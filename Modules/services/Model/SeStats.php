@@ -12,7 +12,6 @@ require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/core/Model/CoreTranslator.php';
-// require_once 'externals/PHPExcel/Classes/PHPExcel.php';
 
 
 class SeOrderStats {
@@ -32,7 +31,7 @@ class SeOrderStats {
         $controller = "servicesinvoiceorder";
         $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
 
-        return $this->makeBalanceXlsFile($filepath, $id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet, $lang);
+        $this->makeBalanceXlsFile($filepath, $id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet, $lang);
     }
 
     private function makeBalanceXlsFile($filepath, $id_space, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null, $lang='en') {
@@ -43,7 +42,6 @@ class SeOrderStats {
         // Create new PHPExcel object
         if($spreadsheet == null) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-            // $spreadsheet = new PHPExcel();
 
             // Set properties
             $spreadsheet->getProperties()->setCreator("Platform-Manager");
@@ -115,9 +113,6 @@ class SeOrderStats {
         $spreadsheet->getActiveSheet()->SetCellValue('F2', ServicesTranslator::Closed_date($lang));
         $spreadsheet->getActiveSheet()->getStyle('F2')->applyFromArray($styleBorderedCell);
 
-        //$spreadsheet->getActiveSheet()->mergeCells('I1:K1');
-        //$spreadsheet->getActiveSheet()->getStyle('I1')->applyFromArray($styleBorderedCell);
-
         $spreadsheet->getActiveSheet()->getRowDimension('1')->setRowHeight(40);
 
         $curentLine = 2;
@@ -133,7 +128,6 @@ class SeOrderStats {
             // Should work not in debug mode
             $client = $modelClUser->getUserClientAccounts($id_space, $id_user);
             $clientName = $client ? $client[0]["name"] : "n/a";
-            // $unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
 
            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $clientName /*$modelUser->getUserFUllName($proj["id_resp"])*/);
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -199,13 +193,11 @@ class SeOrderStats {
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $orders = $ordersBilledBalance["orders"];
         foreach ($orders as $proj) {
             $curentLine++;
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
@@ -272,7 +264,6 @@ class SeOrderStats {
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, CoreTranslator::Responsible($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
-        //$spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, InvoicesTranslator::Number($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Total_HT($lang));
 
@@ -281,10 +272,8 @@ class SeOrderStats {
             $curentLine++;
 
             $unitName = $modelClient->getInstitution($id_space, $invoice["id_responsible"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            //$spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($invoice["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["total_ht"]);
             $total += $invoice["total_ht"];
@@ -323,17 +312,14 @@ class SeOrderStats {
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, CoreTranslator::Unit($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_identification($lang));
-        //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
         $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-        //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
         $itemIdx = 4;
         $items = $projectsBalance["items"];
-        //print_r($items);
         $modelItem = new SeService();
 
         foreach ($items as $item) {
@@ -353,25 +339,20 @@ class SeOrderStats {
         $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, ServicesTranslator::Closed_date($lang));
         $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBalance["orders"];
-        //print_r($projects);
         foreach ($projects as $proj) {
             $curentLine++;
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["no_identification"]);
-            //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-            //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
             if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
@@ -390,24 +371,16 @@ class SeOrderStats {
             $offset = 4;
             $projItemCount = 0;
             foreach ($entries as $entry) {
-                // print_r($entry);
-                // echo "<br/>";
                 $idx++;
                 $pos = $this->findItemPos2($items, $entry["id"]);
-                //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
                    
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
-                    //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
-            //if($projItemCount == 0){
-            //    $spreadsheet->getActiveSheet()->removeRow($curentLine);
-            //    $curentLine--;
-            //}
+
         }
 
         // total services sum
@@ -641,7 +614,6 @@ class SeStats extends Model {
         $numberAccademicProjects = 0;
         $numberIndustryProjects = 0;
 
-        //$modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelPricing = new ClPricing();
 
@@ -658,34 +630,15 @@ class SeStats extends Model {
             }
         }
 
-        // number of new academic projects
-        /*
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
-        $numberNewAccademicProject = $req->rowCount();
-        */
-
-        //echo "numberNewAccademicProject = " . $numberNewAccademicProject . "<br/>";
         // number of new academic team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicTeam = $req->rowCount();
 
-        //echo "numberNewAccademicTeam = " . $numberNewAccademicTeam . "<br/>";
-        // number of new industry projects
-        /*
-        $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
-        $numberNewIndustryProject = $req->rowCount();
-        */
-
-        //echo "numberNewIndustryProject = " . $numberNewIndustryProject . "<br/>";
         // number of new industry team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
-
-        //echo "numberNewIndustryTeam = " . $numberNewIndustryTeam . "<br/>";
 
         $purcentageNewIndustryTeam = 0;
         $purcentageloyaltyIndustryProjects = 0;
@@ -850,7 +803,6 @@ class SeStats extends Model {
         $numberAccademicProjects = 0;
         $numberIndustryProjects = 0;
 
-        //$modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelPricing = new ClPricing();
 
@@ -886,13 +838,11 @@ class SeStats extends Model {
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryProject = $req->rowCount();
 
-        //echo "numberNewIndustryProject = " . $numberNewIndustryProject . "<br/>";
         // number of new industry team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
 
-        //echo "numberNewIndustryTeam = " . $numberNewIndustryTeam . "<br/>";
 
         $purcentageNewIndustryTeam = 0;
         $purcentageloyaltyIndustryProjects = 0;
@@ -924,7 +874,6 @@ class SeStats extends Model {
     }
 
     public function getBalance($periodStart, $periodEnd, $id_space, $isglobal = false, $spreadsheet=null, $lang='en') {
-        //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
         $modelProjects = new SeProject();
         $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
@@ -960,7 +909,6 @@ class SeStats extends Model {
         // Create new PHPExcel object
         if($spreadsheet == null) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-            //$spreadsheet = new PHPExcel();
             // Set properties
             $spreadsheet->getProperties()->setCreator("Platform-Manager");
             $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
@@ -1305,8 +1253,6 @@ class SeStats extends Model {
                     }
                     $spreadsheet->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
                     $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
-
-                    //$originName = $modelOrigin->getName($proj["id_origin"]);
                     
                     $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($id_space, $proj["id_origin"]));
                     $spreadsheet->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
@@ -1531,7 +1477,6 @@ class SeStats extends Model {
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
         
@@ -1560,11 +1505,8 @@ class SeStats extends Model {
                 if ($pos > 0 && $entry["pos"] > 0) {
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + 5) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + 5) . $curentLine)->applyFromArray($styleBorderedCell);
-
-                    //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
         }
 
         // total services sum
@@ -1607,13 +1549,11 @@ class SeStats extends Model {
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ClientsTranslator::Institution($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, CoreTranslator::User($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::No_Projet($lang));
-        //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, ServicesTranslator::Closed_date($lang));
 
         $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-        //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
         $itemIdx = 4;
         $items = $projectsBalance["items"];
@@ -1636,8 +1576,6 @@ class SeStats extends Model {
         $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx + 3) . $curentLine, ServicesTranslator::Closed_date($lang));
         $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx + 3) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
-
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
             $curentLine++;
@@ -1649,13 +1587,11 @@ class SeStats extends Model {
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
-            //$spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
-            //$spreadsheet->getActiveSheet()->getStyle('E' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $dateClosed = "";
             if ($proj["date_close"] && $proj["date_close"] != "0000-00-00") {
@@ -1672,16 +1608,13 @@ class SeStats extends Model {
             $idx = -1;
             $entries = $proj["entries"];
             $offset = 4;
-            // $projItemCount = 0;
             foreach ($entries as $entry) {
                 $idx++;
                 $pos = $this->findItemPos2($items, $entry["id"]);
-                //echo "id = " . $entry["id"] . " pos = " . $pos . "<br/>";
                 if ($pos > 0 && $entry["pos"] > 0) {
 
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
-                    // $projItemCount += $entry["sum"];
                 }
             }
 

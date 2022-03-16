@@ -155,7 +155,6 @@ class BkStatsUser extends Model {
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
         if($reqIcon && $reqIcon['image']) {
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
-            // $objDrawing = new PHPExcel_Worksheet_HeaderFooterDrawing();
             $objDrawing->setName('PHPExcel logo');
             $objDrawing->setPath($reqIcon[0]);
             $objDrawing->setHeight(60);
@@ -206,7 +205,6 @@ class BkStatsUser extends Model {
 
         $ligne = 6;
         foreach ($res as $r) {
-            //print_r($r);
             $colonne = 'A';
             $sheet->getRowDimension($ligne)->setRowHeight(13);
 
@@ -299,13 +297,10 @@ class BkStatsUser extends Model {
             //je redimensionne l’image
             $TailleImageChoisie = getimagesize($ImageNews);
             //la largeur voulu dans le document excel
-            //$NouvelleLargeur = 150;
             $NouvelleHauteur = 80;
             //calcul du pourcentage de réduction par rapport à l’original
-            //$Reduction = ( ($NouvelleLargeur * 100)/$TailleImageChoisie[0] );
             $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
             //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
-            //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
             $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
             //j’initialise la nouvelle image
             $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
@@ -323,12 +318,10 @@ class BkStatsUser extends Model {
             $objDrawing->setOffsetY(8);
             $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
             $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
-            //enfin on l’envoie à la feuille de calcul !
-            //$objDrawing->setWorksheet($sheet);
+
         }
 
 
-        // $writer = PHPExcel_IOFactory::createWriter($spreadsheet, 'Excel2007');
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         $dir = dirname($file);

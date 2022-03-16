@@ -80,9 +80,6 @@ class BookingstatisticauthorizationsController extends StatisticsController {
                 "space" => ["id" => $id_space]
             ]);
             return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
-
-            //$f = $this->generateStats($id_space, $period_begin, $period_end);
-            //return ['data' => ['file' => $f]];
         }
 
         $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
@@ -132,19 +129,6 @@ class BookingstatisticauthorizationsController extends StatisticsController {
             "space" => ["id" => $id_space]
         ]);
         return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
-
-
-        // query
-        /*
-        $statUserModel = new BkStatsUser();
-        $f = null;
-        if ($email != "") {
-            $f = $statUserModel->authorizedUsersMail($resource_id, $id_space);
-        } else {
-            $f = $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
-        }
-        return ['data' => ['file' => $f]];
-        */
     }
 
 }

@@ -55,12 +55,11 @@ class BkStats {
         // summary
         $summary["total"] = $modelAuthorizations->getTotalForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($id_space, $period_begin, $period_end);
-        // $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($id_space, $period_begin, $period_end);
         $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
         $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
 
-        return $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
+        $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
     }
 
     protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
@@ -198,9 +197,6 @@ class BkStats {
 
         $spreadsheet->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
         $spreadsheet->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
-
-        //$spreadsheet->getActiveSheet()->SetCellValue('A5', "Nombre d'unités");
-        //$spreadsheet->getActiveSheet()->SetCellValue('B5', $summary["distinctunit"]);
 
         $spreadsheet->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
         $spreadsheet->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
