@@ -10,6 +10,7 @@
 * [core] add option to tables to view all elements
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
+* [core] in core user edit, show user spaces and pending spaces #607
 
 ## 2.4.1
 
