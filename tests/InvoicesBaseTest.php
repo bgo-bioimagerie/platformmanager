@@ -57,7 +57,7 @@ class InvoicesBaseTest extends BaseTest {
             $c->runAction('invoices', 'pdftemplate', ['id_space' => $space['id']]);
         } catch(Throwable) {
             if(!file_exists(__DIR__."/../data/invoices/".$space["id"])){
-                mkdir(__DIR__."/../data/invoices/".$space["id"]);
+                mkdir(__DIR__."/../data/invoices/".$space["id"], 0755, true);
             }
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }

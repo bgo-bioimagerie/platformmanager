@@ -70,7 +70,7 @@ class CoreFiles extends Model {
         $name = basename($path);
         
         if(!is_dir($base)) {
-            mkdir($base, 0777, true);
+            mkdir($base, 0755, true);
         }
         FileUpload::uploadFile($base, $formFileId, $name);
     }
@@ -104,7 +104,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         copy($path, $dest);
     }
@@ -116,7 +116,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         file_put_contents($dest, $data);
     }
@@ -151,10 +151,20 @@ class CoreFiles extends Model {
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=?, WHERE id=?';
+            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=? WHERE id=?';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user, $id));
             return $id;
         }
+    }
+
+    public function status(int $id_space, int $id, int $status, string $msg) {
+        $sql = 'UPDATE core_files SET status=?,msg=? WHERE id=? AND id_space=? AND deleted=0';
+        $this->runRequest($sql, array($status, $msg, $id, $id_space));  
+    }
+
+    public function getByModule(int $id_space, string $module, int $role) {
+        $sql = "SELECT core_files.*, core_users.login as login FROM core_files INNER JOIN core_users ON core_users.id=core_files.id_user WHERE core_files.id_space=? AND core_files.module=? and core_files.role>=? ORDER BY core_files.id DESC";
+        return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
     }
 
 }
