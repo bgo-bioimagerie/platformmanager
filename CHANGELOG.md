@@ -2,9 +2,7 @@
 
 ## 2.5.0
 
-<<<<<<< HEAD
 * [core] fix tile display error if no space
-=======
 * [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
@@ -21,7 +19,6 @@
 
 * [core] add missing tableName properties in model constructors
 * [space] improve todolist sql requests
->>>>>>> develop
 * [helpdesk] close connection in anycase
 * [core] fix TODO in corespaceadmin, do not get all bookings, just count them
 * [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
