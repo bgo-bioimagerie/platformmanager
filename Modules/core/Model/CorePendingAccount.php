@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 
 /**
  * case validated=0 and validated_by=0 => request is pending 
- * case validated=0 and validated_by>0 => space admin has rejected the join request
+ * case validated=0 and validated_by>0 => space admin has rejected the join request // @outdated
  * case validated=1 and validated_by>0 => space admin has accepted the join request
  * case validated=1 and validated_by=0 => has already join then unjoin
  */
@@ -115,6 +115,17 @@ class CorePendingAccount extends Model {
                 WHERE pending.id_space=? AND pending.validated=0 AND pending.validated_by=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
+    
+    public function getActivatedForSpace($id_space) {
+        $sql = "SELECT * FROM core_pending_accounts WHERE id_space=? AND validated=0 AND validated_by>0";
+        return $this->runRequest($sql, array($id_space))->fetch();
+    }
+
+    public function countActivatedForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM core_pending_accounts WHERE id_space=? AND validated=1 AND validated_by>0";
+        $total = $this->runRequest($sql, array($id_space))->fetch();
+        return $total['total'];
+    }
 
     public function countPendingForSpace($id_space) {
         $sql = "SELECT count(*) as total
@@ -124,7 +135,7 @@ class CorePendingAccount extends Model {
     }
 
     public function getSpaceIdsForPending($id_user){
-        $sql = "SELECT id_space FROM core_pending_accounts WHERE id_user=? AND validated=0 AND validated_by=0";
+        $sql = "SELECT core_pending_accounts.id_space, core_spaces.name as space_name FROM core_pending_accounts INNER JOIN core_spaces ON core_spaces.id=core_pending_accounts.id_space  WHERE core_pending_accounts.id_user=? AND core_pending_accounts.validated=0 AND core_pending_accounts.validated_by=0";
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
 

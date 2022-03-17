@@ -136,10 +136,8 @@ class BookingdefaultController extends BookingabstractController {
             return true;
         }
 
-        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_space, $id_resource);
-        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
 
         if ($id_recipient == $id_user) {
 
@@ -203,7 +201,7 @@ class BookingdefaultController extends BookingabstractController {
         if($redir) {
             $redirInfo = explode(':', $redir);
             $redirPage = $redirInfo[0];
-            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
         }
 
         if (!$canValidateBooking) {
@@ -707,7 +705,8 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        $form->addHidden("id", $resaInfo["id"]);
+        // $form->addHidden("id", $resaInfo["id"]);
+        $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
@@ -902,6 +901,10 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
 
+        $details = ['steps' => []];
+        if($resaInfo["id"] > 0) {
+            $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+        }
 
         return $this->render(array(
             "id_space" => $id_space,
@@ -922,7 +925,8 @@ class BookingdefaultController extends BookingabstractController {
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
             "formDeletePeriod" => $formDeletePeriod->getHtml($lang),
-            'from' => $this->request->getParameterNoException('from')
+            'from' => $this->request->getParameterNoException('from'),
+            'details' => $details
         ),
             "addreservationAction"
         );
@@ -981,10 +985,10 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
-        if ($sendEmail == 1) {
+        if ($sendEmail == 1 && $entryInfo["start_time"] > time()) {
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource, time());
             $subject = $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 

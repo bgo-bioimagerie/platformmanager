@@ -21,7 +21,9 @@ class CoreUpgradeDB1642743110 extends Model {
 		$mailerEdit = $modelCoreConfig->getParamSpace('mailerEdit', $id_space, '');
 		if(!$mailerEdit) {
 		  $mailerVisibility = $cp->getSpaceMenusRole($id_space, 'mailer');
-		  $modelCoreConfig->setParam('mailerEdit', $mailerVisibility, $id_space);
+		  if($mailerVisibility != null) {
+		  	$modelCoreConfig->setParam('mailerEdit', $mailerVisibility, $id_space);
+		  }
 		}
 	  }
 

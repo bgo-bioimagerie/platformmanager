@@ -28,6 +28,12 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 	} else if($size_bloc_resa == 1800) {
 		$caseTimeLength = 1800;
 		$nbBlocks = 2;
+	} else if($size_bloc_resa == 3600) {
+		$caseTimeLength = 3600;
+		$nbBlocks = 1;
+	} else {
+		$caseTimeLength = 3600*24;
+		$nbBlocks = 1;
 	}
 
 	for($i=$day_begin;$i<$day_end;$i++) {

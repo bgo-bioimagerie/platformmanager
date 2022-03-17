@@ -15,6 +15,7 @@ Variables:
     clientInfos: optional customer info (clientInfo.name for example)
     invoiceInfo: invoice object
     isquote: boolean (if defined) to specify this is a quote and not an invoice
+    lang: current language ('en', 'fr')
 
 #}
 <style type="text/css">
@@ -113,10 +114,15 @@ Variables:
     <div style="width: 100%; height:75px;">
     </div>
 
-    {% if invoiceInfo.title %}
-        {{invoiceInfo.title}}
-        <br>
+    <p>{{invoiceInfo.module}}:
+    {% if invoiceInfo.period_begin is defined and invoiceInfo.period_begin is not null %}
+       {% if lang == 'fr' %}
+         {{invoiceInfo.period_begin|date('d/m/Y')}} - {{invoiceInfo.period_end|date('d/m/Y')}}
+       {% else %}
+         {{invoiceInfo.period_begin}} - {{invoiceInfo.period_end}}
+       {% endif %}
     {% endif %}
+    </p>
 
     {{ table | raw }}
     <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">

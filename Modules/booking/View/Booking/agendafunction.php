@@ -1,9 +1,9 @@
 <?php
 
-function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int $bk_id_area, string $id_user, string $lang) {
+function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int|string $bk_id_area, string $id_user, bool $detailedView, string $lang) {
     
-    $html = '<div class="row"  style="background-color: #ffffff; padding-bottom: 12px;">
-	<div class="col-md-7 text-left">
+    $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
+	<div class="col-12 col-md-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
 	$today = date("Y-m-d", time());
@@ -11,10 +11,18 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
 	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $reload = 'booking'.$kind.'/'.$id_space.$qc;
 
-	$html .= '<a rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-left"></span> </button></a>';
-	$html .= '<a rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-default"> <span class="glyphicon glyphicon-menu-right"></span> </button></a>';
-	$html .= '<a rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-default"> '.BookingTranslator::Today($lang).' </button></a>';
+    if(!$detailedView) {
+        $qc .= '&view=simple';
+        $qt .= '&view=simple';
+        $qb .= '&view=simple';
+        $qa .= '&view=simple';
+    }
+
+	$html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
+	$html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
+	$html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
 	$html .= '</div>';
 
 	$d = explode("-", $fromDate);
@@ -30,21 +38,40 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 
 	$html .= '</div>';
 
-    $dayactive = $kind == 'day' ? 'active':'';
-    $dayareaactive = $kind == 'dayarea' ? 'active':'';
-    $weekactive = $kind == 'week' ? 'active':'';
-    $weekareaactive = $kind == 'weekarea' ? 'active':'';
-    $monthactive = $kind == 'month' ? 'active':'';
+    $dayselected = $kind == 'day' ? 'selected':'';
+    $dayareaselected = $kind == 'dayarea' ? 'selected':'';
+    $weekselected = $kind == 'week' ? 'selected':'';
+    $weekareaselected = $kind == 'weekarea' ? 'actselectedive':'';
+    $monthselected = $kind == 'month' ? 'selected':'';
 
-	$html .= '<div class="col-md-5 text-right">
-		<div class="btn-group" role="group">';
-	$html .='			<a aria-label="go to day view" style="color:#333;" href="bookingday/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayactive.'" type="button">'.BookingTranslator::Day($lang).'</button></a>';
-	$html .= '			<a aria-label="go to day area view" style="color:#333;" href="bookingdayarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$dayareaactive.'" type="button">'.BookingTranslator::Day_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to week view" style="color:#333;" href="bookingweek/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekactive.'" type="button">'.BookingTranslator::Week($lang).'</button></a>';
-	$html .='			<a aria-label="go to week area view" style="color:#333;" href="bookingweekarea/'.$id_space.$qc.'" ><button class="btn btn-default '.$weekareaactive.'" type="button">'.BookingTranslator::Week_Area($lang).'</button></a>';
-	$html .='			<a aria-label="go to month view" style="color:#333;" href="bookingmonth/'.$id_space.$qc.'" ><button class="btn btn-default '.$monthactive.'" type="button">'.BookingTranslator::Month($lang).'</button></a>';
-    $html .='        </div>
-        </div>
+    $html .= '<script>function switchView(view) {
+        let url = "'.$reload.'" + "&view="+view; 
+        window.location.href=url;
+    }</script>';
+
+    $html .= '<div class="col-12 col-md-3 text-right">';
+    $html .= '<select id="selectview" class="form-select" onchange="location.href=this.value">';
+    $html .='			<option aria-label="go to day view" value="bookingday/'.$id_space.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
+	$html .= '			<option aria-label="go to day area view" value="bookingdayarea/'.$id_space.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
+	$html .='			<option aria-label="go to week view" value="bookingweek/'.$id_space.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
+	$html .='			<option aria-label="go to week area view" value="bookingweekarea/'.$id_space.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
+	$html .='			<option aria-label="go to month view" value="bookingmonth/'.$id_space.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
+    $html .= '</select>';
+    $html .= '</div>';
+
+
+    if($kind != 'month') {
+        $html .='<div class="col-12 col-md-2 text-right">';
+        $html .= '           <select onchange="switchView(this.options[this.selectedIndex].value)" class="form-select" aria-label="simple/detailed view" >';
+        $simpleSelected = $detailedView ? '' : 'selected';
+        $detailedSelected = $detailedView ? 'selected' : '';
+        $html .= '              <option '.$simpleSelected.' value="simple">'.BookingTranslator::SimpleView($lang).'</option>';
+        $html .= '              <option '.$detailedSelected.' value="detailed">'.BookingTranslator::DetailedView($lang).'</option>';
+        $html .= '           </select>';
+        $html .= '</div>';
+    }
+
+    $html .='
     </div>';
     return $html;
 
@@ -57,12 +84,17 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 		$elts = implode(':', $from);
 		$q .= "from=$elts";
 	}
-    // $mois_fr = Array("", "Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre");
-    // $mois_en = Array("", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
     $days_fr = ["Lun", "Mar", "Merc", "Jeu", "Ven", "Sam", "Dim"];
     $days_en = ["Mon", "Tue", "Web", "Thu", "Fri", "Sat", "Sun"];
 
+    $month_fr = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Octobre", "Novembre", "Décembre"];
+    $month_en = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    $strmonth = $month_en[$mois-1];
+    if($lang == "fr") {
+        $strmonth = $month_fr[$mois-1];
+    }
 
     $l_day = date("t", mktime(0, 0, 0, $mois, 1, $annee));
     $x = date("N", mktime(0, 0, 0, $mois, 1, $annee));
@@ -75,8 +107,8 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
     ?>
 
     <div class="container">
-        <div class="row"><div class="col-sm-12" style="text-align: center"><?php
-		echo $resourceBase['name'];
+        <div class="row"><div class="col-12" style="text-align: center"><?php
+		echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
 		if($resourceBase['last_state'] != ""){
 			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
 		}
@@ -96,7 +128,7 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                 $case = 0;
                 if ($x > 1) {
                     for ($i = 1; $i < $x; $i++) {
-                        echo '<td class="desactive col-sm-1">&nbsp;</td>';
+                        echo '<td class="desactive col-1">&nbsp;</td>';
                         $case++;
                     }
                 }
@@ -104,17 +136,21 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
                     $y = date("N", mktime(0, 0, 0, $mois, $i, $annee));
                     
                     $tile_date = date("Y-m-d", mktime(0, 0, 0, $mois, $i, $annee));
-                    echo "<td class=\"col-sm-1\">";
+                    echo "<td class=\"col-1\">";
                     ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
                 <?php $tileq = '?'.implode('&', ["bk_curentDate=$tile_date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]); ?>
-                <a class="glyphicon glyphicon-plus" href="bookingday/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
+                <a class="bi-plus" href="bookingday/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
                     <?php
                     $found = false;
                     $modelBookingSetting = new BkBookingSettings();
                     $nbentries = 0;
                     foreach ($entries as $entry) {
-                        if (date("d", $entry["start_time"]) <= $i && date("d", $entry["end_time"]) >= $i) {
+                        $dstart = mktime(0, 0, 0, $mois, $i, $annee);
+                        $dend = mktime(23, 59, 59, $mois, $i, $annee);
+                        if(($entry['start_time'] >= $dstart &&$entry['start_time'] <= $dend) ||
+                        ($entry['end_time'] >= $dstart &&$entry['end_time'] <= $dend) ||
+                        ($entry['start_time'] < $dstart && $entry['end_time'] > $dend)) {
                             $found = true;
                             $shortDescription = $entry['short_description'];
                             ?>

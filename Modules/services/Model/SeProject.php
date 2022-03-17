@@ -18,6 +18,10 @@ require_once 'Modules/services/Model/StockShelf.php';
  */
 class SeProject extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_project";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_project` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -779,7 +783,6 @@ class SeProject extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE se_project SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_project WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

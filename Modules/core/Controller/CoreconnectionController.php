@@ -207,17 +207,10 @@ class CoreconnectionController extends CorecookiesecureController {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
                     if(!$userInfo['apikey']) {
                         $this->user->newApiKey($userInfo['idUser']);
-                    }
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
                     return $this->user->isActive($login);
                 }

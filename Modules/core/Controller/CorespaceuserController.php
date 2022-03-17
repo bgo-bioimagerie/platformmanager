@@ -1,5 +1,7 @@
 <?php
 
+use function Sentry\configureScope;
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -37,14 +39,19 @@ class CorespaceuserController extends CorespaceaccessController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => $this->request->getParameterNoException("origin")];
+        $todo = ($this->request->getParameterNoException("redirect") === "todo")
+            ? true : false;
         $modelOptions = new CoreSpaceAccessOptions();
         $options = array_reverse($modelOptions->getAll($id_space));
         $modules = array_map(function($option) { return $option['module'];}, $options);
 
-        $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user);
+        $spaceAccessForm = $this->generateSpaceAccessForm($id_space, $id_user, $todo);
         $spaceAccessFormHtml = $spaceAccessForm->getHtml($lang);
         if ($spaceAccessForm->check()) {
-            $this->validateSpaceAccessForm($id_space, $id_user, $spaceAccessForm);
+            $this->validateSpaceAccessForm($id_space, $id_user, $spaceAccessForm, $todo);
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            }
             $origin['page'] = 'spaceaccess';
         }
         $forms = ['space' => ['forms' => [$spaceAccessFormHtml], 'show' => 1]];
@@ -54,13 +61,16 @@ class CorespaceuserController extends CorespaceaccessController {
         $clientsUsertableHtml = "";
         if (in_array('clients', $modules)) {
             $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
-            $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user);
+            $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user, $todo);
             $clientsUserFormHtml = $clientsUserForm->getHtml($lang);
             if ($clientsUserForm->check()) {
-                $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm->getParameter("id_client"));
+                $clientsUsersCTRL->validateClientsUserform($id_space, $id_user, $clientsUserForm->getParameter("id_client"), $todo);
+                if ($todo) {
+                    return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                }
                 $origin['page'] = 'clientsuser';
             }
-            $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user);
+            $clientsUsertableHtml = $clientsUsersCTRL->generateClientsUserTable($id_space, $id_user, $todo);
             $forms['clients'] = ['forms'  => [$clientsUserFormHtml, $clientsUsertableHtml], 'show' => 0];
             $btnNames['clients'] = ClientsTranslator::clientsuseraccounts($lang);
         }
@@ -70,7 +80,7 @@ class CorespaceuserController extends CorespaceaccessController {
         $bkHistoryTableHtml = "";
         if (in_array('booking', $modules)) {
             $bookingAuthCTRL = new BookingauthorisationsController($this->request);
-            $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit", $lang);
+            $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit", $lang, $todo);
             $bkAuthAddFormHtml = $bkAuthAddForm->getHtml($lang);
             if ($bkAuthAddForm->check()) {
                 $bookingAuthCTRL->validateBkAuthAddForm(
@@ -78,8 +88,12 @@ class CorespaceuserController extends CorespaceaccessController {
                     $id_user,
                     $bkAuthAddForm->getParameter("resource"), /* stands for category id */
                     $bkAuthAddForm->getParameter("visa_id"),
-                    $bkAuthAddForm->getParameter("date")
+                    $bkAuthAddForm->getParameter("date"),
+                    $todo
                 );
+                if ($todo) {
+                    return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                }
                 $origin['page'] = 'bookingaccess';
             }
             $bkAuth = $bookingAuthCTRL->generateBkAuthTable($id_space, $id_user, "corespaceuseredit", $lang);

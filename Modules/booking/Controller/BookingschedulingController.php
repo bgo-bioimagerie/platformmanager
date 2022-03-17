@@ -31,6 +31,11 @@ class BookingschedulingController extends BookingsettingsController {
         
         $modelArea = new ReArea();
         $areas = $modelArea->getForSpace($id_space);
+
+        if (empty($areas)) {
+            $_SESSION['flash'] = ResourcesTranslator::Area_Needed($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
         
         $table = new TableView();
         $table->setTitle(BookingTranslator::Scheduling($lang), 3);
@@ -101,7 +106,13 @@ class BookingschedulingController extends BookingsettingsController {
         }
         $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $bkScheduling["default_color_id"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id_rearea);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "bookingschedulingedit/".$id_space."/".$id_rearea;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setColumnsWidth(3, 9);
         $form->setButtonsWidth(3, 9);
 
@@ -118,12 +129,20 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("day_end"), 
                     $this->request->getParameter("size_bloc_resa"), 
                     $this->request->getParameter("booking_time_scale"), 
-                    $this->request->getParameter("resa_time_setting"), 
+                    $this->request->getParameter("resa_time_setting"),
                     $this->request->getParameter("default_color_id"),
                     $this->request->getParameter("shared")
             );
-               
-            return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+
+            $_SESSION["flash"] = BookingTranslator::Item_created("schedule", $lang);
+            $_SESSION["flashClass"] = "success";
+                
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+            }
+            
         }
          
         return $this->render(array(

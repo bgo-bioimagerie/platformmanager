@@ -126,28 +126,13 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
 
-        // who can delete user
-        /*
-        $formDeleteUser = $this->whoCanDeleteUserForm($modelCoreConfig, $lang);
-
-        if ($formDeleteUser->check()) {
-            $modelCoreConfig->setParam("who_can_delete_user", $this->request->getParameter("who_can_delete_user"));
-
-            $this->redirect("coreconfigadmin");
-            return;
-        }
-        */
-
         // view
         $forms = array($formMaintenance->getHtml($lang),
             $formSpaceIconsForm->getHtml($lang),
             $formDesactivateUser->getHtml($lang),
-            // $formLdap->getHtml($lang),
             $formHomePage->getHtml($lang),
             $formConnectionPage->getHtml($lang),
-            // $formDeleteUser->getHtml($lang),
             $formEmail->getHtml($lang),
-            // $formNavbar->getHtml($lang)
         );
 
         $this->render(array("forms" => $forms, "lang" => $lang));

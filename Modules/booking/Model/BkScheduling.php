@@ -238,6 +238,11 @@ class BkScheduling extends Model {
         return ($req->rowCount() == 1);
     }
 
+    public function getForSpace($id_space) {
+        $sql = "SELECT * from bk_schedulings WHERE id_space=? AND deleted=0";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
     /**
      * Check if a bkScheduling exists from area
      * @param string $id_space

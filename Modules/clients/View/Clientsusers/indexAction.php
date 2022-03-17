@@ -2,7 +2,7 @@
 
     
 <?php startblock('content') ?>
-<div class="pm-table"> 
+<div class="row pm-table">
     <?php echo $formHtml ?>
     <?php echo $tableHtml ?>
 </div>

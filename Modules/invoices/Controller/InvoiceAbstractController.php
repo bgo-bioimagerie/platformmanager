@@ -24,13 +24,14 @@ abstract class InvoiceAbstractController extends InvoicesController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false) {
+    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en') {
         $address = nl2br($address);
         $adress = $address; // backwark compat
-        $date = CoreTranslator::dateFromEn($date, 'fr');
+        $date = CoreTranslator::dateFromEn($date, $lang);
         
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->getByNumber($id_space, $number);
+        $invoiceInfo['module'] = InvoicesTranslator::Module($invoiceInfo['module'], $lang);
 
         if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
             throw new PfmFileException("No template found", 404);
@@ -58,11 +59,11 @@ abstract class InvoiceAbstractController extends InvoicesController {
                 'details' => $details,
                 'clientInfos' => $clientInfos,
                 'invoiceInfo' => $invoiceInfo,
+                'lang' => $lang
             ]);
         }
         
         // convert in PDF
-        // require_once('externals/html2pdf/vendor/autoload.php');
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');

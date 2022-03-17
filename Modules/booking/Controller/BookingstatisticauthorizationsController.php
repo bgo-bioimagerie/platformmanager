@@ -63,302 +63,26 @@ class BookingstatisticauthorizationsController extends StatisticsController {
             $period_begin = $this->request->getParameter("period_begin");
             $period_end = $this->request->getParameter("period_end");
 
-            $f = $this->generateStats($id_space, $period_begin, $period_end);
-            return ['data' => ['file' => $f]];
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $name = 'stats_'.BkStats::STATS_AUTH_STAT.'_'.str_replace('/', '-', $period_begin).'_'.str_replace('/', '-', $period_end).'.xlsx';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_AUTH_STAT,
+                "dateBegin" => $period_begin,
+                "dateEnd" => $period_end,
+                "lang" => $lang,
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
-    }
-
-    protected function generateStats($id_space, $period_begin, $period_end) {
-
-        $modelResource = new ReCategory();
-        $resources = $modelResource->getBySpace($id_space);
-        $modelVisa = new ReVisa();
-        $instructors = $modelVisa->getAllInstructors($id_space);
-        $modelAuthorizations = new BkAuthorization();
-        $countResourcesInstructor = array();
-
-        // by instructor
-        foreach ($resources as $resource) {
-            foreach ($instructors as $instructor) {
-                $authorizations = $modelAuthorizations->getForResourceInstructorPeriod($id_space, $resource["id"], $instructor["id_instructor"], $period_begin, $period_end);
-                $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]] = count($authorizations);
-            }
-        }
-
-        
-        // by unit
-        $modelClients = new ClClient();
-        $units = $modelClients->getAll($id_space);
-        $countResourcesUnit = array();
-        foreach ($resources as $resource) {
-            foreach ($units as $unit) {
-                $authorizations = $modelAuthorizations->getFormResourceUnitPeriod($id_space, $resource["id"], $unit["id"], $period_begin, $period_end);
-                $countResourcesUnit[$resource["id"]][$unit["id"]] = count($authorizations);
-            }
-        }
-
-        // summary
-        $summary["total"] = $modelAuthorizations->getTotalForPeriod($id_space, $period_begin, $period_end);
-        $summary["distinctuser"] = $modelAuthorizations->getDistinctUserForPeriod($id_space, $period_begin, $period_end);
-        // $summary["distinctunit"] = $modelAuthorizations->getDistinctUnitForPeriod($id_space, $period_begin, $period_end);
-        $summary["distinctvisa"] = $modelAuthorizations->getDistinctVisaForPeriod($id_space, $period_begin, $period_end);
-        $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
-        $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
-
-        return $this->generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
-    }
-
-    protected function generateXls($resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
-
-        //echo "generateXls 1 <br/>";
-        //include_once ("externals/PHPExcel/Classes/PHPExcel.php");
-        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel5.php");
-        //include_once ("externals/PHPExcel/Classes/PHPExcel/Writer/Excel2007.php");
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        
-
-        //echo "generateXls 2 <br/>";
-        // Set properties
-        $spreadsheet->getProperties()->setCreator("Platform-Manager");
-        $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
-        $spreadsheet->getProperties()->setTitle("Authorizations statistics");
-        $spreadsheet->getProperties()->setSubject("Authorizations statistics");
-        $spreadsheet->getProperties()->setDescription("");
-
-        $stylesheet = $this->xlsStyleSheet();
-
-        // print by instructors
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations par formateur");
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par formateur du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
-
-
-        $curentLine = 3;
-        $num = 1;
-        foreach ($resources as $resource) {
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $resource["name"]);
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-        }
-        $num++;
-        $letter = $this->get_col_letter($num);
-        $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, "Total");
-        $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-
-
-        $modelUser = new CoreUser();
-        $instructorsStartLine = $curentLine + 1;
-        foreach ($instructors as $instructor) {
-            $curentLine++;
-            $letter = $this->get_col_letter(1);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $modelUser->getUserFUllName($instructor["id_instructor"]));
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-
-            $total = 0;
-            $num = 1;
-            foreach ($resources as $resource) {
-                $num++;
-                $letter = $this->get_col_letter($num);
-                $val = $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]];
-                if ($val == 0) {
-                    $val = "";
-                }
-                $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
-                $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-                $total += intval($val);
-            }
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-        }
-        $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
-        for ($i = 0; $i < count($resources); $i++) {
-            $letter = $this->get_col_letter($i + 2);
-            $sumEnd = $curentLine - 1;
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $instructorsStartLine . ':' . $letter . $sumEnd . ')');
-        }
-        $letter = $this->get_col_letter(count($resources) + 2);
-        $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $instructorsStartLine . ':' . $letter . $sumEnd . ')');
-
-        // by unit
-        $objWorkSheet = $spreadsheet->createSheet(1);
-        $objWorkSheet->setTitle("Authorisations par unité");
-        $spreadsheet->setActiveSheetIndex(1);
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par unité du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
-
-        $curentLine = 2;
-        $num = 1;
-        foreach ($resources as $resource) {
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $resource["name"]);
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-        }
-        $num++;
-        $letter = $this->get_col_letter($num);
-        $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, "Total");
-        $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-
-        $unitsStartLine = $curentLine;
-        foreach ($units as $unit) {
-            $curentLine++;
-            $letter = $this->get_col_letter(1);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $unit["name"]);
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-
-            $total = 0;
-            $num = 1;
-            foreach ($resources as $resource) {
-                $num++;
-                $letter = $this->get_col_letter($num);
-                $val = $countResourcesUnit[$resource["id"]][$unit["id"]];
-                $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
-                $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-                $total += intval($val);
-            }
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
-            $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
-        }
-        $curentLine++;
-        $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
-        for ($i = 0; $i < count($resources); $i++) {
-            $letter = $this->get_col_letter($i + 2);
-            $sumEnd = $curentLine - 1;
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $unitsStartLine . ':' . $letter . $sumEnd . ')');
-        }
-        $letter = $this->get_col_letter(count($resources) + 2);
-        $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $unitsStartLine . ':' . $letter . $sumEnd . ')');
-
-        // print summary
-        $objWorkSheet = $spreadsheet->createSheet(2);
-        $objWorkSheet->setTitle("Authorisations résumé");
-        $spreadsheet->setActiveSheetIndex(2);
-
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations résumé");
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Résumé des autorisations du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
-
-        $spreadsheet->getActiveSheet()->SetCellValue('A3', "Nombre de formations");
-        $spreadsheet->getActiveSheet()->SetCellValue('B3', $summary["total"]);
-
-        $spreadsheet->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
-        $spreadsheet->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
-
-        //$spreadsheet->getActiveSheet()->SetCellValue('A5', "Nombre d'unités");
-        //$spreadsheet->getActiveSheet()->SetCellValue('B5', $summary["distinctunit"]);
-
-        $spreadsheet->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
-        $spreadsheet->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
-
-        $spreadsheet->getActiveSheet()->SetCellValue('A7', "Nombre de ressources");
-        $spreadsheet->getActiveSheet()->SetCellValue('B7', $summary["distinctresource"]);
-
-        $spreadsheet->getActiveSheet()->SetCellValue('A8', "Nombre de nouveaux utilisateurs");
-        $spreadsheet->getActiveSheet()->SetCellValue('B8', $summary["newuser"]);
-
-        // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
-
-        if(getenv('PFM_MODE') == 'test') {
-            $tmpName = tempnam('/tmp', 'statistics').'.xlsx';
-            $objWriter->save($tmpName);
-            return $tmpName;
-        }
-        //On enregistre les modifications et on met en téléchargement le fichier Excel obtenu
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="platorm-manager-authorizations-stats.xlsx"');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
-    }
-
-    protected function xlsStyleSheet() {
-        $styleBorderedCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-            ),
-        );
-
-        $styleBorderedCenteredCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ),
-        );
-
-        return array("borderedCell" => $styleBorderedCell, "borderedCenteredCell" => $styleBorderedCenteredCell);
-    }
-
-    function get_col_letter($num) {
-        $comp = 0;
-        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-
-        //if the number is greater than 26, calculate to get the next letters
-        if ($num > 26) {
-            //divide the number by 26 and get rid of the decimal
-            $comp = floor($num / 26);
-
-            //add the letter to the end of the result and return it
-            if ($comp != 0) {
-                // don't subtract 1 if the comparative variable is greater than 0
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26)];
-            } else {
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26) - 1];
-            }
-        } else {
-            //return the letter
-            return $letters[($num - 1)];
-        }
     }
 
     /**
@@ -387,15 +111,24 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $email = $this->request->getParameterNoException("email");
 
         $lang = $this->getLanguage();
-        // query
-        $statUserModel = new BkStatsUser();
-        $f = null;
-        if ($email != "") {
-            $f = $statUserModel->authorizedUsersMail($resource_id, $id_space);
-        } else {
-            $f = $statUserModel->authorizedUsers($resource_id, $id_space, $lang);
-        }
-        return ['data' => ['file' => $f]];
+
+        $c = new CoreFiles();
+        $cs = new CoreSpace();
+        $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+        $name = 'stats_'.BkStats::STATS_AUTH_LIST.'_'.$resource_id.'.xlsx';
+        $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+        $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+        Events::send([
+            "action" => Events::ACTION_STATISTICS_REQUEST,
+            "stat" => BkStats::STATS_AUTH_LIST,
+            "resource_id" => $resource_id,
+            "email" => $email,
+            "user" => ["id" => $_SESSION['id_user']],
+            "lang" => $lang,
+            "file" => ["id" => $fid],
+            "space" => ["id" => $id_space]
+        ]);
+        return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
     }
 
 }

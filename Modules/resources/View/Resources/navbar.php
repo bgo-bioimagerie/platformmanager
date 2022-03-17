@@ -3,6 +3,8 @@
         <a  style="background-color:{{bgcolor}}; color: #fff;" href="resources/{{id_space}}"> {{title}} 
             <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>
         </a>
+        <div class="col-md-3 col-md-offset-9" style="margin-top: -30px;">
+    </div>
     </div>
 
     <div class="pm-inline-div" style="background-color:{{bgcolor}};">

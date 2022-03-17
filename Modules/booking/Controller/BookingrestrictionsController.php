@@ -64,7 +64,6 @@ class BookingrestrictionsController extends BookingsettingsController {
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $data['id_resource']);
         $resourceName = $resource['name'];
-        // $resourceName = $modelResource->getName($data["id_resource"]);
         
         $form = new Form($this->request, "restrictioneditform");
         $form->setTitle(BookingTranslator::RestrictionsFor($lang) . ": " . $resourceName);
@@ -75,14 +74,8 @@ class BookingrestrictionsController extends BookingsettingsController {
         
         if ($form->check()){
             
-            //$id_resource = $data["id_resource"];
-            
             $maxbookingperday = $form->getParameter("maxbookingperday");
             $bookingdelayusercanedit = $form->getParameter("bookingdelayusercanedit");
-            
-            //echo 'id = ' . $id . "<br/>";
-            //echo 'maxbookingperday = ' . $maxbookingperday . "<br/>";
-            //echo 'bookingdelayusercanedit = ' . $bookingdelayusercanedit . "<br/>";
             $model->set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit);
             
             $this->redirect("bookingrestrictions/".$id_space);

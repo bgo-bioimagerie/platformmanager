@@ -13,7 +13,6 @@ class ServicesRouting extends Routing {
 
         // config
         $this->addRoute("servicesconfig", "servicesconfig", "servicesconfig", "index", array("id_space"), array(""));
-        // $this->addRoute("servicesconfigadmin", "servicesconfigadmin", "servicesconfigadmin", "index");
 
         // add here the module routes
         $this->addRoute("services", "services", "services", "index", array("id_space"), array(""));
@@ -81,6 +80,7 @@ class ServicesRouting extends Routing {
 
 
         // stats
+        // deprecated ?
         $this->addRoute("servicesbalance", "servicesbalance", "servicesbalance", "index", array("id_space"), array(""));
 
         // invoicing

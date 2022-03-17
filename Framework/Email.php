@@ -44,6 +44,8 @@ class Email extends Model {
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
         $content = trim($content);
         if($mailing) {
+            // should diff between auto mails notif and manager sending mail to list
+            // $mail->addCustomHeader("Auto-Submitted", "auto-generated");
             $mailingInfo = explode("@", $mailing);
             $url = Configuration::get('PFM_PUBLIC_URL')."/coremail/$mailingInfo[1]";
             $mail->Body = $content . "<br/><small>You are registered to the pfm $mailingInfo[0] mailing list. To unsubscribe: <a href=\"$url\">$url</a></small>";
