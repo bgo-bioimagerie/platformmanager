@@ -2,6 +2,8 @@
 
 ## 2.5.0
 
+* [booking_quantities] avoid having two qtes with the same name for the same resource 
+* [booking_quantities] allow to delete quantities duplicates or refering to a deleted resource
 * [packages] can't add a resource to a package in which it is already included 
 * [packages] can delete packages elements individually
 * [core] hide space unsubscribe button if user is pending or not member of space

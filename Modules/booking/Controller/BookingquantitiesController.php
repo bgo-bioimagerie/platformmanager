@@ -53,9 +53,9 @@ class BookingquantitiesController extends BookingsettingsController {
         
         $formAdd = new FormAdd($this->request, "supsAddForm");
         $formAdd->addHidden("id_sups", $supsIds);
-        $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang) , $choicesR, $choicesRid, $supsIdsRes);
+        $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang), $choicesR, $choicesRid, $supsIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $supsNames);
-        $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang) , array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supsMandatories);
+        $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supsMandatories);
         $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang) , array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supIsInvoicingUnit);
         
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
@@ -96,14 +96,22 @@ class BookingquantitiesController extends BookingsettingsController {
                    $supacks[$supName[$sup]] = $supID[$sup];
                 }
             }
+
+            $coupleQteResourceExists = false;
             for ($sup = 0; $sup < count($supID); $sup++) {
                 if($supName[$sup] == "") {
                     continue;
                 }
                 if (!$supID[$sup]) {
-                    // If package id not set, use from known packages
+                    // If quantity id not set, use from known quantities
                     if(isset($supacks[$supName[$sup]])) {
                         $supID[$sup] = $supacks[$supName[$sup]];
+                        if ($this->coupleQteResourceExists($supID[$sup],$supResources[$sup], $id_space)) {
+                            $coupleQteResourceExists = [
+                                "resource" => $modelResource->get($id_space, $supResources[$sup])['name'],
+                                "qte" => $supName[$sup]
+                            ];
+                        }
                     } else {
                         // Or create a new package
                        $cvm = new CoreVirtual();
@@ -116,16 +124,28 @@ class BookingquantitiesController extends BookingsettingsController {
             }
             
             $sups = $modelSups->getForSpace($id_space, "id_resource");
+            
+            //  get all ids from id_packages
+            $id_qtes = [];
+            for ($i=0; $i<count($supID); $i++) {
+                array_push($id_qtes, $modelSups->getByQuantityID($id_space, $supID[$i], $supResources[$i])['id']);
+            }
+            
             // If package in db is not listed in provided package list, delete them
-            foreach ($sups as $sup) {
-                if($sup['id_quantity'] && !in_array($sup['id_quantity'], $supID)) {
-                    $modelSups->delete($id_space, $sup['id']);
-                }
-            } 
+            $modelSups->removeUnlistedQuantities($id_space, $id_qtes, false);
 
-            $modelSups->removeUnlistedQuantities($id_space, $supID);
-            $_SESSION["flash"] = BookingTranslator::Quantities_saved($lang);
-            $_SESSION["flashClass"] = "success";
+            if ($coupleQteResourceExists) {
+                $_SESSION["flash"] = BookingTranslator::Qte_resource_exists(
+                    $coupleQteResourceExists["qte"],
+                    $coupleQteResourceExists["resource"],
+                    $lang
+                );
+                $_SESSION["flashClass"] = 'danger';
+            } else {
+                $_SESSION["flash"] = BookingTranslator::Quantities_saved($lang);
+                $_SESSION["flashClass"] = "success";
+            }
+
             $this->redirect("bookingquantities/".$id_space);
             return;
         }
@@ -136,5 +156,16 @@ class BookingquantitiesController extends BookingsettingsController {
             "lang" => $lang,
             'formHtml' => $formHtml
         ));
+    }
+
+    protected function coupleQteResourceExists($id_qte, $id_resource, $id_space) {
+        $modelQte = new BkCalQuantities();
+        $dbQtes = $modelQte->calQuantitiesByResource($id_space, $id_resource);
+        foreach ($dbQtes as $dbQte) {
+            if ($dbQte['id_quantity'] == $id_qte) {
+                return true;
+            }
+        }
+        return false;
     }
 }

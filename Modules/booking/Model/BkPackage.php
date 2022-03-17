@@ -140,8 +140,7 @@ class BkPackage extends Model {
         $sql = "SELECT * FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
         if ($req->rowCount() == 1) {
-            $tmp = $req->fetch();
-            return $tmp;
+            return $req->fetch();
         } else {
             return null;
         }

@@ -104,6 +104,16 @@ class BkCalQuantities extends Model {
         }
     }
 
+    public function getByQuantityID($id_space, $id_quantity, $id_resource) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id_quantity, $id_resource, $id_space));
+        if ($req->rowCount() == 1) {
+            return $req->fetch();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Add a supplementary
      * @param unknown $name
@@ -218,21 +228,22 @@ class BkCalQuantities extends Model {
         return $supData;
     }
 
-    public function removeUnlistedQuantities($id_space, $packageID) {
-
-        $sql = "select id, id_quantity from bk_calquantities WHERE id_space=?";
+    public function removeUnlistedQuantities($id_space, $ids, $idIsQuantity=false) {
+        $id_column = $idIsQuantity ? "id_quantity" : "id";
+        $sql = "SELECT id, id_quantity FROM bk_calquantities WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
-        $databasePackages = $req->fetchAll();
-        foreach ($databasePackages as $dbPackage) {
+        $databaseQuantities = $req->fetchAll();
+
+        foreach ($databaseQuantities as $dbQte) {
             $found = false;
-            foreach ($packageID as $pid) {
-                if ($dbPackage["id_quantity"] == $pid) {
+            foreach ($ids as $id) {
+                if ($dbQte[$id_column] == $id) {
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                $this->delete($id_space, $dbPackage["id"]);
+                $this->delete($id_space, $dbQte["id"]);
             }
         }
     }

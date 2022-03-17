@@ -737,6 +737,13 @@ class BookingTranslator {
         return "Resource " . $resourceName . " already in package " . $packageName;
     }
 
+    public static function Qte_resource_exists($qteName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return "La quantité " . $qteName . " est déjà affectée à la ressource " . $resourceName;
+        }
+        return "Quantity " . $qteName . " is already affected to resource " . $resourceName;
+    }
+
     public static function Is_mandatory($lang) {
         if ($lang == "fr") {
             return "Champ obligatoire";
