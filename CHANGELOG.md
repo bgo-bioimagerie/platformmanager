@@ -13,6 +13,7 @@
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607
 * [statistics] generate stats in background (async) and save generated files for later download #551
+* [booking] manage shared area calendar option to conflict resources on same calendar #578
 
 ## 2.4.1
 
