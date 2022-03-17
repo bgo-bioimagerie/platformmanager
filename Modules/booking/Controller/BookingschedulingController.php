@@ -88,7 +88,8 @@ class BookingschedulingController extends BookingsettingsController {
         $form->addSelect("size_bloc_resa", BookingTranslator::Booking_size_bloc($lang), array("15min", "30min", "1h"), array(900, 1800, 3600), $bkScheduling["size_bloc_resa"]);
         $form->addSelect("booking_time_scale", BookingTranslator::Booking_time_scale($lang), array(BookingTranslator::Minutes($lang), BookingTranslator::Hours($lang), BookingTranslator::Days($lang)), array(1, 2, 3), $bkScheduling["booking_time_scale"]);
         $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $bkScheduling["resa_time_setting"]);
-        
+        $form->addSelect("shared", "Share between resources", [CoreTranslator::yes($lang), CoreTranslator::no($lang)], [1,0], $bkScheduling['shared']);
+
         $modelColor = new BkColorCode();
         $colors = $modelColor->getForSpace($id_space);
 
@@ -128,8 +129,10 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("day_end"), 
                     $this->request->getParameter("size_bloc_resa"), 
                     $this->request->getParameter("booking_time_scale"), 
-                    $this->request->getParameter("resa_time_setting"), 
-                    $this->request->getParameter("default_color_id"));
+                    $this->request->getParameter("resa_time_setting"),
+                    $this->request->getParameter("default_color_id"),
+                    $this->request->getParameter("shared")
+            );
 
             $_SESSION["flash"] = BookingTranslator::Item_created("schedule", $lang);
             $_SESSION["flashClass"] = "success";
