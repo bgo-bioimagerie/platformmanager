@@ -37,11 +37,19 @@ function isReply($mail, $headersDetailed) {
         }
     }
     if(!$isReply) {
-        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? $headersDetailed["X-GND-Status"] == "BOUNCE" : false;
+        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? str_starts_with($headersDetailed["X-GND-Status"][0], "BOUNCE") : false;
         if($isReply) {
             Configuration::getLogger()->debug('[helpdesk] bounce');
         }
     }
+
+    if(!$isReply) {
+        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) ? str_starts_with($headersDetailed["Auto-Submitted"][0], "auto-replied") : false;
+        if($isReply) {
+            Configuration::getLogger()->debug('[helpdesk] auto-reply');
+        }
+    }
+
     Configuration::getLogger()->debug('[helpdesk] is reply?', [
         'headers' => $headersDetailed,
         'subject' => $mail->subject,

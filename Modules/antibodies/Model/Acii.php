@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Acii extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_aciis";
+    }
+
     /**
      * Create the espece table
      * 

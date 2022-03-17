@@ -610,8 +610,8 @@ class BkGraph extends Model {
 
     /**
      * Generate a pie chart number of reservation per resource
-     * @param unknown $year
-     * @param unknown $numTotal
+     * @param int $year
+     * @param float $numTotal
      * @return string
      */
     public function getCamembertContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
@@ -700,8 +700,8 @@ class BkGraph extends Model {
 
     /**
      * Generate a pie chart time of reservation per resource
-     * @param unknown $year
-     * @param unknown $numTotal
+     * @param int $year
+     * @param float $numTotal
      * @return string
      */
     public function getCamembertTimeContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {

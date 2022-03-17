@@ -5,7 +5,7 @@
 
 <div class="pm-form">
 
-    <div class="col-xs-12">
+    <div class="col-12">
         <?php echo $formHtml ?>
     </div>
 

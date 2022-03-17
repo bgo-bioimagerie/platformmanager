@@ -18,19 +18,19 @@
 <div class="row" style="background-color: #fff; height:100%">
 
         <!-- Title -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-10 offset-1 text-center">
             <h1 class="text-center login-title"><?php echo $home_title ?></h1>
         </div>
 
         <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-10 offset-1 text-center">
             <p></p>
             <h3 style="text-align:center;"><?php echo $home_message ?></h3>
             <p></p>
         </div>
 
          <!-- Form -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-10 offset-1 text-center">
             <p></p>
             <?php echo $formHtml ?>
             <p></p>

@@ -106,7 +106,10 @@ class AntibodiesInstall extends Model {
         $modelStaining = new AcStaining();
 		$modelStaining->createTable();
 
-		//mkdir("/data/antibodies");
+		$dir= "data/antibodies";
+		if(!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
                 
 		return 'success';
 	}

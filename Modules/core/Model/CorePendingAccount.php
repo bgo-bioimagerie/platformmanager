@@ -121,6 +121,12 @@ class CorePendingAccount extends Model {
         return $this->runRequest($sql, array($id_space))->fetch();
     }
 
+    public function countActivatedForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM core_pending_accounts WHERE id_space=? AND validated=1 AND validated_by>0";
+        $total = $this->runRequest($sql, array($id_space))->fetch();
+        return $total['total'];
+    }
+
     public function countPendingForSpace($id_space) {
         $sql = "SELECT count(*) as total
             FROM core_pending_accounts
@@ -129,7 +135,7 @@ class CorePendingAccount extends Model {
     }
 
     public function getSpaceIdsForPending($id_user){
-        $sql = "SELECT id_space FROM core_pending_accounts WHERE id_user=? AND validated=0 AND validated_by=0";
+        $sql = "SELECT core_pending_accounts.id_space, core_spaces.name as space_name FROM core_pending_accounts INNER JOIN core_spaces ON core_spaces.id=core_pending_accounts.id_space  WHERE core_pending_accounts.id_user=? AND core_pending_accounts.validated=0 AND core_pending_accounts.validated_by=0";
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
 
