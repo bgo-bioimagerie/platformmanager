@@ -679,8 +679,19 @@ class CoreSpace extends Model {
     }
 
     public function delete($id) {
+        // delete space
         $sql = "DELETE FROM core_spaces WHERE id=?";
         $this->runRequest($sql, array($id));
+
+        // delete related item
+        $modelItem = new CoreMainMenuItem();
+        $items = $modelItem->getAll();
+        foreach ($items as $item) {
+            if ($item['id_space'] == $id) {
+                $modelItem->delete($item['id']);
+            }
+        }
+
         Events::send([
             "action" => Events::ACTION_SPACE_DELETE,
             "space" => ["id" => intval($id)]
