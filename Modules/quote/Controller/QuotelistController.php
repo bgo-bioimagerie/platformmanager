@@ -415,6 +415,7 @@ class QuotelistController extends QuoteController {
 
         $details = "";
         $invoiceInfo["title"] = "";
+        $invoiceInfo["module"] = QuoteTranslator::quote($lang);
         $number = "";
         $unit = "";
 

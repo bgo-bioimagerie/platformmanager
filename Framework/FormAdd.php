@@ -186,10 +186,10 @@ class FormAdd {
         if ($label != "") {
             $html = "<div class=\"form-group row mb-3\">";
             $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "	<div class=\"col-12 col-md-" . $inputWidth . "\">";
+            $html .= "	<div class=\"col-12 col-md-" . $inputWidth . " table-responsive\" >";
         } else {
             $html .= "<div class=\"form-group row mb-3\">";
-            $html .= "	<div class=\"col-12\">";
+            $html .= "	<div class=\"col-12 table-responsive\">";
         }
 
         $tableID = $this->id . "table";
@@ -203,7 +203,7 @@ class FormAdd {
             if ($this->types[$l] == "hidden") {
                 $html .= "<th style=\"width:0em;\"> </th>";
             } else {
-                $html .= "<th style=\"min-width:10em;\">" . $this->labels[$l] . "</th>";
+                $html .= "<th>" . $this->labels[$l] . "</th>";
             }
         }
 

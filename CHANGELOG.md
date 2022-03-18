@@ -2,10 +2,18 @@
 
 ## 2.5.0
 
+* [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
+* [core] show number of user clients in user admin view
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
+* [core] add option to tables to view all elements
+* [booking] change booking compute (day/night/we/closed) and get details #565
+* [booking] fix package invoicing #606
+* [core] in core user edit, show user spaces and pending spaces #607
+* [statistics] generate stats in background (async) and save generated files for later download #551
+* [booking] manage shared area calendar option to conflict resources on same calendar #578
 
 ## 2.4.1
 

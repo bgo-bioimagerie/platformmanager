@@ -17,7 +17,7 @@ class MailerInstall extends Model {
     public function createDatabase() {        
 
         if (!file_exists('data/mailer/')) {
-            mkdir('data/mailer/', 0777, true);
+            mkdir('data/mailer/', 0755, true);
         }
     }
 }
