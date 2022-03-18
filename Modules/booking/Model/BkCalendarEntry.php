@@ -579,7 +579,7 @@ class BkCalendarEntry extends Model {
        return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
-    public function isConflictP($id_space, $start_time, $end_time, $resource_id, $id_period) {
+    public function isConflictP($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			(
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR
@@ -589,18 +589,14 @@ class BkCalendarEntry extends Model {
             ) 
             AND deleted=0
             AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($id_period > 0 && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $period_id = $tmp['period_id'];
-                if ($period_id == $id_period) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($period_id != $id_period);
             }
             return true;
         } else {
@@ -640,7 +636,7 @@ class BkCalendarEntry extends Model {
      * @param string $reservation_id
      * @return boolean
      */
-    public function isConflict($id_space, $start_time, $end_time, $resource_id, $reservation_id = "") {
+    public function isConflict($id_space, $start_time, $end_time, array $resources_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
 			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
@@ -649,18 +645,14 @@ class BkCalendarEntry extends Model {
                            ) 
                            AND deleted=0
                            AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($reservation_id != "" && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $id = $tmp[0];
-                if ($id == $reservation_id) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($id != $reservation_id);
             }
             return true;
         } else {

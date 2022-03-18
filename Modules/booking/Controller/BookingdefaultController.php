@@ -395,7 +395,16 @@ class BookingdefaultController extends BookingabstractController {
 
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
-            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
+            $resources_id = [$id_resource];
+            if($schedule['shared']) {
+                $rem = new ResourceInfo();
+                $areaResources = $rem->resourceIDNameForArea($id_space, $ri['id_area']);
+                $resources_id = [];
+                foreach ($areaResources as $r) {
+                    $resources_id[] = $r['id'];
+                }
+            }
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resources_id, $id);
             if ($conflict) {
                 $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                 $error = 'reservationError';
@@ -443,7 +452,7 @@ class BookingdefaultController extends BookingabstractController {
                 $pass = -86400;
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=86400) {
                     $pass += 86400;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -475,7 +484,7 @@ class BookingdefaultController extends BookingabstractController {
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=$step) {
 
                     $pass += $step;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -561,7 +570,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -613,7 +622,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space, $start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space, $start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
