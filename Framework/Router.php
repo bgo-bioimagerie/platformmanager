@@ -175,7 +175,11 @@ class Router {
             $this->runAction($controller, $urlInfo, $action, $args);
             $reqEnd = microtime(true);
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            if ($e instanceOf PfmException && !$e->sendReports) {
+                Configuration::getLogger()->debug('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            } else {
+                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            }
             $reqEnd = microtime(true);
             $this->manageError($e);
         }
@@ -312,7 +316,7 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require ($fileController);
+            require_once ($fileController);
             $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
@@ -400,6 +404,7 @@ class Router {
                     "sideMenu" => null,
                     "spaceMenu" => null,
                     "rootWeb" => Configuration::get("rootWeb", "/"),
+                    "lang" => 'en',
                     "currentSpace" => null,  // current space if any
                     "role" => -1   // user role in space if any
             ],

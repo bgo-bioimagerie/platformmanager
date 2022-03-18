@@ -1,10 +1,10 @@
 <?php include 'Modules/booking/View/layoutsettings.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
-    <div class="pm-form">
-        <div class="col-md-8 col-md-offset-2">
+    <div class="container pm-form">
+        <div class="col-12">
             <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $id_space ?>"
                   method="post">
 
@@ -15,23 +15,23 @@
                     </h3>
                 </div>
 
-                <div class="form-group">
-                    <label  class="control-label col-xs-2">ID</label>
-                    <div class="col-xs-10">
+                <div class="form-group mb-3">
+                    <label  class="control-label col-2">ID</label>
+                    <div class="col-10">
                         <input class="form-control" id="id" type="text" name="id" value="<?php echo $this->clean($pricing['id_belonging']) ?>" readonly
                                />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label  class="control-label col-xs-2"><?php echo CoreTranslator::Name($lang) ?></label>
-                    <div class="col-xs-10">
+                <div class="form-group mb-3">
+                    <label  class="control-label col-2"><?php echo CoreTranslator::Name($lang) ?></label>
+                    <div class="col-10">
                         <input class="form-control" id="name" type="text" name="name" value="<?php echo $this->clean($pricing['name']) ?>" readonly
                                />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label  class="control-label col-xs-2"><?php echo BookingTranslator::Unique_price($lang) ?></label>
-                    <div class="col-xs-10">
+                <div class="form-group mb-3">
+                    <label  class="control-label col-2"><?php echo BookingTranslator::Unique_price($lang) ?></label>
+                    <div class="col-10">
                         <select class="form-control" name="tarif_unique">
                             <?php $unique = $this->clean($pricing['tarif_unique']) ?>
                             <OPTION value="1" <?php if ($unique == 1) {
@@ -43,9 +43,9 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label  class="control-label col-xs-2"><?php echo BookingTranslator::Price_night($lang) ?></label>
-                    <div class="col-xs-10">
+                <div class="form-group mb-3">
+                    <label  class="control-label col-2"><?php echo BookingTranslator::Price_night($lang) ?></label>
+                    <div class="col-10">
                         <select class="form-control" name="tarif_night">
 <?php $tnuit = $this->clean($pricing['tarif_night']) ?>
                             <OPTION value="1" <?php if ($tnuit == 1) {
@@ -56,11 +56,11 @@
 } ?>> <?php echo CoreTranslator::No($lang) ?> </OPTION>
                         </select>
                     </div>
-                    <br></br>
-                    <div class="col-xs-10 col-xs-offset-2">
-                        <label  class="control-label col-xs-3"><?php echo BookingTranslator::Night_beginning($lang) ?></label>
-                        <div class="col-xs-3">
-                            <select class="form-control col-xs-2" name="night_start">
+                    <div class="col-10 mt-3">
+                        <div class="row">
+                        <label  class="control-label col-3"><?php echo BookingTranslator::Night_beginning($lang) ?></label>
+                        <div class="col-3">
+                            <select class="form-control col-2" name="night_start">
 <?php $snight = $this->clean($pricing['night_start']) ?>
                                 <OPTION value="18" <?php if ($snight == 18) {
     echo "selected=\"selected\"";
@@ -79,8 +79,8 @@
                                 } ?>> 22h </OPTION>
                             </select>
                         </div>
-                        <label  class="control-label col-xs-3"><?php echo BookingTranslator::Night_end($lang) ?></label>
-                        <div class="col-xs-3">
+                        <label  class="control-label col-3"><?php echo BookingTranslator::Night_end($lang) ?></label>
+                        <div class="col-3">
                             <select class="form-control" name="night_end">
 <?php $enight = $this->clean($pricing['night_end']) ?>
                                 <OPTION value="6" <?php if ($enight == 6) {
@@ -97,11 +97,12 @@
                     } ?>> 9h </OPTION>
                             </select>
                         </div>
+                        </div>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label  class="control-label col-xs-2"><?php echo BookingTranslator::Price_weekend($lang) ?></label>
-                    <div class="col-xs-10">
+                <div class="form-group mb-3">
+                    <label  class="control-label col-2"><?php echo BookingTranslator::Price_weekend($lang) ?></label>
+                    <div class="col-10">
                         <select class="form-control" name="tarif_we">
                                     <?php $tarif_we = $this->clean($pricing['tarif_we']) ?>
                             <OPTION value="1" <?php if ($tarif_we == 1) {
@@ -127,61 +128,61 @@ if (count($list) < 7) {
     $list[6] = 1;
 }
 ?>
-                    <div class="col-xs-10 col-xs-offset-2">
-                        <label  class="control-label col-xs-3"><?php echo BookingTranslator::Weekend_days($lang) ?></label>
-                        <div class="col-xs-2">
+                    <div class="col-10 mt-3">
+                        <label  class="control-label col-3"><?php echo BookingTranslator::Weekend_days($lang) ?></label>
+                        <div class="col-2">
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $lundi = $list[0]; ?>
-                                    <input type="checkbox" name="lundi" <?php if ($lundi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="lundi" <?php if ($lundi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Monday($lang) ?>
                                 </label>
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $mardi = $list[1]; ?>
-                                    <input type="checkbox" name="mardi" <?php if ($mardi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="mardi" <?php if ($mardi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Tuesday($lang) ?>
                                 </label>
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $mercredi = $list[2]; ?>
-                                    <input type="checkbox" name="mercredi" <?php if ($mercredi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="mercredi" <?php if ($mercredi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Wednesday($lang) ?>
                                 </label>
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $jeudi = $list[3]; ?>
-                                    <input type="checkbox" name="jeudi" <?php if ($jeudi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="jeudi" <?php if ($jeudi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Thursday($lang) ?>
                                 </label>
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $vendredi = $list[4]; ?>
-                                    <input type="checkbox" name="vendredi" <?php if ($vendredi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="vendredi" <?php if ($vendredi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Friday($lang) ?>
-                                </label>
+                                </label class="form-check-label">
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $samedi = $list[5]; ?>
-                                    <input type="checkbox" name="samedi" <?php if ($samedi == 1) {
+                                    <input class="form-check-input" type="checkbox" name="samedi" <?php if ($samedi == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Saturday($lang) ?>
-                                </label>
+                                </label class="form-check-label">
                             </div>
                             <div class="checkbox">
-                                <label>
+                                <label class="form-check-label">
 <?php $dimanche = $list[6]; ?>
-                                    <input type="checkbox" name="dimanche" <?php if ($dimanche == 1) {
+                                    <input class="form-check-input" type="checkbox" name="dimanche" <?php if ($dimanche == 1) {
     echo "checked";
 } ?>> <?php echo BookingTranslator::Sunday($lang) ?>
                                 </label>
@@ -190,12 +191,11 @@ if (count($list) < 7) {
                     </div>
                 </div>
 
-                <div class="col-xs-4 col-xs-offset-8" id="button-div">
+                <div class="col-4 offset-8" id="button-div">
                     <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
-                    <button type="button" onclick="location.href = 'bookingnightwe/'<?php echo $id_space ?>" class="btn btn-default"><?php echo CoreTranslator::Cancel($lang) ?></button>
+                    <button type="button" onclick="location.href = 'bookingnightwe/'<?php echo $id_space ?>" class="btn btn-outline-dark"><?php echo CoreTranslator::Cancel($lang) ?></button>
                 </div>
             </form>
         </div>
     </div>
-<?php
-endblock();
+<?php endblock(); ?>

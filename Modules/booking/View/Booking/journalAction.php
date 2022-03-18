@@ -1,9 +1,9 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
-<div class="container">
+<div class="container pm-table">
     <h3>Last 30 days and upcoming bookings</h3>
     <table class="table" aria-label="last 30 days and future bookings">
     <thead><tr><th scope="col">Id</th><th scope="col">Start time</th><th scope="col">Resource</th><th scope="col"></th></tr></thead>
@@ -19,4 +19,4 @@
     </table>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

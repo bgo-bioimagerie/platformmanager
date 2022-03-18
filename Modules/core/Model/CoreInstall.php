@@ -1040,7 +1040,7 @@ class CoreInstall extends Model {
         $modelMail->createTable();
 
         if (!file_exists('data/conventions/')) {
-            mkdir('data/conventions/', 0777, true);
+            mkdir('data/conventions/', 0755, true);
         }
 
     }

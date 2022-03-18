@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row" style="background-color: #fff; height: 2000px;">
@@ -54,19 +54,19 @@
                     <ul class="pm-tiles bs-glyphicons-list">
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spaceconfig/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-gear-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Configuration($lang) ?></span>
                             </a>
                         </li>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spaceconfiguser/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-cog" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-gear-fill" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Access($lang) ?></span>
                             </a>
                         </li> 
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "spacedashboard/" . $space["id"] ?>">
-                                <span class="pm-tiles glyphicon glyphicon-th" aria-hidden="true"></span>
+                                <span class="pm-tiles bi-list" aria-hidden="true"></span>
                                 <span class="pm-tiles glyphicon-class"><?php echo CoreTranslator::Dashboard($lang) ?></span>
                             </a>
                         </li> 
@@ -79,5 +79,4 @@
 
     </div> <!-- /container -->
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

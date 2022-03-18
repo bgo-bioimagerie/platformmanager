@@ -46,7 +46,6 @@ class BookingblockController extends BookingsettingsController {
     /**
      * Query to make several resources unavailable
      * 
-     * @deprecated
      */
     public function blockresourcesqueryAction($id_space) {
         $lang = $this->getLanguage();
@@ -99,7 +98,7 @@ class BookingblockController extends BookingsettingsController {
         $userID = $_SESSION["id_user"];
         foreach ($resources as $resource_id) {
 
-            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resource_id);
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, [$resource_id]);
 
             if ($conflict) {
                 $errormessage = "Error: There is already a reservation for the given slot, please remove it before booking";

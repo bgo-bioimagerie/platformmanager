@@ -8,6 +8,15 @@ require_once 'Framework/Configuration.php';
  */
 class CoreFiles extends Model {
 
+    public static int $READY=0;
+    public static int $PENDING=1;
+    public static int $IN_PROGRESS=2;
+    public static int $ERROR=3;
+
+    public function __construct() {
+        $this->tableName = "core_files";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_files` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -16,6 +25,8 @@ class CoreFiles extends Model {
         `id_user` int(11),
         `module` varchar(30) NOT NULL,
         `role` int(11) NOT NULL,
+        `status` int NOT NULL DEFAULT 0,
+        `msg` varchar(255) NOT NULL DEFAULT '',
         PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -59,7 +70,7 @@ class CoreFiles extends Model {
         $name = basename($path);
         
         if(!is_dir($base)) {
-            mkdir($base, 0777, true);
+            mkdir($base, 0755, true);
         }
         FileUpload::uploadFile($base, $formFileId, $name);
     }
@@ -93,7 +104,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         copy($path, $dest);
     }
@@ -105,7 +116,7 @@ class CoreFiles extends Model {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
         if(!is_dir($destDirName)) {
-            mkdir($destDirName, 0777, true);
+            mkdir($destDirName, 0755, true);
         }
         file_put_contents($dest, $data);
     }
@@ -140,10 +151,20 @@ class CoreFiles extends Model {
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
             return $this->getDatabase()->lastInsertId();
         } else {
-            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=?, WHERE id=?';
+            $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=? WHERE id=?';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user, $id));
             return $id;
         }
+    }
+
+    public function status(int $id_space, int $id, int $status, string $msg) {
+        $sql = 'UPDATE core_files SET status=?,msg=? WHERE id=? AND id_space=? AND deleted=0';
+        $this->runRequest($sql, array($status, $msg, $id, $id_space));  
+    }
+
+    public function getByModule(int $id_space, string $module, int $role) {
+        $sql = "SELECT core_files.*, core_users.login as login FROM core_files INNER JOIN core_users ON core_users.id=core_files.id_user WHERE core_files.id_space=? AND core_files.module=? and core_files.role>=? ORDER BY core_files.id DESC";
+        return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
     }
 
 }

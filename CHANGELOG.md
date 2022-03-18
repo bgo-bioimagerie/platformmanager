@@ -1,7 +1,109 @@
 # Changes
 
+## 2.5.0
+
+* [core] hide space unsubscribe button if user is pending or not member of space
+* [core] add redirects to TODO after doing todo actions
+* [core] use bootstrap5 and update/remove some libraries
+* [core] show number of user clients in user admin view
+* [booking] add to calendar a summary view option
+* [core][ldap] do not automatically add ldap users to spaces
+* [core] add option to tables to view all elements
+* [booking] change booking compute (day/night/we/closed) and get details #565
+* [booking] fix package invoicing #606
+* [core] in core user edit, show user spaces and pending spaces #607
+* [statistics] generate stats in background (async) and save generated files for later download #551
+* [booking] manage shared area calendar option to conflict resources on same calendar #578
+
+## 2.4.1
+
+* [core] add missing tableName properties in model constructors
+* [space] improve todolist sql requests
+* [helpdesk] close connection in anycase
+* [core] fix TODO in corespaceadmin, do not get all bookings, just count them
+* [core] if module is inactive, fix authorization (isUserMenuSpaceAuthorized)
+* [core] disable timezone, impacts existing bookings recorded as UTC
+* [booking] fix calendar when area has no resource
+* [booking] fix calendar display when resa spans multiple days
+* [booking] fix calendar month display for month overlap resa
+
+## 2.4.0
+
+### Features
+
+* mailer:
+  * record and display sent messages
+  * module *can* be set at *user* level, space members will see
+    messages previously sent, only users with *edit* right
+    (module configuration) can send emails
+* documents:
+  * new file hierarchy document display (virtual directories)
+  * in premium plans, possibility to set document visibility
+    (public, members, private)
+  * module *can* be set at *user* level, users will only see
+    public or members level documents, users with *edit* right
+    (module configuration) can create/edit documents.
+  * booking: in booking configuration, calendar has a new option
+    for labels display (*managers only*). If selected, only space
+    managers will see the label (user id, etc.) in calendar.
+  * invoices: invoices are now generated in background, avoiding
+    a blank (and possibly long) blank page during generation.
+    Invoices page will show generation status and errors if any.
+
+## Security
+
+* [antibodies] fix control access to module pages
+
+### Updates
+
+* [core] add space configuration helpers (interactive Todo)
+* [mailer] allow access to space users, users can see sent emails
+* [documentation] add packages documentation and use case
+* [core] reduce space users options after a module is deactivated
+* [documentation] update space join use case
+* [documents] add visibility controls on documents to have public, private, user/client scopes
+* [core] group users space access options on a single page
+* [core] in corespaceaccess show convention download button only if present
+* [invoices] show message if no template defined
+* [core] add status and msg to core files
+* [helpdesk] on file upload (manual), create dir if not exists
+* [core] fix default sort order in tables and remove download button if no url
+* [core] fix typos/spelling
+* [booking] on calendar, showuser infos (name, phone,...) options: Hidden/Visible/Managers only Closes #509
+* [booking] manage redirect after reservation edit to page were booking was done
+* [booking] fix default color code
+* [users] if date_end_contract is empty, insert null in db
+* [core] code cleanup #554
+* [booking] handle booking settings fields *booking scale* and *user specifies*
+* [booking] fix package display on new reservation
+* [invoice] generate invoices in background (async) and show generation status
+* [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
+* [booking] graphics and code refactoring of calendar
+* [core] handle multiple Accept values in http headers for API calls (application/json)
+* [catalog] fix default config display and layout
+* [antobodies] fix image_url settings in tissues creation
+* [antibodies] fix ACL checks
+* [core] add reset for user api key
+
+## 2.3.3 [unreleased]
+
+* [booking] fix display of package on new booking Closes #563
+
+## 2.3.2
+
+* [booking][services] fix popup when editing with pagination #553
+* [services] fix date on followup when in french #555
+* [invoices] fix template var name clientsInfos -> clientInfos
+* [booking] fix resource status color in dayarea/weekarea
+* [booking] fix missing import for invoices
+
+## 2.3.1
+
+* [core] fix upgrade for redis invoice numbers
+
 ## 2.3.0
 
+* [invoices] fix non-numeric quantity and/or price cases in invoice edition
 * [services] dynamize client selection in project edition
 * [services] services quantity types differenciation in projects, orders and invoices
 * [coreconfig] remove module color edition from core config
@@ -30,6 +132,8 @@
 * [statistics] various fixes
 * [antibodies] fix missing table creation at install
 * [booking] send emails only if user status > VISITOR in space
+* [com] check ACLs on com module and limit edition to space admins
+* [booking] fix booking emails if invalid/recuring, notify if new or update
 
 ## 2.2.2
 
@@ -49,7 +153,7 @@
 * [booking] fix authorizations when related to user's roles
 * [helpdesk] sort tickets and fix refresh
 * [helpdesk] ignore auto replies
-* [core] check id_user to see if user is logged
+* [core] check id_user to see if user is logged
 * [core] on register after email validation validate the account #472
 * [statistics] require env var MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD} in pfm/pfm-events containers
 * [core] use module url and not name for notifications #476
@@ -58,7 +162,7 @@
 
 ## 2.2.0
 
-**Warning**: [admin] Ldap configuration modification from ini or env variables
+**Warning**: [admin] Ldap configuration modification from ini or env variables
 only, not configurable via UI anymore and existing values not taken into account.
 See ldap.ini.example if needed or doc for env variables.
 

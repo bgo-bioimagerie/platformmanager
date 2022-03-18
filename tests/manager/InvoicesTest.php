@@ -34,6 +34,7 @@ class InvoicesTest extends InvoicesBaseTest {
             $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
             $clients = $data['clients'];
             $this->doInvoice($space, $user, $clients[0]);
+            break;
 
         }
     }
@@ -70,6 +71,7 @@ class InvoicesTest extends InvoicesBaseTest {
                 $canEdit = false;
             }
             $this->assertFalse($canEdit);
+
             $canDelete = true;
             try {
                 $user = $this->user($data['users'][0]);

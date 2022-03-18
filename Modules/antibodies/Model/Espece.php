@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Espece extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_especes";
+    }
+
     /**
      * Create the espece table
      * 

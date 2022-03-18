@@ -329,6 +329,14 @@ class Configuration {
         }
 
         self::$parameters['shibboleth'] = getenv('PFM_SHIBBOLETH') === "1" ? true : false;
+        if(!isset(self::$parameters['timezone'])) {
+            self::$parameters['timezone'] = 'UTC';
+        }
+        if(getenv('PFM_TIMEZONE')) {
+            self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
+        }
+        // do not set because impacts existing bookings....
+        // date_default_timezone_set(self::$parameters['timezone']);
 
     }
 

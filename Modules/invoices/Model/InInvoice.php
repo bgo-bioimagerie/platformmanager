@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
- * Class defining the Area model
+ * Class defining the invoice model
  *
  * @author Sylvain Prigent
  */
@@ -95,6 +95,11 @@ class InInvoice extends Model {
     public function setTotal($id_space, $id_invoice, $total) {
         $sql = "UPDATE in_invoice SET total_ht=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($total, $id_invoice, $id_space));
+    }
+
+    public function setNumber($id_space, $id_invoice, $number) {
+        $sql = "UPDATE in_invoice SET number=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($number, $id_invoice, $id_space));
     }
 
     public function setDatePaid($id_space, $id, $date) {
@@ -306,23 +311,6 @@ class InInvoice extends Model {
                 }
             }
 
-            // $firstDateInfo = explode("-", $firstDate);
-            // $firstYear = $firstDateInfo[0];
-            /*
-            $i = 0;
-            while ($firstYear == "0000") {
-                $i++;
-                $firstDate = $data[$i]["date_generated"];
-                $firstDateInfo = explode("-", $firstDate);
-                $firstYear = $firstDateInfo[0];
-            }
-
-
-            $lastDate = $data[count($data) - 1]["date_generated"];
-            $lastDateInfo = explode("-", $lastDate);
-            $lastYear = $lastDateInfo[0];
-            */
-
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
@@ -358,7 +346,6 @@ class InInvoice extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE in_invoice SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM in_invoice WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

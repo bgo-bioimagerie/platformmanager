@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcOption extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_options";
+    }
+
     /**
      * Create the espece table
      * 

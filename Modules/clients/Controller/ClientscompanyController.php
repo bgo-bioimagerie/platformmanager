@@ -51,25 +51,38 @@ class ClientscompanyController extends ClientsController {
         $form->addTextArea('address', ClientsTranslator::Address($lang), true, $data["address"]);
         $form->addText('zipcode', ClientsTranslator::Zip_code($lang), true, $data["zipcode"]);
         $form->addText('city', ClientsTranslator::City($lang), true, $data["city"]);
-        $form->addText('county', ClientsTranslator::County($lang), true, $data["county"]);
+        $form->addText('county', ClientsTranslator::County($lang), false, $data["county"]);
         $form->addText('country', ClientsTranslator::Country($lang), true, $data["country"]);
         $form->addText('tel', ClientsTranslator::Tel($lang), true, $data["tel"]);
-        $form->addText('fax', ClientsTranslator::Fax($lang), true, $data["fax"]);
+        $form->addText('fax', ClientsTranslator::Fax($lang), false, $data["fax"]);
         $form->addText('email', ClientsTranslator::Email($lang), true, $data["email"]);
         $form->addText('approval_number', ClientsTranslator::ApprovalNumber($lang), true, $data["approval_number"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "clcompany/" . $id_space);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "clcompany/".$id_space;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setButtonsWidth(4, 8);
 
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $form->getParameter("county"), $form->getParameter("country"), $form->getParameter("tel"), $form->getParameter("fax"), $form->getParameter("email"), $form->getParameter("approval_number")
+            $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $this->request->getParameterNoException("county"), $form->getParameter("country"), $form->getParameter("tel"), $this->request->getParameterNoException('fax'), $form->getParameter("email"), $form->getParameter("approval_number")
             );
 
-            $_SESSION["message"] = ClientsTranslator::Data_has_been_saved($lang);
-            // after the provider is saved we redirect to the providers list page
-            $this->redirect("clcompany/" . $id_space);
+            $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = 'success';
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                // after the provider is saved we redirect to the providers list page
+                return $this->redirect("clcompany/" . $id_space);
+            }
+            
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

@@ -47,7 +47,7 @@ class InvoicesconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'invoices', 'euro');
+            $this->menusactivation($id_space, 'invoices', 'currency-euro');
             return $this->redirect("invoicesconfig/" . $id_space);
         }
 
@@ -175,7 +175,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUpload->setButtonsWidth(2, 10);
         if ($formUpload->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
-                mkdir('data/invoices/' . $id_space, 0777, true);
+                mkdir('data/invoices/' . $id_space, 0755, true);
             }
 
             if(file_exists('data/invoices/' . $id_space . '/template.twig')) {
@@ -202,7 +202,8 @@ class InvoicesconfigController extends CoresecureController {
                 unlink('data/invoices/' . $id_space . '/template.twig.save');
             }
 
-            $_SESSION["message"] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang) ;
+            $_SESSION['flash'] = InvoicesTranslator::TheTemplateHasBeenUploaded($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect('invoicepdftemplate/' . $id_space);
             return;
         }
@@ -215,7 +216,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUploadImages->setColumnsWidth(0, 12);
         if ($formUploadImages->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
-                mkdir('data/invoices/' . $id_space, 0777, true);
+                mkdir('data/invoices/' . $id_space, 0755, true);
             }
             FileUpload::uploadFile('data/invoices/' . $id_space . '/', 'image', $_FILES["image"]["name"]);
             $this->redirect('invoicepdftemplate/' . $id_space);

@@ -8,6 +8,7 @@ require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
@@ -54,7 +55,9 @@ class CoreusersController extends CoresecureController {
             "status" => CoreTranslator::Status($lang),
             "source" => CoreTranslator::Source($lang),
             "is_active" => CoreTranslator::Is_user_active($lang),
-            "date_last_login" => CoreTranslator::Last_connection($lang));
+            "date_last_login" => CoreTranslator::Last_connection($lang),
+            "created_at" => CoreTranslator::DateCreated($lang)
+        );
         $modelUser = new CoreUser();
         $data = $modelUser->selectAll() ?? [];
 
@@ -75,7 +78,7 @@ class CoreusersController extends CoresecureController {
 
         }
 
-        $tableHtml = $table->view($data, $header);
+        $tableHtml = $table->view($data, $header, true);
         return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 
@@ -128,6 +131,7 @@ class CoreusersController extends CoresecureController {
         $form->setButtonsWidth(3, 8);
 
 
+        $rolesTableHtml  = '';
         if ($id > 0) {
             $formPwd = new Form($this->request, "coreuseretidpwd");
             $formPwd->addHidden("id", $user["id"]);
@@ -136,6 +140,24 @@ class CoreusersController extends CoresecureController {
             $formPwd->addPassword("pwdconfirm", CoreTranslator::New_password($lang));
             $formPwd->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
             $formPwd->setButtonsWidth(3, 8);
+
+
+            $csm = new CoreSpace();
+            $roles = $csm->getUserSpacesRoles(0, $user['id']);
+            $pum = new CorePendingAccount();
+            $pendings = $pum->getSpaceIdsForPending($user['id']);
+            foreach ($pendings as $p) {
+                $roles[] = ['space_name' => $p['space_name'], 'role_name' => CoreTranslator::PendingUserAccount($lang)];
+            }
+            $rolesTable = new TableView('spaces');
+            $rolesTable->setTitle(CoreTranslator::Spaces($lang));
+            $headers = array(
+                "space_name" => CoreTranslator::Space($lang),
+                "role_name" => CoreTranslator::Role($lang),
+            );
+            $rolesTableHtml = $rolesTable->view($roles, $headers);
+
+
         }
         $script = "";
         if ($form->check()) {
@@ -194,6 +216,7 @@ class CoreusersController extends CoresecureController {
         return $this->render(array(
             "formHtml" => $form->getHtml($lang),
             "formPwdHtml" => $formPwdHtml,
+            "rolesTableHtml" => $rolesTableHtml,
             "script" => $script,
             "data" => ['user' => $user]
         ));
@@ -278,7 +301,7 @@ class CoreusersController extends CoresecureController {
             $modelUser = new CoreUser();
             $modelUser->delete($id);
         } else {
-            $_SESSION["message"] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
+            $_SESSION['flash'] = CoreTranslator::UserIsMemberOfSpace($this->getLanguage());
         }
         $this->redirect("coreusers");
     }

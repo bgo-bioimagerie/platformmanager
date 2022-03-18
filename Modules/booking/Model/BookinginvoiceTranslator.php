@@ -371,8 +371,6 @@ class BookinginvoiceTranslator {
 
             return BookingTranslator::translateDayFromEn($dayStream, $lang) . " " . $dayNumStream . " " . BookingTranslator::translateMonthFromEn($monthStream, $lang) . " " . $yearStream;
 
-            // setlocale(LC_TIME, "fr_FR");
-            // return utf8_encode(strftime('%A %d %B %Y', $time));
         }
         // english
 
@@ -964,9 +962,9 @@ class BookinginvoiceTranslator {
 
     public static function Invoice_Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Facturer un responsable";
+            return "Facturer un client";
         }
-        return "Invoice a person in charge";
+        return "Invoice a client";
     }
 
     public static function Details($lang = "") {

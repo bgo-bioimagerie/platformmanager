@@ -10,83 +10,79 @@
 <!-- Custom styles for this template -->
 <link href="Modules/core/Theme/signin.css" rel="stylesheet">
 
-<?php endblock() ?>
+<?php endblock(); ?>
 
 <!-- body -->
 <?php startblock('content') ?>
 
-<div class="row" style="background-color: #fff; height:100%">
+<div class="container">
+
+    <div class="row">
         <!-- Title -->
-        <div class="col-sm-12">
+        <div class="col-12">
             <h1 class="text-center login-title"><?php echo $home_title ?></h1>
         </div>
 
         <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
+        <div class="col-12">
             <p></p>
             <h3 style="text-align:center;"><?php echo $home_message ?></h3>
             <p></p>
         </div>
 
         <!-- Login -->
-        <div class="col-sm-12">
-
-
-                    <div class="col-xs-12 col-md-4 col-md-offset-4 col-lg-8 col-lg-offset-2">
-                        <div class="account-wall">
-                            <?php if (isset($msgError) && $msgError != "") { ?>
-                                <div class="alert alert-danger">
-                                    <p><?php echo $msgError ?></p>
-                                </div>
-                            <?php } ?>
+        <div class="col-12 col-md-8">
+            <div class="row">
+                <div class="col-12">
+                    <?php if (isset($msgError) && $msgError != "") { ?>
+                        <div role="alert" class="alert alert-danger">
+                            <p><?php echo $msgError ?></p>
                         </div>
-                        <div class="col-xs-12  col-md-8 col-md-offset-2 col-lg-8 col-lg-offset-2">
-                            <br></br>
-
-                            <form class="form-signin" action="corelogin" method="post">
-                                <input name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                                <input name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
-                                <input name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="remember" value=""><?php echo CoreTranslator::RememberMe($language) ?></label>
-                                </div>
+                    <?php } ?>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-12 col-md-6">
+                    <form class="form form-signin" action="corelogin" method="post">
+                        <div class="row">
+                        <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
+                        <input class="form-control mb-3" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                        <input class="form-control mb-3" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
+                        <div class="checkbox mb-3">
+                            <label class="form-check-label" for="remember"><?php echo CoreTranslator::RememberMe($language) ?></label>
+                            <input class="form-check-input" type="checkbox" id="remember" name="remember" value="">
+                        </div>
+                        </div>
+                        <div class="row mb-3">
                                 <?php if(Configuration::get('shibboleth', false)) { ?>
-                                <div class="row">
-                                <div class="col-sm-6"><button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button></div>
-                                <div class="col-sm-6"><a title="log or register with renater federation" href="ooc/shibboleth"><button class="btn btn-lg btn-secondary btn-block" type="button"> <img alt="renater federation" style="width:150px" src="externals/pfm/css/federation.png"/> </button></a></div>
-                                </div>
+                                <div class="col-12 col-md-3 p-1"><button class="btn btn-primary" type="submit"><?php echo CoreTranslator::Ok($language) ?> </button></div>
+                                <div class="col-12 col-md-9 p-1"><a title="log or register with renater federation" href="ooc/shibboleth"><button class="btn btn-lg btn-secondary btn-block" type="button"> <img alt="renater federation" style="width:150px" src="externals/pfm/css/federation.png"/> </button></a></div>
                                 <?php } else { ?>
-                                    <button class="btn btn-lg btn-primary btn-block" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>
-                                <?php } ?>
-                            </form>
+                                    <div class="col-12 m-3"><button class="btn btn-primary" type="submit"><?php echo CoreTranslator::Ok($language) ?> </button>
+                                <?php } ?> 
 
+                            <div class="col-12">
+                                <div><a href="corepasswordforgotten" class="m-3"><?php echo CoreTranslator::PasswordForgotten($language) ?></a></div>
+                                <div><a href="mailto:<?php echo $admin_email ?>" class="m-3"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a></div>
+                            </div>
                         </div>
-                        <br/>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-                            <a href="corepasswordforgotten" class="text-center new-account"><?php echo CoreTranslator::PasswordForgotten($language) ?></a>
-                        </div>
+                    </form>
 
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-                            <a href="mailto:<?php echo $admin_email ?>" class="text-center new-account"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a>
-                        </div>
+                </div>
 
-                        <?php if(Configuration::get('allow_registration', false)) { ?>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-                            <br/>
-                            <p class="text-center">
-                                <strong><?php echo CoreTranslator::or_($language) ?></strong>
-                            </p>
-                        </div>
-                        <div class="col-xs-12 col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2">
-                            <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
-                        </div>
-                        <?php }  ?>
 
-                    </div>
+            </div>
         </div>
+        <?php if(Configuration::get('allow_registration', false)) { ?>
+            <div class="col-12 col-md-4">
+                <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
+            </div>
+        <?php }  ?>
+    </div>
+    <div class="row justify-content-md-center">
 
         <?php if (!empty($providers)) { ?>
-        <div class="col-sm-12" style="text-align:center;">
+        <div class="col-12" style="text-align:center;">
             <h2>Log with external connection providers</h2>
             <p><small>You must have link provider with your account before in account settings.</small></p>
         <?php
@@ -100,6 +96,7 @@
         ?>
         </div>
         <?php } ?>
+    </div>
+
 </div>
-    <?php
-    endblock();
+<?php endblock(); ?>

@@ -13,6 +13,8 @@
       <file>tests/manager/DocumentsTest.php</file>
       <file>tests/manager/HelpdeskTest.php</file>
       <file>tests/manager/StatisticsTest.php</file>
+      <file>tests/manager/ComTest.php</file>
+      <file>tests/anon/AnonTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

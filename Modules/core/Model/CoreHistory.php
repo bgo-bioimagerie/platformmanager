@@ -8,6 +8,10 @@ require_once 'Framework/Configuration.php';
  */
 class CoreHistory extends Model {
 
+    public function __construct() {
+        $this->tableName = "core_history";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_history` (
         `id` int(11) NOT NULL AUTO_INCREMENT,

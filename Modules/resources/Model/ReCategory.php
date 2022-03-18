@@ -65,6 +65,18 @@ class ReCategory extends Model {
         return false;
     }
 
+    public function getForList($id_space) {
+        $sql = "SELECT * FROM re_category WHERE id_space=? AND deleted=0 ORDER BY name ASC;";
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $names = array();
+        $ids = array();
+        foreach ($data as $d) {
+            $names[] = $d["name"];
+            $ids[] = $d["id"];
+        }
+        return array("names" => $names, "ids" => $ids);
+    }
+
     /**
      * get the name of a resources category
      *
@@ -98,7 +110,6 @@ class ReCategory extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE re_category SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM re_category WHERE id = ? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id, $id_space));
     }
 

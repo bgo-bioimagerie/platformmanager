@@ -55,6 +55,7 @@ class BookingpackagesController extends BookingsettingsController {
         $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang), $choicesR, $choicesRid, $packagesIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $packagesNames);
         $formAdd->addNumber("durations", BookingTranslator::Duration($lang), $packagesDuration);
+        $formAdd->addLabel(BookingTranslator::Package($lang), $packagesIds);
 
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);
@@ -154,7 +155,8 @@ class BookingpackagesController extends BookingsettingsController {
             */
    
             $modelPackages->removeUnlistedPackages($id_space, $packageID);
-            $_SESSION["message"] = BookingTranslator::Packages_saved($lang);
+            $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("bookingpackages/".$id_space);
             return;
         }

@@ -1,6 +1,6 @@
 <?php include 'Modules/resources/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 
@@ -55,5 +55,4 @@ $PopupObject->render(true);
 ?>    
 
 
-<?php
-endblock();
+<?php endblock(); ?>

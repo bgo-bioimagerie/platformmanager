@@ -47,11 +47,6 @@ class CoreconnectionController extends CorecookiesecureController {
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
 
-        if(isset($_SESSION['message'])) {
-            $message =  $_SESSION['message'];
-        }
-        unset($_SESSION['message']);
-
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
         if(!empty($openid_providers)) {
@@ -121,6 +116,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirectPath = $this->getRedirectPath();
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
+                Configuration::getLogger()->info('[login] invalid', ['error' => $connect, 'login' => $login]);
                 $this->loginError($redirection, $connect);
             }
         } else {
@@ -211,17 +207,10 @@ class CoreconnectionController extends CorecookiesecureController {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
                     if(!$userInfo['apikey']) {
                         $this->user->newApiKey($userInfo['idUser']);
-                    }
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
                     return $this->user->isActive($login);
                 }
@@ -237,7 +226,8 @@ class CoreconnectionController extends CorecookiesecureController {
         $form->addEmail("email", CoreTranslator::Email($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
 
-        $_SESSION["message"] = CoreTranslator::PasswordForgotten($lang);
+        $_SESSION['flash'] = CoreTranslator::PasswordForgotten($lang);
+        $_SESSION["flashClass"] = 'info';
         if ($form->check()) {
             $email = $this->request->getParameter("email");
             $model = new CoreUser();
@@ -245,7 +235,7 @@ class CoreconnectionController extends CorecookiesecureController {
             if ($userByEmail) {
 
                 if ($userByEmail["source"] == "ext") {
-                    $_SESSION["message"] = CoreTranslator::ExtAccountMessage($lang);
+                    $_SESSION['flash'] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
 
                     $newPassWord = $this->randomPassword();
@@ -258,12 +248,14 @@ class CoreconnectionController extends CorecookiesecureController {
                     $subject = CoreTranslator::AccountPasswordReset($lang);
                     $content = CoreTranslator::AccountPasswordResetMessage($lang) . "'" . $newPassWord . "'";
                     $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
-                    $_SESSION["message"] = CoreTranslator::ResetPasswordMessageSend($lang);
+                    $_SESSION['flash'] = CoreTranslator::ResetPasswordMessageSend($lang);
+                    $_SESSION["flashClass"] = 'success';
                 }
 
             }
             else{
-                $_SESSION["message"] = CoreTranslator::UserNotFoundWithEmail($lang);
+                $_SESSION['flash'] = CoreTranslator::UserNotFoundWithEmail($lang);
+                $_SESSION["flashClass"] = 'danger';
             }
         }
 

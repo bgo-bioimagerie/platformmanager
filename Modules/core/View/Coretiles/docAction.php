@@ -1,6 +1,6 @@
 <?php include 'Modules/core/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row pm-tile-container">
@@ -30,5 +30,4 @@
     </div>
 
 </div>
-<?php
-endblock();
+<?php endblock(); ?>

@@ -4,6 +4,10 @@ require_once 'Framework/Configuration.php';
 
 Class CoreOpenId extends Model {
 
+    public function __construct() {
+        $this->tableName = "core_openid";
+    }
+
     /**
      * Create the status table
      *

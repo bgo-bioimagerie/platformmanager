@@ -10,11 +10,15 @@ require_once 'Modules/booking/Controller/BookingcolorcodesController.php';
 require_once 'Modules/booking/Controller/BookingaccessibilitiesController.php';
 require_once 'Modules/booking/Controller/BookingdefaultController.php';
 require_once 'Modules/booking/Controller/BookingController.php';
+require_once 'Modules/booking/Controller/BookingnightweController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
+require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
+
+require_once 'Modules/clients/Model/ClPricing.php';
 
 require_once 'tests/BaseTest.php';
 
@@ -142,6 +146,40 @@ class BookingBaseTest extends BaseTest {
             $this->assertEquals($expects[$bkaccess['resource']], $bkaccess['bkaccess']);
         }
 
+
+
+        //  Call index to create them if not exists
+        $form = [
+            "path" => "bookingnightwe/".$space['id'],
+        ];
+        $req = $this->request($form);
+        $c = new BookingnightweController($req, $space);
+        $c->runAction('bookingnightwe', 'index', ['id_space' => $space['id']]);
+
+
+        $clm = new ClPricing();
+        $pricings = $clm->getForList($space['id']);
+        foreach($pricings['ids'] as $pid) {
+            $form = [
+                "path" => "bookingnightweeditq/".$pid,
+                "id" => $pid,
+                "tarif_unique" => 0,
+                "tarif_night" => 1,
+                "night_start" => 19,
+                "night_end" => 8,
+                "tarif_we" => 1,
+                "lundi" => "",
+                "mardi" => "",
+                "mercredi" => "",
+                "jeudi" => "",
+                "vendredi" => "",
+                "samedi" => 1,
+                "dimanche" => 1
+            ];
+            $req = $this->request($form);
+            $c = new BookingnightweController($req, $space);
+            $c->runAction('bookingnightwe', 'editquery', ['id_space' => $space['id']]);
+        }
     }
 
     protected function viewBooking($space, $user, $id) {
@@ -166,13 +204,27 @@ class BookingBaseTest extends BaseTest {
 
     /**
      * Book resource on next monday between $time and $time+1 for user
+     * 
+     * option duration in hours
      */
-    protected function book($space, $user, $client, $resource, $time=9):mixed {
+    protected function book($space, $user, $client, $resource, $time=9, $day='monday', $duration=0):mixed {
         Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space, 'resource' => $resource]);
         
         $date = new DateTime();
-        $date->modify('next monday');
+        $date->modify('next '.$day);
+        $date->setTime($time, 0, 0);
         $bookDate = $date->format('Y-m-d');
+
+        $bookEnd = $bookDate;
+        $hour_endH = $time+1;
+        if($duration) {
+            $resa_end = $date;
+            $resa_end->add(DateInterval::createFromDateString($duration.' hour'));
+            $bookEnd = $resa_end->format('Y-m-d');
+            $hour_endH = $resa_end->format('h');
+        }
+
+        Configuration::getLogger()->debug('[book] info', ['resa_start' => $bookDate, 'hour_startH' => $time, 'resa_end' => $bookEnd, 'hour_endH' => $hour_endH]);
 
         $req = $this->request([
             "path" => "bookingeditreservationquery/".$space['id'],
@@ -186,8 +238,8 @@ class BookingBaseTest extends BaseTest {
             "resa_start" => $bookDate,
             "hour_startH" => $time,
             "hour_startm" => 0,
-            "resa_end" => $bookDate,
-            "hour_endH" => $time+1,
+            "resa_end" => $bookEnd,
+            "hour_endH" => $hour_endH,
             "hour_endm" => 0 
         ]);
         $c = new BookingdefaultController($req, $space);
@@ -209,17 +261,23 @@ class BookingBaseTest extends BaseTest {
         $visas = $modelVisa->getForListByCategory($space['id'], $id_resource_category);
 
         $req = $this->request([
-            "path" => "bookingauthorizationsadd/".$space['id']."/".$id_resource_category."_".$user['id'],
+            "path" => "corespaceuseredit/".$space['id']."/".$user['id'],
             "formid" => "authorisationAddForm",
             "user" => $user['id'],
             "resource" => $id_resource_category,
             "visa_id" => $visas['ids'][0],
             "date" => date('Y-m-d')
         ]);
-        $c = new BookingauthorisationsController($req, $space);
-        $c->runAction('booking', 'add', ['id_space' => $space['id'], 'id' => $id_resource_category."_".$user['id']]);
-    }
+        $c = new CorespaceuserController($req, $space);
+        $c->runAction('corespaceuser', 'edit', ['id_space' => $space['id'], 'id_user' => $user['id']]);
 
+        $req = $this->request([
+            "path" => "bookingauthorizations/".$space['id']."/".$user['id'],
+        ]);
+        $c = new BookingauthorisationsController($req, $space);
+        $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
+        $this->assertTrue(!empty($data['bkauthorizations']));
+    }
 
 }
 

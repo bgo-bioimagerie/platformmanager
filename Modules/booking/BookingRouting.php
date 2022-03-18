@@ -15,9 +15,8 @@ class BookingRouting extends Routing{
         // config
         $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_space"), array(""));
         $this->addRoute("bookingsettingsconfig", "bookingsettingsconfig", "bookingconfig", "index", array("id_space"), array(""));
-        // $this->addRoute("bookingconfigadmin", "bookingconfigadmin", "bookingconfigadmin", "index");
         
-        // user srttings
+        // user settings
         $this->addRoute("bookingusersettings", "bookingusersettings", "bookingusersettings", "index");
         
         // add here the module routes
@@ -60,9 +59,7 @@ class BookingRouting extends Routing{
         
         $this->addRoute("bookingeditreservationperiodicdelete", "bookingeditreservationperiodicdelete", "bookingdefault", "deleteperiod", array("id_space", "id_period"), array("", ""));
         
-        
-        
-        $this->addRoute("bookingauthorisations", "bookingauthorisations", "bookingauthorisations", "index", array("id_space", "id"), array("", ""));
+        $this->addRoute("bookingauthorisations", "bookingauthorisations", "bookingauthorisations", "index", array("id_space", "id_user"), array("", ""));
         $this->addRoute("bookingauthorisationshist", "bookingauthorisationshist", "bookingauthorisations", "history", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsadd", "bookingauthorisationsadd", "bookingauthorisations", "add", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsedit", "bookingauthorisationsedit", "bookingauthorisations", "edit", array("id_space", "id"), array("", ""));
@@ -93,12 +90,6 @@ class BookingRouting extends Routing{
     
         // update user resp in booking
         $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
-        
-        // pm transfert
-        // $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
-        
-        
-        
-        
+           
     }
 }

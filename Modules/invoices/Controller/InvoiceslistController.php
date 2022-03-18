@@ -5,6 +5,8 @@ require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -54,6 +56,11 @@ class InvoiceslistController extends InvoicesController {
 
         if ($sent == ""){
             $sent = 0;
+        }
+
+        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
+            $_SESSION['flash'] = InvoicesTranslator::NoTemplate($lang);
+            $_SESSION['flashClass'] = 'warning';
         }
         
         $modelInvoices = new InInvoice();
@@ -115,10 +122,14 @@ class InvoiceslistController extends InvoicesController {
         }
         $tableView = $table->view($invoices, $headers);
 
+        $cv = new CoreVirtual();
+        $requests = $cv->getRequests($id_space, 'invoices');
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableView,
+            "requests" => $requests,
             "year" => $year,
             "years" => $years,
             "sent" => $sent,
@@ -204,7 +215,7 @@ class InvoiceslistController extends InvoicesController {
             
             if($this->request->getParameter("date_send") != "" && $this->request->getParameter("visa_send") == 0){
                 $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
-                $_SESSION["message"] = $message;
+                $_SESSION['flash'] = $message;
                 $this->redirect("invoiceinfo/".$id_space."/".$id);
                 return;
             }
@@ -216,7 +227,8 @@ class InvoiceslistController extends InvoicesController {
                     CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang), 
                     $this->request->getParameter("visa_send"));
             
-            $_SESSION["message"] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
             $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return "";
         }
@@ -237,17 +249,20 @@ class InvoiceslistController extends InvoicesController {
     }
 
     public function deleteAction($id_space, $id) {
-
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-
+        $lang = $this->getLanguage();
         // cancel the pricing in the origin module
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id_space, $id);
+        if(!$service) {
+            $_SESSION['flash'] = InvoicesTranslator::Invoice($lang)." $id ".CoreTranslator::NotFound($lang);
+            return $this->redirect("invoices/" . $id_space, [], ['invoice' => null]);
+        }
+
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName($this->request, $this->currentSpace);
-        // $object->setRequest($this->request);
         Configuration::getLogger()->debug('[invoices][delete]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
         $object->runAction($service["module"], "delete", array($id_space, $id));
         

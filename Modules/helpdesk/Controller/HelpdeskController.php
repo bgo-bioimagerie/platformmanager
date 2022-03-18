@@ -40,8 +40,7 @@ class HelpdeskController extends CoresecureController {
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
         if(!$role || $role < CoreSpace::$MANAGER) {
-            $this->render(['data' => ['notifs' => 0]]);
-            return;
+            return $this->render(['data' => ['notifs' => 0]]);
         }
 
         $hm = new Helpdesk();
@@ -56,7 +55,7 @@ class HelpdeskController extends CoresecureController {
                 $total += intval($u['total']);
             }
         }
-        $this->render(['data' => ['notifs' => $total]]);
+        return $this->render(['data' => ['notifs' => $total]]);
     }
 
     public function setSettingsAction($id_space) {
@@ -188,6 +187,10 @@ class HelpdeskController extends CoresecureController {
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;
                 $filePath = $c->path($file);
+                $fileBase = dirname($filePath);
+                if(!file_exists($fileBase)) {
+                    mkdir($fileBase, 0750, true);
+                }
                 if(!move_uploaded_file($_FILES[$fid]["tmp_name"], $filePath)) {
                     Configuration::getLogger()->error('[helpdesk] file upload error', ['file' => $_FILES[$fid], 'to' => $filePath]);
                     throw new PfmFileException("Error, there was an error uploading your file", 500);

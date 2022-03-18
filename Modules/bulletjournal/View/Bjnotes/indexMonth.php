@@ -1,15 +1,15 @@
-<div class="col-xs-12 col-md-10" style="border-bottom: 1px solid #666;">
-    <div class="col-xs-10">
+<div class="col-12 col-10" style="border-bottom: 1px solid #666;">
+    <div class="col-10">
         <p style="text-transform: uppercase; font-weight: bold; color: #666;">
-            <b>
+            <strong>
                 <?php echo date("F Y", mktime(0, 0, 0, $month, 1, $year)) ?>
-            </b>
+            </strong>
         </p>
     </div>
-    <div class="col-md-2 text-left">
+    <div class="col-2 text-left">
         <div class="dropdown">
-            <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span style="color: #666;" class="glyphicon glyphicon-plus"></span>
+            <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span style="color: #666;" class="bi-plus"></span>
 
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
@@ -21,21 +21,21 @@
     </div>
 </div>
 
-<div class="col-xs-12">
-    <table class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
+<div class="col-12">
+    <table role="presentation" aria-label="month list of notes" class="table-hover table-condensed" id="list_<?php echo $year . "-" . $month?>">
         <?php
         foreach ($notes as $dnote) {
             if ($dnote["is_month_task"] == 1) {
                 $d = "01";
-                $typeicon = "glyphicon glyphicon-minus";
+                $typeicon = "bi-x-square-fill";
                 if ($dnote["type"] == 2) {
-                    $typeicon = "glyphicon glyphicon-asterisk";
+                    $typeicon = "bi-asterisk";
                     if($dnote["migrated"] == 1){
-                        $typeicon = "glyphicon glyphicon-chevron-right";
+                        $typeicon = "bi-chevron-right";
                     }
                 }
                 if ($dnote["type"] == 3) {
-                    $typeicon = "glyphicon glyphicon-calendar";
+                    $typeicon = "bi-calendar3";
                 }
                 ?>
 
@@ -92,8 +92,8 @@
                             $cancelTxt = BulletjournalTranslator::ReOpen($lang);
                         }
                         ?>
-                        <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-primary"><?php echo $editTxt ?></button></td>
-                        <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-xs btn-default"><?php echo $cancelTxt ?></button></td>
+                        <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
+                        <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                             <?php
                         } else {
                             ?>

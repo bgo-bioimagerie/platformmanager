@@ -23,7 +23,7 @@ class DemController extends AntibodiesController {
 
     // affiche la liste des Prelevements
     public function indexAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
         $demsArray = $this->demModel->getBySpace($id_space);
 
@@ -43,7 +43,7 @@ class DemController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
         $dem = $this->demModel->get($id_space, $id);
@@ -73,7 +73,7 @@ class DemController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->demModel->delete($id_space, $id);
 

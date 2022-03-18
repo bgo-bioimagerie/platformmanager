@@ -4,7 +4,7 @@
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />
 <?php endblock(); ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
 
 <div class="row pm-tile-container"  >
@@ -18,5 +18,4 @@
     </div>
 
 </div> <!-- /container -->
-<?php
-endblock();
+<?php endblock(); ?>

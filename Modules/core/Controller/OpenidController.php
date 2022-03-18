@@ -205,7 +205,7 @@ class OpenidController extends CorecookiesecureController {
     public function connectAction($provider) {
         // Check openid connection
         if(!isset($_GET['code'])) {
-            $_SESSION["message"] = "Authentication failed";
+            $_SESSION['flash'] = "Authentication failed";
             Configuration::getLogger()->debug('[openid][code] no code provided');
             $this->redirect("coreconnection");
             return;
@@ -224,11 +224,11 @@ class OpenidController extends CorecookiesecureController {
                 $user = $this->google($_GET['code']);
                 break;
             default:
-                $_SESSION['message'] = "unknown provider";
+                $_SESSION['flash'] = "unknown provider";
                 break;
         }
         if($user == '') {
-            $_SESSION['message'] = "$provider connection failed or no link set for this provider in your account settings";
+            $_SESSION['flash'] = "$provider connection failed or no link set for this provider in your account settings";
         }
         if($redirect) {
             unset($_SESSION['redirect']);
