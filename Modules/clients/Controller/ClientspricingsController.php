@@ -94,8 +94,7 @@ class ClientspricingsController extends ClientsController {
                 "display_order" => 0,
                 "type" => 0
             );
-        }
-        else{
+        } else {
             $pricing = $this->pricingModel->get($id_space, $id);
         }
         
@@ -115,8 +114,13 @@ class ClientspricingsController extends ClientsController {
         $choicesid = array(1, 2);
         $form->addSelect("type", CoreTranslator::type($lang), $choices, $choicesid, $pricing["type"]);
         
-        
-        $form->setValidationButton(CoreTranslator::Ok($lang), "clpricingedit/" . $id_space . "/" . $id);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "clpricingedit/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clpricings/" . $id_space);
         $form->setButtonsWidth(4, 8);
 
@@ -130,12 +134,19 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("type"),
                     $form->getParameter("display_order"),
                     $form->getParameter("txtcolor"),
-                );   
+                );
+
+            $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
+            $_SESSION["flashClass"] = "success";
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                // after the provider is saved we redirect to the providers list page
+                return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
+            }
             
-            $_SESSION['flash'] = ClientsTranslator::Data_has_been_saved($lang);
-            $_SESSION["flashClass"] = 'success';
-            // after the provider is saved we redirect to the providers list page
-            return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
+            
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);

@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 
 <div class="container pm-form">
-
+    <div class="row"><div class="col-xs-12">
     <?php echo $form->htmlOpen() ?>
     <?php echo $form->getHtml($lang, false) ?>
     <script type="module">
@@ -123,7 +123,7 @@
     if($from) {
         $redirInfo = explode(':', $from);
         $redirPage = $redirInfo[0];
-        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]";
+        $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
     }
     $url = "booking$redirPage/$id_space?$q"
     ?>
@@ -131,7 +131,47 @@
 </div>
 
 <?php echo $form->htmlClose() ?>
+    </div></div>
+    <div class="row"><div class="col-xs-12">
 
+    <table aria-label="details of reservation" class="table">
+        <thead><tr><th scope="col" aria-label="day/night/weekend/closed">Type</th><th scope="col">Date</th><th scope="col"><?php echo BookingTranslator::Duration($lang) ?> (h)</th></tr></thead>
+        <tobody>
+        <?php foreach ($details['steps'] as $step) { ?>
+            <tr>
+                <td><?php 
+                switch ($step['kind']) {
+                    case 'day':
+                        $color = 'yellow';
+                        $txtcolor = 'black';
+                        break;
+                    case 'night':
+                        $color = 'black';
+                        $txtcolor = 'white';
+                        break;
+                    case 'we':
+                        $color = 'orange';
+                        $txtcolor = 'black';
+                        break;
+                    case 'closed':
+                        $color = 'red';
+                        $txtcolor = 'black';
+                        break;
+                    default:
+                        $color = 'blue';
+                        $txtcolor = 'white';
+                        break;
+                }
+                echo '<span class="label" style="background-color: '.$color.';color: '.$txtcolor.'">'.$step['kind'].'</label>';
+                ?></td>
+                <td><?php echo date('Y-m-d H-i', $step['start']).' - '.date('Y-m-d H-i', $step['end']) ?></td>
+                <td><?php echo $step['duration']/3600 ?>h</td>
+            </tr>
+        <?php } ?>
+        </tobody>
+    </table>
+
+    </div></div>
 </div>
 
 

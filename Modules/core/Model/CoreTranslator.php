@@ -274,9 +274,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation/entreprise";
+            return "Organisation / entreprise";
         }
-        return "Organization/Company";
+        return "Organization / Company";
     }
 
     public static function Responsible($lang) {
@@ -1806,6 +1806,13 @@ class CoreTranslator {
         return "Add existing account";
     }
 
+    public static function UserAccountAdded($userLogin, $lang) {
+        if ($lang == "fr") {
+            return "le compte " . $userLogin . " à été ajouté à votre espace";
+        }
+        return "User account " . $userLogin . " has been added to your space";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -2122,6 +2129,14 @@ class CoreTranslator {
             return "optionnel";
         }
         return "optional";
+    }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";       
+
     }
     
 }

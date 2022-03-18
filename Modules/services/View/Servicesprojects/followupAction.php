@@ -13,7 +13,7 @@
         <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
     </div>
 
-    <button class="btn btn-primary" id="addentrybutton"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
+    <button class="btn btn-primary mb-3" id="addentrybutton"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
     
     <?php echo $tableHtml ?>
     

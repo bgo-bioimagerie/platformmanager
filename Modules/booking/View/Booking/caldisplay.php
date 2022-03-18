@@ -102,7 +102,7 @@ th {
 		}
 	?>
 	<?php foreach ($days as $calDay => $calRes) { ?>
-		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo $calDay.' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
+		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo BookingTranslator::translateDayFromEn($calDay, $lang).' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
 	<?php } ?>
 	</tr>
 	<tr>

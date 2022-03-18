@@ -6,6 +6,7 @@ require_once 'Framework/TableView.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -248,12 +249,16 @@ class InvoiceslistController extends InvoicesController {
     }
 
     public function deleteAction($id_space, $id) {
-
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
-
+        $lang = $this->getLanguage();
         // cancel the pricing in the origin module
         $modelInvoice = new InInvoice();
         $service = $modelInvoice->get($id_space, $id);
+        if(!$service) {
+            $_SESSION['flash'] = InvoicesTranslator::Invoice($lang)." $id ".CoreTranslator::NotFound($lang);
+            return $this->redirect("invoices/" . $id_space, [], ['invoice' => null]);
+        }
+
 
         $controllerName = ucfirst($service["controller"]) . "Controller";
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
