@@ -16,6 +16,7 @@
 * [statistics] generate stats in background (async) and save generated files for later download #551
 * [booking] manage shared area calendar option to conflict resources on same calendar #578
 * [core] space settings, add option to either remove user from space or set as inactive on expiration
+* [helpdesk] skip emails if helpdesk not activated, else only skip auto-replies
 
 ## 2.4.1
 
