@@ -37,6 +37,10 @@ class Request {
         $this->parameters = $params;
     }
 
+    public function setParam($param, $value) {
+        $this->parameters[$param] = $value;
+    }
+
     public function params() {
         return $this->parameters;
     }

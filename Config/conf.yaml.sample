@@ -25,6 +25,7 @@ plans:
     flags:
       - grafana
       - documents
+      - rating
   - name: silver
     color: silver
     id: 2
