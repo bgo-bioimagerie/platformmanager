@@ -15,6 +15,7 @@
 * [core] in core user edit, show user spaces and pending spaces #607
 * [statistics] generate stats in background (async) and save generated files for later download #551
 * [booking] manage shared area calendar option to conflict resources on same calendar #578
+* [core] space settings, add option to either remove user from space or set as inactive on expiration
 
 ## 2.4.1
 

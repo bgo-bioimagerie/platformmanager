@@ -152,6 +152,7 @@ class CoreSpace extends Model {
         `plan` int NOT NULL DEFAULT 0,
         `plan_expire` int NOT NULL DEFAULT 0,
         `user_desactivate` int(1) NOT NULL DEFAULT 1,
+        `on_user_desactivate` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -162,6 +163,7 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'plan', "int", '0');
         $this->addColumn('core_spaces', 'plan_expire', "int", '0');
         $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
+        $this->addColumn('core_spaces', 'on_user_desactivate', "int", '0');
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -518,7 +520,12 @@ class CoreSpace extends Model {
 
     public function setDeactivate($id, $deactivate){
         $sql = "UPDATE core_spaces SET user_desactivate=? WHERE id=?";
-        $this->runRequest($sql, array($deactivate, $id));        
+        $this->runRequest($sql, array($deactivate, $id));
+    }
+
+    public function setOnDeactivate($id, $on_user_desactivate) {
+        $sql = "UPDATE core_spaces SET on_user_desactivate=? WHERE id=?";
+        $this->runRequest($sql, array($on_user_desactivate, $id));
     }
 
     public function setShortname($id, $shortname){
