@@ -10,6 +10,10 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/services/Model/SeProject.php';
+require_once 'Modules/services/Model/ServicesTranslator.php';
+
 
 /**
  * 
@@ -33,6 +37,7 @@ class RatingController extends CoresecureController {
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
             'color' => $menuInfo['txtcolor'] ?? '',
+            'manager' => $this->role >= CoreSpace::$MANAGER
 
         ];
         return $this->twig->render("Modules/rating/View/Rating/navbar.twig", $dataView);
@@ -47,7 +52,14 @@ class RatingController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $cm = new RatingCampaign();
-        $campaigns = $cm->list($id_space);
+
+        $campaigns = [];
+        if($this->role < CoreSpace::$MANAGER){
+            $campaigns = $cm->list($id_space, open: true);
+        } else {
+            $campaigns = $cm->list($id_space);
+        }
+
         $dataTable = new TableView();
         $dataTable->setTitle(RatingTranslator::Campaigns($lang));
 
@@ -71,7 +83,12 @@ class RatingController extends CoresecureController {
             "to_date" => RatingTranslator::To($lang),
             "limit_date" => RatingTranslator::Deadline($lang)
         );
-        $dataTable->addLineButton("rating/" . $id_space . "/campaign", "id", CoreTranslator::Access($lang));
+
+        if($this->role < CoreSpace::$MANAGER){
+            $dataTable->addLineButton("rating/" . $id_space . "/rate", "id", CoreTranslator::Access($lang));
+        } else {
+            $dataTable->addLineButton("rating/" . $id_space . "/campaign", "id", CoreTranslator::Access($lang));
+        }
 
         $tableHtml = $dataTable->view($data, $headers);
         $this->render(['table' => $tableHtml, 'data' => ['campaigns' => $campaigns]]);
@@ -156,8 +173,50 @@ class RatingController extends CoresecureController {
             $this->redirect('rating/'.$id_space);
         }
 
+        $r = new Rating();
+        $booking_ratings = $r->list($id_space, 'booking', campaign:$id_campaign);
+        for($i=0;$i<count($booking_ratings);$i++){
+            $booking_ratings[$i]['rate'] = intval($booking_ratings[$i]['rate']);
+            if(!$booking_ratings[$i]['login'] || $booking_ratings[$i]['anon']) {
+                $booking_ratings[$i]['login'] = '';
+            }
+        }
 
-        $this->render(['data' => ['campaign' => $data], 'form' => $form->getHtml($lang)]);
+        $projects_ratings = $r->list($id_space, 'projects', campaign:$id_campaign);
+        for($i=0;$i<count($projects_ratings);$i++){
+            $projects_ratings[$i]['rate'] = intval($projects_ratings[$i]['rate']);
+            if(!$projects_ratings[$i]['login'] || $projects_ratings[$i]['anon']) {
+                $projects_ratings[$i]['login'] = '';
+            }
+        }
+
+        $global_stats = $r->stat($id_space, $id_campaign);
+
+        $global_bookings = [];
+        foreach($global_stats as $g) {
+            if($g['module'] == 'booking') {
+                $g['rate'] = round($g['rate']);
+                $global_bookings[] = $g;
+            }
+        }
+
+        $global_projects = [];
+        foreach($global_stats as $g) {
+            if($g['module'] == 'projects') {
+                $g['rate'] = round($g['rate']);
+                $global_projects[] = $g;
+            }
+        }
+
+        $total_stats = $r->statGlobal($id_space, $id_campaign);
+        $total = [];
+        foreach ($total_stats as $stat) {
+            $stat['rate'] = round($stat['rate']);
+            $total[$stat['module']] = $stat;
+        }
+
+
+        $this->render(['data' => ['total' => $total, 'global_projects' => $global_projects, 'global_bookings' => $global_bookings, 'campaign' => $data, 'bookings' => $booking_ratings, 'projects' => $projects_ratings], 'lang' => $lang, 'form' => $form->getHtml($lang)]);
     }
 
     /**
@@ -173,14 +232,14 @@ class RatingController extends CoresecureController {
         if($role < CoreSpace::$USER) {
             throw new PfmAuthException('Access not allowed');
         }
-
+        $lang = $this->getLanguage();
         $cm = new RatingCampaign();
         $campaign = $cm->get($id_space, $id_campaign);
         if(!$campaign) {
             throw new PfmParamException('Survey not found');
         }
         if($campaign['limit_date'] && $campaign['limit_date'] < time()){
-            throw new PfmAuthException('Survey expired!');
+            throw new PfmParamException('Survey expired!');
         }
         $bke = new BkCalendarEntry();
         $bkentries = $bke->getEntriesForPeriod($id_space, $_SESSION['id_user'], $campaign['from_date'], $campaign['to_date']);
@@ -190,43 +249,56 @@ class RatingController extends CoresecureController {
         foreach($bkentries as $entry) {
             if(isset($entry['resource_id'])) {  
                 $resources[$entry['resource_id']] = [
-                    'id' => null,
+                    'vid' => intval($entry['resource_id']),
+                    'id' => 0,
+                    'module' => 'booking',
                     'name' => $entry['resource_name'],
-                    'rate' => null,
+                    'rate' => 0,
                     'comment' => null,
-                    'anon' => true,
+                    'anon' => 1,
                 ];
             }
         }
 
+        // TODO add projects
+        // closedProjectsByPeriod
+        $s = new SeProject();
+        $closed_projects = $s->closedProjectsByPeriod($id_space, $_SESSION['id_user'], date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        $projects = [];
+        foreach($closed_projects as $entry) {
+                $projects[$entry['id']] = [
+                    'vid' => intval($entry['id']),
+                    'id' => 0,
+                    'module' => 'projects',
+                    'name' => $entry['name'],
+                    'rate' => 0,
+                    'comment' => null,
+                    'anon' => 1,
+                ];
+        }
+
         $r = new Rating();
         $stats = $r->list($id_space, campaign: $campaign['id']);
-        foreach($stats as $i => $stat){
-            if(isset($resources[$stat['resource']])) {
-                $resources[$stat['resource']]['id'] = $stat['id'];
-                $resources[$stat['resource']]['rate'] = round($stat['rate']);
-                $resources[$stat['resource']]['comment'] = $stat['comment'];
-                $resources[$stat['resource']]['anon'] = $stat['anon'];
+        foreach($stats as $stat){
+            if($stat['module'] == 'booking' && isset($resources[$stat['resource']])) {
+                    $resources[$stat['resource']]['id'] = $stat['id'];
+                    $resources[$stat['resource']]['rate'] = round($stat['rate']);
+                    $resources[$stat['resource']]['comment'] = $stat['comment'];
+                    $resources[$stat['resource']]['anon'] = $stat['anon'];
+                }
+            if($stat['module'] == 'projects' && isset($projects[$stat['resource']])) {
+                $projects[$stat['resource']]['id'] = $stat['id'];
+                $projects[$stat['resource']]['rate'] = round($stat['rate']);
+                $projects[$stat['resource']]['comment'] = $stat['comment'];
+                $projects[$stat['resource']]['anon'] = $stat['anon'];
             }
         }
-        return $this->render(['data' => ['resources' => $resources]]);
-    }
-
-    public function ratingsAction($id_space, $module, $resource) {
-        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-        if(!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
-            throw new PfmAuthException('Sorry, space does not have this feature plan');
-        }
-        $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
-        $r = new Rating();
-        $ratings = $r->get($id_space, $module, $resource);
-        
-        return $this->render(['data' => ['ratings' => $ratings]]);
+        return $this->render(['lang' => $lang, 'campaign' => $id_campaign, 'data' => ['resources' => $resources, 'projects' => $projects]]);
     }
 
 
 
-    public function rateAction($id_space, $module, $resource) {
+    public function rateAction($id_space, $id_campaign) {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if(!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
@@ -235,55 +307,29 @@ class RatingController extends CoresecureController {
         if($userSpaceStatus != CoreSpace::$USER) {
             throw new PfmAuthException("only user space member can evaluate!");
         }
-        $resourceName = '';
-        if($module == 'booking') {
-            $b = new BkCalendarEntry();
-            $booking = $b->getEntry($id_space, $resource);
-            if(!$booking) {
-                throw new PfmParamException('resource not found', 404);
-            }
-            if($booking['recipient_id'] != $_SESSION['id_user']) {
-                throw new PfmAuthException('forbiden, not one of your resources', 403);
-            }
-            $r = new ResourceInfo();
-            $resourceInfo = $r->get($id_space, $booking['resource_id']);
-            if(!$resourceInfo) {
-                throw new PfmParamException('related resource not found', 404);
-            }
-            $resourceName = $resourceInfo['name'];
-        } else {
-            throw new PfmParamException('invalid module');
+        $c = new RatingCampaign();
+        $campaign = $c->get($id_space, $id_campaign);
+        if(!$campaign) {
+            throw new PfmParamException("Survey not found");
         }
-        $rate = [
-            'rate' => 0,
-            'module' => $module,
-            'resource' => $resource,
-            'resourcename' => $resourceName,
-            'id_user' => $_SESSION['id_user'],
-            'anon' => 1
-        ];
+        if($campaign['limit_date'] < time()) {
+            throw new PfmParamException("Survey expired");
+        }
         $r = new Rating();
-        $evaluated = $r->evaluated($id_space, $module, $resource, $_SESSION['id_user']);
-        if($evaluated) {
-            throw new PfmAuthException('resource already evaluated');
-        }
-        if($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $rateval = intval($this->request->getParameter("rate"));
-            $comment = $this->request->getParameterNoException('comment') ?? '';
-            $anon = $this->request->getParameterNoException('anon') ?? 1;
-            $r->set($id_space, 0, $_SESSION['id_user'], $module, $resource, $resourceName, $rateval, $comment, $anon);
-            $rate = [
-                'rate' => $rateval,
-                'comment' => $comment,
-                'resource' => $resource,
-                'module' => $module,
-                'resourcename' => $resourceName,
-                'id_user' => $_SESSION['id_user'],
-                'anon' => $anon
-            ];
-
-        }
-        return $this->render(['data' => ['rate' => $rate]]);
+        $id_user = $_SESSION['id_user'];
+        $id = $r->set(
+            $id_space,
+            $id_campaign,
+            $id_user,
+            $this->request->getParameter('id'),
+            $this->request->getParameter('module'),
+            $this->request->getParameter('vid'),
+            $this->request->getParameter('name'),
+            $this->request->getParameter('rate'),
+            $this->request->getParameterNoException('comment'),
+            $this->request->getParameter('anon'),
+        );
+        return $this->render(['data' => ['rate' => ['id' => $id]]]);
     }
 }
 ?>

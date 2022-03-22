@@ -91,6 +91,13 @@ class RatingTranslator {
         }
         return "Satisfation survey";
     }
+
+    public static function Responses($lang){
+        if ($lang == "fr") {
+            return "Réponses";
+        }
+        return "Responses";
+    }
     
 }
 

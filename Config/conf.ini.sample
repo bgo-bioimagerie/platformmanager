@@ -36,6 +36,7 @@ modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
 ;modules[] = "helpdesk"
+modules[] = "rating"
 
 [Company]
 name = "Platform-Manager"

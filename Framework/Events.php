@@ -577,6 +577,14 @@ class EventHandler {
         }
         $b = new BkCalendarEntry();
         $emails = $b->getEmailsWithEntiesForPeriod($id_space, $campaign['from_date'], $campaign['to_date']);
+        $p = new SeProject();
+        $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        foreach ($pemails as $email) {
+            if(!in_array($email, $emails)) {
+                $emails[] = $email;
+            }
+        }
+
         $me = new Email();
         $from = Configuration::get('smtp_from');
         if($c->getSpaceMenusRole($id_space, "helpdesk")) {

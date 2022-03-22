@@ -22,6 +22,7 @@ plans:
     features:
       - Grafana statistics interactive dashboards
       - Document visibility scopes
+      - Satisfaction surveys
     flags:
       - grafana
       - documents

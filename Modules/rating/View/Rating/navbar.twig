@@ -7,11 +7,9 @@
 
     <div class="pm-inline-div">
         <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="rating/{{id_space}}">Campaigns</a>
+        {% if manager %}
         <a style="{%if color %} color: {{color}}; {%endif%}" class="menu-button" href="rating/{{id_space}}/campaign/0">+</a>
-    </div>
-
-    <div class=" pm-inline-div" style="background-color:{{bgcolor}};">
-        <a color:{{color}}; style="color: #fff" id="menu-button" href="/rating/{{id_space}}">Ratings</a>
+        {% endif %}
     </div>
 
 </div>
