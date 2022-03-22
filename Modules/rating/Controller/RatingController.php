@@ -170,7 +170,7 @@ class RatingController extends CoresecureController {
             }
 
             $_SESSION['flashClass'] = 'success';
-            $this->redirect('rating/'.$id_space);
+            return $this->redirect('rating/'.$id_space, [], ['campaign' => ['id' => $new_campaign]]);
         }
 
         $r = new Rating();
@@ -216,7 +216,7 @@ class RatingController extends CoresecureController {
         }
 
 
-        $this->render(['data' => ['total' => $total, 'global_projects' => $global_projects, 'global_bookings' => $global_bookings, 'campaign' => $data, 'bookings' => $booking_ratings, 'projects' => $projects_ratings], 'lang' => $lang, 'form' => $form->getHtml($lang)]);
+        return $this->render(['data' => ['total' => $total, 'global_projects' => $global_projects, 'global_bookings' => $global_bookings, 'campaign' => $data, 'bookings' => $booking_ratings, 'projects' => $projects_ratings], 'lang' => $lang, 'form' => $form->getHtml($lang)]);
     }
 
     /**

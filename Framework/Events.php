@@ -608,7 +608,7 @@ class EventHandler {
         }
 
         foreach ($emails as $email) {
-            $user = $cu->getUserByEmail($email);
+            $user = $cu->getUserByEmail($email['email']);
             $lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
             $message = $campaign['message'];
             $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
@@ -617,7 +617,7 @@ class EventHandler {
                 $message .= '<br/><p>'.RatingTranslator::Deadline($lang).': '.$limit_date_str.'</p>';
             }
             $period = CoreTranslator::dateFromEn($from_date_str, $lang).' - '.CoreTranslator::dateFromEn($to_date_str, $lang);
-            $me->sendEmail($from, $fromName, $email, RatingTranslator::Survey($lang).': '.$period, $message, mailing:'campaign@rating');
+            $me->sendEmail($from, $fromName, $email['email'], RatingTranslator::Survey($lang).': '.$period, $message, bcc:false, mailing:'campaign@rating');
         }
         Configuration::getLogger()->debug('[campaignRequest] '.$msg['campaign']['id'].' done!');
     }
