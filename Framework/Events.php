@@ -208,7 +208,6 @@ class EventHandler {
 
     public function userApiKey($msg) {
         $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
-        // TODO do nothing if not a space manager/admin
         $gm = new Grafana();
         $u = new CoreUser();
         $id_user = $msg['user']['id'];

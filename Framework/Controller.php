@@ -317,7 +317,6 @@ abstract class Controller {
             header('Content-Type: application/json');
             if(isset($dataView['data'])) {
                 ob_start();
-                // Configuration::getLogger()->debug('[api] response', ['data' => json_encode($dataView['data'])]);
                 try {
                     echo json_encode($dataView['data']);
                 } catch(Exception $e) {

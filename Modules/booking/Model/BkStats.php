@@ -351,8 +351,6 @@ class BkStats {
         $spreadsheet = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         if ($generateclientstats == 1) {
             $spreadsheet = $this->statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-            // call to deprecated function statsReservationsPerResponsible()
-            // $spreadsheet = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         }
         return $spreadsheet;
     }
