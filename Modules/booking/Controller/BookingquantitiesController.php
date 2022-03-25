@@ -23,6 +23,7 @@ class BookingquantitiesController extends BookingsupsabstractController {
         $this->supsTypePlural = "quantities";
         $this->invoicable = true;
         $this->mandatoryFields = true;
+        $this->hasDuration = false;
         $this->formUrl = "bookingquantities";
     }
     

@@ -43,7 +43,7 @@ class BkCalSupInfo extends Model {
         return $data->fetchAll();
     }
 
-    public function calSupByResource($id_space, $id_resource) {
+    public function getByResource($id_space, $id_resource) {
         $sql = "SELECT * FROM bk_calsupinfo WHERE id_resource=? AND deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
@@ -115,7 +115,7 @@ class BkCalSupInfo extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setSupplementary($id_space, $id_supinfo, $id_resource, $name, $mandatory) {
+    public function setSupplementary($id_space, $id_supinfo, $id_resource, $name, $mandatory, $isInvoicingUnit, $duration) {
 
         if ($this->isCalSupInfoId($id_space, $id_supinfo, $id_resource)) {
             $this->updateCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory);

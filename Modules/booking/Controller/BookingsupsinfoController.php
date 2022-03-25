@@ -23,6 +23,7 @@ class BookingsupsinfoController extends BookingsupsabstractController {
         $this->supsTypePlural = "supplementaries";
         $this->invoicable = false;
         $this->mandatoryFields = true;
+        $this->hasDuration = false;
         $this->formUrl = "bookingsupsinfo";
     }
 

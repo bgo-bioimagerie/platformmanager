@@ -44,7 +44,7 @@ class BkCalQuantities extends Model {
         return $data->fetchAll();
     }
 
-    public function calSupByResource($id_space, $id_resource) {
+    public function getByResource($id_space, $id_resource) {
         $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
@@ -131,7 +131,7 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setSupplementary($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+    public function setSupplementary($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit, $duration) {
 
         if ($this->isCalQuantityId($id_space, $id_quantity, $id_resource)) {
             $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
