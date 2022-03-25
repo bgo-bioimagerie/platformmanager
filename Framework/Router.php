@@ -93,8 +93,6 @@ class Router {
             }
         }
 
-        $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
-        //Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
         if(!$match) {
             Configuration::getLogger()->debug('No route match, check old way');

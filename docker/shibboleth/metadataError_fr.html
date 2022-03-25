@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"DTD/xhtml1-strict.dtd">
+	
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<link rel="stylesheet" type="text/css" href="<shibmlp styleSheet/>" />
+	<title>Fournisseur d'identites non autorise (Unauthorized Identity Provider)</title>
+</head>
+
+<body>
+<div class="head">
+<img src="<shibmlp logoLocation/>" alt="Logo" />
+<h1>Fournisseur d'identites non autorise (Unauthorized Identity Provider)</h1>
+</div>
+
+<p>Le fournisseur d'identités auprès duquel vous vous êtes authentifié n'est pas autorisé à vous donner acces à ce service.</p>
+
+<shibmlpif originContactName>
+<h3><u>Information pour le support du fournisseur d'identités</u></h3>
+<div>Contact: <shibmlp originContactName/> </div>
+<div>E-Mail: <a href="mailto:<shibmlp originContactEmail/>"><shibmlp originContactEmail/></a></div>
+</shibmlpif>
+<shibmlpif originErrorURL>
+<div>URL: <a href="<shibmlp originErrorURL/>"><shibmlp originErrorURL/></a></div>
+</shibmlpif>
+
+Vous devriez lui demander si ce service est censé vous être accessible.
+
+<p>Incluez le message suivant dans votre email :</p>
+<p class="error">Metadata lookup failure at (<shibmlp requestURL/>)</p>
+<p><shibmlp errorType/>: <shibmlp errorText/></p>
+
+</body>
+</html>

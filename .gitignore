@@ -4,3 +4,5 @@ vendor
 Config/conf.ini
 Config/conf.yaml
 .vscode
+docker/apache2/sp-cert.key
+docker/apache2/sp-cert.pem

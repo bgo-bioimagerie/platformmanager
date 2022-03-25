@@ -38,6 +38,7 @@ RUN apt-get -q update && \
     a2enmod rewrite && \
     a2enmod headers && \
     a2enmod proxy_http && \
+    a2enmod ssl && \
     rm -rf /var/lib/apt/lists/* && \
     touch /var/log/php_errors.log && \
     chown www-data /var/log/php_errors.log && \
@@ -49,11 +50,6 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
     && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
     && php /tmp/composer-setup.php --no-ansi --install-dir=/usr/local/bin --filename=composer --snapshot \
     && rm -f /tmp/composer-setup.*
-
-ADD php_logs.ini /usr/local/etc/php/conf.d/php_logs.ini
-ADD php_timezone.ini /usr/local/etc/php/conf.d/tz.ini
-ADD apache2/platformmanager.conf /etc/apache2/conf-enabled/platformmanager.conf
-ADD apache2/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 
 RUN mkdir -p /var/www/platformmanager \
     && chown -R www-data /var/www/platformmanager
@@ -100,5 +96,12 @@ ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.6.0/wait
 RUN chmod +x /wait
 
 RUN cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
+
+ADD php_logs.ini /usr/local/etc/php/conf.d/php_logs.ini
+ADD php_timezone.ini /usr/local/etc/php/conf.d/tz.ini
+ADD apache2/platformmanager.conf /etc/apache2/conf-enabled/platformmanager.conf
+ADD apache2/000-default.conf /etc/apache2/sites-enabled/000-default.conf
+ADD apache2/sp-cert.pem /etc/ssl/certs/pfm.pem
+ADD apache2/sp-cert.key /etc/ssl/certs/pfm.key
 
 CMD ["/entrypoint.sh"]

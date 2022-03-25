@@ -87,6 +87,7 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
+* PFM_SHIBBOLETH: 0 # is shibboleth configured for authentication [0|1]
 * PFM_TIMEZONE: server timezone (Europe/Paris, ..., defaults to UTC)
 
 And .env file should define (according to variables used):

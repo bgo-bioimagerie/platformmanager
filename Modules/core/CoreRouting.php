@@ -23,6 +23,10 @@ class CoreRouting extends Routing{
         $router->map('GET', '/core/spaceaccess/[i:id_space]/users/[i:id_user]/convention', 'core/corespaceaccess/downloadConvention', 'corespaceaccess_download_user_convention');
         $router->map('GET', '/core/privacy', 'core/coreabout/privacy', 'core_privacy');
 
+        $router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
+        $router->map( 'GET', '/ooc/[a:provider]/unlink', 'core/openid/unlink', 'ooc_unlink' );
+        $router->map( 'GET|POST', '/ooc/shibboleth', 'core/shibboleth/connect', 'shibboleth' );
+
     }
     
     public function listRoutes(){

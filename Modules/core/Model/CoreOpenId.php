@@ -17,7 +17,7 @@ Class CoreOpenId extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `core_openid` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`provider` varchar(30) NOT NULL DEFAULT '',
-        `oid` varchar(30) NOT NULL DEFAULT '',
+        `oid` varchar(255) NOT NULL DEFAULT '',
         `user` int(11) NOT NULL,
 		PRIMARY KEY (`id`)
 		);";

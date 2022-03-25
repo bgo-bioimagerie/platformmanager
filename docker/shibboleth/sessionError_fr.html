@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"DTD/xhtml1-strict.dtd">
+	
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<link rel="stylesheet" type="text/css" href="<shibmlp styleSheet/>" />
+	<title>Echec de la création de la session (Session Creation Failure)</title>
+</head>
+
+<body>
+<div class="head">
+<img src="<shibmlp logoLocation/>" alt="Logo" />
+<h1>Echec de la création de la session (Session Creation Failure)</h1>
+</div>
+
+<p>Le système inter-institutionnel de connexion n'est pas en mesure de vous ouvrir une session authentifié à <shibmlp now /></p>
+
+<shibmlpif originContactName>
+<h3><u>Information pour le support du fournisseur d'identités</u></h3>
+<div>Contact: <shibmlp originContactName/> </div>
+<div>E-Mail: <a href="mailto:<shibmlp originContactEmail/>"><shibmlp originContactEmail/></a></div>
+</shibmlpif>
+<shibmlpif originErrorURL>
+<div>URL: <a href="<shibmlp originErrorURL/>"><shibmlp originErrorURL/></a></div>
+</shibmlpif>
+
+<p>Pour avertir de ce problème, contacter l'administrateur du site �
+<a href="mailto:<shibmlp supportContact/>"><shibmlp supportContact/></a>.
+</p>
+
+<p>Incluez le message suivant votre email :</p>
+<p class="error">Session creation failure at (<shibmlp requestURL/>)</p>
+<p><shibmlp errorType/>: <shibmlp errorText/></p>
+
+</body>
+</html>

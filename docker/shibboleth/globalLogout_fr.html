@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+	PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+	"DTD/xhtml1-strict.dtd">
+	
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" type="text/css" href="<shibmlp styleSheet/>" />
+	<title>Global Logout</title>
+</head>
+
+<body>
+<div class="head">
+<img src="<shibmlp logoLocation/>" alt="Logo" />
+<h1>Global Logout</h1>
+</div>
+
+<p><strong>Status of Global Logout:</strong> <shibmlp logoutStatus/></p>
+
+<shibmlpif statusCode>
+	<p>Erreur venant de votre fournisseur d'identités :</p>
+	<blockquote>
+		<strong>Statut:</strong> <shibmlp statusCode/><br>
+		<shibmlpif statusCode2>
+			<strong>sous-Statut:</strong> <shibmlp statusCode2/><br>
+		</shibmlpif>
+		<shibmlpif statusMessage>
+			<strong>Message:</strong> <shibmlp statusMessage/><br>
+		</shibmlpif>
+	</blockquote>
+</shibmlpif>
+
+<p>Si le message au dessus indique un succès c'est que vous avez bien été déconnecté de toutes les 
+applications qui supportent une déconnexion globale.</p>
+
+<p>Cependant, on vous recommende fortement d'achever le processus de déconnexion en fermant votre navigateur Internet.</p>
+
+</body>
+</html>

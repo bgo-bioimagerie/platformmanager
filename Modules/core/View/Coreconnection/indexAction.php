@@ -44,6 +44,7 @@
             <div class="row justify-content-md-center">
                 <div class="col-12 col-md-6">
                     <form class="form form-signin" action="corelogin" method="post">
+                        <div class="row">
                         <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
                         <input class="form-control mb-3" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
                         <input class="form-control mb-3" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
@@ -51,9 +52,16 @@
                             <label class="form-check-label" for="remember"><?php echo CoreTranslator::RememberMe($language) ?></label>
                             <input class="form-check-input" type="checkbox" id="remember" name="remember" value="">
                         </div>
+                        </div>
                         <div class="row mb-3">
-                            <div class="col-12 col-md-3"><button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button></div>
-                            <div class="col-12 col-md-9">
+                                <?php if(Configuration::get('shibboleth', false)) { ?>
+                                <div class="col-12 col-md-3 p-1"><button class="btn btn-primary" type="submit"><?php echo CoreTranslator::Ok($language) ?> </button></div>
+                                <div class="col-12 col-md-9 p-1"><a title="log or register with renater federation" href="ooc/shibboleth"><button class="btn btn-lg btn-secondary btn-block" type="button"> <img alt="renater federation" style="width:150px" src="externals/pfm/css/federation.png"/> </button></a></div>
+                                <?php } else { ?>
+                                    <div class="col-12 m-3"><button class="btn btn-primary" type="submit"><?php echo CoreTranslator::Ok($language) ?> </button>
+                                <?php } ?> 
+
+                            <div class="col-12">
                                 <div><a href="corepasswordforgotten" class="m-3"><?php echo CoreTranslator::PasswordForgotten($language) ?></a></div>
                                 <div><a href="mailto:<?php echo $admin_email ?>" class="m-3"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a></div>
                             </div>
