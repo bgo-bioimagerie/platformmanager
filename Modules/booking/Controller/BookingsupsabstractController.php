@@ -45,7 +45,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
             $supsIds[] = $sup["id_" . $this->supsType];
             $supsIdsRes[] = $sup["id_resource"];
             $supsNames[] = $sup["name"];
-            $supsMandatories[] = $sup["mandatory"] ?? 0; // TODO: do we add bk_package.mandatory column?
+            if ($this->mandatoryFields) {
+                $supsMandatories[] = $sup["mandatory"] ?? 0;
+            }
             if ($this->invoicable) {
                 $supIsInvoicingUnit[] = $sup["is_invoicing_unit"] ? intval($sup["is_invoicing_unit"]) : 0;
             }
