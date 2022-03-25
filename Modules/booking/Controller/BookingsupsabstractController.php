@@ -72,7 +72,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         return $form;
     }
 
-    protected function supsFormCheck($request, $id_space) {
+    protected function supsFormCheck($id_space) {
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
         $supID = $this->request->getParameterNoException("id_sups");
@@ -111,7 +111,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
             }
         }
 
-        $coupleQteResourceExists = false;
+        $coupleSupResourceExists = false;
         for ($sup = 0; $sup < count($supID); $sup++) {
             if($supName[$sup] == "") {
                 continue;
@@ -121,9 +121,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
                 if(isset($supacks[$supName[$sup]])) {
                     $supID[$sup] = $supacks[$supName[$sup]];
                     if ($this->coupleSupResourceExists($supID[$sup],$supResources[$sup], $id_space)) {
-                        $coupleQteResourceExists = [
+                        $coupleSupResourceExists = [
                             "resource" => $modelResource->get($id_space, $supResources[$sup])['name'],
-                            "qte" => $supName[$sup]
+                            "sup" => $supName[$sup]
                         ];
                     }
                 } else {
@@ -134,35 +134,35 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
                     $supacks[$supName[$sup]] = $vid;
                 }
             }
-            $this->modelSups->setCalQuantity($id_space,  $supID[$sup], $supResources[$sup], $supName[$sup], $supMandatory[$sup], $supIsInvoicingUnit[$sup]);
+            $this->modelSups->setSupplementary($id_space,  $supID[$sup], $supResources[$sup], $supName[$sup], $supMandatory[$sup], $supIsInvoicingUnit[$sup]);
         }
         
         
         //  get all ids from id_sup
         $id_qtes = [];
         for ($i=0; $i<count($supID); $i++) {
-            array_push($id_qtes, $this->modelSups->getByQuantityID($id_space, $supID[$i], $supResources[$i])['id']);
+            array_push($id_qtes, $this->modelSups->getBySupID($id_space, $supID[$i], $supResources[$i])['id']);
         }
         
         // If package in db is not listed in provided package list, delete them
-        $this->modelSups->removeUnlistedQuantities($id_space, $id_qtes, false);
+        $this->modelSups->removeUnlisted($id_space, $id_qtes, false);
 
-        if ($coupleQteResourceExists) {
-            $_SESSION["flash"] = BookingTranslator::Qte_resource_exists(
-                $coupleQteResourceExists["qte"],
-                $coupleQteResourceExists["resource"],
+        if ($coupleSupResourceExists) {
+            $_SESSION["flash"] = BookingTranslator::Sup_resource_exists(
+                $coupleSupResourceExists["sup"],
+                $coupleSupResourceExists["resource"],
                 $lang
             );
             $_SESSION["flashClass"] = 'danger';
         } else {
-            $_SESSION["flash"] = BookingTranslator::Quantities_saved($lang);
+            $_SESSION["flash"] = BookingTranslator::Sups_saved($this->supsTypePlural, $lang);
             $_SESSION["flashClass"] = "success";
         }
 
     }
 
     protected function coupleSupResourceExists($id_sup, $id_resource, $id_space) {
-        $dbSups = $this->modelSups->calQuantitiesByResource($id_space, $id_resource); // TODO: change methodName
+        $dbSups = $this->modelSups->calSupByResource($id_space, $id_resource);
         foreach ($dbSups as $dbSup) {
             if ($dbSup['id_' . $this->supsType] == $id_sup) {
                 return true;

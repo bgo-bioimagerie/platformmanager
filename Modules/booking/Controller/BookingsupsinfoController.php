@@ -36,39 +36,8 @@ class BookingsupsinfoController extends BookingsupsabstractController {
         $form = $this->getSupForm($id_space, BookingTranslator::supplementaries($lang));
 
         if ($form->check()) {
-            $supID = $this->request->getParameterNoException("id_sups");
-            $supResource = $this->request->getParameterNoException("id_resources");
-            $supName = $this->request->getParameterNoException("names");
-            $supMandatory = $this->request->getParameterNoException("mandatory");
-
-            $packs = [];
-            for ($p = 0; $p < count($supID); $p++) {
-                if ($supName[$p] != "" && $supID[$p]) {
-                   $packs[$supName[$p]] = $supID[$p];
-                }
-            }
-            for ($p = 0; $p < count($supID); $p++) {
-                if ($supName[$p] != "") {
-                    if (!$supID[$p]) {
-                        // If package id not set, use from known packages
-                        if(isset($packs[$supName[$p]])) {
-                            $supID[$p] = $packs[$supName[$p]];
-                        } else {
-                            // Or create a new package
-                        $cvm = new CoreVirtual();
-                        $vid = $cvm->new('supinfo');
-                        $supID[$p] = $vid;
-                        $packs[$supName[$p]] = $vid;
-                        }
-                    }
-                    $this->modelSups->setCalSupInfo($id_space, $supID[$p], $supResource[$p], $supName[$p], $supMandatory[$p]);
-                }
-            }
-
-            $this->modelSups->removeUnlistedSupInfos($id_space, $supID);
-            $_SESSION['flash'] = BookingTranslator::Supplementaries_saved($lang);
-            $_SESSION["flashClass"] = 'success';
-            $this->redirect("bookingsupsinfo/".$id_space);
+            $this->supsFormCheck($id_space);
+            $this->redirect($this->formUrl."/".$id_space);
             return;
         }
         // view

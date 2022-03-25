@@ -70,10 +70,6 @@ class BookingpackagesController extends BookingsettingsController {
             $packageName = $this->request->getParameterNoException("names");
             $packageDuration = $this->request->getParameterNoException("durations");
 
-            //print_r($packageID);
-
-            $count = 0;
-
             $rem = new ResourceInfo();
             $spaceResources = $rem->getForSpace($id_space);
             $spaceResourcesIDs = [];
@@ -131,39 +127,6 @@ class BookingpackagesController extends BookingsettingsController {
                 $modelPackages->setPackage($id_space, $packageID[$p], $packageResource[$p], $packageName[$p], $packageDuration[$p]);
             }
 
-            // get the last package id
-            // @bug, should get from an increment in table, risk of conflict
-            /*            
-            $lastID = 0;
-            for ($p = 0; $p < count($packageID); $p++) {
-                if ($packageName[$p] != "") {
-                    if ($packageID[$p] > $lastID) {
-                        $lastID = $packageID[$p];
-                    }
-                }
-            }
-
-            for ($p = 0; $p < count($packageID); $p++) {
-                if ($packageName[$p] != "") {
-                    $curentID = $packageID[$p];
-
-                    if ($curentID == "") {
-                        $lastID++;
-                        $curentID = $lastID;
-                        $packageID[$p] = $lastID;
-                    }
-                    if ($curentID == 1 && $p > 0) {
-                        $lastID++;
-                        $curentID = $lastID;
-                        $packageID[$p] = $lastID;
-                    }
-
-                    //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelPackages->setPackage($id_space, $curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
-                    $count++;
-                }
-            }
-            */
             //  get all ids from id_packages
             // TODO: to test with deleted resources
             $id_packages = [];

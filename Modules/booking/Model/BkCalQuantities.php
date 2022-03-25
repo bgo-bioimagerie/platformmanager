@@ -44,7 +44,7 @@ class BkCalQuantities extends Model {
         return $data->fetchAll();
     }
 
-    public function calQuantitiesByResource($id_space, $id_resource) {
+    public function calSupByResource($id_space, $id_resource) {
         $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
@@ -104,7 +104,7 @@ class BkCalQuantities extends Model {
         }
     }
 
-    public function getByQuantityID($id_space, $id_quantity, $id_resource) {
+    public function getBySupID($id_space, $id_quantity, $id_resource) {
         $sql = "SELECT * FROM bk_calquantities WHERE id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_quantity, $id_resource, $id_space));
         if ($req->rowCount() == 1) {
@@ -131,7 +131,7 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+    public function setSupplementary($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
 
         if ($this->isCalQuantityId($id_space, $id_quantity, $id_resource)) {
             $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
@@ -228,8 +228,8 @@ class BkCalQuantities extends Model {
         return $supData;
     }
 
-    public function removeUnlistedQuantities($id_space, $ids, $idIsQuantity=false) {
-        $id_column = $idIsQuantity ? "id_quantity" : "id";
+    public function removeUnlisted($id_space, $ids, $idIsSup=false) {
+        $id_column = $idIsSup ? "id_quantity" : "id";
         $sql = "SELECT id, id_quantity FROM bk_calquantities WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
         $databaseQuantities = $req->fetchAll();

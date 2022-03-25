@@ -23,6 +23,7 @@ class BookingquantitiesController extends BookingsupsabstractController {
         $this->supsTypePlural = "quantities";
         $this->invoicable = true;
         $this->mandatoryFields = true;
+        $this->formUrl = "bookingquantities";
     }
     
     /**
@@ -32,12 +33,11 @@ class BookingquantitiesController extends BookingsupsabstractController {
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $this->formUrl = "bookingquantities";
         $form = $this->getSupForm($id_space, BookingTranslator::Quantities($lang));
         
         if ($form->check()) {
-            $this->supsFormCheck($this->request, $id_space);
-            $this->redirect("bookingquantities/".$id_space);
+            $this->supsFormCheck($id_space);
+            $this->redirect($this->formUrl."/".$id_space);
             return;
         }
         // view
