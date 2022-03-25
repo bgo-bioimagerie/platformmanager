@@ -19,6 +19,9 @@ require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 
+require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
+
 /**
  *
  * @author sprigent
@@ -150,7 +153,8 @@ class CorespaceaccessController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $u = new CoreUser();
-        $users = $u->disableUsers($space['user_desactivate'], true, $id_space, false);
+        $remove = ($space['on_user_desactivate'] == CoreConfig::$ONEXPIRE_REMOVE);
+        $users = $u->disableUsers($space['user_desactivate'], $remove, $id_space, false);
         $this->redirect("/corespaceaccess/$id_space/user/expire", [], ['users' => $users]);    
     }
 
@@ -215,6 +219,16 @@ class CorespaceaccessController extends CoresecureController {
                 : "active";
         }
 
+        $clm = new ClClientUser();
+        $clus = $clm->getForSpace($id_space);
+        $cmap = [];
+        foreach($clus as $cl){
+            if(!array_key_exists($cl['id_user'], $cmap)){
+                $cmap[$cl['id_user']] = 0;
+            }
+            $cmap[$cl['id_user']]++;
+        }
+
         // get user list
         
         $usersArray = array();
@@ -225,6 +239,7 @@ class CorespaceaccessController extends CoresecureController {
             $user["date_convention"] = CoreTranslator::dateFromEn($user["date_convention"], $lang);
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
             $user["convention_url"] = $user['convention_url'] ? sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']) : '';
+            $user["clients"] = $cmap[$user['id']] ?? 0;
             array_push($usersArray, $user);
         }
 
@@ -255,12 +270,13 @@ class CorespaceaccessController extends CoresecureController {
             "unit" => CoreTranslator::Unit($lang),
             "organization" => CoreTranslator::Organization($lang),
             "phone" => CoreTranslator::Phone($lang),
-            "date_convention" => CoreTranslator::Convention($lang),
+            "date_convention" => CoreTranslator::Date_convention($lang),
             "date_contract_end" => CoreTranslator::Date_end_contract($lang),
             "convention_url" => array("title" => CoreTranslator::Convention($lang),
                                    "type" => "download",
                                    "text" => CoreTranslator::Download($lang)
             ),
+            "clients" => ClientsTranslator::clients($lang),
             "id" => "ID",
         );
 

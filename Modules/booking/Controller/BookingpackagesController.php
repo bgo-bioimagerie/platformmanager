@@ -55,6 +55,7 @@ class BookingpackagesController extends BookingsettingsController {
         $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang), $choicesR, $choicesRid, $packagesIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $packagesNames);
         $formAdd->addNumber("durations", BookingTranslator::Duration($lang), $packagesDuration);
+        $formAdd->addLabel(BookingTranslator::Package($lang), $packagesIds);
 
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);
@@ -118,40 +119,6 @@ class BookingpackagesController extends BookingsettingsController {
                 }
                 $modelPackages->setPackage($id_space, $packageID[$p], $packageResource[$p], $packageName[$p], $packageDuration[$p]);
             }
-
-            // get the last package id
-            // @bug, should get from an increment in table, risk of conflict
-            /*            
-            $lastID = 0;
-            for ($p = 0; $p < count($packageID); $p++) {
-                if ($packageName[$p] != "") {
-                    if ($packageID[$p] > $lastID) {
-                        $lastID = $packageID[$p];
-                    }
-                }
-            }
-
-            for ($p = 0; $p < count($packageID); $p++) {
-                if ($packageName[$p] != "") {
-                    $curentID = $packageID[$p];
-
-                    if ($curentID == "") {
-                        $lastID++;
-                        $curentID = $lastID;
-                        $packageID[$p] = $lastID;
-                    }
-                    if ($curentID == 1 && $p > 0) {
-                        $lastID++;
-                        $curentID = $lastID;
-                        $packageID[$p] = $lastID;
-                    }
-
-                    //echo "set package (".$curentID." , " . $id_resource ." , " . $packageName[$p]." , ". $packageDuration[$p] . ")<br/>";
-                    $modelPackages->setPackage($id_space, $curentID, $packageResource[$p], $packageName[$p], $packageDuration[$p]);
-                    $count++;
-                }
-            }
-            */
    
             $modelPackages->removeUnlistedPackages($id_space, $packageID);
             $_SESSION["flash"] = BookingTranslator::Packages_saved($lang);

@@ -5,10 +5,13 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
- * Class defining the GRR area model
+ * Class defining the booking entries
  *
  * @author Sylvain Prigent
  */
@@ -135,7 +138,6 @@ class BkCalendarEntry extends Model {
         foreach($resps as $resp){
             
             $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND id_space=?";
-            //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
 
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
             if(!$respinfo) {
@@ -167,7 +169,6 @@ class BkCalendarEntry extends Model {
         $modelUserClient = new ClClientUser();
         
         foreach ($data as $d) {
-            //$resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
             $resps = $modelUserClient->getUserClientAccounts($d["recipient_id"], $id_space);
 
             if (!empty($resps)) {
@@ -295,16 +296,17 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      * @return string
      */
     public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
@@ -358,17 +360,19 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry if not exists  
-     * @param unknown $id
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $id_space
+     * @param int $id
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      */
     public function setEntryOld($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
 
@@ -472,12 +476,9 @@ class BkCalendarEntry extends Model {
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
-        //$modelUser = new CoreUser();
-        //$modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                //$userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
@@ -525,17 +526,16 @@ class BkCalendarEntry extends Model {
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                //$userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
                 $data[$i]["phone"] = "";
             }
             if(!$data[$i]["color_bg"]) {
-                $data[$i]["color_bg"] = "aaaaaa";
+                $data[$i]["color_bg"] = "#aaaaaa";
             }
             if(!$data[$i]["color_text"]) {
-                $data[$i]["color_text"] = "000000";
+                $data[$i]["color_text"] = "#000000";
             }
         }
 
@@ -544,24 +544,15 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get entries for a given period and a given area
-     * @param unknown $dateBegin
-     * @param unknown $dateEnd
-     * @param unknown $areaId
+     * @param int $dateBegin
+     * @param int $dateEnd
+     * @param int $areaId
      * @return multitype:
      */
     public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId, $id_user='') {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($id_space, $areaId);
-
-        /*
-        $data = array();
-        foreach ($resources as $resource) {
-            $id = $resource["id"];
-            $dataInter = $this->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $id);
-            $data = array_merge($data, $dataInter);
-        }
-        */
 
         $rids = [];
         foreach($resources as $r) {
@@ -570,7 +561,7 @@ class BkCalendarEntry extends Model {
        return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
-    public function isConflictP($id_space, $start_time, $end_time, $resource_id, $id_period) {
+    public function isConflictP($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			(
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR
@@ -580,18 +571,14 @@ class BkCalendarEntry extends Model {
             ) 
             AND deleted=0
             AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($id_period > 0 && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $period_id = $tmp['period_id'];
-                if ($period_id == $id_period) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($period_id != $id_period);
             }
             return true;
         } else {
@@ -631,7 +618,7 @@ class BkCalendarEntry extends Model {
      * @param string $reservation_id
      * @return boolean
      */
-    public function isConflict($id_space, $start_time, $end_time, $resource_id, $reservation_id = "") {
+    public function isConflict($id_space, $start_time, $end_time, array $resources_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
 			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
@@ -640,18 +627,14 @@ class BkCalendarEntry extends Model {
                            ) 
                            AND deleted=0
                            AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($reservation_id != "" && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $id = $tmp[0];
-                if ($id == $reservation_id) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($id != $reservation_id);
             }
             return true;
         } else {
@@ -781,7 +764,6 @@ class BkCalendarEntry extends Model {
             $req = $this->runRequest($sql, array($rec['recipient_id']));
             $resp_id_req = $req->fetch();
             $resp_id_req = $resp_id_req[0];
-            //echo "resp_id_req = " . $resp_id_req . "<br />";
             if ($resp_id_req == $unit_id) {
                 return true;
             }
@@ -827,7 +809,8 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get the emails address of the users who booked a resource and still have a role in space
-     * @param unknown $resource_id
+     * @param int $resource_id
+     * @param int $ts  select reservations after timestamp
      * @return multitype:
      */
     public function getEmailsBookerResource($id_space, $resource_id, $ts=0) {
@@ -850,7 +833,7 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get the emails address of the users who booked resorces of a given area
-     * @param unknown $area_id
+     * @param int $area_id
      * @return multitype:
      */
     public function getEmailsBookerArea($id_space, $area_id) {
@@ -907,6 +890,159 @@ class BkCalendarEntry extends Model {
         $q = array('today' => $now, 'id_user' => $id_user, 'id_space' => $id_space);
         $res = $this->runRequest($sql, $q);
         return $res->fetchAll();
+    }
+
+    public function computeDuration($id_space, $booking) {
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $id_resource = $booking['resource_id'];
+        $id_client = $booking['responsible_id'];
+        $start_time = $booking['start_time'];
+        $end_time = $booking['end_time'];
+        $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $day_begin = $bkScheduling['day_begin'];
+        $day_end = $bkScheduling['day_end'];
+
+        $modelClient = new ClCLient();
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_client);
+        $pricingModel = new BkNightWE();
+        $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+        if(!$pricingInfo) {
+            throw new PfmException('no pricing found for client '.$id_client);
+        }
+
+        $night_begin = $pricingInfo['night_start'];
+        $night_end = $pricingInfo['night_end'];
+        $we_array = explode(",", $pricingInfo['choice_we']);
+        $night_rate = $pricingInfo['tarif_night'] == 1 ? true : false;
+        $we_rate = $pricingInfo['tarif_we'] == 1 ? true : false;
+        
+        $searchDate_start = $start_time;
+        $searchDate_end = $end_time;
+
+        $booking_time_scale = 2;
+        $resa_block_size = 3600;
+        switch ($booking_time_scale) {
+            case '1':
+                $gap = $resa_block_size;
+                break;
+            case '2':
+                $gap = 3600;
+                break;
+            case '3':
+                $gap = 3600 * 24;
+                break;
+            default:
+                $gap = 3600;
+                break;
+        }
+
+        $gaps = [];
+        $gapDuration = 0;
+        $timeStep = $searchDate_start;
+        $kind = null;
+
+        while ($timeStep < $searchDate_end) {
+            $is_open = true; // is open ? (is_monday etc...)
+            $d = strtolower(date('l', $timeStep));
+            if(!array_key_exists('is_'.$d, $bkScheduling) || !$bkScheduling['is_'.$d]) {
+                $is_open = false;
+            }
+            if(date('G', $timeStep) >= $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
+                if($kind && $kind!="closed") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'closed';
+            } else if($we_rate && $we_array[date('N', $timeStep)-1] == 1) {
+                // weekend
+                if($kind && $kind != "we") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'we';
+            } else if($night_rate && (date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin)) {
+                if($kind && $kind != "night") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'night';
+            } else {
+                if($kind && $kind != 'day') {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                }
+                    $gapDuration += $gap;
+                
+                $kind = 'day';
+            }
+
+            $timeStep += $gap;
+        }
+        if($gapDuration > 0) {
+            $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+        }
+
+        $total_duration = 0;
+        $nb_day = 0;
+        $nb_night = 0;
+        $nb_we = 0;
+        $nb_closed = 0;
+        foreach ($gaps as $gap) {
+            if($gap['kind'] == 'closed') {
+                $nb_closed += $gap['duration'];
+                continue;
+            }
+            $total_duration += $gap['duration'];
+            switch ($gap['kind']) {
+                case 'day':
+                    $nb_day += $gap['duration'];
+                    break;
+                case 'night':
+                    $nb_night += $gap['duration'];
+                    break;
+                case 'we':
+                    $nb_we += $gap['duration'];
+                    break;
+                default:
+                    Configuration::getLogger()->error('[compute] unknown kind', ['kind' => $gap['kind']]);
+            }
+        }
+
+        $nb_hours_closed = round($nb_closed / 3600, 1);
+        $nb_hours_day = round($nb_day / 3600, 1);
+        $nb_hours_night = round($nb_night / 3600, 1);
+        $nb_hours_we = round($nb_we / 3600, 1);
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+        $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+        $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+
+        $result = [
+            'total' => $total_duration,
+            'steps' => $gaps,
+            'hours' => [
+                'nb_hours_closed' => $nb_hours_closed,
+                'nb_hours_day' => $nb_hours_day,
+                'nb_hours_night' => $nb_hours_night,
+                'nb_hours_we' => $nb_hours_we,
+                'ratio_bookings_day' => $ratio_bookings_day,
+                'ratio_bookings_night' => $ratio_bookings_night,
+                'ratio_bookings_we' => $ratio_bookings_we
+            ]
+        ];
+        Configuration::getLogger()->debug('[booking] compute_duration', $result);
+        return $result;
     }
 
 }

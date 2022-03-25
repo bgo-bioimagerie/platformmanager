@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-table">
+<div class="container pm-table">
     
     <div class="col-10">
         <div id="invoice-message-div" class="alert alert-success">
@@ -12,6 +12,8 @@
     </div>
     
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) ?> : <?php echo $invoice["number"] ?> </h3>
+
+    <h4><a href="invoices/<?php echo $id_space ?>/<?php echo $invoice['id'] ?>/details">Details</a></h4>
 
     <form class="form-horizontal">
         <div id="invoiceform" class="col-12">

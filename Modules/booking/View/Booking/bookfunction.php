@@ -119,10 +119,13 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			$curHour = date('G', $c['start_time']);
 			$pixelHeight = $blocSize*$agendaStyle["line_height"];
 			$shortDescription = $c['short_description'];
-			$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
-			$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-			if($text === '') {
-				$text = '#'.$c['id'];
+			$text = '';
+			if($c['id']) {
+				$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
+				$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
+				if($text === '') {
+					$text = '#'.$c['id'];
+				}
 			}
 			$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'].$q;
 			$c['text'] = $text;
@@ -144,20 +147,35 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 				if ($minutes == "00"){$blockNumber = 0;}
 				if ($minutes == "30"){$blockNumber = 1;}
 			}
-
+			
+			if($c['id'] == 0) {
+				$c = [
+					'free' => true,
+					'link' => '',
+					'id' => 0,
+					'text' => '',
+					'span' => 1,
+					'resource_id' => $resourceID,
+					'day' => date("l", $date_unix),
+					'expand' => false,
+					'hour' => $he[0].'h'.$he[1]
+				];
+			}
 				$calRows[$curHour][$blockNumber] = $c;
 
-				for($j=$blockNumber;$j>=0;$j--) {
-					if($calRows[$curHour][$j]['id'] == $c['id']) {
-						if($j==0 || $calRows[$curHour][$j-1]['id'] != $c['id']) {
-							$calRows[$curHour][$j]['span'] = $blockNumber-$j+1;
-							$calRows[$curHour][$j]['end_time'] = $c['end_time'];
-							$calRows[$curHour][$j]['hend'] = date('H:i', $c['end_time']);
-						} else {
-							$calRows[$curHour][$j]['text'] = '';
+				if($c['id']) {
+					for($j=$blockNumber;$j>=0;$j--) {
+						if($calRows[$curHour][$j]['id'] == $c['id']) {
+							if($j==0 || $calRows[$curHour][$j-1]['id'] != $c['id']) {
+								$calRows[$curHour][$j]['span'] = $blockNumber-$j+1;
+								$calRows[$curHour][$j]['end_time'] = $c['end_time'];
+								$calRows[$curHour][$j]['hend'] = date('H:i', $c['end_time']);
+							} else {
+								$calRows[$curHour][$j]['text'] = '';
+							}
 						}
+						
 					}
-					
 				}
 
 			

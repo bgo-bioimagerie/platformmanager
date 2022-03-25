@@ -218,15 +218,17 @@ class CoreUser extends Model {
                 continue;
             }
 
-            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
             if($remove) {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_UNJOIN,
                     "space" => ["id" => $r['space']],
                     "user" => ["id" => intval($r['id'])],
                 ]); 
             } else {
+                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
                     "space" => ["id" =>  $r['space']],
@@ -234,8 +236,6 @@ class CoreUser extends Model {
                     "role" => 0
                 ]); 
             }
-            $this->runRequest($sql, array($r['id'], $r['space']));
-            
 
             if($expireContract || $remove) {
                 Configuration::getLogger()->debug('[user][disable] disable bk_authorization', ['user' => $r]);
@@ -315,7 +315,7 @@ class CoreUser extends Model {
             $tmp = $req->fetch();
             return $tmp[0];
         }
-        return 0;
+        return null;
     }
 
     /**

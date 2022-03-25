@@ -274,9 +274,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation/entreprise";
+            return "Organisation / entreprise";
         }
-        return "Organization/Company";
+        return "Organization / Company";
     }
 
     public static function Responsible($lang) {
@@ -2145,6 +2145,34 @@ class CoreTranslator {
             return "optionnel";
         }
         return "optional";
+    }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";
+    }
+
+    public static function Disable_Inactivate($lang) {
+        if($lang=="fr") {
+            return "Rendre inactif";
+        }
+        return "Inactivate";
+    }
+
+    public static function Disable_Remove($lang) {
+        if($lang=="fr") {
+            return "Retirer de l'espace";
+        }
+        return "Remove from space";
+    }
+
+    public static function Disable_user_account_on($lang) {
+        if($lang=="fr") {
+            return "Lors de l'expiration";
+        }
+        return "On account expiration";
     }
     
 }

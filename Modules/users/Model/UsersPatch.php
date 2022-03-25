@@ -229,7 +229,6 @@ class UsersPatch extends Model {
                 return $tmp[0];
             }
             Configuration::getLogger()->debug('[users][patch] getResponsibleNewClientId: no id', ['responsible' => $resp_fullname, 'space' => $id_space]);
-            // echo "Warning getResponsibleNewClientId: no id for " . $resp_fullname . " and space " . $id_space . "<br/>";
             return 0;
         }
         return 0;
@@ -283,7 +282,9 @@ class UsersPatch extends Model {
         Configuration::getLogger()->info('[user][patch] changeRespIdsToClientIdsInBookingAndServices done');
     }
 
-    // @deprecated - can't work anyway
+    /**
+     * @deprecated - can't work anyway
+     */
     protected function copyEcUsersToUsers() {
         Configuration::getLogger()->info('[user][patch] copy ecusers to users');
         $modelUserInfo = new UsersInfo();

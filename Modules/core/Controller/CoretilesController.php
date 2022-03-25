@@ -9,6 +9,8 @@ require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
@@ -208,6 +210,14 @@ class CoretilesController extends CorecookiesecureController {
             $title = $modelSubMenu->getName($id);
         }
 
+        // filter out items with no space
+        $filteredItems = array();
+        for ($i=0; $i<count($items); $i++) {
+            if ($items[$i]) {
+                array_push($filteredItems, $items[$i]);
+            }
+        }
+
         $starModel = new CoreStar();
         $starList = [];
         if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
@@ -224,7 +234,7 @@ class CoretilesController extends CorecookiesecureController {
             'submenu' => $id,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
-            'items' => $items,
+            'items' => $filteredItems,
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
             'userSpaces' => $userSpaces['userSpaceIds'],
@@ -320,10 +330,11 @@ class CoretilesController extends CorecookiesecureController {
             // remove user from space members
             $modelSpaceUser->delete($id_space, $id_user);
         } else {
+            $cum = new CoreUser();
+            $login_user = $cum->getUserLogin($id_user);
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
             $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
-
             if (!$isPending) {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
@@ -356,12 +367,18 @@ class CoretilesController extends CorecookiesecureController {
                     if (intval($pendingObject["validated"]) === 1 && intval($pendingObject["validated_by"]) === 0) {
                         // user has unjoin or has been rejected by space admin
                         $modelSpacePending->updateWhenRejoin($id_user, $id_space);
+                        $m = new CoreHistory();
+                        $m->add($id_space, $login_user, 'User join request');
                     } else {
                         $modelSpacePending->invalidate($pendingId, NULL);
+                        $m = new CoreHistory();
+                        $m->add($id_space, $login_user, 'User cancelled join request');
                     }
                 } else {
                     // This user is not associated to this space in database
                     $modelSpacePending->add($id_user, $id_space);
+                    $m = new CoreHistory();
+                    $m->add($id_space, $login_user, 'User join request');
                 }
 
                 $modelUser = new CoreUser();

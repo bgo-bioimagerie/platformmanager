@@ -13,6 +13,7 @@
                 columnDefs: [
                     {targets: 'no-sort', orderable: false, searchable: false}
                 ],
+                lengthMenu: [[10,  50, 100, -1], [10, 50, 100, 'All']],
                 order: [[ defaultCol, "desc"]]
             });
         });
