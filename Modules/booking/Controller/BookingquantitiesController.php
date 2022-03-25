@@ -32,6 +32,7 @@ class BookingquantitiesController extends BookingsupsabstractController {
     public function indexAction($id_space) {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+        $this->formUrl = "bookingquantities";
         $form = $this->getSupForm($id_space, BookingTranslator::Quantities($lang));
         
         if ($form->check()) {
