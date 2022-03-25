@@ -209,6 +209,14 @@ class CoretilesController extends CorecookiesecureController {
             $title = $modelSubMenu->getName($id);
         }
 
+        // filter out items with no space
+        $filteredItems = array();
+        for ($i=0; $i<count($items); $i++) {
+            if ($items[$i]) {
+                array_push($filteredItems, $items[$i]);
+            }
+        }
+
         $starModel = new CoreStar();
         $starList = [];
         if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
@@ -225,7 +233,7 @@ class CoretilesController extends CorecookiesecureController {
             'submenu' => $id,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
-            'items' => $items,
+            'items' => $filteredItems,
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
             'userSpaces' => $userSpaces['userSpaceIds'],

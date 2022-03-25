@@ -212,7 +212,6 @@ class BookingInvoice extends InvoiceModel {
                     }
                     $slots = $modelCal->computeDuration($id_space, $reservation);
                     $resaDayNightWe = $slots['hours'];
-                    // $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     Configuration::getLogger()->debug('[invoice][booking] night and week ends', ['resource' => $res['id'], 'count' => $resaDayNightWe]);
 
                     if ($isInvoicingUnit) {

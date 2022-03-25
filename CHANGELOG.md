@@ -6,6 +6,7 @@
 * [booking_quantities] allow to delete quantities duplicates or refering to a deleted resource
 * [packages] can't add a resource to a package in which it is already included 
 * [packages] can delete packages elements individually
+* [core] fix tile display error if no space
 * [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
@@ -18,6 +19,8 @@
 * [core] in core user edit, show user spaces and pending spaces #607
 * [statistics] generate stats in background (async) and save generated files for later download #551
 * [booking] manage shared area calendar option to conflict resources on same calendar #578
+* [core] space settings, add option to either remove user from space or set as inactive on expiration
+* [helpdesk] skip emails if helpdesk not activated, else only skip auto-replies
 
 ## 2.4.1
 

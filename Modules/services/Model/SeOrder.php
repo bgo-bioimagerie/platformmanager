@@ -200,6 +200,9 @@ class SeOrder extends Model {
     }
 
     // @bug refers to ec_j_user_responsible
+    /**
+     * @deprecated
+     */
     public function openedForResp($id_space, $id_resp){
         $sql = "select * from se_order where deleted=0 AND id_status=1 AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0)";
         $req = $this->runRequest($sql, array($id_resp, $id_space));
