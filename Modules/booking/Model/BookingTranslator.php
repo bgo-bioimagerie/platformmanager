@@ -196,7 +196,7 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Bloquer ressources";
         }
-        return "Block resouces";
+        return "Block resources";
     }
 
     public static function Edit_color_code($lang) {
