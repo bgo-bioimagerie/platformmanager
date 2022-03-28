@@ -52,7 +52,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
                 $supIsInvoicingUnit[] = $sup["is_invoicing_unit"] ? intval($sup["is_invoicing_unit"]) : 0;
             }
             if ($this->hasDuration) {
-                $supsDuration[] = $sup["duration"];
+                $supsDuration[] = $sup["duration"] ?? 0;
             }
         }
 
@@ -94,6 +94,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
 
         // format into arrays
         $supIsInvoicingUnit = is_array($supIsInvoicingUnit) ? $supIsInvoicingUnit : [$supIsInvoicingUnit];
+        $supDuration = is_array($supDuration) ? $supDuration : [$supDuration];
         $supID = is_array($supID) ? $supID : [$supID];
         $supResources = is_array($supResources) ? $supResources : [$supResources];
 
@@ -129,7 +130,8 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
                     $supacks[$supName[$i]] = $vid;
                 }
             }
-            $this->modelSups->setSupplementary($id_space, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i], $supIsInvoicingUnit[$i], $supDuration[$i]);
+
+            $this->modelSups->setSupplementary($id_space, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i] ?? 0, $supIsInvoicingUnit[$i] ?? 0, $supDuration[$i] ?? 0);
             array_push($id_sups, $this->modelSups->getBySupID($id_space, $supID[$i], $supResources[$i])['id']);
         }
         
@@ -154,7 +156,6 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         foreach ($supResources as $index => $resource) {
             if ($supIsInvoicingUnit[$index] == 1) {
                 if (in_array($resource, $invoicingUnitsResources)) {
-                    Configuration::getLogger()->debug("[TEST]", ["duplicate!!!"]);
                     $_SESSION["flash"] = BookingTranslator::maxInvoicingUnits($lang);
                     $_SESSION["flashClass"] = "danger";
                     $result = true;
