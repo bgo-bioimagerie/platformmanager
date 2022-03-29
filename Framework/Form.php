@@ -51,7 +51,6 @@ class Form {
     private $deleteID;
 
     /** form display (in bootstrap column number) */
-    //private $totalWidth;
     private $labelWidth;
     private $inputWidth;
     private $buttonsWidth;
@@ -59,7 +58,6 @@ class Form {
 
     /** for download feild */
     private $useUpload;
-    private $isDate;
     private $isTextArea;
     private $formAdd;
     private $isFormAdd;
@@ -94,17 +92,6 @@ class Form {
         }
 
         $this->useUpload = false;
-        $this->isDate = false;
-    }
-
-    /**
-     * 
-     * @param type $buttonsWidth Number of bootstrap columns for the buttons
-     * @param type $buttonsOffset Number of offset bootstrap columns
-     */
-    public function setButtonsWidth($buttonsWidth, $buttonsOffset) {
-        //$this->buttonsWidth = $buttonsWidth;
-        //$this->buttonsOffset = $buttonsOffset;
     }
 
     /**
@@ -376,7 +363,6 @@ class Form {
      * @param type $value default value
      */
     public function addDate($name, $label, $isMandatory = false, $value = "") {
-        $this->isDate = true;
         $this->types[] = "date";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -393,7 +379,6 @@ class Form {
     }
 
     public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
-        $this->isDate = true;
         $this->types[] = "datetime";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -410,7 +395,6 @@ class Form {
     }
 
     public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
-        $this->isDate = true;
         $this->types[] = "hour";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -696,70 +680,74 @@ class Form {
             if ($this->isMandatory[$i]) {
                 $required = "required";
             }
-            $validated = "";
+            $is_validated = "";
             if ($this->validated[$i] === false) {
-                $validated = "alert alert-danger";
+                $is_validated = "alert alert-danger";
             }
-            if ($this->types[$i] == "separator") {
-                $html .= $formHtml->separator($this->names[$i], 3);
-            }
-            if ($this->types[$i] == "separator2") {
-                $html .= $formHtml->separator($this->names[$i], 5);
-            }
-            if ($this->types[$i] == "comment") {
-                $html .= $formHtml->comment($this->names[$i], $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "hidden") {
-                $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
-            }
-            if ($this->types[$i] == "text") {
-                $html .= $formHtml->text($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicityElem);
-            }
-            if ($this->types[$i] == "password") {
-                $html .= $formHtml->password($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "date") {
-                $html .= $formHtml->date($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $required, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "datetime") {
-                $html .= $formHtml->datetime($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "hour") {
-                $html .= $formHtml->hour($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $lang, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "color") {
-                $html .= $formHtml->color($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "email") {
-                $html .= $formHtml->email($validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicityElem);
-            }
-            if ($this->types[$i] == "number") {
-                $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "float") {
-                $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, true);
-            }
-            if ($this->types[$i] == "textarea") {
-                $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "upload") {
-                $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "downloadbutton") {
-                $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "select") {
-                $sub = "";
-                if ($this->submitOnChange[$i]) {
-                    $sub = $this->id;
-                }
-                $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth, $sub);
-            }
-            if ($this->types[$i] == "formAdd") {
-                $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);
-            }
-            if ($this->types[$i] == "choicesList") {
-                $html .= $formHtml->choicesList($this->labels[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+            switch ($this->types[$i]) {
+                case 'separator':
+                    $html .= $formHtml->separator($this->names[$i], 3);
+                    break;
+                case 'separator2':
+                    $html .= $formHtml->separator($this->names[$i], 5);
+                    break;
+                case 'comment';
+                    $html .= $formHtml->comment($this->names[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'hidden':
+                    $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
+                    break;
+                case 'text':
+                    $html .= $formHtml->text($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth, $readonlyElem, $checkUnicityElem);
+                    break;
+                case 'password':
+                    $html .= $formHtml->password($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->enabled[$i], $required, $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'date':
+                    $html .= $formHtml->date($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'datetime':
+                    $html .= $formHtml->datetime($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'hour':
+                    $html .= $formHtml->hour($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'color':
+                    $html .= $formHtml->color($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'email':
+                    $html .= $formHtml->email($is_validated, $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, $checkUnicityElem);
+                    break;
+                case 'number':
+                    $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'float':
+                    $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, true);
+                    break;
+                case 'textarea':
+                    $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'upload':
+                    $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'downloadbutton':
+                    $html .= $formHtml->downloadbutton($this->id, $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'select':
+                    $sub = "";
+                    if ($this->submitOnChange[$i]) {
+                        $sub = $this->id;
+                    }
+                    $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth, $sub);
+                    break;
+                case 'formAdd':
+                    $html .= $this->formAdd->getHtml($this->labels[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                case 'choicesList':
+                    $html .= $formHtml->choicesList($this->labels[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                    break;
+                default:
+                    break;
             }
         }
 

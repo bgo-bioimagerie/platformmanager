@@ -174,14 +174,12 @@ class FormAdd {
 
     /**
      * 
-     * @param type $lang Interface language
      * @param type $label Form label
      * @param type $labelWidth Bootstrap columns number for the label
      * @param type $inputWidth Bootstrap columns number for the fields
      * @return string The formAdd HTML code
      */
-    public function getHtml($lang = "en", $label = "", $labelWidth = 2, $inputWidth = 9) {
-        //print_r($this->types);
+    public function getHtml($label = "", $labelWidth = 2, $inputWidth = 9) {
         $html = "";
         if ($label != "") {
             $html = "<div class=\"form-group row mb-3\">";
@@ -225,7 +223,7 @@ class FormAdd {
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
-                        $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
+                        $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true);
                     } else if ($this->types[$j] == "number") {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "float") {
@@ -253,7 +251,7 @@ class FormAdd {
                 } else if ($this->types[$j] == "text") {
                     $html .= $formHtml->inlineText($this->names[$j], "", false, true);
                 } else if ($this->types[$j] == "textdate") {
-                    $html .= $formHtml->inlineDate($this->names[$j], "", true, $lang);
+                    $html .= $formHtml->inlineDate($this->names[$j], "", true);
                 } else if ($this->types[$j] == "number") {
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true);
                 } else if ($this->types[$j] == "float") {
