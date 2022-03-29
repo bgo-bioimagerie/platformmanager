@@ -307,7 +307,11 @@ class TableView {
                         $html .= "<button onclick=\"editentry('".$this->editURL . "_" . $idxVal."')\" id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-sm btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
-                         $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-sm btn-primary\">Edit</button><span> </span>";   
+                        $edit_url = $this->editURL . "/" . $idxVal;
+                        if($this->editIndex != "" && str_contains($this->editURL, '{{'.$this->editIndex.'}}')) {
+                            $edit_url = str_replace('{{'.$this->editIndex.'}}', $idxVal, $this->editURL);
+                        }
+                        $html .= "<button type='button' onclick=\"location.href='" . $edit_url . "'\" class=\"btn btn-sm btn-primary\">Edit</button><span> </span>";
                     }  
                     $html .= "</td>";
                 }
