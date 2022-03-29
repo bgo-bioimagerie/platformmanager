@@ -12,7 +12,6 @@ class CoreUpgradeDB1642773819 extends Model {
     $this->runRequest($sql);
     $sql = "ALTER TABLE dc_documents ADD COLUMN id_ref INT NOT NULL DEFAULT 0";
     $this->runRequest($sql);
-    Configuration::getLogger()->info("[db][upgrade] Apply documents_visibility, done!");
 
     $modelCoreConfig = new CoreConfig();
     $cp = new CoreSpace();
@@ -24,6 +23,7 @@ class CoreUpgradeDB1642773819 extends Model {
         $modelCoreConfig->setParam('documentsEdit', CoreSpace::$MANAGER, $id_space);
       }
     }
+    Configuration::getLogger()->info("[db][upgrade] Apply documents_visibility, done!");
   }
 }
 $db = new CoreUpgradeDB1642773819();
