@@ -472,7 +472,7 @@ class FormSelectElement extends FormInputElement {
         $this->options = $options;
     }
 
-    function options():string {
+    function getOptions():string {
         $html = '';
         foreach ($this->options as $key => $value) {
             $selected = '';
@@ -500,7 +500,7 @@ class FormSelectElement extends FormInputElement {
                     value="{$this->value}"
                     {$this->htmlContraints()}
                 >
-                {$this->options()}
+                {$this->getOptions()}
                 </select>
             </div>
             {$this->about()}
@@ -526,7 +526,7 @@ class FormChoicesElement extends FormInputElement {
         $this->options = $options;
     }
 
-    function options():string {
+    function getOptions():string {
         $html = '';
         foreach ($this->options as $key => $value) {
             $selected = '';
@@ -546,7 +546,7 @@ class FormChoicesElement extends FormInputElement {
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
             <div class="col-12 {$this->getInputSize()}">
-                {$this->options()}
+                {$this->getOptions()}
             </div>
             {$this->about()}
             {$this->error()}
@@ -619,6 +619,53 @@ class FormSeparatorElement extends FormElement {
         return <<<HTML
         <div class="mb-3 row">
         <div class="col-12"><h{$this->level}>{$this->label}</h{$this->level}></div>
+        </div>
+        HTML;
+    }
+}
+
+class FormTypeaheadElement extends FormInputElement {
+
+    private array $options = [];
+
+    /**
+     * List of options to select ['name' => 'value', ...]
+     */
+    public function setOptions(array $options) {
+        $this->options = $options;
+    }
+
+    private function getOptions(): string {
+        $html = sprintf('<datalist id="%s">', $this->id);
+        foreach ($this->options as $name => $value) {
+            $html .= sprintf('<option x-value=%s value="%s"/>', $value, $name)."\n";
+        }
+        $html .= '</datalist>'."\n";
+        return $html;
+    }
+
+    function toHtml(): string {
+        return <<<HTML
+        <div id="form_blk_{$this->name}" class="mb-3 row">
+            {$this->htmlLabel()}
+            <div class="col-12 {$this->getInputSize()}">
+                <input
+                    id="{$this->id}"
+                    class="form-control"
+                    type="hidden"
+                    name="{$this->name}"
+                    value="{$this->value}"
+                />
+                {$this->getOptions()}
+                <input
+                id="{$this->id}_ahead"
+                class="form-control"
+                type="{$this->type}"
+                value="{$this->value}"
+                {$this->htmlContraints()}/>
+            </div>
+            {$this->about()}
+            {$this->error()}
         </div>
         HTML;
     }
