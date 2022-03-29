@@ -3,6 +3,7 @@
 ## 2.6.0
 
 * [booking] in booking invoice details, show related bookings
+* [core] remove lasting references to ec classes
 
 ## 2.5.0
 
