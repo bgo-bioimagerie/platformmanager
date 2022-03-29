@@ -27,7 +27,7 @@ class ComtileController extends ComController {
         $form->addTextArea("message", "" , false, $message, true);
         $form->setColumnsWidth(0, 12);
         $form->setValidationButton(CoreTranslator::Ok($lang), "comtileedit/".$id_space);
-        $form->setButtonsWidth(1, 11);
+
         
         if($form->check()){
             $modelParam->setParam("tilemessage", $this->request->getParameter("message", false), $id_space);

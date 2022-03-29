@@ -235,7 +235,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formAdd->addText("comment", ServicesTranslator::Comment($lang), $itemComments);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceprojectform");
-        $form->setButtonsWidth(2, 9);
+
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
@@ -249,7 +249,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $total = (1-floatval($discount)/100)*$total;
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
-        $form->setButtonsWidth(4, 8);
+
         return $form;
     }
 
@@ -265,7 +265,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;
@@ -283,7 +283,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;

@@ -147,7 +147,7 @@ class QuotelistController extends QuoteController {
         }
 
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
         if ($form->check()) {
@@ -300,7 +300,7 @@ class QuotelistController extends QuoteController {
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
             $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));

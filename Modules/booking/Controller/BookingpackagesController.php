@@ -60,7 +60,7 @@ class BookingpackagesController extends BookingsettingsController {
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingpackages/".$id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         if ($form->check()) {
             $packageID = $this->request->getParameterNoException("id_package");

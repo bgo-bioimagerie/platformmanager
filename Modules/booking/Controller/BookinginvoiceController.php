@@ -226,11 +226,11 @@ class BookinginvoiceController extends InvoiceAbstractController {
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->addExternalButton(InvoicesTranslator::GeneratePdfDetails($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/2", "danger", true);
-        $form->setButtonsWidth(4, 8);
+
         $form->setFormAdd($formAdd);
 
         $discount = $modelInvoice->getDiscount($id_space ,$id_invoice);
@@ -283,7 +283,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
 
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;
@@ -301,7 +301,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;

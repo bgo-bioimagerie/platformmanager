@@ -186,7 +186,7 @@ class ServicesordersController extends ServicesController {
         $form->setFormAdd($formAdd);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesorderedit/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $id_order = $this->validateEditQuery($id_space, $id, $this->request);

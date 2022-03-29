@@ -56,7 +56,7 @@ class ClientsusersController extends ClientsController {
         $form->setTitle(ClientsTranslator::UsersForAccount($lang) . ": " . $clientName);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"]);
         $form->setValidationButton(CoreTranslator::Add($lang), "clclientusers/" . $id_space . "/" . $id_client);
-        $form->setButtonsWidth(4, 8);
+
         
         if ($form->check()) {
 

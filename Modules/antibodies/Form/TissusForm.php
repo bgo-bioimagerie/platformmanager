@@ -60,7 +60,6 @@ class TissusForm extends FormGenerator{
         $this->form->addUpload("image_url", AntibodiesTranslator::Image($this->lang));
         
         $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl); 
-        $this->form->setButtonsWidth(2, 10);
     }
    
     

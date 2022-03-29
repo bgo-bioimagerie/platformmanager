@@ -114,7 +114,7 @@ class BookingschedulingController extends BookingsettingsController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setColumnsWidth(3, 9);
-        $form->setButtonsWidth(3, 9);
+
 
         if ($form->check()) {
             $id_bkScheduling = $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],

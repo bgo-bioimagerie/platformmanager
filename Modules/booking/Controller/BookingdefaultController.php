@@ -879,8 +879,6 @@ class BookingdefaultController extends BookingabstractController {
             $formDelete->addHidden("sendmail", 0);
         }
         $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space . "/" . $resaInfo["id"]);
-        $formDelete->setButtonsWidth(2, 10);
-
 
         $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         // periodicity information
@@ -898,7 +896,6 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod = new Form($this->request, "bookingeditreservationdefaultdeleteform");
         $formDeletePeriod->addComment(BookingTranslator::RemoveReservationPeriodic($lang));
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
-        $formDeletePeriod->setButtonsWidth(2, 10);
 
         $details = ['steps' => []];
         if($resaInfo["id"] > 0) {

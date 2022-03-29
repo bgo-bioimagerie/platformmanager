@@ -49,7 +49,7 @@ class ServicesstatisticsorderController extends ServicesController {
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, "");
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton("Ok", "servicesstatisticsorder/".$id_space);
 
         $stats = "";

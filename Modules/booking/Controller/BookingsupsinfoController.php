@@ -59,7 +59,7 @@ class BookingsupsinfoController extends BookingsettingsController {
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingsupsinfo/".$id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         if ($form->check()) {
             $supID = $this->request->getParameterNoException("id_sups");

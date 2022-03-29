@@ -56,7 +56,7 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         $form->setTitle(BookingTranslator::Authorisations_statistics($lang));
         $form->addDate("period_begin", BookingTranslator::PeriodBegining($lang), true, $date_begin);
         $form->addDate("period_end", BookingTranslator::PeriodEnd($lang), true, $date_end);
-        $form->setButtonsWidth(3, 9);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatisticauthorizations/" . $id_space);
 
         if ($form->check()) {
