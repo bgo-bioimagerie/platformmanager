@@ -153,7 +153,6 @@ class BookingController extends BookingabstractController {
         }
     }
 
-    // DEPRECATED? => replaced by bookingAction()? 
     public function book($id_space, $message) {
         $lastView = "";
         if (isset($_SESSION["user_settings"]["calendarDefaultView"])) {

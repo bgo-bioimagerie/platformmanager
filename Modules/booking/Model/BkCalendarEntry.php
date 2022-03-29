@@ -11,7 +11,7 @@ require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
- * Class defining the GRR area model
+ * Class defining the booking entries
  *
  * @author Sylvain Prigent
  */
@@ -143,7 +143,6 @@ class BkCalendarEntry extends Model {
         foreach($resps as $resp){
             
             $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND id_space=?";
-            //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
 
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
             if(!$respinfo) {
@@ -175,7 +174,6 @@ class BkCalendarEntry extends Model {
         $modelUserClient = new ClClientUser();
         
         foreach ($data as $d) {
-            //$resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
             $resps = $modelUserClient->getUserClientAccounts($d["recipient_id"], $id_space);
 
             if (!empty($resps)) {
@@ -304,16 +302,17 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      * @return string
      */
     public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0, $reason=0) {
@@ -367,17 +366,19 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry if not exists  
-     * @param unknown $id
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $id_space
+     * @param int $id
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      */
     public function setEntryOld($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
 
@@ -481,12 +482,9 @@ class BkCalendarEntry extends Model {
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
-        //$modelUser = new CoreUser();
-        //$modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                //$userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
@@ -534,7 +532,6 @@ class BkCalendarEntry extends Model {
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                //$userInfo = $modelUser->userAllInfo($rid);
                 $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
@@ -553,24 +550,15 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get entries for a given period and a given area
-     * @param unknown $dateBegin
-     * @param unknown $dateEnd
-     * @param unknown $areaId
+     * @param int $dateBegin
+     * @param int $dateEnd
+     * @param int $areaId
      * @return multitype:
      */
     public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId, $id_user='') {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($id_space, $areaId);
-
-        /*
-        $data = array();
-        foreach ($resources as $resource) {
-            $id = $resource["id"];
-            $dataInter = $this->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $id);
-            $data = array_merge($data, $dataInter);
-        }
-        */
 
         $rids = [];
         foreach($resources as $r) {
@@ -782,7 +770,6 @@ class BkCalendarEntry extends Model {
             $req = $this->runRequest($sql, array($rec['recipient_id']));
             $resp_id_req = $req->fetch();
             $resp_id_req = $resp_id_req[0];
-            //echo "resp_id_req = " . $resp_id_req . "<br />";
             if ($resp_id_req == $unit_id) {
                 return true;
             }
@@ -828,7 +815,8 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get the emails address of the users who booked a resource and still have a role in space
-     * @param unknown $resource_id
+     * @param int $resource_id
+     * @param int $ts  select reservations after timestamp
      * @return multitype:
      */
     public function getEmailsBookerResource($id_space, $resource_id, $ts=0) {
@@ -851,7 +839,7 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get the emails address of the users who booked resorces of a given area
-     * @param unknown $area_id
+     * @param int $area_id
      * @return multitype:
      */
     public function getEmailsBookerArea($id_space, $area_id) {

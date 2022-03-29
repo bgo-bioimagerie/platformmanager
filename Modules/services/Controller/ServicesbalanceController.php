@@ -208,7 +208,6 @@ class ServicesbalanceController extends ServicesController {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);

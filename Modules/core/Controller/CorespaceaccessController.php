@@ -153,7 +153,8 @@ class CorespaceaccessController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $u = new CoreUser();
-        $users = $u->disableUsers($space['user_desactivate'], true, $id_space, false);
+        $remove = ($space['on_user_desactivate'] == CoreConfig::$ONEXPIRE_REMOVE);
+        $users = $u->disableUsers($space['user_desactivate'], $remove, $id_space, false);
         $this->redirect("/corespaceaccess/$id_space/user/expire", [], ['users' => $users]);    
     }
 

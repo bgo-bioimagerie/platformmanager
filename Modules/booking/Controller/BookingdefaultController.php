@@ -705,7 +705,6 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        // $form->addHidden("id", $resaInfo["id"]);
         $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
