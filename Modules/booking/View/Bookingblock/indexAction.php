@@ -106,7 +106,7 @@
         <div class="form-group">
             <label for="color_code_id" class="control-label col-3"><?php echo BookingTranslator::Color_code($lang) ?></label>
             <div class="col-8 mb-3">
-                <select class="form-select" id="color_code_id" name="color_code_id" <?php echo $readOnlyGlobal ?>>
+                <select class="form-select" id="color_code_id" name="color_code_id">
                     <?php
                     $colorID = 1;
                     foreach ($colorCodes as $colorCode) {

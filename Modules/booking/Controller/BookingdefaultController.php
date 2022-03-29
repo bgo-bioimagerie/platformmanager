@@ -905,7 +905,7 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setButtonsWidth(2, 10);
 
         $details = ['steps' => []];
-        if($resaInfo["id"] > 0) {
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
             $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
         }
 
