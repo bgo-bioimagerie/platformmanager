@@ -1,19 +1,32 @@
 <?php
-
+/**
+ * Examples
+ * 
+ * <?php
+*  require_once 'Framework/FormElements.php';
+*
+*  $e = new FormTypeaheadElement('test', 'test', '', 'some test');
+*  $e->setOptions(['1' => 'opt1', '2' => 'opt2', '3' => "other"]);
+*  echo $e->toHtml();
+*  $b = new FormInputElement('test2', 'test2', '222', 'test other');
+*  echo $b->toHtml();
+*  ?>
+ */
 abstract class FormElement {
 
     protected string $type = 'text';
-    private ?string $id = '';
-    private ?string $name = '';
-    private ?string $label = '';
-    private ?string $placeholder = '';
-    private $value = '';
-    private bool $mandatory = false;
-    private bool $disabled = false;
-    private string $aboutText = '';
+    protected ?string $id = '';
+    protected ?string $name = '';
+    protected ?string $label = '';
+    protected ?string $placeholder = '';
+    protected $value = '';
+    protected bool $mandatory = false;
+    protected bool $disabled = false;
+    protected string $aboutText = '';
+    protected string $errorText = '';
 
-    private string $labelSize = ''; // bootstrap col size
-    private string $inputSize = ''; // bootstrap col size
+    protected string $labelSize = 'col-md-2'; // bootstrap col size
+    protected string $inputSize = 'col-md-10'; // bootstrap col size
 
     function __construct(string $type) {
             $this->type = $type;
@@ -80,15 +93,15 @@ abstract class FormElement {
     }
 
     public  function setError(string $error) {
-        $this->error = $error;
+        $this->errorText = $error;
     }
 
     public  function clearError() {
-        $this->error = '';
+        $this->errorText = '';
     }
 
     public  function getError():string {
-        return $this->error;
+        return $this->errorText;
     }
 
     public function setColSize(string $labelSize, string $inputSize) {
@@ -140,9 +153,11 @@ abstract class FormElement {
         if ($this->isMandatory()) {
             $reqTxt = ' *';
         }
+        Configuration::getLogger()->error('???????,',['l' => $this->label]);
         return <<<HTML
         <label class="{$this->getLabelSize()} col-form-label">{$this->label}{$reqTxt}</label>
         HTML;
+
     }
 
     public abstract function toHtml(): string;
@@ -178,13 +193,6 @@ class FormDateElement extends FormInputElement {
     }
 }
 
-class FormFloatElement extends FormIntegerElement {
-    public function setStep(string $step) {
-        $this->step = $step;
-    }
-}
-
-
 class FormIntegerElement extends FormInputElement {
 
     private $min = -1;
@@ -216,6 +224,13 @@ class FormIntegerElement extends FormInputElement {
         }
         $html .= sprintf(' step="%s" ', $this->step);
         return $html;
+    }
+}
+
+
+class FormFloatElement extends FormIntegerElement {
+    public function setStep(string $step) {
+        $this->step = $step;
     }
 }
 
@@ -629,18 +644,31 @@ class FormTypeaheadElement extends FormInputElement {
     private array $options = [];
 
     /**
-     * List of options to select ['name' => 'value', ...]
+     * List of options to select ['id' => 'name', ...]
      */
     public function setOptions(array $options) {
         $this->options = $options;
     }
 
     private function getOptions(): string {
-        $html = sprintf('<datalist id="%s">', $this->id);
-        foreach ($this->options as $name => $value) {
-            $html .= sprintf('<option x-value=%s value="%s"/>', $value, $name)."\n";
+        $html = sprintf('<datalist id="%s_ta_list">', $this->id);
+        foreach ($this->options as $id => $name) {
+            $html .= sprintf('<option value="%s"/>', $name)."\n";
         }
         $html .= '</datalist>'."\n";
+        return $html;
+    }
+
+    private function getHash(): string {
+        $html = 'let '.$this->id.' = ';
+        $elts = [];
+        foreach ($this->options as $id => $name) {
+            $elts[$name] = $id;
+            if(!$id){
+                $elts[$name] = $name;
+            }
+        }
+        $html .= json_encode($elts).";\n";
         return $html;
     }
 
@@ -658,14 +686,25 @@ class FormTypeaheadElement extends FormInputElement {
                 />
                 {$this->getOptions()}
                 <input
-                id="{$this->id}_ahead"
+                id="{$this->id}_ta_elt"
                 class="form-control"
                 type="{$this->type}"
                 value="{$this->value}"
+                list="{$this->id}_ta_list"
+                onchange="ta_{$this->id}()"
                 {$this->htmlContraints()}/>
             </div>
             {$this->about()}
             {$this->error()}
+            <script>
+                {$this->getHash()}
+                function ta_{$this->id}() {
+                    let elt_select = document.getElementById('{$this->id}_ta_elt');
+                    let value = elt_select.value;
+                    let elt = document.getElementById('{$this->id}');
+                    elt.value = {$this->id}[value]
+                }
+            </script>
         </div>
         HTML;
     }
