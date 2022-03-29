@@ -20,10 +20,10 @@ class UsersInstall extends Model {
         $model1->createTable();
         
         if (!file_exists('data/users/')) {
-            mkdir('data/users/', 0777, true);
+            mkdir('data/users/', 0755, true);
         }
         if (!file_exists('data/users/avatar/')) {
-            mkdir('data/users/avatar/', 0777, true);
+            mkdir('data/users/avatar/', 0755, true);
         }
         
     }

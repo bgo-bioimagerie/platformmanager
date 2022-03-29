@@ -196,7 +196,7 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Bloquer ressources";
         }
-        return "Block resouces";
+        return "Block resources";
     }
 
     public static function Edit_color_code($lang) {
@@ -1718,7 +1718,7 @@ class BookingTranslator {
                     $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";
                     break;
                     case "access":
-                        $result = ($lang === "fr") ? "Gérer les accès à une ressource" : "Manage a resource access";
+                        $result = ($lang === "fr") ? "Gérer les accès aux ressources" : "Manage resources access";
                         break;
                 case "booking":
                     $result .= ($lang === "fr") ? "une première réservation" : "a first reservation";
@@ -1728,11 +1728,50 @@ class BookingTranslator {
             }
         return $result;
     }
+
+    public static function Item_created($item, $lang = "") {
+        $result = "";
+            switch ($item) {
+                case "colorcode":
+                    $result = ($lang === "fr") ? "code couleur" : "color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "profil horaire" : "schedule profile";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "autorisation de réservation" : "booking authorisation";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "accès aux ressources" : "resources access";
+                        break;
+                case "booking":
+                    $result = ($lang === "fr") ? "réservation" : "reservation";
+                    break;
+                default:
+                    break;
+            }
+            $result .= ($lang === "fr") ? " sauvegardé(e)" : " saved";
+        return $result;
+    }
     
     public static function Closed($lang = "") {
         if($lang == "fr") {
             return "Fermé";
         }
         return "Closed";
+    }
+
+    public static function SimpleView($lang="") {
+        if($lang == "fr") {
+            return "Résumé";
+        }
+        return "Summary";
+    }
+
+    public static function DetailedView($lang="") {
+        if($lang == "fr") {
+            return "Détails";
+        }
+        return "Detailed";
     }
 }

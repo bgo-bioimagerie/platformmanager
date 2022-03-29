@@ -29,7 +29,7 @@ class InvoicesInstall extends Model {
         $modelVisa->createTable();
 
         if (!file_exists('data/invoices/')) {
-            mkdir('data/invoices/', 0777, true);
+            mkdir('data/invoices/', 0755, true);
         }
     }
 

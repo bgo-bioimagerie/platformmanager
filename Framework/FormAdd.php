@@ -184,12 +184,12 @@ class FormAdd {
         //print_r($this->types);
         $html = "";
         if ($label != "") {
-            $html = "<div class=\"form-group\">";
-            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
+            $html = "<div class=\"form-group row mb-3\">";
+            $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "	<div class=\"col-12 col-md-" . $inputWidth . " table-responsive\" >";
         } else {
-            $html .= "<div class=\"form-group\">";
-            $html .= "	<div class=\"col-xs-12\">";
+            $html .= "<div class=\"form-group row mb-3\">";
+            $html .= "	<div class=\"col-12 table-responsive\">";
         }
 
         $tableID = $this->id . "table";
@@ -203,7 +203,7 @@ class FormAdd {
             if ($this->types[$l] == "hidden") {
                 $html .= "<th style=\"width:0em;\"> </th>";
             } else {
-                $html .= "<th style=\"min-width:10em;\">" . $this->labels[$l] . "</th>";
+                $html .= "<th>" . $this->labels[$l] . "</th>";
             }
         }
 
@@ -272,9 +272,9 @@ class FormAdd {
         $html .= "</table>";
         
         if($this->buttonsVisible){
-            $html .= "<div class=\"col-md-6\">";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
+            $html .= "<div class=\"col-6\">";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"m-1 btn btn-sm btn-outline-dark\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"m-1 btn btn-sm btn-outline-dark\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
             $html .= "<br>";
             $html .= "</div>";
         }

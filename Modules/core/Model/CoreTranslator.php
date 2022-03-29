@@ -274,9 +274,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation/entreprise";
+            return "Organisation / entreprise";
         }
-        return "Organization/Company";
+        return "Organization / Company";
     }
 
     public static function Responsible($lang) {
@@ -1242,25 +1242,11 @@ class CoreTranslator {
         return "Connection page data";
     }
 
-    public static function Carousel($lang) {
-        if ($lang == "fr") {
-            return "Carousel";
-        }
-        return "Carousel";
-    }
-
     public static function Image_Url($lang) {
         if ($lang == "fr") {
             return "Image url";
         }
         return "Image url";
-    }
-
-    public static function ViewCarousel($lang) {
-        if ($lang == "fr") {
-            return "Afficher le carousel";
-        }
-        return "View carousel";
     }
 
     public static function TheTwoPasswordAreDifferent($lang) {
@@ -1820,6 +1806,13 @@ class CoreTranslator {
         return "Add existing account";
     }
 
+    public static function UserAccountAdded($userLogin, $lang) {
+        if ($lang == "fr") {
+            return "le compte " . $userLogin . " à été ajouté à votre espace";
+        }
+        return "User account " . $userLogin . " has been added to your space";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -2136,6 +2129,34 @@ class CoreTranslator {
             return "optionnel";
         }
         return "optional";
+    }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";
+    }
+
+    public static function Disable_Inactivate($lang) {
+        if($lang=="fr") {
+            return "Rendre inactif";
+        }
+        return "Inactivate";
+    }
+
+    public static function Disable_Remove($lang) {
+        if($lang=="fr") {
+            return "Retirer de l'espace";
+        }
+        return "Remove from space";
+    }
+
+    public static function Disable_user_account_on($lang) {
+        if($lang=="fr") {
+            return "Lors de l'expiration";
+        }
+        return "On account expiration";
     }
     
 }

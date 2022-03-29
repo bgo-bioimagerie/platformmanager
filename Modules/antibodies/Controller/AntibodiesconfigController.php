@@ -42,7 +42,7 @@ class AntibodiesconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'antibodies', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'antibodies', 'user');
+            $this->menusactivation($id_space, 'antibodies', 'person');
             return $this->redirect("antibodiesconfig/".$id_space);
         }
 

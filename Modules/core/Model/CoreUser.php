@@ -218,15 +218,17 @@ class CoreUser extends Model {
                 continue;
             }
 
-            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
             if($remove) {
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_UNJOIN,
                     "space" => ["id" => $r['space']],
                     "user" => ["id" => intval($r['id'])],
                 ]); 
             } else {
+                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
                     "space" => ["id" =>  $r['space']],
@@ -234,8 +236,6 @@ class CoreUser extends Model {
                     "role" => 0
                 ]); 
             }
-            $this->runRequest($sql, array($r['id'], $r['space']));
-            
 
             if($expireContract || $remove) {
                 Configuration::getLogger()->debug('[user][disable] disable bk_authorization', ['user' => $r]);
@@ -315,7 +315,7 @@ class CoreUser extends Model {
             $tmp = $req->fetch();
             return $tmp[0];
         }
-        return 0;
+        return null;
     }
 
     /**
@@ -887,8 +887,6 @@ class CoreUser extends Model {
 
         // search for LDAP account
         else {
-            //echo "into LDap <br/>";
-            $modelCoreConfig = new CoreConfig();
             if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
@@ -897,18 +895,11 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
-                    //print_r($userInfo);
-
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
+                    if(!$userInfo['apikey']) {
+                        $this->user->newApiKey($userInfo['idUser']);
                     }
-
                     return $this->user->isActive($login);
                 }
             }

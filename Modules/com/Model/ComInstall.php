@@ -21,7 +21,7 @@ class ComInstall extends Model {
         $model1->createTable();
         
         if (!file_exists('data/com/')) {
-            mkdir('data/com/', 0777, true);
+            mkdir('data/com/', 0755, true);
         }
     }
 }
