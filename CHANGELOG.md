@@ -1,5 +1,9 @@
 # Changes
 
+## 2.6.0
+
+* [booking] in booking invoice details, show related bookings
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
