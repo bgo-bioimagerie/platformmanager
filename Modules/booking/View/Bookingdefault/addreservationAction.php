@@ -29,7 +29,7 @@
     ?>
 
     <?php if ($use_packages) { ?>
-        <div>
+        <div class="row mb-3">
             <div class="checkbox col-8 offset-4">
                 <label>
                     <input id="use_package" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
@@ -50,19 +50,19 @@
     <!-- Periodicity -->
     <?php if ($usePeriodicBooking) {
         ?>            
-        <div class="form-group">
+        <div class="row mb-3">
             <label class="control-label col-4">
                 <?php echo BookingTranslator::PeriodicityType($lang) ?> 
             </label>
             <div class="col-6">
-                <div class="radio">
-                    <label><input  type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
+                <div class="form-check mb-1">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
                 </div>
-                <div class="radio">
-                    <label><input  type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
+                <div class="form-check mb-1">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
                 </div>
-                <div class="radio">
-                    <label><input  type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
+                <div class="form-check mb-1">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
                     <select class="form-control" name="periodic_week">
                         <option value="1"><?php echo BookingTranslator::EveryWeek($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::Every2Week($lang) ?></option>
@@ -71,28 +71,25 @@
                         <option value="5"><?php echo BookingTranslator::Every5Week($lang) ?></option>
                     </select>
                 </div>
-                <div class="radio">
-                    <label ><input type="radio" name="periodic_radio" value="4"></label>
+                <div class="form-check mb-1">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="4"></label>
                     <select class="form-control" name="periodic_month">
                         <option value="1"><?php echo BookingTranslator::EveryMonthSameDate($lang) ?></option>
                         <option value="2"><?php echo BookingTranslator::EveryMonthSameDay($lang) ?></option>
                     </select>
                 </div>
-                <div class="radio">
-                    <label><input type="radio" name="periodic_radio" value="5"><?php echo BookingTranslator::EveryYearSameDate($lang) ?></label>
+                <div class="form-check mb-1">
+                    <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="5"><?php echo BookingTranslator::EveryYearSameDate($lang) ?></label>
                 </div>
             </div>
         </div>
-        <div class="form-group">
+        <div class="row mb-3">
             <label class="control-label col-4">
                 <?php echo BookingTranslator::DateEndPeriodicity($lang) ?> 
             </label>
             <div class="col-6">
-                <div class='col-12 input-group date'>
+                <div class='input-group date'>
                     <input type='date' class="form-control" id="resa_start" name="periodic_enddate" value="<?php echo $periodInfo['enddate'] ?>"/>          
-                    <span class="input-group-addon">          
-                        <span class="bi-calendar3"></span>          
-                    </span>
                 </div>
 
             </div>

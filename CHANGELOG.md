@@ -3,6 +3,7 @@
 ## 2.5.1
 
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
 
 ## 2.5.0
 
