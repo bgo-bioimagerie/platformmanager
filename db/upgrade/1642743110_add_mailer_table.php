@@ -26,7 +26,7 @@ class CoreUpgradeDB1642743110 extends Model {
 		  }
 		}
 	  }
-
+	  Configuration::getLogger()->info("[db][upgrade] Apply add mailer table, done!");
   }
 }
 $db = new CoreUpgradeDB1642743110();

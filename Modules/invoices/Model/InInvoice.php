@@ -184,7 +184,6 @@ class InInvoice extends Model {
         return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
-    // @bug, should get unique ids, no increment (parallel requests will result in conflicts)
     public function getNextNumber(int $id_space) {
 
         $cv = new CoreVirtual();
@@ -202,44 +201,6 @@ class InInvoice extends Model {
             $num = $newNumber;
         }
         return $curYear . "-" . $num;
-
-        /*
-        if ($previousNumber == "") {
-            $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
-            $req = $this->runRequest($sql);
-
-            $lastNumber = "";
-            if ($req->rowCount() > 0) {
-                $bill = $req->fetch();
-                $lastNumber = $bill["number"];
-            }
-        } else {
-            $lastNumber = $previousNumber;
-        }
-        if ($lastNumber != "") {
-            //echo "lastNumber = " . $lastNumber . "<br/>";
-            $lastNumber = explode("-", $lastNumber);
-            $lastNumberY = $lastNumber[0];
-            $lastNumberN = $lastNumber[1];
-
-            if ($lastNumberY == date("Y", time())) {
-                $lastNumberN = (int) $lastNumberN + 1;
-            } else {
-                return date("Y", time()) . "-0001";
-            }
-            $num = "";
-            if ($lastNumberN < 10) {
-                $num = "000" . $lastNumberN;
-            } else if ($lastNumberN >= 10 && $lastNumberN < 100) {
-                $num = "00" . $lastNumberN;
-            } else if ($lastNumberN >= 100 && $lastNumberN < 1000) {
-                $num = "0" . $lastNumberN;
-            }
-            return $lastNumberY . "-" . $num;
-        } else {
-            return date("Y", time()) . "-0001";
-        }
-        */
     }
 
     public function allPeriodYears($id_space, $periodBegin, $periodEnd){

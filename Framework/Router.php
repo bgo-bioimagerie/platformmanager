@@ -400,19 +400,26 @@ class Router {
 
         $view = new View('error');
         $view->setFile('Modules/error.php');
-        $view->generate(array(
-            'context' => [
-                    "mainMenu" =>null,
-                    "sideMenu" => null,
-                    "spaceMenu" => null,
-                    "rootWeb" => Configuration::get("rootWeb", "/"),
-                    "lang" => 'en',
-                    "currentSpace" => null,  // current space if any
-                    "role" => -1   // user role in space if any
-            ],
-            'type' => $type,
-            'message' => $exception->getMessage()
-        ));
+        try {
+            $view->generate(array(
+                'context' => [
+                        "mainMenu" =>null,
+                        "sideMenu" => null,
+                        "spaceMenu" => null,
+                        "rootWeb" => Configuration::get("rootWeb", "/"),
+                        "lang" => 'en',
+                        "currentSpace" => null,  // current space if any
+                        "role" => -1 ,  // user role in space if any,
+                        "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "dev" => false
+                ],
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+        } catch(Throwable $e) {
+            echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
+            echo '<br>'.$exception->getMessage();
+        }
     }
 
 }

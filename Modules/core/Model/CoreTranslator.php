@@ -2135,8 +2135,28 @@ class CoreTranslator {
         if($lang == "fr") {
             return "non trouvé(e)";
         }
-        return "not found";       
+        return "not found";
+    }
 
+    public static function Disable_Inactivate($lang) {
+        if($lang=="fr") {
+            return "Rendre inactif";
+        }
+        return "Inactivate";
+    }
+
+    public static function Disable_Remove($lang) {
+        if($lang=="fr") {
+            return "Retirer de l'espace";
+        }
+        return "Remove from space";
+    }
+
+    public static function Disable_user_account_on($lang) {
+        if($lang=="fr") {
+            return "Lors de l'expiration";
+        }
+        return "On account expiration";
     }
     
 }

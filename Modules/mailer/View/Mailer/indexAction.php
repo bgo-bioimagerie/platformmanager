@@ -3,6 +3,10 @@
  require_once 'Modules/core/Model/CoreTranslator.php';
  ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+
 <?php startblock('stylesheet') ?>
 <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
 

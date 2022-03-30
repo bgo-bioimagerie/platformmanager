@@ -1,7 +1,20 @@
 # Changes
 
+## 2.6.0
+
+* [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
+* [booking] add to scheduling option to force usage of packages to an area
+
+## 2.5.1
+
+* [space] fix pending accounts bug
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
+
 ## 2.5.0
 
+* [core] fix tile display error if no space
 * [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
 * [core] use bootstrap5 and update/remove some libraries
@@ -9,11 +22,14 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607
 * [statistics] generate stats in background (async) and save generated files for later download #551
 * [booking] manage shared area calendar option to conflict resources on same calendar #578
+* [core] space settings, add option to either remove user from space or set as inactive on expiration
+* [helpdesk] skip emails if helpdesk not activated, else only skip auto-replies
 
 ## 2.4.1
 
@@ -76,7 +92,6 @@
 * [core] code cleanup #554
 * [booking] handle booking settings fields *booking scale* and *user specifies*
 * [booking] fix package display on new reservation
-* [booking] add to scheduling option to force usage of packages to an area
 * [invoice] generate invoices in background (async) and show generation status
 * [core] update dependencies (CVE on twig/twig, update guzzle and influxdb client)
 * [booking] graphics and code refactoring of calendar

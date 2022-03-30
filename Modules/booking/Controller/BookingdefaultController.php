@@ -705,11 +705,13 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        // $form->addHidden("id", $resaInfo["id"]);
         $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
+        if($resaInfo['reason'] > 0) {
+            $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
+        }
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -902,8 +904,12 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setButtonsWidth(2, 10);
 
         $details = ['steps' => []];
-        if($resaInfo["id"] > 0) {
-            $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
         }
 
         $modelResource = new ResourceInfo();

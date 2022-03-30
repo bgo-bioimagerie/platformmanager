@@ -136,7 +136,6 @@ class Email extends Model {
         $spaceId = $params["id_space"];
         $space = $modelSpace->getSpace($spaceId);
         $spaceName = $space['name'];
-        // $spaceName = $modelSpace->getSpaceName($spaceId);
         // If helpdesk is activated
         $from = Configuration::get('smtp_from');
         if($modelSpace->getSpaceMenusRole($spaceId, "helpdesk")) {

@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+
 /**
  * Class to translate the syggrif views
  *
@@ -196,7 +198,14 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Bloquer ressources";
         }
-        return "Block resouces";
+        return "Block resources";
+    }
+
+    public static function Blocked_Resouces($lang) {
+        if ($lang == "fr") {
+            return "Ressources bloquées";
+        }
+        return "Blocked resources";
     }
 
     public static function Edit_color_code($lang) {
@@ -1787,5 +1796,37 @@ class BookingTranslator {
             return "Détails";
         }
         return "Detailed";
+    }
+
+    public static function BlockReason(int $reason, $lang="") {
+        if($lang == "fr") {
+            switch ($reason) {
+                case BkCalendarEntry::$REASON_BOOKING:
+                    return 'Réservation';
+                case BkCalendarEntry::$REASON_HOLIDAY:
+                    return 'Vacances';
+                case BkCalendarEntry::$REASON_MAINTENANCE:
+                    return 'Maintenance';
+                default:
+                    return 'Réservation';
+            }
+        }
+        switch ($reason) {
+            case BkCalendarEntry::$REASON_BOOKING:
+                return 'Booking';
+            case BkCalendarEntry::$REASON_HOLIDAY:
+                return 'Holidays';
+            case BkCalendarEntry::$REASON_MAINTENANCE:
+                return 'Maintenance';
+            default:
+                return 'Booking';
+        }
+    }
+
+    public static function Reason($lang) {
+        if($lang == 'fr') {
+            return 'Cause';
+        }
+        return 'Reason';
     }
 }

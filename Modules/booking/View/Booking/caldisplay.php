@@ -45,20 +45,12 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 		for($r = 0 ; $r < count($resourcesBase) ; $r++){
 			$cals = [];
 			foreach($calEntries[$r] as $c) {
-
-				// $cd = date("l", $c["start_time"]);
-				// $ce = date("l", $c["end_time"]);
 				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
 					continue;
 				}
-				/*
-				if($cd != $dayStream && $ce != $dayStream) {
-					continue;
-				}
-				*/
 				$cals[] = $c;
 			}
-			$colResHeader = compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
+			$colResHeader = compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
 			foreach($colResHeader as $h => $colData) {
 				if(!key_exists($h, $calData)) {
 					$calData[$h] = [];
