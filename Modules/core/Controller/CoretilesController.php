@@ -349,7 +349,7 @@ class CoretilesController extends CorecookiesecureController {
                         $m = new CoreHistory();
                         $m->add($id_space, $login_user, 'User join request');
                     } else {
-                        $modelSpacePending->invalidate($pendingId, NULL);
+                        $modelSpacePending->invalidate($pendingId, 0);
                         $m = new CoreHistory();
                         $m->add($id_space, $login_user, 'User cancelled join request');
                     }

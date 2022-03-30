@@ -7,6 +7,7 @@
 
 ## 2.5.1
 
+* [space] fix pending accounts bug
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
 * [core][booking] layout fixes on booking edition (periodic)
 
