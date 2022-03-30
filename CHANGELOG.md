@@ -5,6 +5,7 @@
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
+* [core] on user join request, request a comment from user to be added to email
 * [booking] add to scheduling option to force usage of packages to an area
 * [booking] hide nightwe entries if pricing does not exists anymore
 

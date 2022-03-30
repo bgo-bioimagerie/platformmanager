@@ -209,7 +209,7 @@ class Email extends Model {
             $userFullName = $params['fullName'] ?? "";
 
             $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
-            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $userFullName, $lang, $organization ?? '', $unit ?? '');
+            $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $userFullName, $lang, $organization ?? '', $unit ?? '', $params['comment'] ?? '');
             $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($idSpace));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
