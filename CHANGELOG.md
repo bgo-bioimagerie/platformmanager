@@ -4,6 +4,7 @@
 
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
+* [core] on user join request, request a comment from user to be added to email
 
 ## 2.5.1
 
@@ -20,7 +21,6 @@
 * [core] show number of user clients in user admin view
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
-* [core] on user join request, request a comment from user to be added to email
 * [core] add option to tables to view all elements
 * [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
