@@ -126,7 +126,7 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
 					$text .= '<br/>'.$shortDescription;
 				}
 			} else {
-				if($c['id']) {
+				if($c['id'] && $role >= CoreSpace::$USER) {
 					$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
 					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 					if($text === '') {
