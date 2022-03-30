@@ -5,6 +5,11 @@
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
 
+## 2.5.1
+
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
