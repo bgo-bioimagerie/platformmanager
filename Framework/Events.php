@@ -567,12 +567,6 @@ class EventHandler {
         $this->logger->debug('[pricingDelete]', ['id_pricing' => $id_pricing, 'id_space' => $id_space]);
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "Pricing  $pricing deleted");
-        $bkem = new BkNightWE();
-        $bke = $bkem->getPricing($id_pricing, $id_space);
-        if($bke) {
-            Configuration::getLogger()->debug('[pricingDelete] delete related bknightwe', ['bke' => $bke['id']]);
-            $bkem->delete($id_space, $bke['id']);
-        }
     }
 
     public function invoiceRequest($msg) {

@@ -161,9 +161,12 @@ class BkNightWE extends Model {
      * @param unknown $we_char
      */
     public function setPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char) {
+        $id = null;
         if (!$this->isPricing($id_belonging, $id_space)) {
             $this->addPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char);
+            $id = $this->getDatabase()->lastInsertId();
         }
+        return $id;
     }
 
     /**

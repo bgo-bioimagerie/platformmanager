@@ -21,7 +21,7 @@ BkCalQuantities -> ResourceInfo[label="id_resource"];
 BkCalSupInfo -> VirtualSupInfo [label="id_supinfo"];
 BkCalSupInfo -> ResourceInfo [label="id_resource"];
 
-BkNightWE -> ClClient [label="id_belonging"];  // to be checked
+BkNightWE -> ClPricing [label="id_belonging"];  // to be checked
 
 BkOwnerPrice -> ResourceInfo [label="id_resource"];
 BkOwnerPrice -> BkPackage [label="id_package"]; // from VirtualPackage
