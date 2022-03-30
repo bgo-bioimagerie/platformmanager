@@ -9,6 +9,9 @@
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="<?php echo $context['dev'] ? 'dev' : 'prod' ?>">
+        <?php startblock('meta') ?>
+
+        <?php endblock() ?>
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>

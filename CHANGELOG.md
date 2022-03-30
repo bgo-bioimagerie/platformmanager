@@ -3,6 +3,7 @@
 ## 2.6.0
 
 * [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
 
 ## 2.5.0
 
