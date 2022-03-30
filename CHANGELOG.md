@@ -5,6 +5,7 @@
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
 * [booking] add to scheduling option to force usage of packages to an area
+* [booking] hide nightwe entries if pricing does not exists anymore
 
 ## 2.5.1
 

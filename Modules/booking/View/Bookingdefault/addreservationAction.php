@@ -130,6 +130,7 @@
         </div>
     </div>
 
+    <?php if($details['steps']) { ?>
     <div class="row">
         <div class="col-xs-12">
             <table aria-label="details of reservation" class="table">
@@ -170,6 +171,7 @@
             </table>
         </div>
     </div>
+    <?php } ?>
 </div>
 
 
