@@ -76,15 +76,12 @@ class BkNightWE extends Model {
      * @return array
      */
     public function getPricing($id, $id_space) {
-        Configuration::getLogger()->debug("[TEST]", ["in get pricing"]);
         $sql = "select * from bk_nightwe where id_belonging=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
         } else {
-            $default = $this->getDefault();
-            Configuration::getLogger()->debug("[TEST]", ["default bknightwe" => $default]);
-            return $default;
+            return $this->getDefault();
         }
     }
 
