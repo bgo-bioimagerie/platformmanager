@@ -166,6 +166,14 @@ class ClientspricingsController extends ClientsController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+
+        $clientModel = new ClClient();
+        $clients = $clientModel->getPricingClients($id_space, $id);
+        if($clients) {
+            $_SESSION['flash'] = 'Some client use this pricing, cannot delete it!';
+            $_SESSION['flashClass'] = 'danger';
+            return $this->redirect("clpricings/" . $id_space);
+        }
         
         // query to delete the provider
         $this->pricingModel->delete($id_space, $id);

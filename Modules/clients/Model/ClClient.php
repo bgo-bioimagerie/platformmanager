@@ -62,6 +62,12 @@ class ClClient extends Model {
         return $tmp ? $tmp[0] : null;
     }
 
+    public function getPricingClients($id_space, $id) {
+        $sql = "SELECT id FROM cl_clients WHERE pricing=? AND id_space=? AND deleted=0";
+        $tmp = $this->runRequest($sql, array($id, $id_space))->fetchAll();
+        return $tmp ? $tmp[0] : null;
+    }
+
     public function getAll($id_space) {
         $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
