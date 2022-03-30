@@ -174,9 +174,20 @@ class ClientspricingsController extends ClientsController {
             $_SESSION['flashClass'] = 'danger';
             return $this->redirect("clpricings/" . $id_space);
         }
+
+        $p = $this->pricingModel->get($id_space, $id);
+        if(!$p){
+            throw new PfmParamException('pricing not found', 404);
+        }
         
         // query to delete the provider
         $this->pricingModel->delete($id_space, $id);
+
+        Events::send([
+            "action" => Events::ACTION_CLIENT_PRICING_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "pricing" => ["id" => intval($id), "name" => $p['name']]
+        ]);
         
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);
