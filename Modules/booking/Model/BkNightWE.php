@@ -73,12 +73,12 @@ class BkNightWE extends Model {
     /**
      * add a unique pricing
      * @param int $id
-     * @return PDOStatement
+     * @return int|bool
      */
     public function addUnique($id, $id_space) {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space) VALUES(?,?)";
-        $pdo = $this->runRequest($sql, array($id, $id_space));
-        return $pdo;
+        $this->runRequest($sql, array($id, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
     
     public function addBelongingIfNotExists($id_space, $belongings){

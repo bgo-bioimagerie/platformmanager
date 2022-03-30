@@ -58,9 +58,8 @@ class BookingnightweController extends BookingsettingsController {
         $table = new TableView ();
 
         $table->setTitle(BookingTranslator::Nightwe($lang), 3);
-        //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("bookingnightweedit/".$id_space, "id_belonging");
-        $table->addDeleteButton("bookingnightwedelete/".$id_space);
+        // $table->addDeleteButton("bookingnightwedelete/".$id_space);
 
         $tableContent = array(
             "id" => "ID",
