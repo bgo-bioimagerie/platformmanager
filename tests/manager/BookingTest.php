@@ -216,7 +216,7 @@ class BookingTest extends BookingBaseTest {
         $c = new BookingschedulingController($req, $space);
         $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
         $bkScheduling = $data['bkScheduling'];
-        $this->assertTrue($bkScheduling['id']  == 0);
+        $this->assertTrue($bkScheduling['id'] > 0);
 
         // cannot book at 19h
         $this->asUser($user['login'], $space['id']);
