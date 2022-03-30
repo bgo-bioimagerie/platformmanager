@@ -33,8 +33,7 @@
         <?php } ?>
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
-        <script src="externals/jquery-1.11.1.js"></script>
-
+        <script src="externals/node_modules/jquery/dist/jquery.min.js"></script>
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
 
