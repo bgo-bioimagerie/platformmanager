@@ -33,7 +33,7 @@ class BkNightWE extends Model {
             "night_start" => 19,
             "night_end" => 8,
             "tarif_we" => 0,
-            "choice_we" => "",
+            "choice_we" => "0,0,0,0,0,1,1",
             "id_space" => 0,
         );
     }
