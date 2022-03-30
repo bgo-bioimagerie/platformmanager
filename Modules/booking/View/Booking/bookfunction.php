@@ -120,7 +120,7 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			$pixelHeight = $blocSize*$agendaStyle["line_height"];
 			$shortDescription = $c['short_description'];
 			$text = '';
-			if($c['id']) {
+			if($c['id'] && $role >= CoreSpace::$USER) {
 				$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
 				$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 				if($text === '') {
