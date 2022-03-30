@@ -901,8 +901,12 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setButtonsWidth(2, 10);
 
         $details = ['steps' => []];
-        if($resaInfo["id"] > 0) {
-            $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
         }
 
         return $this->render(array(

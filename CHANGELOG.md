@@ -1,5 +1,9 @@
 # Changes
 
+## 2.5.1
+
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
