@@ -3,6 +3,7 @@
 ## 2.6.0
 
 * [core] remove lasting references to ec classes
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
