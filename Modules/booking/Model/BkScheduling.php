@@ -283,6 +283,11 @@ class BkScheduling extends Model {
         $this->runRequest($sql, array($id, $id_space));
     }
 
+    public function deleteByArea($id_space, $id_area) {
+        $sql = "UPDATE bk_schedulings SET deleted=1,deleted_at=NOW() WHERE id_rearea=? AND id_space=?";
+        $this->runRequest($sql, array($id_area, $id_space));
+    }
+
     public function setReArea($id_space, $id, $id_rearea) {
         $sql = "UPDATE bk_schedulings SET id_rearea=? WHERE id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($id_rearea, $id, $id_space));

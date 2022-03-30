@@ -9,6 +9,9 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
+require_once 'Modules/booking/Model/BkBookingTableCSS.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
+
 /**
  * 
  * @author sprigent
@@ -98,6 +101,44 @@ class ReareasController extends ResourcesBaseController {
                 $form->getParameter("is_restricted"),
                 $id_space);
 
+            $css = new BkBookingTableCSS();
+            if (!$css->isAreaCss($id_space, $id_area)) {
+                $css_default = $css->getDefault();
+                $css->addAreaCss(
+                    $id_space,
+                    $id_area,
+                    $css_default['header_background'],
+                    $css_default['header_color'],
+                    $css_default['header_font_size'],
+                    $css_default['resa_font_size'],
+                    $css_default['header_height'],
+                    $css_default['line_height']
+                );
+            }
+            $bkm = new BkScheduling();
+            if(!$bkm->existsByReArea($id_space, $id_area)) {
+                $sched = $bkm->getDefault();
+                $bkm->add(
+                    $id_space,
+                    $id_area,
+                    $sched['is_monday'],
+                    $sched['is_tuesday'],
+                    $sched['is_wednesday'],
+                    $sched['is_thursday'],
+                    $sched['is_friday'],
+                    $sched['is_saturday'],
+                    $sched['is_sunday'],
+                    $sched['day_begin'],
+                    $sched['day_end'],
+                    $sched['size_bloc_resa'],
+                    $sched['booking_time_scale'],
+                    $sched['resa_time_setting'],
+                    $sched['default_color_id'],
+                    $sched['force_packages'],
+                    $sched['shared']
+                );
+            }
+
             $_SESSION["flash"] = ResourcesTranslator::Item_created("area", $lang);
             $_SESSION["flashClass"] = "success";
 
@@ -132,6 +173,12 @@ class ReareasController extends ResourcesBaseController {
         if ($linkedResources == null || empty($linkedResources)) {
             // not linked to resources, deletion is authorized
             $this->model->delete($id_space, $id);
+
+            $modelCSS = new BkBookingTableCSS();
+            $modelCSS->deleteByArea($id_space, $id);
+            $modelBkSched = new BkScheduling();
+            $modelBkSched->deleteByArea($id_space, $id);
+
         } else {
             // linked to resources, notify the user
             $_SESSION['flash'] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
