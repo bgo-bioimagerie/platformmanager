@@ -285,6 +285,13 @@ class BookingTranslator {
         return "The user specifies";
     }
 
+    public static function Force_packages($lang) {
+        if($lang == "fr") {
+            return "Doit utiliser les packages";
+        }
+        return "Must use packages";
+    }
+
     public static function the_booking_duration($lang) {
         if ($lang == "fr") {
             return "La durée de la réservation";
@@ -1669,6 +1676,13 @@ class BookingTranslator {
             return "Vous devez créer au moins un code couleur afin de pouvoir éditer les horaires";
         }
         return "You need to create at least one color code to be able to edit schedulings";
+    }
+
+    public static function MissingPackages($lang) {
+        if($lang == "fr") {
+            return "Vous devez créer au moins un ".self::Package($lang);
+        }
+        return "You need to create at least one ".self::Package($lang);
     }
 
     public static function noBookingArea($lang) {
