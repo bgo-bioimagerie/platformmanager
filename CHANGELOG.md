@@ -1,5 +1,16 @@
 # Changes
 
+## 2.6.0
+
+* [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
+
+## 2.5.1
+
+* [space] fix pending accounts bug
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
@@ -11,6 +22,7 @@
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] on user join request, request a comment from user to be added to email
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607
