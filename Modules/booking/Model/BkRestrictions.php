@@ -15,7 +15,7 @@ class BkRestrictions extends Model {
     }
 
     public function init($id_space) {
-        $sql = "SELECT id FROM re_info WHERE id_space=?";
+        $sql = "SELECT id FROM re_info WHERE id_space=? AND deleted=0";
         $resources = $this->runRequest($sql, array($id_space))->fetchAll();
 
         foreach ($resources as $r) {
@@ -71,6 +71,11 @@ class BkRestrictions extends Model {
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_restrictions SET deleted=1, deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+    }
+
+    public function deleteByResource($id_space, $id_resource) {
+        $sql = "UPDATE bk_restrictions SET deleted=1, deleted_at=NOW() WHERE id_resource=? AND id_space=?";
+        $this->runRequest($sql, array($id_resource, $id_space));
     }
 
 }
