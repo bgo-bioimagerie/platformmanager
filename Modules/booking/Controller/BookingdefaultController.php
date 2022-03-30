@@ -905,7 +905,11 @@ class BookingdefaultController extends BookingabstractController {
 
         $details = ['steps' => []];
         if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
-            $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
         }
 
         return $this->render(array(
