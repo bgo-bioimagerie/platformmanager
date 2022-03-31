@@ -7,6 +7,7 @@
 * [core][booking] layout fixes on booking edition (periodic)
 * [booking] compute duration with 2 digits per minute
 * [booking] weekarea calendar, use summary view by default
+* [booking] if multiple prices are in db, pick first
 
 ## 2.5.0
 
