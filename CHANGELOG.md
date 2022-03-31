@@ -1,5 +1,8 @@
 # Changes
 
+## 2.5.2
+
+* [services] improve projects form usability
 ## 2.5.1
 
 * [space] fix pending accounts bug
