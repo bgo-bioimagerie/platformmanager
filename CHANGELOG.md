@@ -6,6 +6,7 @@
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
 * [core][booking] layout fixes on booking edition (periodic)
 * [booking] compute duration with 2 digits per minute
+* [booking] weekarea calendar, use summary view by default
 
 ## 2.5.0
 
