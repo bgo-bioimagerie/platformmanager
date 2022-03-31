@@ -21,6 +21,7 @@ require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
+require_once 'Modules/booking/Model/BkAuthorization.php';
 
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
@@ -557,7 +558,9 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $modelBkRestrictions = new BkRestrictions();
         $modelBkRestrictions->deleteByResource($id_space, $id);
-        
+
+        $modelBkAuth = new BkAuthorization();
+        $modelBkAuth->deleteByResource($id_space, $id);
 
         $this->redirect("resources/" . $id_space);
     }

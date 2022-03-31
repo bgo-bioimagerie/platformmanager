@@ -256,12 +256,20 @@ class BkAuthorization extends Model {
     }
 
     /**
-     * Remove a visa
+     * Remove an authorization
      * @param number $id
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_authorization set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
+        $sql = "UPDATE bk_authorization set deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
+
+    public function deleteByResource($id_space, $id_resource) {
+        $sql = "UPDATE bk_authorization set deleted=1,deleted_at=NOW() WHERE resource_id=? AND id_space=?";
+        Configuration::getLogger()->debug('[booking] delete all BkAuthorization for resource', ['id_resource' => $id_resource, 'id_space' => $id_space]);
+        $this->runRequest($sql, array($id_resource, $id_space));
+    }
+
+    //resource_id
 
 }
