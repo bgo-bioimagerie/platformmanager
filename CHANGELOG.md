@@ -10,6 +10,9 @@
 * [booking] hide nightwe entries if pricing does not exists anymore
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
+* [booking][supplementaries] avoid having two sups with the same name for the same resource 
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
 
 ## 2.5.1
 
@@ -19,10 +22,6 @@
 
 ## 2.5.0
 
-* [booking_quantities] avoid having two qtes with the same name for the same resource 
-* [booking_quantities] allow to delete quantities duplicates or refering to a deleted resource
-* [packages] can't add a resource to a package in which it is already included 
-* [packages] can delete packages elements individually
 * [core] fix tile display error if no space
 * [core] hide space unsubscribe button if user is pending or not member of space
 * [core] add redirects to TODO after doing todo actions
