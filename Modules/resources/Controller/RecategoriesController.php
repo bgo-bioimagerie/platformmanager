@@ -9,6 +9,8 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
+require_once 'Modules/booking/Model/BkAuthorization.php';
+
 /**
  * 
  * @author sprigent
@@ -122,6 +124,8 @@ class RecategoriesController extends ResourcesBaseController {
         if ($linkedResources == null || empty($linkedResources)) {
             // not linked to resources, deletion is authorized
             $this->categoryModel->delete($id_space, $id);
+            $modelBkAuth = new BkAuthorization();
+            $modelBkAuth->deleteByResourceCategory($id_space, $id);
         } else {
             // linked to resources, notify the user
             $_SESSION['flash'] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Category($lang), $lang);
