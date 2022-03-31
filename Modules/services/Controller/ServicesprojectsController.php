@@ -540,11 +540,11 @@ class ServicesprojectsController extends ServicesController {
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
 
-        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
+        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
         // id_client is denominated id_resp in se_project table
         $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $value["id_resp"]);
-        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
         $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        $form->addSelectMandatory("in_charge", ServicesTranslator::Visa($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
 
         $newIDs = array("", 1, 2, 3);
         $newNames = array("", CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
