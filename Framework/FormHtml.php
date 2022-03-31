@@ -469,19 +469,25 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
+     * @param bool $required is mandatory?
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function textarea($useJavascript, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
+    static public function textarea($useJavascript, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $divid = "";
         if ($useJavascript) {
             $divid = "id='editor'";
         }
+        $mandatory = '';
+        if($required) {
+            $label = $label.'*';
+            $mandatory = ' required="required" ';
+        }
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-12 col-md-" . $inputWidth . "\">";
-        $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\">" . $value . "</textarea>";
+        $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\"".$mandatory.">" . $value . "</textarea>";
         $html .= "</div>";
         $html .= "</div>";
         return $html;
