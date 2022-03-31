@@ -8,6 +8,8 @@
 * [core] on user join request, request a comment from user to be added to email
 * [booking] add to scheduling option to force usage of packages to an area
 * [booking] hide nightwe entries if pricing does not exists anymore
+* [helpdesk] do not send ticket reply if mail coming from helpdesk
+* [mail] add support for custom headers
 
 ## 2.5.1
 

@@ -325,18 +325,23 @@ while(true) {
                     $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
-                if($newTicket['is_new']) {
-                    Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
-                    $from = Configuration::get('helpdesk_email');
-                    $fromInfo = explode('@', $from);
-                    $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
-                    $fromName = $fromInfo[0]. '+' . $spaceName;
-                    $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
-                    $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
-                    $e = new Email();
-                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+
+                $fromMyself = ($toSpace == $userEmail);
+                if(!$fromMyself) {
+                    if($newTicket['is_new']) {
+                        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+                        $from = Configuration::get('helpdesk_email');
+                        $fromInfo = explode('@', $from);
+                        $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                        $fromName = $fromInfo[0]. '+' . $spaceName;
+                        $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
+                        $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
+                        $e = new Email();
+                        $headers = ["Auto-Submitted" => "auto-replied"];
+                        $e->sendEmail($from, $fromName, $userEmail, $subject, $content, $headers);
+                    }
+                    $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
                 }
-                $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
             $isClosed = true;

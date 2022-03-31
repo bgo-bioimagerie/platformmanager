@@ -27,8 +27,9 @@ class Email extends Model {
      * @param string $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
      * @param bool   set toAddress as Bcc:, defaults to true, else just set in To:
+     * @param array custom headers to add to mail (["Auto-Submitted" => "auto-replied"])
      */
-    public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true, $mailing=null) {        
+    public function sendEmail($from, $fromName, $toAddress, $subject, $content, $sentCopyToFrom = false, $files = [], $bcc=true, $mailing=null, $customHeaders=[]) {        
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -39,13 +40,15 @@ class Email extends Model {
         $mail->SetFrom($from, $fromName);
         $mail->Subject = $subject;
         $mail->addCustomHeader("X-PFM", "1");
+        foreach ($customHeaders as $key => $value) {
+            $mail->addCustomHeader($key, $value);
+        }
 
         // parse content
         $content = preg_replace("/\r\n|\r/", "<br />", $content);
         $content = trim($content);
         if($mailing) {
             // should diff between auto mails notif and manager sending mail to list
-            // $mail->addCustomHeader("Auto-Submitted", "auto-generated");
             $mailingInfo = explode("@", $mailing);
             $url = Configuration::get('PFM_PUBLIC_URL')."/coremail/$mailingInfo[1]";
             $mail->Body = $content . "<br/><small>You are registered to the pfm $mailingInfo[0] mailing list. To unsubscribe: <a href=\"$url\">$url</a></small>";
