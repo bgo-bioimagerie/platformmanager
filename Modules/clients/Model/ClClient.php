@@ -154,7 +154,9 @@ class ClClient extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=? AND deleted=0";
-        //$sql = "DELETE FROM cl_clients WHERE id=?  AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($id, $id_space));
+        // Delete client / user relationship
+        $sql = "DELETE FROM cl_j_client_user WHERE id_client=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
         Events::send([
             "action" => Events::ACTION_CUSTOMER_DELETE,
