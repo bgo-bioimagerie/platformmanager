@@ -10,6 +10,7 @@
 * [booking] hide nightwe entries if pricing does not exists anymore
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
+* [booking] weekarea calendar, use summary view by default
 
 ## 2.5.1
 
