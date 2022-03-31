@@ -920,8 +920,10 @@ class BkCalendarEntry extends Model {
         $searchDate_start = $start_time;
         $searchDate_end = $end_time;
 
-        $booking_time_scale = 2;
-        $resa_block_size = 3600;
+        // $booking_time_scale = 2;
+        // $resa_block_size = 3600;
+        $booking_time_scale = 1;
+        $resa_block_size = 60;
         switch ($booking_time_scale) {
             case '1':
                 $gap = $resa_block_size;
@@ -1019,10 +1021,10 @@ class BkCalendarEntry extends Model {
             }
         }
 
-        $nb_hours_closed = round($nb_closed / 3600, 1);
-        $nb_hours_day = round($nb_day / 3600, 1);
-        $nb_hours_night = round($nb_night / 3600, 1);
-        $nb_hours_we = round($nb_we / 3600, 1);
+        $nb_hours_closed = round($nb_closed / 3600, 2);
+        $nb_hours_day = round($nb_day / 3600, 2);
+        $nb_hours_night = round($nb_night / 3600, 2);
+        $nb_hours_we = round($nb_we / 3600, 2);
         $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
         $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
         $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
