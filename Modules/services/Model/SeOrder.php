@@ -199,31 +199,6 @@ class SeOrder extends Model {
         return $entries;
     }
 
-    // @bug refers to ec_j_user_responsible
-    /**
-     * @deprecated
-     */
-    public function openedForResp($id_space, $id_resp){
-        $sql = "select * from se_order where deleted=0 AND id_status=1 AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0)";
-        $req = $this->runRequest($sql, array($id_resp, $id_space));
-        return $req->fetchAll();
-    }
-
-    // @bug refers to ec_j_user_responsible
-    /**
-     * @deprecated
-     */
-    public function openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space){
-        $sql = "SELECT * FROM se_order WHERE id_status=1 "
-                . "AND id_user IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=? AND id_space=? AND deleted=0) "
-                . "AND date_open>=? "
-                . "AND date_close<=? "
-                . "AND id_space=? AND deleted=0";
-
-        $req = $this->runRequest($sql, array($id_resp, $id_space, $dateBegin, $dateEnd, $id_space));
-        return $req->fetchAll();
-    }
-
     public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space) {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_client' => $id_client, 'id_space' => $id_space);
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
@@ -296,16 +271,13 @@ class SeOrder extends Model {
         $this->runRequest($sql, array($id, $id_space));
     }
 
-    // @bug refers to ec_j_user_responsible
     public function openedItemsForClient($id_space, $id_client){
-
         $userList = " SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0 ";
         $orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1 AND id_space=? AND deleted=0";
         $sql = "SELECT * FROM se_order_service WHERE id_order IN (".$orderList.")";
         return $this->runRequest($sql, array($id_client, $id_space, $id_space))->fetchAll();
     }
 
-    // @bug refers to ec_j_user_responsible
     public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
         $sql = "SELECT * FROM se_order WHERE deleted=0 AND id_space = ? AND date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
@@ -313,7 +285,7 @@ class SeOrder extends Model {
 
         for($i = 0 ; $i < count($orders) ; $i++){
             if ($orders[$i]["id_resp"] == 0){
-                $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user=? AND id_space=? AND deleted=0";
+                $sql = "SELECT id_client FROM cl_j_client_user WHERE id_user=? AND id_space=? AND deleted=0";
                 $resp_id = $this->runRequest($sql, array($orders[$i]["id_user"], $id_space))->fetch();
                 $orders[$i]["id_resp"] = !empty($resp_id) ? $resp_id[0] : 0;
             }

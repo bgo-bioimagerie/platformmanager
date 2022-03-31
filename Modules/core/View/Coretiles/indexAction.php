@@ -99,7 +99,7 @@
                                         </div>
                                     <?php
                                         }
-                                    } else if (!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
+                                    } else {
                                     ?>
                                         <div>
                                             <button type="button" class="btn btn-md btn-info" disabled>

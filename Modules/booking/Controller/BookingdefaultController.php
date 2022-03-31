@@ -709,6 +709,9 @@ class BookingdefaultController extends BookingabstractController {
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
+        if($resaInfo['reason'] > 0) {
+            $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
+        }
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -901,9 +904,22 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setButtonsWidth(2, 10);
 
         $details = ['steps' => []];
-        if($resaInfo["id"] > 0) {
-            $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
         }
+
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $forcePackages = $schedul['force_packages'] ?? 0;
+        if($forcePackages) {
+            $packageChecked = true;
+        }
+
 
         return $this->render(array(
             "id_space" => $id_space,
@@ -912,6 +928,7 @@ class BookingdefaultController extends BookingabstractController {
             "data" => ["booking" => $resaInfo],
             "form" => $form,
             "use_packages" => $use_packages,
+            "forcePackages" => $forcePackages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,
             "id_reservation" => $resaInfo["id"],

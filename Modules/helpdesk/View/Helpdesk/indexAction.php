@@ -1,6 +1,10 @@
 <!doctype html>
 <?php include 'Modules/layout.php' ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+
 
 <?php startblock('stylesheet') ?>
 <script src="externals/node_modules/marked/marked.min.js"></script>
