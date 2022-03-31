@@ -4,6 +4,7 @@ BkAccess -> ResourceInfo[label="id_resource"];
 
 BkAuthorization -> ReCategory [label="resource_id"];
 BkAuthorization -> CoreUser [label="user_id"];
+BkAuthorization -> ReVisa [label="visa_id"];
 
 BkBookingTableCSS -> ReArea [label="id_area"];
 BkCalendarEntry -> ResourceInfo[label="resource_id"];
@@ -124,6 +125,7 @@ ResourceInfo -> ReArea [label="id_area"];
 ReState;
 
 ReVisa -> ReCategory [label="id_resource_category"];
+ReVisa -> CoreUser [label="id_instructor"];
 
 SeOrder -> InInvoice [label="id_invoice"];
 SeOrder -> id_unit; // ????
