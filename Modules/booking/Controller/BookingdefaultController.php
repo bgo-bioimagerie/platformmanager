@@ -475,7 +475,7 @@ class BookingdefaultController extends BookingabstractController {
             // every week
             else if ($periodic_option == 3) {
 
-                $periodic_week = $this->request->getParameter("periodic_week");
+                $periodic_week = intval($this->request->getParameter("periodic_week"));
                 $modelPeriodic->setPeriod($id_space ,$id_period, $periodic_option, $periodic_week);
                 $step = $periodic_week * 7 * 24 * 3600;
                 $pass = -$step;
