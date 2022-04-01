@@ -11,6 +11,7 @@
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
 * [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
 
 ## 2.5.1
 
