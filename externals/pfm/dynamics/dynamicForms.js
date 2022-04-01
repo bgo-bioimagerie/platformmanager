@@ -53,6 +53,9 @@ export class DynamicForms {
         fetch(apiRoute, cfg, true).
             then((response) => response.json()).
             then(data => {
+                if (target.addEmptyItem) {
+                    data.elements.unshift("");
+                }
                 switch (targetElement.nodeName) {
                     case "SELECT":
                         let elements = Array.isArray(data.elements) ? data.elements : [data.elements];

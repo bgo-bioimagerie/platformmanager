@@ -15,7 +15,8 @@
         {
             elementId: "id_user",
             apiRoute: `clientusers/getusers/`,
-            activateOnLoad: true
+            activateOnLoad: true,
+            addEmptyItem: true
         }
     ];
     dynamicForms.dynamicFields(sourceId, targets, spaceId);
