@@ -264,7 +264,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "" || $hour_endH == "" || $hour_endM == "") {
-            throw new PfmParamException("invalid end date");
+            throw new PfmParamException("invalid end date, missing end date or time");
         }
 
         if($all_day_long == 1){
