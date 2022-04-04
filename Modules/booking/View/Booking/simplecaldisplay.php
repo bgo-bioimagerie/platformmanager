@@ -70,12 +70,9 @@ th {
 <table aria-label="bookings day view" class="table table-sm">
 <thead>
 	<tr>
-	<th scope="col"></th>
+	<th scope="col">Time</th>
 	<?php
 		$days = array_keys($calData);
-		if(empty($calData)) {
-			echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
-		}
 	?>
 	<?php foreach ($days as $calDay) {  ?>
 		<th scope="col" id="<?php echo $calDay?>"><?php echo $calDay.' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
@@ -83,10 +80,14 @@ th {
 	</tr>
 </thead>
 <tbody>
+	<?php
+		if(empty($calData)) {
+			echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
+		}
+	?>
 <tr>
 
 	<?php
-	
 	foreach($calResources as $resId => $resource) {
 
 		?>

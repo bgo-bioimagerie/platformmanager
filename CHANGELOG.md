@@ -2,6 +2,7 @@
 
 ## 2.6.0
 
+* [booking] fix closed days hidding in summary view
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
