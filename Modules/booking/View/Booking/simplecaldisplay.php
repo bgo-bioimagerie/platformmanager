@@ -6,7 +6,6 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 $modelBookingSetting = new BkBookingSettings();
 $modelBookingSupplemetary = new BkCalSupInfo();
 
-
 $day_begin = $this->clean($scheduling['day_begin']);
 $day_end = $this->clean($scheduling['day_end']);
 $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
@@ -34,20 +33,26 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 	$monthStream = date("M", $date_unix);
 	$dayNumStream = date("d", $date_unix);
 	$sufixStream = date("S", $date_unix);
-		
-	$calData[$dayStream] = [];
-	for($r = 0 ; $r < count($resourcesBase) ; $r++){
-		$cals = [];
-		foreach($calEntries[$r] as $c) {
-			if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
-				continue;
-			}
-			$cals[] = $c;
-		}
-		$calData[$dayStream][$resourcesBase[$r]['id']] = $cals;
+	
+	$isAvailableDay = false;
+	if($scheduling["is_".strtolower($dayStream)] == 1) {
+	//if ($available_days[$d] == 1){
+		$isAvailableDay = true;
 
-		$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
-		$calDays[$dayStream] = date('Y-m-d', $date_unix);
+		$calData[$dayStream] = [];
+		for($r = 0 ; $r < count($resourcesBase) ; $r++){
+			$cals = [];
+			foreach($calEntries[$r] as $c) {
+				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
+					continue;
+				}
+				$cals[] = $c;
+			}
+			$calData[$dayStream][$resourcesBase[$r]['id']] = $cals;
+
+			$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
+			$calDays[$dayStream] = date('Y-m-d', $date_unix);
+		}
 	}
 }
 
@@ -68,6 +73,9 @@ th {
 	<th scope="col"></th>
 	<?php
 		$days = array_keys($calData);
+		if(empty($calData)) {
+			echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
+		}
 	?>
 	<?php foreach ($days as $calDay) {  ?>
 		<th scope="col" id="<?php echo $calDay?>"><?php echo $calDay.' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
