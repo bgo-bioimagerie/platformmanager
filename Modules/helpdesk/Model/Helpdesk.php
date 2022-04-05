@@ -20,6 +20,10 @@ class Helpdesk extends Model {
     public static $STATUS_CLOSED = 3;
     public static $STATUS_SPAM = 4;
 
+    public function __construct() {
+        $this->tableName = "hp_tickets";
+    }
+
     /**
      * Create the stats_buckets table
      * 
@@ -120,8 +124,8 @@ class Helpdesk extends Model {
 
     public function addEmail($id_ticket, $body, $from, $files=[]) {
         // create message
-        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
-        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL));
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
+        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL, ''));
         $id = $this->getDatabase()->lastInsertId();
 
         foreach($files as $attachment) {
@@ -133,8 +137,8 @@ class Helpdesk extends Model {
 
     public function addNote($id_ticket, $body, $from) {
         // create message
-        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at)  VALUES (?,?,?,?, NOW())';
-        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE));
+        $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
+        $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE, ''));
         return $this->getDatabase()->lastInsertId();
 
     }
@@ -207,13 +211,6 @@ class Helpdesk extends Model {
             return $res['id'];
         }
         return 0;
-    }
-
-    public function replyToTicket($id_ticket, $id_message, $body, $from, $files=[]) {
-        // TODO
-        // create message
-        // create attachements
-        // send message
     }
 
     public function assign($id_ticket, $id_user) {

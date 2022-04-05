@@ -190,11 +190,7 @@ class Form {
      * @param string $value Default value
      */
     protected function setValue($value) {
-        //if ($this->parseRequest) {
-        //    $this->values[] = $this->request->getParameterNoException($name);
-        //} else {
         $this->values[] = $value;
-        //}
     }
 
     /**
@@ -365,7 +361,7 @@ class Form {
         $this->choices[] = array();
         $this->choicesid[] = array();
         $this->validated[] = true;
-        $this->enabled[] = true;
+        $this->enabled[] = "";
         $this->useJavascript[] = false;
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
@@ -744,7 +740,7 @@ class Form {
                 $html .= $formHtml->number($this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth, true);
             }
             if ($this->types[$i] == "textarea") {
-                $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
+                $html .= $formHtml->textarea($this->useJavascript[$i], $this->labels[$i], $this->names[$i], $this->values[$i], $required, $this->labelWidth, $this->inputWidth);
             }
             if ($this->types[$i] == "upload") {
                 $html .= $formHtml->upload($this->labels[$i], $this->names[$i], $this->values[$i], $this->labelWidth, $this->inputWidth);
@@ -774,9 +770,6 @@ class Form {
             $html .= $formHtml->formFooter();
         }
 
-        if ($this->isDate === true) {
-            // $html .= $formHtml->timePickerScript();
-        }
         if ($this->isTextArea === true) {
             $html .= $formHtml->textAreaScript();
         }
@@ -791,9 +784,6 @@ class Form {
 
         if ($this->isFormAdd === true) {
             $html .= $this->formAdd->getJavascript();
-        }
-        if ($this->useAjax) {
-            //$html .= $formHtml->ajaxScript($this->id, $this->validationURL);
         }
 
         return $html;

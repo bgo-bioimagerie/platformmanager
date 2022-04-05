@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-form-short">
+<div class="pm-form-short container ">
     <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 
@@ -16,14 +16,14 @@
         <?php
         if (isset($errorMessage) && $errorMessage != '') {
             ?>
-            <div class="alert alert-danger">
+            <div class="col-12 alert alert-danger">
                 <p><?php echo $errorMessage ?></p>
             </div>
         <?php } ?>
 
-        <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
-            <div class="col-xs-10">
+        <div class="form-group mb-3 row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_Begin($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
 
                     <?php
@@ -37,9 +37,9 @@
                 </div>
             </div>
         </div>
-        <div class="form-group ">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
-            <div class="col-xs-10">
+        <div class="form-group mb-3 row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Date_End($lang) ?></label>
+            <div class="col-10">
                 <div class='input-group date'>
                     <?php
                     $date = "";
@@ -53,10 +53,10 @@
             </div>
         </div>
 
-        <div class="form-group ">
-            <label for="inputEmail" class="control-label col-xs-2"> Condition </label>
-            <div class="col-xs-10">
-                <select class="form-control" name="condition_et_ou" >
+        <div class="form-group mb-3 row ">
+            <label for="condition_et_ou" class="control-label col-2"> Condition </label>
+            <div class="col-10">
+                <select class="form-select" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
                     if (isset($condition_et_ou) && $condition_et_ou == 1) {
                         echo "selected=\"selected\"";
@@ -72,12 +72,13 @@
 
         </div>
 
-        <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2"><?php echo BookingTranslator::query($lang) ?></label>
-            <div class="col-xs-10">
+        <div class="form-group row mb-3">
+            <label for="champ" class="control-label col-2"><?php echo BookingTranslator::query($lang) ?></label>
+            <div class="col-10" id="champ">
                 <?php for ($i = 0; $i < 5; $i++) {
                     ?>
-                    <div class="col-xs-4">
+                    <div class="row">
+                    <div class="col-4">
                         <select class="form-control" name="champ[]" >
                             <?php
                             $checkedArea = "";
@@ -109,8 +110,8 @@
                         </select>
 
                     </div>
-                    <div class="col-xs-4">
-                        <select class="form-control" name="type_recherche[]" >
+                    <div class="col-4">
+                        <select class="form-select" name="type_recherche[]" >
                             <OPTION value="1" <?php
                             if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
                                 echo "selected=\"selected\"";
@@ -123,7 +124,7 @@
                             ?>> <?php echo BookingTranslator::Does_not_contain($lang) ?> </OPTION>
                         </select>
                     </div>
-                    <div class="col-xs-4">
+                    <div class="col-4">
                         <?php
                         $value = "";
                         if (isset($text[$i])) {
@@ -132,15 +133,16 @@
                         ?>
                         <input type="text" class="form-control" name="text[]" value="<?php echo $value ?>" />
                     </div>
+                    </div>
                 <?php }
                 ?>
             </div>
         </div>
         <br>
-        <div class="form-group">
-            <label class="control-label col-xs-2"><?php echo BookingTranslator::Output($lang) ?></label>
-            <div class="col-xs-10">
-                <select class="form-control" name="output">
+        <div class="form-group row">
+            <label class="control-label col-2"><?php echo BookingTranslator::Output($lang) ?></label>
+            <div class="col-10">
+                <select class="form-select" name="output">
                     <?php
                     if (isset($output)) {
                         
@@ -175,10 +177,10 @@
             </div>
         </div>	
         <br>
-        <div class="form-group">
-            <label for="inputEmail" class="control-label col-xs-2">Résumé par (ne concerne que les résumés) :</label>
-            <div class="col-xs-10">
-                <select class="form-control" name="summary_rq">
+        <div class="form-group row">
+            <label for="summary_rq" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
+            <div class="col-10">
+                <select class="form-select" id="summary_rq" name="summary_rq">
                     <?php
                     $checkedC = "";
                     $checkedS = "";
@@ -201,14 +203,14 @@
             </div>
         </div>
 
-        <div class="col-xs-2 col-xs-offset-10" id="button-div">
+        <div class="col-2 offset-10" id="button-div">
             <input class="form-control" id="name" type="hidden" name="is_request" value="y"/>
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
         </div>
     </form>
 </div>
 
-<div class="col-md-10 col-md-offset-2 pm-table-short">
+<div class="col-10 offset-2 pm-table-short">
 
     <?php
     if (isset($table)) {
@@ -218,13 +220,13 @@
 
             <thead> <!-- En-tête du tableau -->
                 <tr>				
-                    <th><?php echo BookingTranslator::Area($lang) ?></th>
-                    <th><?php echo BookingTranslator::Resource($lang) ?></th>
-                    <th><?php echo BookingTranslator::Short_description($lang) ?></th>
-                    <th><?php echo CoreTranslator::Date($lang) ?></th> 
-                    <th><?php echo BookingTranslator::Full_description($lang) ?> </th>
-                    <th><?php echo BookingTranslator::Color_code($lang) ?> </th>
-                    <th><?php echo BookingTranslator::recipient($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Area($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Resource($lang) ?></th>
+                    <th scope="col"><?php echo BookingTranslator::Short_description($lang) ?></th>
+                    <th scope="col"><?php echo CoreTranslator::Date($lang) ?></th> 
+                    <th scope="col"><?php echo BookingTranslator::Full_description($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::Color_code($lang) ?> </th>
+                    <th scope="col"><?php echo BookingTranslator::recipient($lang) ?> </th>
                 </tr>
             </thead>
 
@@ -263,7 +265,7 @@
 
 </div>
 
-<div class="col-md-10 col-md-offset-2" id="pm-table">
+<div class="col-10 offset-2" id="pm-table">
 
     <?php
     if (isset($summaryTable)) {
@@ -282,16 +284,16 @@
 
 
             <thead>
-            <th></th>
+            <th scope="col"></th>
             <?php
             foreach ($resourcesNames as $name) {
                 ?>
-                <th><?php echo $name ?></th>
+                <th scope="col"><?php echo $name ?></th>
                 <?php
             }
             ?>
 
-            <th>Total</th>
+            <th scope="col">Total</th>
             </thead>
 
             <tbody>
@@ -303,7 +305,7 @@
                     $i++;
                     ?>
                     <tr>
-                        <th><?php echo $entrySummary[$i] ?></th>
+                        <td><?php echo $entrySummary[$i] ?></td>
                         <?php
                         $j = -1;
                         $totalC = 0;
@@ -312,13 +314,13 @@
                             $j++;
                             ?>
 
-                            <th> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </th>
+                            <td> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </td>
                             <?php
                             $totalC += $col;
                             $totalH += $timeTable[$entrySummary[$i]][$resourcesNames[$j]];
                         }
                         ?>
-                        <th>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </th>
+                        <td>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </td>
                     </tr>
                     <?php
                     $totalCG += $totalC;
@@ -327,10 +329,9 @@
                 ?>
 
                 <tr>
-                    <th> Total </th>
+                    <td> Total </td>
                     <?php
                     for ($i = 0; $i < count($resourcesNames); $i++) {
-                        // calcualte the sum
                         $sumC = 0;
                         $sumH = 0;
                         for ($x = 0; $x < count($entrySummary); $x++) {
@@ -338,11 +339,11 @@
                             $sumH += $timeTable[$entrySummary[$x]][$resourcesNames[$i]];
                         }
                         ?>
-                        <th> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </th>
+                        <td> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </td>
                         <?php
                     }
                     ?>
-                    <th> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </th>
+                    <td> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </td>
                 </tr>
 
             </tbody>

@@ -64,11 +64,7 @@ class CoreldapconfigController extends CoresecureController {
         $form->addText("ldap_host", CoreTranslator::ldapAdress($lang), false, $ldapConnect["ldap_host"], false, true);
         $form->addText("ldap_port", CoreTranslator::ldapPort($lang), false, $ldapConnect["ldap_port"], false, true);
         $form->addText("ldap_user", CoreTranslator::ldapId($lang), false, $ldapConnect["ldap_user"], false, true);
-        //$form->addPassword("ldap_password", CoreTranslator::ldapPwd($lang), false);
-        $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);
-        // $form->addSelect("ldap_tls", CoreTranslator::UseTLS($lang), 
-        //         array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array("TRUE","FALSE"), $ldapConnect["ldap_tls"]);
-        
+        $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);        
         
         $form->setButtonsWidth(2, 9);
         $form->setValidationButton(CoreTranslator::Save($lang), "coreldapconfig");

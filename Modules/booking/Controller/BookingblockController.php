@@ -25,21 +25,56 @@ class BookingblockController extends BookingsettingsController {
     public function indexAction($id_space) {
 
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-
+        $lang = $this->getLanguage();
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getBySpace($id_space);
+        $rmap = [];
+        foreach ($resources as $res) {
+            $rmap[$res['id']] = $res['name'];
+        }
 
         $modelColor = new BkColorCode();
         $colorCodes = $modelColor->getColorCodes($id_space);
 
-        $errormessage = "";
+        $bm = new BkCalendarEntry();
+        $blockedEntries = $bm->blockedEntries($id_space);
+        $table = new TableView();
+        $table->setTitle(BookingTranslator::Blocked_Resouces($lang));
+        $table->addLineEditButton("bookingeditreservation/".$id_space);
+
+
+
+        for($i=0;$i<count($blockedEntries);$i++){
+            $e = $blockedEntries[$i];
+            $start = new DateTime();
+            $start->setTimestamp($e['start_time']);
+            $end = new DateTime();
+            $end->setTimestamp($e['end_time']);
+            $blockedEntries[$i]['id'] = 'r_'.$e['id'];
+            $blockedEntries[$i]['start'] = CoreTranslator::dateFromEn($start->format('Y-m-d'), $lang)." ".$start->format('H:i');
+            $blockedEntries[$i]['end'] = CoreTranslator::dateFromEn($end->format('Y-m-d'), $lang)." ".$end->format('H:i');
+            $blockedEntries[$i]['reason'] = BookingTranslator::BlockReason($e['reason'], $lang);
+            $blockedEntries[$i]['resource'] = $rmap[$e['resource_id']];
+
+        }
+        
+        $headers = array(
+            "id" => "ID",
+            "start" => BookingTranslator::Beginning_of_the_reservation($lang),
+            "end" => BookingTranslator::End_of_the_reservation($lang),
+            "resource" => ResourcesTranslator::resource($lang),
+            "reason" => BookingTranslator::Reason($lang)
+        );
+            
+        $tableHtml = $table->view($blockedEntries, $headers);
+
         $lang = $this->getLanguage();
         $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             'resources' => $resources,
             'colorCodes' => $colorCodes,
-            'errormessage' => $errormessage
+            'blocked' => $tableHtml
         ));
     }
 
@@ -60,6 +95,10 @@ class BookingblockController extends BookingsettingsController {
         $end_hour = $this->request->getParameter("end_hour");
         $end_min = $this->request->getParameter("end_min");
         $color_type_id = $this->request->getParameter("color_code_id");
+        $reason = $this->request->getParameterNoException("reason");
+        if($reason == '') {
+            $reason = BkCalendarEntry::$REASON_BOOKING;
+        }
 
         if($begin_date == "") {
             throw new PfmParamException("invalid begin date");
@@ -83,12 +122,13 @@ class BookingblockController extends BookingsettingsController {
             $resources = $modelResources->getBySpace($id_space);
             $modelColor = new BkColorCode();
             $colorCodes = $modelColor->getColorCodes($id_space);
+            $_SESSION['flash'] = $errormessage;
+            $_SESSION['flashClass'] = 'danger';
             $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
                 'resources' => $resources,
-                'colorCodes' => $colorCodes,
-                'errormessage' => $errormessage
+                'colorCodes' => $colorCodes
                     ), "indexAction");
             return;
         }
@@ -98,7 +138,7 @@ class BookingblockController extends BookingsettingsController {
         $userID = $_SESSION["id_user"];
         foreach ($resources as $resource_id) {
 
-            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resource_id);
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, [$resource_id]);
 
             if ($conflict) {
                 $errormessage = "Error: There is already a reservation for the given slot, please remove it before booking";
@@ -106,12 +146,13 @@ class BookingblockController extends BookingsettingsController {
                 $resources = $modelResources->getBySpace($id_space);
                 $modelColor = new BkColorCode();
                 $colorCodes = $modelColor->getColorCodes($id_space);
+                $_SESSION['flash'] = $errormessage;
+                $_SESSION['flashClass'] = 'danger';
                 $this->render(array(
                     'id_space' => $id_space,
                     'lang' => $lang,
                     'resources' => $resources,
-                    'colorCodes' => $colorCodes,
-                    'errormessage' => $errormessage
+                    'colorCodes' => $colorCodes
                         ), "indexAction");
                 return;
             }
@@ -120,7 +161,9 @@ class BookingblockController extends BookingsettingsController {
             $last_update = date("Y-m-d H:i:s", time());
             $full_description = "";
             $quantity = "";
-            $modelCalEntry->addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity);
+            $modelCalEntry->addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity, reason: $reason);
+            $_SESSION['flash'] = 'Resource(s) blocked';
+            $_SESSION['flashClass'] = 'success';
         }
 
         $this->redirect("bookingblock/" . $id_space);

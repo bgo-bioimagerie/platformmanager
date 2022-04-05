@@ -10,6 +10,13 @@ require_once 'Framework/Configuration.php';
  */
 class CoreConfig extends Model {
 
+    static int $ONEXPIRE_INACTIVATE = 0;
+    static int $ONEXPIRE_REMOVE = 1;
+
+    public function __construct() {
+        $this->tableName = "core_config";
+    }
+
     private static $params = null;
 
     /**

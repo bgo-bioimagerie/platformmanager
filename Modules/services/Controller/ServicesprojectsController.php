@@ -189,7 +189,7 @@ class ServicesprojectsController extends ServicesController {
                 $today = time();
                 $delay = $limitD - $today;
                 if ($delay < 0 || $delay < $warning * 24 * 3600) {
-                    $entriesArray[$i]["close_icon"] = "glyphicon glyphicon-warning-sign";
+                    $entriesArray[$i]["close_icon"] = "bi-exclamation-triangle-fill";
                 }
             }
 
@@ -365,17 +365,14 @@ class ServicesprojectsController extends ServicesController {
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "projectEditForm");
-        //$form->setTitle(ServicesTranslator::Edit_projects($lang), 3);
 
         $modelProject = new SeProject();
         $projectName = $modelProject->getName($id_space, $id);
 
         if ($id > 0) {
             $value = $modelProject->getEntry($id_space, $id);
-            // $items = $modelProject->getProjectServices($id_space, $id);
         } else {
             $value = $modelProject->defaultEntryValues();
-            // $items = array("dates" => array(), "services" => array(), "quantities" => array(), "comment" => array());
         }
 
         $modelUser = new CoreUser();
@@ -385,8 +382,6 @@ class ServicesprojectsController extends ServicesController {
 
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
-
-        //$form->addSeparator(CoreTranslator::Description($lang));
 
         $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
         $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);

@@ -177,7 +177,11 @@ class Router {
             $this->runAction($controller, $urlInfo, $action, $args);
             $reqEnd = microtime(true);
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            if ($e instanceOf PfmException && !$e->sendReports) {
+                Configuration::getLogger()->debug('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            } else {
+                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            }
             $reqEnd = microtime(true);
             $this->manageError($e);
         }
@@ -318,7 +322,7 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require ($fileController);
+            require_once ($fileController);
             $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
@@ -400,19 +404,26 @@ class Router {
 
         $view = new View('error');
         $view->setFile('Modules/error.php');
-        $view->generate(array(
-            'context' => [
-                    "mainMenu" =>null,
-                    "sideMenu" => null,
-                    "spaceMenu" => null,
-                    "rootWeb" => Configuration::get("rootWeb", "/"),
-                    "lang" => 'en',
-                    "currentSpace" => null,  // current space if any
-                    "role" => -1   // user role in space if any
-            ],
-            'type' => $type,
-            'message' => $exception->getMessage()
-        ));
+        try {
+            $view->generate(array(
+                'context' => [
+                        "mainMenu" =>null,
+                        "sideMenu" => null,
+                        "spaceMenu" => null,
+                        "rootWeb" => Configuration::get("rootWeb", "/"),
+                        "lang" => 'en',
+                        "currentSpace" => null,  // current space if any
+                        "role" => -1 ,  // user role in space if any,
+                        "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "dev" => false
+                ],
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+        } catch(Throwable $e) {
+            echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
+            echo '<br>'.$exception->getMessage();
+        }
     }
 
 }

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkPrice extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_prices";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_prices` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -26,7 +30,7 @@ class BkPrice extends Model {
     public function getPrice($id_space, $id_resource, $id_belongings){
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
         }
@@ -36,7 +40,7 @@ class BkPrice extends Model {
     public function getDayPrice($id_space, $id_resource, $id_belongings){
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, "day", $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
         }
@@ -46,7 +50,7 @@ class BkPrice extends Model {
     public function getNightPrice($id_space, $id_resource, $id_belongings){
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, "night", $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
         }
@@ -56,7 +60,7 @@ class BkPrice extends Model {
     public function getWePrice($id_space, $id_resource, $id_belongings){
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, "we", $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
         }
@@ -66,7 +70,7 @@ class BkPrice extends Model {
     public function getPackagePrice($id_space, $package_id, $resources_id, $belonging_id){
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND id_package=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($resources_id, $belonging_id, $package_id, $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             $tmp = $req->fetch();
             return $tmp[0];
         }
@@ -126,7 +130,7 @@ class BkPrice extends Model {
     public function isPricePackage($id_space, $id_resource, $id_belongings, $id_package){
         $sql = "SELECT id FROM bk_prices WHERE id_resource=? AND id_belonging=? AND id_package=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, $id_package, $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() > 0){
             return true;
         }
         return false;
@@ -135,7 +139,7 @@ class BkPrice extends Model {
     public function isPriceDay($id_space, $id_resource, $id_belongings, $day){
         $sql = "SELECT id FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_resource, $id_belongings, $day, $id_space));
-        return ($req->rowCount() == 1);
+        return ($req->rowCount() > 0);
     }
 
 

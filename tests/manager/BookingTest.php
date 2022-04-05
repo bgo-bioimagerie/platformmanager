@@ -4,6 +4,9 @@ require_once 'tests/BookingBaseTest.php';
 require_once 'Modules/clients/Controller/ClientslistController.php';
 require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/booking/Controller/BookingschedulingController.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
+require_once 'Modules/clients/Model/ClClient.php';
 
 class BookingTest extends BookingBaseTest {
 
@@ -174,7 +177,7 @@ class BookingTest extends BookingBaseTest {
         $bookingId = $this->book($space, $user, $clients[0], $resources[0], 10);
     }
 
-    public function testBookinSCheduling() {
+    public function testBookingSCheduling() {
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
         $space = null;
@@ -303,6 +306,23 @@ class BookingTest extends BookingBaseTest {
         $c = new BookingController($req, $space);
         $data = $c->runAction('booking', 'month', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
         $this->assertTrue(!empty($data['bookings']));
+
+
+        // Test compute
+        $id_booking = 0;
+        foreach($resources as $resource) {
+            // book for 12 hours
+            $id_booking= $this->book($space, $user, $clients[0], $resource, 12, 'tuesday', 12);
+            break;
+        }
+
+        $bk = new BkCalendarEntry();
+        $entry = $bk->getEntry($space['id'], $id_booking);
+        $compute = $bk->computeDuration($space['id'], $entry);
+        $this->assertTrue($compute['hours']['nb_hours_closed'] == 12);
+        $this->assertTrue($compute['hours']['nb_hours_day'] == 11);
+        $this->assertTrue($compute['hours']['nb_hours_night'] == 1);
+        $this->assertTrue($compute['hours']['nb_hours_we'] == 0);
     }
 
 }

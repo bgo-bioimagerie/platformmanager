@@ -17,7 +17,7 @@ class StatisticsInstall extends Model {
     public function createDatabase() {        
 
         if (!file_exists('data/statistics/')) {
-            mkdir('data/statistics/', 0777, true);
+            mkdir('data/statistics/', 0755, true);
         }
     }
 }

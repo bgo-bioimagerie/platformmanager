@@ -7,7 +7,6 @@ class BulletjournalRouting extends Routing{
     public function listRoutes(){
         
         // config
-        // $this->addRoute("bulletjournalconfigadmin", "bulletjournalconfigadmin", "bulletjournalconfigadmin", "index");
         $this->addRoute("bulletjournalconfig", "bulletjournalconfig", "bulletjournalconfig", "index", array("id_space"), array(""));
 
         

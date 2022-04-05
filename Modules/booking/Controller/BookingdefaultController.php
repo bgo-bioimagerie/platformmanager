@@ -77,25 +77,52 @@ class BookingdefaultController extends BookingabstractController {
         $hourArray = explode("-", $hour);
         $id_resource = $paramVect[3];
 
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $schedule = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+
         $minutes = 0;
         if (count($hourArray) == 2) {
             $minutes = $hourArray[1];
         }
 
         $start_time = mktime($hourArray[0], $minutes, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
-        $end_time = $start_time + 3600;
+        $duration = 0;
+        $units = 'h';
+            switch ($schedule['booking_time_scale']) {
+                case 1:
+                    $end_time = $start_time + $schedule['size_bloc_resa'];
+                    $duration = ($end_time - $start_time) / 60;
+                    $units = 'm';
+                    break;
+                case 2:
+                    $end_time = $start_time + 3600;
+                    $duration = ($end_time - $start_time) / 3600;
+                    $units = 'h';
+                    break;
+                case 3:
+                    $start_time = mktime($schedule['day_begin'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
+                    $end_time = mktime($schedule['day_end'], 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
+                    $duration = 1;
+                    $units = 'd';
+                    break;
+                default:
+                    $end_time = $start_time + 3600;
+                    $duration = ($end_time - $start_time) / 60;
+                    break;
+            }
+        if($schedule['resa_time_setting'] == 2) {
+            $duration=0;
+        }
 
         $modelResa = new BkCalendarEntry();
         $id_user = $_SESSION["id_user"];
 
-        $modelResource = new ResourceInfo();
-        /*
-        $_SESSION['bk_id_resource'] = $id_resource;
-        $_SESSION['bk_id_area'] = $modelResource->getAreaID($id_space, $id_resource);
-        $_SESSION['bk_curentDate'] = date("Y-m-d", $start_time);
-        */
+        $resaInfo = $modelResa->getDefault($id_space ,$start_time, $end_time, $id_resource, $id_user);
+        $resaInfo['duration'] = $duration;
+        $resaInfo['durationUnits'] = $units;
+        return $resaInfo;
 
-        return $modelResa->getDefault($id_space ,$start_time, $end_time, $id_resource, $id_user);
     }
 
     private function canUserEditReservation($id_space, $id_resource, $id_user, $id_reservation, $id_recipient, $start_date) {
@@ -109,10 +136,8 @@ class BookingdefaultController extends BookingabstractController {
             return true;
         }
 
-        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_space, $id_resource);
-        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
 
         if ($id_recipient == $id_user) {
 
@@ -133,31 +158,11 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
 
         $modelUser = new CoreUser();
-        $userStatus = $modelUser->getStatus($_SESSION["id_user"]);
+        //$userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
         $modelBkAccess = new BkAccess();
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
-
-        $curentDate = date("Y-m-d", time());
-        if (isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-        $temp = explode("-", $curentDate);
-        try {
-            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
-        } catch(Exception $e) {
-            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $curentDate]);
-            $curentDateUnix = time();
-        }
-
-        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $userStatus, $curentDateUnix);
-
-        if (!$canValidateBooking) {
-            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
-            $_SESSION['flashClass'] = "warning";
-            return $this->redirect("booking/".$id_space, [], ['error' => 'resourceBookingUnauthorized']);
-        }
 
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
@@ -173,6 +178,38 @@ class BookingdefaultController extends BookingabstractController {
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
 
         $dateResaStart = $this->request->getParameter("resa_start");
+        $dateResaEnd = $this->request->getParameterNoException("resa_end");
+        $duration = $this->request->getParameterNoException("resa_duration");
+        if(!$dateResaEnd && !$duration) {
+            throw new PfmParamException('no end date nor duration specified');
+        }
+
+        $temp = explode("-", $dateResaStart);
+        try {
+            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
+        } catch(Exception $e) {
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $dateResaStart]);
+            $curentDateUnix = time();
+        }
+
+        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $curentDateUnix);
+
+        $redir = $this->request->getParameterNoException('from');
+
+        $backto = [];
+        $redirPage = '';
+        if($redir) {
+            $redirInfo = explode(':', $redir);
+            $redirPage = $redirInfo[0];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
+        }
+
+        if (!$canValidateBooking) {
+            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
+            $_SESSION['flashClass'] = "warning";
+            return $this->redirect("booking$redirPage/".$id_space, $backto, ['error' => 'resourceBookingUnauthorized']);
+        }
+
         $dateResaStartArray = explode("-", $dateResaStart);
         if($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
@@ -184,13 +221,12 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmAuthException('access denied for this resource', 403);
         }
 
+        $modelScheduling = new BkScheduling();
+        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+
 
         if($all_day_long == 1){
-            $modelResource = new ResourceInfo();
-            $modelScheduling = new BkScheduling();
-            $schedul = $modelScheduling->get($id_space ,$modelResource->getAreaID($id_space, $id_resource));
-            $start_time = mktime($schedul["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
-
+            $start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
         }
         else{
             $hour_startH = $this->request->getParameter("hour_startH");
@@ -201,29 +237,47 @@ class BookingdefaultController extends BookingabstractController {
         }
 
 
-        $dateResaEnd = $this->request->getParameter("resa_end");
+
+        $hour_endH = $this->request->getParameterNoException("hour_endH");
+        $hour_endM = $this->request->getParameterNoException("hour_endm");
+
+        if($duration && !$dateResaEnd) {
+            $units = $this->request->getParameterNoException("resa_units");
+            switch ($units) {
+                case 'm':
+                    $end = $start_time + (60 * $duration);
+                    break;
+                case 'h':
+                    $end = $start_time + (3600 * $duration);
+                    break;
+                case 'd':
+                    $end = mktime(23, 59, 59, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
+                    break;
+                default:
+                    $end = $start_time + (3600 * $duration);
+                    break;
+            }
+            $dateResaEnd = date('Y-m-d', $end);
+            $hour_endH = intval(date('G', $end));
+            $hour_endM = intval(date('i', $end));
+        }
+
         $dateResaEndArray = explode("-", $dateResaEnd);
-        if($dateResaEnd == "") {
-            throw new PfmParamException("invalid end date");
+        if($dateResaEnd == "" || $hour_endH == "" || $hour_endM == "") {
+            throw new PfmParamException("invalid end date, missing end date or time");
         }
 
         if($all_day_long == 1){
-            $modelResource = new ResourceInfo();
-            $modelScheduling = new BkScheduling();
-            $schedul = $modelScheduling->get($id_space, $modelResource->getAreaID($id_space ,$id_resource));
-            $end_time = mktime($schedul["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
+            $end_time = mktime($schedule["day_end"]-1, 59, 59, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
         else{
-            $hour_endH = $this->request->getParameter("hour_endH");
-            $hour_endM = $this->request->getParameter("hour_endm");
             $modelScheduling = new BkScheduling();
             $hour_endM = $modelScheduling->getClosestMinutes($id_space ,$id_resource, $hour_endM);
 
             $end_time = mktime($hour_endH, $hour_endM, 0, $dateResaEndArray[1], $dateResaEndArray[2], $dateResaEndArray[0]);
         }
 
-        $modelScheduling = new BkScheduling();
-        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+        
         $bk_start_start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
         $bk_start_end_time = mktime($schedule["day_end"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
 
@@ -341,7 +395,16 @@ class BookingdefaultController extends BookingabstractController {
 
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
-            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
+            $resources_id = [$id_resource];
+            if($schedule['shared']) {
+                $rem = new ResourceInfo();
+                $areaResources = $rem->resourceIDNameForArea($id_space, $ri['id_area']);
+                $resources_id = [];
+                foreach ($areaResources as $r) {
+                    $resources_id[] = $r['id'];
+                }
+            }
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resources_id, $id);
             if ($conflict) {
                 $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                 $error = 'reservationError';
@@ -389,7 +452,7 @@ class BookingdefaultController extends BookingabstractController {
                 $pass = -86400;
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=86400) {
                     $pass += 86400;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -412,7 +475,7 @@ class BookingdefaultController extends BookingabstractController {
             // every week
             else if ($periodic_option == 3) {
 
-                $periodic_week = $this->request->getParameter("periodic_week");
+                $periodic_week = intval($this->request->getParameter("periodic_week"));
                 $modelPeriodic->setPeriod($id_space ,$id_period, $periodic_option, $periodic_week);
                 $step = $periodic_week * 7 * 24 * 3600;
                 $pass = -$step;
@@ -421,7 +484,7 @@ class BookingdefaultController extends BookingabstractController {
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=$step) {
 
                     $pass += $step;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -507,7 +570,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space ,$start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -559,7 +622,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space, $start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictP($id_space, $start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -614,9 +677,7 @@ class BookingdefaultController extends BookingabstractController {
             }
         }
 
-        $bk_id_area = $modelResource->getAreaID($id_space ,$id_resource);
-        return $this->redirect("booking/".$id_space."/".$bk_id_area."/".$id_resource, [], ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
-        //return $this->redirect("booking/".$id_space."/".$_SESSION["bk_id_area"]."/".$_SESSION["bk_id_resource"], [], ['bkcalentry' => ['id' => $id_entry]]);
+        return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
@@ -644,9 +705,13 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        $form->addHidden("id", $resaInfo["id"]);
+        $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
+        $form->addHidden("from", $this->request->getParameterNoException('from'));
+        if($resaInfo['reason'] > 0) {
+            $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
+        }
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -792,9 +857,15 @@ class BookingdefaultController extends BookingabstractController {
         $formPackage = new Form($this->request, "formPackage");
         $formPackage->addSelect("package_id", BookingTranslator::Package($lang), $pNames, $pIds, $resaInfo["package_id"], false);
 
-        $formEndDate = new Form($this->request, "formEndDate");
-        $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
-        $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
+        if(array_key_exists('duration', $resaInfo) && $resaInfo['duration']) {
+            $formEndDate = new Form($this->request, "formEndDate");
+            $formEndDate->addHidden("resa_units", $resaInfo['durationUnits']);
+            $formEndDate->addNumber("resa_duration", BookingTranslator::Duration($lang). '('.$resaInfo['durationUnits'].')', true, $resaInfo['duration']);
+        } else {
+            $formEndDate = new Form($this->request, "formEndDate");
+            $formEndDate->addDate("resa_end", BookingTranslator::End_of_the_reservation($lang), false, date("Y-m-d", $resaInfo["end_time"]));
+            $formEndDate->addHour("hour_end", BookingTranslator::time($lang), false, array(date("H", $resaInfo["end_time"]), date("i", $resaInfo["end_time"])));
+        }
         $packageChecked = $resaInfo["package_id"];
 
         $userCanEdit = $this->canUserEditReservation($id_space, $id_resource, $_SESSION["id_user"], $resaInfo["id"], $resaInfo["recipient_id"], $resaInfo["start_time"]);
@@ -832,6 +903,24 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
         $formDeletePeriod->setButtonsWidth(2, 10);
 
+        $details = ['steps' => []];
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
+        }
+
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $forcePackages = $schedul['force_packages'] ?? 0;
+        if($forcePackages) {
+            $packageChecked = true;
+        }
+
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
@@ -839,6 +928,7 @@ class BookingdefaultController extends BookingabstractController {
             "data" => ["booking" => $resaInfo],
             "form" => $form,
             "use_packages" => $use_packages,
+            "forcePackages" => $forcePackages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,
             "id_reservation" => $resaInfo["id"],
@@ -850,7 +940,10 @@ class BookingdefaultController extends BookingabstractController {
             "periodInfo" => $periodInfo,
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
-            "formDeletePeriod" => $formDeletePeriod->getHtml($lang)),
+            "formDeletePeriod" => $formDeletePeriod->getHtml($lang),
+            'from' => $this->request->getParameterNoException('from'),
+            'details' => $details
+        ),
             "addreservationAction"
         );
     }
@@ -908,10 +1001,10 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
-        if ($sendEmail == 1) {
+        if ($sendEmail == 1 && $entryInfo["start_time"] > time()) {
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource, time());
             $subject = $resourceName . " has been freed";
             $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
 

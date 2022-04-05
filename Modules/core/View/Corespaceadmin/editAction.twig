@@ -1,0 +1,115 @@
+{% extends "Modules/layout.twig" %}
+   
+{% block content %}
+
+<div id="content" class="container pm-form">
+    {% if todolist %}
+        <div id="buttons">
+            <button
+                id="todo_btn"
+                class="tab btn btn-primary"
+                style="margin:5px; font-weight:bold"
+                onclick="showAction()">
+                Hide Todo
+            </button>
+        </div>
+        
+        <div id="sections">
+            <div id="spaceedit_todo">
+                <div class="page-header">
+                    <h3>Basic space configuration</h3>
+                </div>
+                
+                {% for module in todolist %}
+                    <div style="margin-bottom:10px">
+                        <h4> {{ module.title }} </h4>
+                        <p>
+                            <a href="{{module.docurl}}" style="font-style:italic">
+                                {{ module.title }} documentation
+                            </a>
+                        </p>    
+
+                        {% for task in module.tasks %}
+                            {% set checked = task.done ? "checked" : "" %}
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    id="{{task.id}}"
+                                    name="{{task.id}}"
+                                    disabled
+                                    {{checked}} >
+                                <label for="{{task.id}}" style="font-weight:normal">
+                                    <div id="{{task.id}}_link" onclick="goto('{{task.id}}', '{{task.url}}')">
+                                        {{task.title}}
+                                    </div>
+                                </label>
+                                {% if task.options %}
+                                    <select id="{{task.id}}_select" class="customSelector">
+                                        <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
+                                        {% for item in task.options.list %}
+                                            <option value={{item[0]}}>{{item[1]}}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div id="spaceedit_form" style="display:block">
+            {{ formHtml | raw }}
+        </div>
+    </div>
+</div>
+
+{% if todolist %}
+
+    <script>
+        // setLinks();
+
+        const todoBtn = document.getElementById("todo_btn");
+        '{{showTodo}}' ? showAction() : todoBtn.innerHTML = "Show Todo";
+        
+        function showAction() {
+            const section = document.getElementById("spaceedit_todo");
+            section.classList.toggle("expanded");
+            const expanded = section.classList.contains("expanded");
+            if (expanded) {
+                todoBtn.innerHTML = "Hide Todo";
+            } else {
+                todoBtn.innerHTML = "Show Todo";
+            }
+        }
+
+        function goto(taskId, taskUrl) {
+            let select = document.getElementById(taskId + "_select") ?? null;
+            let targetUrl = taskUrl;
+            if (select) {
+                let selValue = select.options[select.selectedIndex].value;
+                targetUrl += "/" + selValue;
+                targetUrl += "?origin=" + taskId;
+                targetUrl += "&redirect=todo";
+            } else {
+                targetUrl += "?redirect=todo";
+            }
+            window.location = targetUrl;
+        }
+
+    </script>
+
+    <style type="text/css">
+        #spaceedit_todo {
+            max-height: 0px;
+            overflow-y: hidden;
+            transition: all 0.2s linear;
+        }
+
+        #spaceedit_todo.expanded {
+            max-height: 1080px;
+        }
+    </style>
+
+{% endif %}
+
+{% endblock %}

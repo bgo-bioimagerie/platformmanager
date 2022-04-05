@@ -28,12 +28,13 @@ class BookingnightweController extends BookingsettingsController {
         $modelBelonging = new ClPricing();
         $belongings = $modelBelonging->getAll($id_space);
         
-        //print_r($belongings);
         
-        // get the sygrrig pricing
+        // get the pricing
         $modelPricing = new BkNightWE();
         $modelPricing->addBelongingIfNotExists($id_space, $belongings);
         $pricingArray = $modelPricing->getSpacePrices($id_space, "id");
+
+        $pricings = [];
 
         // prepare view
         for ($i = 0; $i < count($pricingArray); $i++) {
@@ -53,14 +54,18 @@ class BookingnightweController extends BookingsettingsController {
             } else {
                 $pricingArray[$i]["tarif_we"] = CoreTranslator::no($lang);
             }
+
+            // If pricing does not exists anymore, remove related element from list
+            if($pricingArray[$i]["name"] !== null) {
+                $pricings[] = $pricingArray[$i];
+            }
         }
 
         $table = new TableView ();
 
         $table->setTitle(BookingTranslator::Nightwe($lang), 3);
-        //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("bookingnightweedit/".$id_space, "id_belonging");
-        $table->addDeleteButton("bookingnightwedelete/".$id_space);
+        // $table->addDeleteButton("bookingnightwedelete/".$id_space);
 
         $tableContent = array(
             "id" => "ID",
@@ -69,9 +74,9 @@ class BookingnightweController extends BookingsettingsController {
             "tarif_night" => BookingTranslator::Price_night($lang),
             "tarif_we" => BookingTranslator::Price_weekend($lang)
         );
-        $tableHtml = $table->view($pricingArray, $tableContent);
+        $tableHtml = $table->view($pricings, $tableContent);
         
-        $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml, 'data' => ['pricings' => $pricingArray]));
     }
     
     public function editAction($id_space, $id){

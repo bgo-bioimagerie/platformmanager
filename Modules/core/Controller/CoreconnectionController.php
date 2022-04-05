@@ -100,7 +100,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $loggedUser = $this->initSession($login);
                 // generate the remember me cookie
                 if ($this->request->isparameter("remember")) {
-                    $key = sha1($this->generateRandomKey());
+                    $key = hash('sha512', $this->generateRandomKey());
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
                         throw new PfmException("failed to set cookie with key " . $key, 500);
@@ -207,17 +207,10 @@ class CoreconnectionController extends CorecookiesecureController {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
                     if(!$userInfo['apikey']) {
                         $this->user->newApiKey($userInfo['idUser']);
-                    }
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
                     }
                     return $this->user->isActive($login);
                 }
@@ -281,7 +274,7 @@ class CoreconnectionController extends CorecookiesecureController {
         $pass = array(); //remember to declare $pass as an array
         $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
         for ($i = 0; $i < 8; $i++) {
-            $n = rand(0, $alphaLength);
+            $n = random_int(0, $alphaLength);
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string

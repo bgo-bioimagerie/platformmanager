@@ -22,6 +22,7 @@ class CorePlan {
      */
     // flag to add space managers as grafana org members
     const FLAGS_GRAFANA = 'grafana';
+    const FLAGS_DOCUMENTS = 'documents';
 
     private ?array $plan = null;
 
@@ -103,7 +104,8 @@ class CoreSpace extends Model {
         public string $contact = '',
         public string $support = '',
         public int $plan = 0,
-        public int $plan_expire = 0
+        public int $plan_expire = 0,
+        public ?string $termsofuse = null
     ) {
         $this->tableName = 'core_spaces';
     }
@@ -151,6 +153,8 @@ class CoreSpace extends Model {
         `plan` int NOT NULL DEFAULT 0,
         `plan_expire` int NOT NULL DEFAULT 0,
         `user_desactivate` int(1) NOT NULL DEFAULT 1,
+        `termsofuse` varchar(255),  /* terms of use URL */
+        `on_user_desactivate` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -161,6 +165,8 @@ class CoreSpace extends Model {
         $this->addColumn('core_spaces', 'plan', "int", '0');
         $this->addColumn('core_spaces', 'plan_expire', "int", '0');
         $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
+        $this->addColumn('core_spaces', 'termsofuse', "varchar(255)", '');
+        $this->addColumn('core_spaces', 'on_user_desactivate', "int", '0');
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
@@ -210,7 +216,8 @@ class CoreSpace extends Model {
             "admins" => [],
             "plan" => 0,
             "plan_expire" => 0,
-            "user_desactivate" => 1
+            "user_desactivate" => 1,
+            "termsofuse" => ""
         ];
     }
     
@@ -446,9 +453,6 @@ class CoreSpace extends Model {
             $tmp = $req->fetch();
             return $tmp["status"];
         } else {
-            //if ($this->isSpacePublic($id_space)) {
-            //    return CoreSpace::$USER;
-            //}
             return -1;
         }
     }
@@ -461,6 +465,9 @@ class CoreSpace extends Model {
         $sql = "SELECT user_role FROM core_space_menus WHERE url=? AND id_space=?";
         $roleArray = $this->runRequest($sql, array($menuUrl, $id_space))->fetch();
         $menuRole = $roleArray ? $roleArray[0] : CoreSpace::$MANAGER;
+        if($menuRole == CoreSpace::$INACTIF) {
+            return 0;
+        }
         $userRole = $this->getUserSpaceRole($id_space, $id_user);
 
         if ($this->isSpacePublic($id_space) && $userRole == -1) {    
@@ -517,7 +524,17 @@ class CoreSpace extends Model {
 
     public function setDeactivate($id, $deactivate){
         $sql = "UPDATE core_spaces SET user_desactivate=? WHERE id=?";
-        $this->runRequest($sql, array($deactivate, $id));        
+        $this->runRequest($sql, array($deactivate, $id));
+    }
+
+    public function setOnDeactivate($id, $on_user_desactivate) {
+        $sql = "UPDATE core_spaces SET on_user_desactivate=? WHERE id=?";
+        $this->runRequest($sql, array($on_user_desactivate, $id));
+    }
+
+    public function setTermsOfUse($id, $termsofuseUrl) {
+        $sql = "UPDATE core_spaces SET termsofuse=? WHERE id=?";
+        $this->runRequest($sql, array($termsofuseUrl, $id));        
     }
 
     public function setShortname($id, $shortname){
@@ -678,8 +695,19 @@ class CoreSpace extends Model {
     }
 
     public function delete($id) {
+        // delete space
         $sql = "DELETE FROM core_spaces WHERE id=?";
         $this->runRequest($sql, array($id));
+
+        // delete related item
+        $modelItem = new CoreMainMenuItem();
+        $items = $modelItem->getAll();
+        foreach ($items as $item) {
+            if ($item['id_space'] == $id) {
+                $modelItem->delete($item['id']);
+            }
+        }
+
         Events::send([
             "action" => Events::ACTION_SPACE_DELETE,
             "space" => ["id" => intval($id)]

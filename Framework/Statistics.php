@@ -29,6 +29,10 @@ use InfluxDB2\Service\AuthorizationsService;
 
 class BucketStatistics extends Model {
 
+    public function __construct() {
+        $this->tableName = "stats_buckets";
+    }
+
     /**
      * Create the stats_buckets table
      * 
@@ -213,7 +217,6 @@ class Statistics {
             $sm = new BucketStatistics();
             $sm->add($space, $bucket->getId(), $token);
             Configuration::getLogger()->debug('[stats] bucket created', ['bucket' => $bucket->getId(), 'token' => $token]);
-            // $client->close();
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         } 

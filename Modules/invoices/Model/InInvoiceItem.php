@@ -73,7 +73,6 @@ class InInvoiceItem extends Model {
     
     public function deleteForInvoice($id_space, $id_invoice){
         $sql = "UPDATE in_invoice_item SET deleted=1,deleted_at=NOW() WHERE id_invoice=? AND id_space=?";
-        // $sql = "DELETE FROM in_invoice_item WHERE id_invoice=? AND id_space=?";
         $this->runRequest($sql, array($id_invoice, $id_space));
     }
 

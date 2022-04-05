@@ -21,8 +21,18 @@ require_once 'Modules/core/Model/CoreOpenId.php';
  * Controller for the provider example of users module
  */
 class UseraccountController extends CoresecureController {
+    public function mainMenu() {
 
-
+        $lang = $this->getLanguage();
+        $dataView = [
+            'bgcolor' => Constants::COLOR_WHITE,
+            'color' => Constants::COLOR_BLACK,
+            'My_Account' => CoreTranslator::My_Account($lang),
+            'Informations' => CoreTranslator::Informations($lang),
+            'Password' => CoreTranslator::Password($lang),
+        ];
+        return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
+    }
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -54,9 +64,13 @@ class UseraccountController extends CoresecureController {
         $form->addUpload("avatar", UsersTranslator::Avatar($lang), $userInfo["avatar"] ?? "");
         $form->addTextArea("bio", UsersTranslator::Bio($lang), false, $userInfo["bio"] ?? "");
 
-        $form->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
-
         $form->setValidationButton(CoreTranslator::Save($lang), "usersmyaccount");
+
+
+        $formApi = new Form($this->request, "coremyaccountapikey");
+        $formApi->setTitle('Api key');
+        $formApi->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
+        $formApi->setValidationButton('Reset', "usersmyaccount");
         
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
@@ -95,7 +109,13 @@ class UseraccountController extends CoresecureController {
         ]);
 
         // get user linked providers and display them with unlink
-
+        if($formApi->check()) {
+            $modelCoreUser->newApiKey($_SESSION['id_user']);
+            $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
+            $this->redirect("usersmyaccount");
+            return;
+        }
 
         if ( $form->check() ){
             
@@ -133,6 +153,7 @@ class UseraccountController extends CoresecureController {
         $this->render(array(
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
+            'formApi' => $formApi->getHtml($lang),
             'providers' => $providers,
             'linked' => $linked,
             'data' => ['user' => $userCore]

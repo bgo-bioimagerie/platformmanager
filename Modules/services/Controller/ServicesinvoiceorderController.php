@@ -3,10 +3,13 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Events.php';
 
 require_once 'Modules/invoices/Controller/InvoiceAbstractController.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/services/Model/ServicesInvoice.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SeService.php';
@@ -50,8 +53,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $dateEnd = $this->request->getParameterNoException("date_end");
             $clientId = $this->request->getParameterNoException("id_client");
             if ($clientId != '') {
-                $id_invoice = $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
-                return $this->redirect("invoices/" . $id_space, [], ['invoice' => ['id' => $id_invoice]]);
+                $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
+                return $this->redirect("invoices/" . $id_space);
             }
         }
 
@@ -157,89 +160,19 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $form;
     }
 
-    private function generateClientBill($dateBegin, $dateEnd, $id_client, $id_space) {
-
-        $modelOrder = new SeOrder();
-        $modelInvoice = new InInvoice();
-        $modelInvoiceItem = new InInvoiceItem();
-        // select all the opened orders
-        $orders = $modelOrder->openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space);
-
-        if (count($orders) == 0) {
-            throw new PfmParamException("there are no orders open for this responsible");
-        }
-
-        $lang = $this->getLanguage();
-
-        // get the bill number
-        $number = $modelInvoice->getNextNumber($id_space);
-        $module = "services";
-        $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_space, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($dateBegin, $lang) . " => " . CoreTranslator::dateFromEn($dateEnd, $lang));
-
-        // add the counts to the Invoice
-        $services = $modelOrder->openedItemsForClient($id_space, $id_client);
-        $modelClPricing = new ClPricing();
-        $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0]; // why an array ???
-        $content = $this->parseServicesToContent($id_space, $services, $pricing['id']);
-        $details = $this->parseOrdersToDetails($id_space, $orders);
-        $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
-
-        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+    private function generateClientBill($beginPeriod, $endPeriod, $id_client, $id_space) {
+        $cv = new CoreVirtual();
+        $rid = $cv->newRequest($id_space, "invoices", "orders[$id_client]:$beginPeriod => $endPeriod");
         Events::send([
-            "action" => Events::ACTION_INVOICE_EDIT,
+            "action" => Events::ACTION_INVOICE_REQUEST,
             "space" => ["id" => intval($id_space)],
-            "invoice" => ["id" => intval($id_invoice)]
+            "user" => ["id" => $_SESSION['id_user']],
+            "type" => ServicesInvoice::$INVOICES_SERVICES_ORDERS_CLIENT,
+            "period_begin" => $beginPeriod,
+            "period_end" => $endPeriod,
+            "id_client" => $id_client,
+            "request" => ["id" => $rid]
         ]);
-
-        // close orders
-        foreach ($orders as $order) {
-            $modelOrder->setEntryCloded($id_space, $order["id"]);
-            $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
-        }
-
-        return $id_invoice;
-    }
-
-    protected function parseOrdersToDetails($id_space, $orders) {
-        $details = "";
-        foreach ($orders as $order) {
-            $details .= $order["no_identification"] . "=servicesorderedit/" . $id_space . "/" . $order["id"] . ";";
-        }
-        return $details;
-    }
-
-    protected function parseServicesToContent($id_space, $services, $id_belonging) {
-        $content = "";
-        $addedServices = array();
-        $modelPrice = new SePrice();
-        for ($i = 0; $i < count($services); $i++) {
-            $quantity = 0;
-            if (!in_array($services[$i]["id_service"], $addedServices)) {
-                for ($j = $i; $j < count($services); $j++) {
-                    if ($services[$j]["id_service"] == $services[$i]["id_service"]) {
-                        $quantity += floatval($services[$j]["quantity"]);
-                    }
-                }
-                $price = $modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging);
-                $addedServices[] = $services[$i]["id_service"];
-                $content .= $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";";
-            }
-        }
-        return $content;
-    }
-
-    protected function calculateTotal($id_space, $services, $id_belonging) {
-        $total_HT = 0;
-        $modelPrice = new SePrice();
-        foreach ($services as $service) {
-            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belonging);
-            $total_HT += floatval($service["quantity"]) *  floatval($price);
-        }
-        return $total_HT;
     }
 
     protected function unparseContent($id_space ,$id_item) {

@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Class defining the booking settings model.
@@ -9,6 +10,10 @@ require_once 'Framework/Model.php';
  * @author Sylvain Prigent
  */
 class BkBookingSettings extends Model {
+
+    public function __construct() {
+        $this->tableName = "bk_booking_settings";
+    }
 
     /**
      * Create the booking settings entry table
@@ -20,7 +25,7 @@ class BkBookingSettings extends Model {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_booking_settings` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`tag_name` varchar(100) NOT NULL,
-		`is_visible` int(1) NOT NULL,			
+		`is_visible` int NOT NULL,			
 		`is_tag_visible` int(1) NOT NULL,
 		`display_order` int(5) NOT NULL,
 		`font` varchar(20) NOT NULL,
@@ -150,12 +155,12 @@ class BkBookingSettings extends Model {
      * @param boolean $displayHorizontal
      * @return string Summmary in HTML
      */
-    public function getSummary($id_space, $user, $phone, $short_desc, $desc, $displayHorizontal = true) {
-
+    public function getSummary($id_space, $user, $phone, $short_desc, $desc, $displayHorizontal = true, $role=0) {
         $lang = "En";
         if (isset($_SESSION["user_settings"]["language"])) {
             $lang = $_SESSION["user_settings"]["language"];
         }
+
         $entryList = $this->entries($id_space, "display_order");
         $summary = "";
         // user
@@ -164,6 +169,14 @@ class BkBookingSettings extends Model {
             if ($i == count($entryList) - 1) {
                 $last = true;
             }
+
+            if($entryList[$i]['is_visible'] == 2){
+                $entryList[$i]['is_visible'] = 0;
+                if($role >= CoreSpace::$MANAGER){
+                    $entryList[$i]['is_visible'] = 1;
+                }
+            }
+
             if ($entryList[$i]['tag_name'] == "User") {
                 $summary .= $this->summaryEntry($i, $entryList, $user, $displayHorizontal, BookingTranslator::User($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Phone") {
@@ -192,20 +205,20 @@ class BkBookingSettings extends Model {
         $summary = "" ;
         if ($entryList[$i]['is_visible'] == 1) {
             if ($entryList[$i]['is_tag_visible'] == 1) {
-                $summary .= "<b>" . $tagNameTr . ": </b>";
+                $summary .= "<strong>" . $tagNameTr . ": </strong>";
             }
             if ($entryList[$i]['font'] == "bold") {
-                $summary .= "<b>";
+                $summary .= "<strong>";
             } elseif ($entryList[$i]['font'] == "italic") {
-                $summary .= "<i>";
+                $summary .= "<em>";
             }
             $summary .= $content;
             if ($entryList[$i]['font'] == "bold") {
-                $summary .= "</b>";
+                $summary .= "</strong>";
             } elseif ($entryList[$i]['font'] == "italic") {
-                $summary .= "</i>";
+                $summary .= "</em>";
             }
-            if ($last == false) {
+            if ($summary && $last == false) {
                 if ($displayHorizontal) {
                     $summary .= " ";
                 } else {

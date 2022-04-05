@@ -13,6 +13,7 @@ require_once 'Modules/resources/Model/ReVisa.php';
 
 require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Controller/CorespaceadminController.php';
 
 /**
  * 
@@ -21,31 +22,49 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class BookingauthorisationsController extends CoresecureController {
 
-    public function indexAction($id_space, $id) {
-
+    public function indexAction($id_space, $id_user) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
-        // get all the resources
-        $modelResources = new ReCategory();
-        $resources = $modelResources->getBySpace($id_space);
 
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
-        // user name
+        $form = $this->generateBkAuthAddForm($id_space, $id_user, "bookingauthorisations", $lang);
+        $generatedBkAuth = $this->generateBkAuthTable($id_space, $id_user, "bookingauthorisations", $lang);
+        $tableHtml = $generatedBkAuth['bkTableHtml'];
+        $bkAuthData = $generatedBkAuth['data'];
+
+        if ($form->check()) {
+            $this->validateBkAuthAddForm(
+                $id_space,
+                $id_user,
+                $form->getParameter("resource") /* stands for category id */,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date")
+            );
+        }
+
+        return $this->render(array(
+            "lang" => $lang,
+            "id_space" => $id_space,
+            'tableHtml' => $tableHtml,
+            "formHtml" => $form->getHtml($lang),
+            'space' => $space,
+            'data' => ['bkauthorizations' => $bkAuthData]
+        ));
+    }
+
+    public function generateBkAuthTable($id_space, $id_user, $controller, $lang) {
+        $modelResources = new ReCategory();
+        $resources = $modelResources->getBySpace($id_space);
         $modelUser = new CoreUser();
-        $userName = $modelUser->getUserFUllName($id);
-
-
-        // model Authorization
+        $userName = $modelUser->getUserFUllName($id_user);
         $modelAuth = new BkAuthorization();
 
-        // visas
         $data = array();
         foreach ($resources as $r) {
-            if ($modelAuth->hasAuthorization($id_space, $r["id"], $id)) {
-                $authInfo = $modelAuth->getLastActiveAuthorization($id_space, $r["id"], $id);
+            if ($modelAuth->hasAuthorization($id_space, $r["id"], $id_user)) {
+                $authInfo = $modelAuth->getLastActiveAuthorization($id_space, $r["id"], $id_user);
                 $authorised = CoreTranslator::yes($lang);
                 $authorised_color = "#32CD32";
                 $date_authorized = CoreTranslator::dateFromEn($authInfo["date"], $lang);
@@ -55,7 +74,7 @@ class BookingauthorisationsController extends CoresecureController {
                 $date_authorized = "";
             }
             $data[] = array(
-                "id" => $r["id"] . "_" . $id,
+                "id" => $r["id"] . "_" . $id_user,
                 "resource_category" => $r["name"],
                 "date_authorised" => $date_authorized,
                 "authorised" => $authorised,
@@ -69,53 +88,135 @@ class BookingauthorisationsController extends CoresecureController {
             "date_authorised" => CoreTranslator::Date($lang)
         );
 
-        $table = new TableView();
+        $table = new TableView("bkAuth");
         $table->setTitle(BookingTranslator::Authorisations_for($lang) . " " . $userName, 3);
         $table->setColorIndexes(array("authorised" => "authorised_color"));
+        if ($controller === "bookingauthorisations") {
+            $table->addLineButton($controller . "hist" . "/" . $id_space, "id", BookingTranslator::History($lang));    
+        }
+        return ["bkTableHtml" => $table->view($data, $headers), "data" => $data];
+    }
 
-        $table->addLineButton("bookingauthorisationsadd/" . $id_space, "id", CoreTranslator::Add($lang));
-        $table->addLineButton("bookingauthorisationshist/" . $id_space, "id", BookingTranslator::History($lang));
+    public function generateBkAuthAddForm($id_space, $id_user, $controller, $lang, $todo=false) {
+        $modelUser = new CoreUser();
+        $userName = $modelUser->getUserFUllName($id_user);
+        $modelReCategories = new ReCategory();
+        $categories = $modelReCategories->getBySpace($id_space);
+        $CategoryList = $modelReCategories->getForList($id_space);    
+        $defaultCategoryId = $categories[0]['id'];
+        $modelVisa = new ReVisa();
+        $visa_select = $modelVisa->getForListByCategory($id_space, $defaultCategoryId);
 
-        $tableHtml = $table->view($data, $headers);
+        if (empty($visa_select['ids'])) {
+            $_SESSION['flash'] = BookingTranslator::VisaNeeded($lang);
+        }
 
-        return $this->render(array(
-            "lang" => $lang,
-            "id_space" => $id_space,
-            'tableHtml' => $tableHtml,
-            'space' => $space,
-            'data' => ['bkauthorizations' => $data]
-        ));
+        $form = new Form($this->request, "authorisationAddForm");
+        $form->setTitle(BookingTranslator::Add_authorisation_for($lang) . ": " . $userName);
+        $form->addText("user", CoreTranslator::User(), false, $userName, "disabled");
+        $form->addSelectMandatory("resource", ResourcesTranslator::Category(), $CategoryList['names'], $CategoryList['ids'], $defaultCategoryId);
+        $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
+        $form->addDate("date", BookingTranslator::DateActivation($lang), true);
+
+        $validationUrl = $controller . "/". $id_space."/". $id_user;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl, ["origin" => "bookingaccess"]);
+
+        return $form;
+    }
+
+    public function validateBkAuthAddForm($id_space, $id_user, $id_category, $id_visa, $date) {
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelAuth = new BkAuthorization();
+            $modelAuth->add(
+                $id_space,
+                $id_user,
+                $id_category,
+                $id_visa,
+                CoreTranslator::dateToEn($date, $lang)
+            );
+
+        $_SESSION["flash"] = ResourcesTranslator::AuthorisationAdded($lang);
+        $_SESSION["flashClass"] = "success";
     }
 
     public function historyAction($id_space, $id) {
-
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $idArray = explode("_", $id);
-        $id_resource_category = intval($idArray[0]);
-        if (!is_int($id_resource_category)) {
+        $id_category = intval($idArray[0]);
+        if (!is_int($id_category)) {
             throw new PfmParamException("id resource category is not an int");
         }
         $id_user = intval($idArray[1]);
         if (!is_int($id_user)) {
             throw new PfmParamException("id user is not an int");
         }
+
+        $tableHtml = $this->generateHistoryTable($id_space, $id_user, $id_category);
+        $form = $this->generateEditForm($id_space, $id_user, $id_category);
+
+        if ($form->check()) {
+            $this->validateEditForm(
+                $id_space,
+                $id,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date"),
+                $form->getParameter("date_desactivation"),
+                $form->getParameter("is_active"),
+                $lang
+            );
+        }
+
+        $modelSpace = new CoreSpace();
+        $space = $modelSpace->getSpace($id_space);
+
+        $this->render(array(
+            "lang" => $lang,
+            "id_space" => $id_space,
+            'formHtml' => $form->getHtml($lang),
+            'tableHtml' => $tableHtml,
+            'space' => $space
+        ));
+    }
+
+    public function generateHistoryTable($id_space, $id_user, $id_category, $allCategories = false) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
         $modelUser = new CoreUser();
         $userName = $modelUser->getUserFUllName($id_user);
 
         $modelCategory = new ReCategory();
-
-        //$recat = $modelCategory->get($id_space, $id_resource_category);
+    
+        if ($allCategories) {
+            $categories = $modelCategory->getBySpace($id_space);
+            $categoryName = "";
+        } else {
+            $categoryName = " / " . $modelCategory->getName($id_space, $id_category);
+        }
 
         $table = new TableView();
-        $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName);
+        $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName . $categoryName);
         $table->setColorIndexes(array("active" => "authorised_color"));
-
         $table->addLineEditButton("bookingauthorisationsedit/" . $id_space, "id");
 
         $modelVisa = new BkAuthorization();
-        $data = $modelVisa->getForResourceAndUser($id_space, $id_resource_category, $id_user);
+        
+        if ($allCategories) {
+            $visas_array = array();
+            for ($i = 0; $i < count($categories); $i++) {
+                array_push($visas_array, $modelVisa->getForResourceAndUser($id_space, $categories[$i]['id'], $id_user));  
+            }
+            $data = array_merge(...$visas_array);
+        } else {
+            $data = $modelVisa->getForResourceAndUser($id_space, $id_category, $id_user);
+        }
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFUllName($data[$i]["user_id"]);
             $data[$i]["resource_category"] = $modelCategory->getName($id_space, $data[$i]["resource_id"]);
@@ -136,124 +237,83 @@ class BookingauthorisationsController extends CoresecureController {
             "active" => ResourcesTranslator::IsActive($lang),
         );
 
-        $tableHtml = $table->view($data, $headers);
-
-        $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id_space);
-
-        $this->render(array(
-            "lang" => $lang,
-            "id_space" => $id_space,
-            'tableHtml' => $tableHtml,
-            'space' => $space
-        ));
+        return $table->view($data, $headers);
     }
 
-    public function addAction($id_space, $id) {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
-        $idArray = explode("_", $id);
-        $id_resource_category = intval($idArray[0]);
-        if (!is_int($id_resource_category)) {
-            throw new PfmParamException("id resource category is not an int");
-        }
-        $id_user = intval($idArray[1]);
-        if (!is_int($id_user)) {
-            throw new PfmParamException("id user is not an int");
-        }
-        $modelUser = new CoreUser();
-        $userName = $modelUser->getUserFUllName($id_user);
-
-
-        $modelResourcesCategories = new ReCategory();
-
-        $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
-        $categoryName = $recat['name'];
-
-
-        $modelVisa = new ReVisa();
-        $visa_select = $modelVisa->getForListByCategory($id_space, $id_resource_category);
-        if (empty($visa_select['ids'])) {
-            $_SESSION['flash'] = BookingTranslator::VisaNeeded($lang);
-        }
-
-
-        $form = new Form($this->request, "authorisationAddForm");
-        $form->setTitle(BookingTranslator::Authorisations_for($lang) . ": " . $userName);
-        $form->addText("user", CoreTranslator::User(), false, $userName, "disabled");
-        $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
-
-
-        $form->addSelectMandatory("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"]);
-        $form->addDate("date", BookingTranslator::DateActivation($lang), true);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsadd/" . $id_space . "/" . $id);
-
-        if ($form->check()) {
-            $modelAuth = new BkAuthorization();
-            $modelAuth->add($id_space, $id_user, $id_resource_category, $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang)
-            );
-
-            $this->redirect("bookingauthorisations/" . $id_space . "/" . $id_user);
-            return;
-        }
-
-        $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($id_space);
-
-        $this->render(array(
-            'id_space' => $id_space,
-            'lang' => $lang,
-            'formHtml' => $form->getHtml($lang),
-            'space' => $space
-        ));
-    }
-
-    public function editAction($id_space, $id) {
+    public function generateEditForm($id_space, $id_user, $id_category, $data = null) {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelAuth = new BkAuthorization();
+        if ($data === null) {
+            $data = $modelAuth->getForResourceAndUser($id_space, $id_category, $id_user)[0] ?? null;
+        }
+        $form = new Form($this->request, "authorisationAddForm");
+
+        if ($data) {
+            $modelUser = new CoreUser();
+            $userName = $modelUser->getUserFUllName($id_user);
+
+            $modelResourcesCategories = new ReCategory();
+            $id_resource_category = $data["resource_id"];
+            $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
+            $categoryName = $recat['name'];
+
+            $modelVisa = new ReVisa();
+            $visa_select = $modelVisa->getForListByCategory($id_space, $data["resource_id"]);
+
+            $form->setTitle(BookingTranslator::Authorisations_for($lang) . ": " . $userName);
+            $form->addText("user", CoreTranslator::User(), false, $userName, readonly:true);
+            $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, readonly:true);
+            $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"], $data["visa_id"]);
+            $form->addDate("date", BookingTranslator::DateActivation($lang), true, $data["date"], $lang);
+            $form->addDate("date_desactivation", BookingTranslator::DateDesactivation($lang), false, $data["date_desactivation"]);
+            $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $data["is_active"]);
+            
+            $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationshist" . "/" . $id_space . "/" . $data['id']);
+        }
+        return $form;
+    }
+
+    public function validateEditForm($id_space, $id, $visa_id, $date, $date_desactivation, $is_active, $lang) {
+        $modelAuth = new BkAuthorization();
+        // We keep initial user and resource ids since it can't and shouldn't be modified in the edit action
+        $bkAuth = $modelAuth->get($id_space, $id);
+        $modelAuth->set(
+            $id_space,
+            $id,
+            $bkAuth['user_id'],
+            $bkAuth['resource_id'],
+            $visa_id,
+            CoreTranslator::dateToEn($date, $lang),
+            CoreTranslator::dateToEn($date_desactivation, $lang),
+            $is_active
+        );
+        $_SESSION["flash"] = BookingTranslator::Modifications_have_been_saved($lang);
+        $_SESSION["flashClass"] = "success";
+        $redirectionUrl = "corespaceuseredit/" . $id_space . "/" . /* $bkAuth['resource_id'] . "_" .  */$bkAuth['user_id'];
+        $this->redirect($redirectionUrl, ["origin" => "bookingaccesshistory"]);
+    }
+
+    
+    public function editAction($id_space, $id) {
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        $modelAuth = new BkAuthorization();
         $data = $modelAuth->get($id_space, $id);
 
-        $modelUser = new CoreUser();
-        $userName = $modelUser->getUserFUllName($data["user_id"]);
-
-
-        $modelResourcesCategories = new ReCategory();
-        // $categoryName = $modelResourcesCategories->getName($data["resource_id"]);
-        $id_resource_category = $data["resource_id"];
-        $recat = $modelResourcesCategories->get($id_space, $id_resource_category);
-        $categoryName = $recat['name'];
-
-
-
-        $modelVisa = new ReVisa();
-        $visa_select = $modelVisa->getForListByCategory($id_space, $data["resource_id"]);
-
-        $form = new Form($this->request, "authorisationAddForm");
-        $form->setTitle(BookingTranslator::Authorisations_for($lang) . ": " . $userName);
-        $form->addText("user", CoreTranslator::User(), false, $userName, "disabled");
-        $form->addText("resource", BookingTranslator::Resource(), false, $categoryName, "disabled");
-
-
-        $form->addSelect("visa_id", BookingTranslator::Visa($lang), $visa_select["names"], $visa_select["ids"], $data["visa_id"]);
-        $form->addDate("date", BookingTranslator::DateActivation($lang), true, $data["date"], $lang);
-
-        $form->addDate("date_desactivation", BookingTranslator::DateDesactivation($lang), false, $data["date_desactivation"]);
-        $form->addSelect("is_active", ResourcesTranslator::IsActive($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $data["is_active"]);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingauthorisationsedit/" . $id_space . "/" . $id);
+        $form = $this->generateEditForm($id_space, $data["user_id"], $data['resource_id'], $data);
 
         if ($form->check()) {
-
-            $modelAuth = new BkAuthorization();
-            $modelAuth->set($id_space, $id, $data["user_id"], $data["resource_id"], $form->getParameter("visa_id"), CoreTranslator::dateToEn($form->getParameter("date"), $lang), CoreTranslator::dateToEn($form->getParameter("date_desactivation"), $lang), $form->getParameter("is_active"));
-
-
-            $this->redirect("bookingauthorisations/" . $id_space . "/" . $data["user_id"]);
-            return;
+            $this->validateEditForm(
+                $id_space,
+                $id,
+                $form->getParameter("visa_id"),
+                $form->getParameter("date"),
+                $form->getParameter("date_desactivation"),
+                $form->getParameter("is_active"),
+                $lang
+            );
         }
 
         $modelSpace = new CoreSpace();

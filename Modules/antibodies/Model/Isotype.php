@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Isotype extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_isotypes";
+    }
+
     /**
      * Create the isotype table
      * 
