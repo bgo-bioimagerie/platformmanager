@@ -106,10 +106,15 @@ class Email extends Model {
             $lang = $_SESSION ["user_settings"] ["language"];
         }
 
-        if(!$mail->Send()) {
+        try {
+            if(!$mail->Send()) {
+                return MailerTranslator::Message_Not_Send($lang) . $mail->ErrorInfo;
+            } else {
+                return MailerTranslator::Message_Send($lang);
+            }
+        } catch(Exception $e){
+            Configuration::getLogger()->error('[mail] failed to send email', ['error' => $mail->ErrorInfo, 'exception' => $e->getMessage()]);
             return MailerTranslator::Message_Not_Send($lang) . $mail->ErrorInfo;
-        } else {
-            return MailerTranslator::Message_Send($lang);
         }
     }
 

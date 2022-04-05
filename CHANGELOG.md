@@ -2,6 +2,7 @@
 
 ## 2.6.0
 
+* [booking] fix closed days hidding in summary view
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
@@ -13,6 +14,8 @@
 * [booking][supplementaries] avoid having two sups with the same name for the same resource 
 * [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
 * [booking][supplementaries] can't add a resource to a sup in which it is already included
+* [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
 
 ## 2.5.1
 

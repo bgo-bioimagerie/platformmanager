@@ -321,6 +321,9 @@ class CoretilesController extends CorecookiesecureController {
     public function selfJoinSpaceAction($id_space) {
         $modelSpaceUser = new CoreSpaceUser();
         $id_user = $_SESSION["id_user"];
+        if(!$id_user || $id_user<=0){
+            throw new PfmAuthException('need to be logged', 401);
+        }
         $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
         $lang = $this->getLanguage();
 
