@@ -7,6 +7,7 @@ class ServicesRouting extends Routing {
     public function routes($router) {
         $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
         $router->map('GET|POST', '/services/getServiceType/[i:id_space]/[i:id_service]', 'services/services/getServiceType', 'services_getservicetype');
+        $router->map('GET|POST', '/servicesprojectskanban/[i:id_space]/[i:id_project]', 'services/servicesprojects/kanban', 'services_project_kanban');
     }
 
     public function listRoutes() {

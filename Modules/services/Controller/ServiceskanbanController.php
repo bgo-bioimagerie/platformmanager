@@ -12,12 +12,15 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
-require_once 'Modules/services/Model/SeTrackingsheet.php';
+require_once 'Modules/services/Model/SeKanban.php';
+require_once 'Modules/services/Model/SeTask.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Controller/ServicesController.php';
+require_once 'Modules/services/Controller/ServicesprojectsController.php';
 
-class ServicestrackingsheetController extends ServicesController {
+
+class ServiceskanbanController extends ServicesprojectsController {
 
     // TODO: [tracking] add tracking_sheet template
         // => create form
@@ -28,16 +31,20 @@ class ServicestrackingsheetController extends ServicesController {
     // TODO: ajouter tâches (journal) (avec dates (début, clôture), commentaires => on peut y copier le contenu des mails => apparaîtrait dans le document)
     // => mode canboard
 
-    // dans nun second tyemps)
-    // images => limiter taille ?
-    // intégrer documents dans dossier spécifique au projet
-    // dans une tâche on pêut rajouter document
-    // au niveau général du projet on peut rajouter document
+    // dans un second temps => docs / images
+        // images => limiter taille ?
+        // intégrer documents dans dossier spécifique au projet
+        // dans une tâche on peut rajouter document
+        // au niveau général du projet on peut rajouter document
+        // OU un seul dossier par projet => classe corefiles
 
-    // OU un seul dossier par projet => classe corefiles
-
-    public function indexAction($id_space) {
-
+    public function getKanban($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        Configuration::getLogger()->debug("[TEST]", ["in getKanban"]);
+        $kanbanModel = new SeKanban();
+        $kanban = $kanbanModel->getDefault();
+        return $kanban;
     }
 
 }

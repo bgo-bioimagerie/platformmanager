@@ -117,6 +117,17 @@ class ServicesController extends CoresecureController {
             $html .= $htmlStock;
         }
 
+        /* $servicesusetrackingsheet = $modelCoreConfig->getParamSpace("servicesusetrackingsheet", $id_space);
+        if ($servicesusetrackingsheet == 1) {
+            $htmlTrackingsheet = file_get_contents("Modules/services/View/Services/navbarstock.php");
+
+            $htmlTrackingsheet = str_replace("{{id_space}}", $id_space, $htmlTrackingsheet);
+            $htmlTrackingsheet = str_replace("{{Stock}}", strtoupper(ServicesTranslator::TrackingSheet($lang)), $htmlTrackingsheet);
+            $htmlTrackingsheet = str_replace("{{Stocks}}", ServicesTranslator::TrackingSheet($lang), $htmlTrackingsheet);
+
+            $html .= $htmlTrackingsheet;
+        } */
+
         $htmlListing = file_get_contents("Modules/services/View/Services/navbarlisting.php");
 
         $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);

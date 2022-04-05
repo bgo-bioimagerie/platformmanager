@@ -18,6 +18,7 @@ require_once 'Modules/services/Model/StockShelf.php';
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Controller/ServicesController.php';
+require_once 'Modules/services/Controller/ServiceskanbanController.php';
 
 /**
  * 
@@ -466,6 +467,30 @@ class ServicesprojectsController extends ServicesController {
             "formedit" => $formEdit, "projectEntries" => $items,
             "id_project" => $id,
             "data" => ["entries" => $items]
+        ));
+    }
+
+    public function kanbanAction($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+        Configuration::getLogger()->debug("[TEST]", ["in kanbanAction"]);
+        $kanbanCTRL = new ServiceskanbanController($this->request);
+        $kanban = $kanbanCTRL->getKanban($id_space, $id_project);
+
+        $modelProject = new SeProject();
+        $projectName = $modelProject->getName($id_space ,$id_project);
+
+        $headerInfo["projectId"] = $id_project;
+        $headerInfo["curentTab"] = "kanban";
+
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "projectName" => $projectName,
+            "headerInfo" => $headerInfo,
+            "id_project" => $id_project,
+            "tasks" => $kanban['tasks'],
+            "data" => ["tasks" => $kanban['tasks']]
         ));
     }
 

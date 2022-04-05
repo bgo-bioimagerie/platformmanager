@@ -122,6 +122,20 @@ class ServicesTranslator {
         return "Stock samples";
     }
 
+    public static function Kanban($lang) {
+        if ($lang == "fr") {
+            return "Kanban";
+        }
+        return "Kanban";
+    }
+
+    public static function UseKanban($lang) {
+        if ($lang == "fr") {
+            return "Utiliser les Kanbans";
+        }
+        return "Use Kanbans";
+    }
+
     public static function Purchase($lang) {
         if ($lang == "fr") {
             return "Achat";
