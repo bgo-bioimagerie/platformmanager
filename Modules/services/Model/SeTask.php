@@ -29,27 +29,33 @@ class SeTask extends Model {
     }
 
     public function getForSpace($id_space) {
-        $sql = "SELECT * FROM se_task WHERE id_space=? AND deleted=0 ORDER BY date DESC;";
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
     public function getByProject($id_project, $id_space) {
-        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? deleted=0 ORDER BY date DESC;";
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_project));
         return $req->fetchAll();
     }
+
+    public function getByKanban($id_kanban, $id_space) {
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_kanban=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_kanban));
+        return $req->fetchAll();
+    }
     
-    // TODO: [tracking] replace $params by se_task attributes
-    public function set($id, $id_space, $params) {
+    public function set($id, $id_space, $id_project, $id_kanban, $state, $title, $content) {
+        Configuration::getLogger()->debug("[TEST][SET TASK]", ["id" => $id, "id_space" => $id_space, "id_project" => $id_project, "title" => $title, "state" => $state, "content" => $content]);
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET params=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($params, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, id_kanban=?, state=?, title=?, content=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $id_kanban, $state, $title, $content, $id, $id_space));
             return $id;
         }
         else {
-            $sql = "INSERT INTO se_task (params, id_space) VALUES (?,?)";
-            $this->runRequest($sql, array($params, $id_space));
+            $sql = "INSERT INTO se_task (id_project, id_kanban, state, title, content, id_space) VALUES (?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $id_kanban, $state, $title, $content, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -63,7 +69,7 @@ class SeTask extends Model {
         return false;
     }
 
-    public function delete($id_space, $id){
+    public function delete($id_space, $id) {
         $sql = "UPDATE se_tracking_sheet SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }

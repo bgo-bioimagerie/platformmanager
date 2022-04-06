@@ -34,13 +34,19 @@ class SeKanban extends Model {
     }
 
     public function getForSpace($id_space) {
-        $sql = "SELECT * FROM se_kanban WHERE id_space=? AND deleted=0 ORDER BY date DESC;";
+        $sql = "SELECT * FROM se_kanban WHERE id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
     public function getByProject($id_project, $id_space) {
-        $sql = "SELECT * FROM se_kanban WHERE id_space=? AND id_project=? deleted=0 ORDER BY date DESC;";
+        $sql = "SELECT * FROM se_kanban WHERE id_space=? AND id_project=? deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        return $req->fetchAll();
+    }
+
+    public function getTasks($id_project, $id_space) {
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_project));
         return $req->fetchAll();
     }

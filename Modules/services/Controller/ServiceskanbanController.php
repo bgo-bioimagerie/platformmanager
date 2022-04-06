@@ -44,7 +44,21 @@ class ServiceskanbanController extends ServicesprojectsController {
         Configuration::getLogger()->debug("[TEST]", ["in getKanban"]);
         $kanbanModel = new SeKanban();
         $kanban = $kanbanModel->getDefault();
+        $kanban['tasks'] = $kanbanModel->getTasks($id_project, $id_space);
+
         return $kanban;
+    }
+
+    public function getTasksAction($id_space, $id_project) {
+        $taskModel = new SeTask();
+        return $taskModel->getByProject($id_project, $id_space);
+    }
+
+    public function setTaskAction($id_space, $id_project) {
+        $taskData = $this->request->params()['task'];
+        Configuration::getLogger()->debug("[TEST]", ["taskData" => $taskData]);
+        $taskModel = new SeTask();
+        $taskModel->set($taskData['id'], $id_space, $id_project, 0, $taskData['state'], $taskData['title'], $taskData['content']);
     }
 
 }
