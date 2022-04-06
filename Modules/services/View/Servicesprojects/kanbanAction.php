@@ -1,5 +1,4 @@
 <?php include 'Modules/services/View/layout.php' ?>
-<?php Configuration::getLogger()->debug("[TEST]", ["in kanbanAction view"]); ?>
 
 <?php startblock('content') ?>
 <div class="pm-form">
@@ -11,117 +10,109 @@
     <div class="col-12">
         <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
     </div>
-<!-- BEGINS -->
 
-<div id="board" class="container">
+    <div id="board" class="container mt-5">
+        <div class="row">
+            <div class="col form-inline">
+                <input type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="add"/>
+                <button class="ml-2 btn btn-primary" @click="add" style="margin:5px;">Add</button>
+            </div>
+        </div>
 
+        <div class="row mt-3">
+
+            <div class="col-md-3">
+                <div class="p-2 alert alert-secondary">
+                    <h3>Backlog</h3>
+                    <draggable class="list-group kanban-column" :list="arrBacklog" group="tasks">
+                        <div class="list-group-item" v-for="element in arrBacklog" :key="element.name">
+                            {{element.name}}
+                        </div>
+                    </draggable>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="p-2 alert alert-primary">
+                    <h3>In progress</h3>
+                    <draggable class="list-group kanban-column" :list="arrInProgress" group="tasks">
+                        <div class="list-group-item" v-for="element in arrInProgress" :key="element.name">
+                            {{element.name}}
+                        </div>
+                    </draggable>
+                </div>
+            </div>
+        
+            <div class="col-md-3">
+                <div class="p-2 alert alert-warning">
+                    <h3>Tested</h3>
+                    <draggable class="list-group kanban-column" :list="arrTested" group="tasks">
+                        <div class="list-group-item" v-for="element in arrTested" :key="element.name">
+                            {{element.name}}
+                        </div>
+                    </draggable>
+                </div>
+            </div>
+        
+            <div class="col-md-3">
+                <div class="p-2 alert alert-success">
+                    <h3>Done</h3>
+                    <draggable class="list-group kanban-column" :list="arrDone" group="tasks">
+                        <div class="list-group-item" v-for="element in arrDone" :key="element.name">
+                            {{element.name}}
+                        </div>
+                    </draggable>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<script>
+
+<script type="module">
+import draggable from '/externals/node_modules/vuedraggable/src/vuedraggable.js';
+
+
 let app = new Vue({
     el: '#board',
     data () {
         return {
-            docs: [],
+            newTask: "",
+            arrBacklog: [
+                {name: "Code sign Up Page"},
+                {name: "Test dashboard"},
+                {name: "Style registration"},
+                {name: "Help with designs"}
+            ],
+            arrInProgress: [],
+            arrTested: [],
+            arrDone: [],
+
             id_space: "<?php echo $id_space ?>",
-            search: '',
             tasks: <?php echo json_encode($tasks);?>
         }
     },
     created () {
-            this.levels(this.level, this.path);
+
     },
     methods: {
-        copyLink(doc) {
-            let link = `<?php echo Configuration::get('public_url') ?>/documentsopen/<?php echo $id_space?>/${doc.id}`;
-            navigator.clipboard.writeText(link);
-        },
-        findDocs() {
-            if(this.search.length === 0) {
-                this.matches = [];
-                return;
+        add() {
+            if(this.newTask) {
+                this.arrBacklog.push({name: this.newTask});
+                console.log("backlog: ", this.arrBacklog)
+                this.newTask = "";
             }
-            if(this.search.length<3) {
-                return;
-            }
-            let found = [];
-            doclist.forEach(d => {
-               if(d.title.includes(this.search)) {
-                   found.push(d);
-               }
-            });
-            this.matches = found;
-        },
-        create() {
-            window.location.href = 'documentsedit/<?php echo $id_space ?>/0/?dir='+this.path.join('/')
-        },
-        confirmDelete(doc) {
-            if (confirm(`Delete ${doc.display} ?`)) {
-                window.location.href = 'documentsdelete/<?php echo $id_space ?>/' + doc.id;
-            }
-        },
-        download(id) {
-            window.open(`documentsopen/<?php echo $id_space?>/${id}`)
-        },
-        up() {
-            if(this.level<1) {
-                return;
-            }
-            this.level--;
-            let subpath = this.path.slice(0, this.level).join('/')
-            this.levels(this.level, subpath);
-        },
-        goto(doc) {
-            this.level++;
-            dpath = doc.display;
-            if(doc.subpath) {
-                dpath = doc.subpath+'/'+doc.display;
-            }
-            this.levels(this.level, dpath)
-        },
-        levels(depth, name) {
-            let data = [];
-            let data1 = [];
-            let data2 = [];
-            let dirs = {};
-            doclist.forEach(d => {
-                if(name && !d.title.startsWith(name)) {
-                    return;
-                }
-                if(d.size >= (depth+1)) {
-                    d.display = d.path[depth]
-                    d.folder = false;
-                    if(d.size > (depth+1)) {
-                        if(dirs[d.display] !== undefined) {
-                            return;
-                        }
-                        dirs[d.display] = true;
-                        d.folder = true;
-                        d.subpath = '';
-                        if(depth > 0) {
-                            d.subpath = d.path.slice(0, depth)
-                        }
-                    }
-                    if(d.folder) {data1.push(d)}
-                    else {data2.push(d)}
-                }
-            })
-            this.path = [];
-            if(name) {
-                this.path = name.split('/');
-            }
-            data1.forEach(d => {
-                data.push(d)
-            })
-            data2.forEach(d => {
-                data.push(d)
-            })
-            this.docs = data
         }
     }
 });
 </script>
-<!-- ENDS -->
+
+<style>
+    .kanban-column {
+        min-height: 300px;
+    }
+</style>
 
 <?php include 'Modules/services/View/Servicesprojects/editscript.php';  ?>
 
