@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+
 /**
  * Class to translate the syggrif views
  *
@@ -199,6 +201,13 @@ class BookingTranslator {
         return "Block resources";
     }
 
+    public static function Blocked_Resouces($lang) {
+        if ($lang == "fr") {
+            return "Ressources bloquées";
+        }
+        return "Blocked resources";
+    }
+
     public static function Edit_color_code($lang) {
         if ($lang == "fr") {
             return "Modifier code couleur";
@@ -274,6 +283,13 @@ class BookingTranslator {
             return "L'utilisateur spécifie";
         }
         return "The user specifies";
+    }
+
+    public static function Force_packages($lang) {
+        if($lang == "fr") {
+            return "Doit utiliser les packages";
+        }
+        return "Must use packages";
     }
 
     public static function the_booking_duration($lang) {
@@ -1662,6 +1678,13 @@ class BookingTranslator {
         return "You need to create at least one color code to be able to edit schedulings";
     }
 
+    public static function MissingPackages($lang) {
+        if($lang == "fr") {
+            return "Vous devez créer au moins un ".self::Package($lang);
+        }
+        return "You need to create at least one ".self::Package($lang);
+    }
+
     public static function noBookingArea($lang) {
         if ($lang == "fr") {
             return "Erreur : Aucun domaine et / ou aucune ressource n'a été créé";
@@ -1773,5 +1796,37 @@ class BookingTranslator {
             return "Détails";
         }
         return "Detailed";
+    }
+
+    public static function BlockReason(int $reason, $lang="") {
+        if($lang == "fr") {
+            switch ($reason) {
+                case BkCalendarEntry::$REASON_BOOKING:
+                    return 'Réservation';
+                case BkCalendarEntry::$REASON_HOLIDAY:
+                    return 'Vacances';
+                case BkCalendarEntry::$REASON_MAINTENANCE:
+                    return 'Maintenance';
+                default:
+                    return 'Réservation';
+            }
+        }
+        switch ($reason) {
+            case BkCalendarEntry::$REASON_BOOKING:
+                return 'Booking';
+            case BkCalendarEntry::$REASON_HOLIDAY:
+                return 'Holidays';
+            case BkCalendarEntry::$REASON_MAINTENANCE:
+                return 'Maintenance';
+            default:
+                return 'Booking';
+        }
+    }
+
+    public static function Reason($lang) {
+        if($lang == 'fr') {
+            return 'Cause';
+        }
+        return 'Reason';
     }
 }

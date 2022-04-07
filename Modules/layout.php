@@ -9,6 +9,9 @@
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
         <meta name="mode" description="<?php echo $context['dev'] ? 'dev' : 'prod' ?>">
+        <?php startblock('meta') ?>
+
+        <?php endblock() ?>
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -30,8 +33,7 @@
         <?php } ?>
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
-        <script src="externals/jquery-1.11.1.js"></script>
-
+        <script src="externals/node_modules/jquery/dist/jquery.min.js"></script>
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
 
@@ -63,9 +65,7 @@
                         <div class="container">
                             <div class="alert alert-warning alert-dismissible  show" role="alert">
                                 <?php echo $context['maintenance']; ?>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         </div>                        
                     <?php } ?>
