@@ -494,14 +494,25 @@ class ServicesprojectsController extends ServicesController {
     }
 
     public function getTasksAction($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
         return $taskModel->getByProject($id_project, $id_space);
     }
 
     public function setTaskAction($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
-        $taskModel->set($taskData['id'], $id_space, $id_project, $taskData['state'], $taskData['title'], $taskData['content']);
+        $id = $taskModel->set($taskData['id'], $id_space, $id_project, $taskData['state'], $taskData['title'], $taskData['content']);
+        Configuration::getLogger()->debug("[TEST]", ['newTask_id' => $id]);
+        $this->render(['data' => ['id' => $id]]);
+
+    }
+
+    public function deleteTaskAction($id_space, $id_task) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $taskModel = new SeTask();
+        return $taskModel->delete($id_space, $id_task);
     }
 
     protected function createEditEntryForm($id_space, $lang) {

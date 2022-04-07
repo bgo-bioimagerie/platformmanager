@@ -14,44 +14,23 @@
     <div id="board" class="container mt-5">
         <div class="row">
             <div class="col form-inline">
-                <input type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="add"/>
+                <input type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
                 <button class="ml-2 btn btn-primary" @click="add" style="margin:5px;">Add</button>
             </div>
         </div>
 
         <div class="row mt-3">
 
-            <div class="col-md-3">
-                <div class="p-2 alert alert-secondary">
-                    <h3>Backlog</h3>
-                    <draggable id="backlog" class="list-group kanban-column" :list="arrBacklog" group="tasks" @change="changeState($event, 'backlog')">
-                        <div class="list-group-item" v-for="element in arrBacklog" :key="element.title" @click="showContent($event, element)">
+            <div class="col-md-3" v-for="(column, cindex) in columns">
+                <div class="p-2 alert" v-bind:class="column.color">
+                    <h3>{{column.title}}</h3>
+                    <draggable :id="column.name" class="list-group kanban-column" :list="column.tasks" group="tasks" @change="changeState($event, cindex)">
+                        <div class="list-group-item" v-for="element in column.tasks" :key="element.title" @click="showContent($event, element)">
                             {{element.title}}
-                            <input v-show=element.contentVisible type="textArea">{{element.content}}</input>
-                        </div>
-                    </draggable>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="p-2 alert alert-primary">
-                    <h3>In progress</h3>
-                    <draggable id="inProgress" class="list-group kanban-column" :list="arrInProgress" group="tasks" @change="changeState($event, 'inProgress')">
-                        <div class="list-group-item" v-for="element in arrInProgress" :key="element.title" @click="showContent($event, element)">
-                            {{element.title}}
-                            <input v-if=element.contentVisible type="textArea">{{element.content}}</input>
-                        </div>
-                    </draggable>
-                </div>
-            </div>
-        
-            <div class="col-md-3">
-                <div class="p-2 alert alert-success">
-                    <h3>Done</h3>
-                    <draggable id="done" class="list-group kanban-column" :list="arrDone" group="tasks" @change="changeState($event, 'done')">
-                        <div class="list-group-item" v-for="element in arrDone" :key="element.title" @click="showContent($event, element)">
-                            {{element.title}}
-                            <input v-show=element.contentVisible type="textArea">{{element.content}}</input>
+                            <div class="bi bi-trash" style="display:inline" @click="deleteTask(element)"></div>
+                            <div class="hidable" v-show="element.contentVisible">
+                                <textarea class="contentArea">{{element.content}}</textarea>
+                            </div>
                         </div>
                     </draggable>
                 </div>
@@ -71,10 +50,11 @@ let app = new Vue({
     data () {
         return {
             newTask: "",
-            arrBacklog: [],
-            arrInProgress: [],
-            arrDone: [],
-
+            columns: [
+                {name: "backlog", title: "Backlog", color: "alert-secondary", tasks: []},
+                {name: "inProgress", title: "In progress", color: "alert-primary", tasks: []},
+                {name: "done", title: "Done", color: "alert-success", tasks: []}
+            ],
             id_space: "<?php echo $id_space ?>",
             id_project: "<?php echo $id_project ?>",
             tasks: <?php echo json_encode($tasks);?>
@@ -83,55 +63,35 @@ let app = new Vue({
     created () {
         this.tasks.forEach(task => {
             task.contentVisible = false;
-            switch(task.state) {
-                case "0":
-                    this.arrBacklog.push(task)
-                    break;
-                case "1":
-                    this.arrInProgress.push(task)
-                    break;
-                case "2":
-                    this.arrDone.push(task)
-                    break;
-                default:
-                    console.error("unknown state for task ", task.name);
-                    break;
-            }
+            this.columns[task.state].tasks.push(task)
         });
     },
     methods: {
-        showContent(event, task) {
-            console.log("in showContent")
-            task.contentVisible = !task.contentVisible;
-        },
-        changeState(event, tasksList) {
-            if (event.added) {
-                let newState = null;
-                switch(tasksList) {
-                    case "backlog":
-                        newState = 0;
-                        break;
-                    case "inProgress":
-                        newState = 1;
-                        break;
-                    case "done":
-                        newState = 2;
-                        break;
-                    default:
-                        newState = 0;
-                        console.error("unknown tasksList ", tasksList, " moving task to backlog");
-                        break;
+        getTaskById(id) {
+            this.tasks.forEach(task => {
+                if (id == task.id) {
+                    return task;
                 }
-
+            });
+        },
+        showContent(event, task) {
+            task.contentVisible = !task.contentVisible;
+            let hidables = event.target.getElementsByClassName("hidable");
+            [...hidables].forEach(hidable => {
+                hidable.style.display = task.contentVisible ? "" : "none";
+            });
+        },
+        changeState(event, columnIndex) {
+            if (event.added) {
+                let newState = columnIndex;
                 event.added.element.state = newState; 
                 this.updateTask(event.added.element);
             }
-            
         },
-        add() {
+        async addTask() {
             if(this.newTask) {
                 this.newTask = {
-                    id: 0, // can cause duplicated ids
+                    id: 0,
                     id_space: this.id_space,
                     id_project: this.id_project,
                     state: 0,
@@ -139,13 +99,13 @@ let app = new Vue({
                     content: "",
                     contentVisible: false
                 };
-                this.updateTask(this.newTask); // => should return taskid from bdd, then this.newTask.id = id
+                await this.updateTask(this.newTask)
                 this.tasks.push(this.newTask);
-                this.arrBacklog.push(this.newTask);
+                this.columns[0].tasks.push(this.newTask);
                 this.newTask = "";
             }
         },
-        updateTask(task) {
+        async updateTask(task) {
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');
@@ -159,10 +119,29 @@ let app = new Vue({
             });
             let targetUrl = `/servicesprojects/settask/`;
             let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
-            fetch(apiRoute, cfg, true);
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()) .
+                then(data => {
+                    task.id = data.id;
+                });
         },
-        deleteTask() {
-
+        deleteTask(task) {
+            let tasks = this.columns[task.state].tasks;
+            tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            cfg.body = JSON.stringify({
+                task: task
+            });
+            let targetUrl = `/servicesprojects/deletetask/`
+            let apiRoute = targetUrl + this.id_space + "/" + task.id;
+            fetch(apiRoute, cfg, true)
         }
     }
 });
@@ -172,8 +151,14 @@ let app = new Vue({
     .kanban-column {
         min-height: 300px;
     }
-    .comment {
-        min-height: 50px;
+    .contentArea {
+        min-height: 150px;
+    }
+    .bi-trash {
+        position: absolute;
+        right: 5px;
+        background-color: transparent;
+        color: orangered;
     }
 </style>
 

@@ -61,7 +61,7 @@ class SeTask extends Model {
     }
 
     public function delete($id_space, $id) {
-        $sql = "UPDATE se_tracking_sheet SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE se_task SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
