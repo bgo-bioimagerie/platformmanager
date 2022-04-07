@@ -2,6 +2,8 @@
 
 ## 2.6.0
 
+* [booking] in booking invoice details, show related bookings
+* [core] remove lasting references to ec classes
 * [booking] fix closed days hidding in summary view
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
