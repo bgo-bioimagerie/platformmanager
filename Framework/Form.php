@@ -526,8 +526,13 @@ class Form {
      * @param unknown $choicesid List of options ids
      * @param string $value Input default value
      */
-    public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
-        $this->types[] = "select";
+    public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false, $typeahead=false) {
+        if($typeahead) {
+            $this->types[] = "typeahead";
+        } else {
+            $this->types[] = "select";
+        }
+
         $this->names[] = $name;
         $this->labels[] = $label;
         $this->setValue($value);
@@ -550,8 +555,12 @@ class Form {
      * @param unknown $choicesid List of options ids
      * @param string $value Input default value
      */
-    public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
-        $this->types[] = "select";
+    public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false, $typeahead=false) {
+        if($typeahead) {
+            $this->types[] = "typeahead";
+        } else {
+            $this->types[] = "select";
+        }
         $this->names[] = $name;
         $this->labels[] = $label;
         $this->setValue($value);
@@ -754,6 +763,13 @@ class Form {
                     $sub = $this->id;
                 }
                 $html .= $formHtml->select($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth, $sub);
+            }
+            if ($this->types[$i] == "typeahead") {
+                $sub = "";
+                if ($this->submitOnChange[$i]) {
+                    $sub = $this->id;
+                }
+                $html .= $formHtml->typeahead($this->labels[$i], $this->names[$i], $this->choices[$i], $this->choicesid[$i], $this->values[$i], $this->isMandatory[$i], $this->labelWidth, $this->inputWidth, $sub);
             }
             if ($this->types[$i] == "formAdd") {
                 $html .= $this->formAdd->getHtml($lang, $this->labels[$i], $this->labelWidth, $this->inputWidth);

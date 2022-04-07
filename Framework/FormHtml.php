@@ -639,6 +639,41 @@ class FormHtml {
         return $html;
     }
 
+    static public function typeahead($label, $name, $choices, $choicesid, $value, $isMandatory, $labelWidth = 2, $inputWidth = 9, $submitOnChange = "") {
+        $star = "";
+        if ($isMandatory) {
+            $star = "*";
+        }
+
+        $fn = md5($name);
+        $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
+        $html .= "<label class=\"control-label col-12 col-md-" . $labelWidth . "\">" . $label . $star . "</label>";
+        $html .= "	<div class=\"col-12 col-md-" . $inputWidth . "\">";
+        $html .= '<input type="hidden" id="'.$name.'" name="'.$name.'" value="'.$value.'">';
+        $html .= '<datalist id="tal_'.$fn.'">';
+        $selected = '';
+        $cmap = [];
+        for($i=0;$i<count($choices);$i++) {
+            if($choicesid[$i] == $value) {
+                $selected = $choices[$i];
+            }
+            $cmap[$choices[$i]] = $choicesid[$i];
+            $html .= sprintf('<option x-value=%s value="%s"/>', $choicesid[$i], $choices[$i])."\n";
+        }
+        $html .= '</datalist>';
+
+        $html .= '<input class="form-control" onchange="ta_'.$fn.'()" id="'.$fn.'" value="'.$selected.'" list="tal_'.$fn.'">';
+        $html .= '<script>function ta_'.$fn.'() {'."\n";
+            $html .= "let cmap=".json_encode($cmap)."\n";
+            $html .= "let ta = document.getElementById('".$fn."')\n";
+            $html .= "let tainput = document.getElementById('".$name."');\n";
+            $html .= "tainput.value = cmap[ta.value];\n";
+        $html .= '}</script>'."\n";
+        $html .= "</div>";
+        $html .= "</div>";
+        return $html;
+    }
+
     /**
      * 
      * @param type $validationURL
