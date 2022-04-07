@@ -79,7 +79,6 @@ let app = new Vue({
     },
     created () {
         this.tasks.forEach(task => {
-            // console.log("task: ", task);
             switch(task.state) {
                 case "0":
                     this.arrBacklog.push(task)
@@ -98,12 +97,8 @@ let app = new Vue({
     },
     methods: {
         changeState(event, tasksList) {
-            console.log("tasksList: ", tasksList);
-            console.log("event: ", event);
             if (event.added) {
-                console.log("event.added.element: ", JSON.stringify(event.added.element));
                 let newState = null;
-
                 switch(tasksList) {
                     case "backlog":
                         newState = 0;
@@ -140,7 +135,6 @@ let app = new Vue({
             }
         },
         updateTask(task) {
-            console.log("updating task: ", task);
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');
@@ -152,21 +146,10 @@ let app = new Vue({
             cfg.body = JSON.stringify({
                 task: task
             });
-            let targetUrl = `/serviceskanban/settask/`;
-            console.log("id_space: ", this.id_space)
+            let targetUrl = `/servicesprojects/settask/`;
             let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
-            fetch(apiRoute, cfg, true)/* .
-            then((response) => response.json()).
-            then(data => {
-                console.log("data: ", data)
-            }).catch( error => {
-                console.error("error in setting task " + task.title + " data:", error);
-            }); */
-
+            fetch(apiRoute, cfg, true);
         },
-        getTasks() {
-
-        }
     }
 });
 </script>

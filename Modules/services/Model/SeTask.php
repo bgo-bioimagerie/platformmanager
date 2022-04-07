@@ -19,7 +19,6 @@ class SeTask extends Model {
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL,
             `id_project` int NOT NULL,
-            `id_kanban` int NOT NULL,
             `state` int NOT NULL,
             `title` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
@@ -39,23 +38,15 @@ class SeTask extends Model {
         $req = $this->runRequest($sql, array($id_space, $id_project));
         return $req->fetchAll();
     }
-
-    public function getByKanban($id_kanban, $id_space) {
-        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_kanban=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_space, $id_kanban));
-        return $req->fetchAll();
-    }
     
-    public function set($id, $id_space, $id_project, $id_kanban, $state, $title, $content) {
-        Configuration::getLogger()->debug("[TEST][SET TASK]", ["id" => $id, "id_space" => $id_space, "id_project" => $id_project, "title" => $title, "state" => $state, "content" => $content]);
+    public function set($id, $id_space, $id_project, $state, $title, $content) {
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, id_kanban=?, state=?, title=?, content=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $id_kanban, $state, $title, $content, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, title=?, content=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $title, $content, $id, $id_space));
             return $id;
-        }
-        else {
-            $sql = "INSERT INTO se_task (id_project, id_kanban, state, title, content, id_space) VALUES (?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $id_kanban, $state, $title, $content, $id_space));
+        } else {
+            $sql = "INSERT INTO se_task (id_project, state, title, content, id_space) VALUES (?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $title, $content, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }

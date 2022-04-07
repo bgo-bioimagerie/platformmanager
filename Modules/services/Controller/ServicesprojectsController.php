@@ -12,13 +12,13 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
+require_once 'Modules/services/Model/SeTask.php';
 
 require_once 'Modules/services/Model/StockShelf.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Controller/ServicesController.php';
-require_once 'Modules/services/Controller/ServiceskanbanController.php';
 
 /**
  * 
@@ -473,9 +473,8 @@ class ServicesprojectsController extends ServicesController {
     public function kanbanAction($id_space, $id_project) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        Configuration::getLogger()->debug("[TEST]", ["in kanbanAction"]);
-        $kanbanCTRL = new ServiceskanbanController($this->request);
-        $kanban = $kanbanCTRL->getKanban($id_space, $id_project);
+        $taskModel= new SeTask();
+        $tasks = $taskModel->getByProject($id_project, $id_space);
 
         $modelProject = new SeProject();
         $projectName = $modelProject->getName($id_space ,$id_project);
@@ -489,9 +488,20 @@ class ServicesprojectsController extends ServicesController {
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
-            "tasks" => $kanban['tasks'],
-            "data" => ["tasks" => $kanban['tasks']]
+            "tasks" => $tasks,
+            "data" => ["tasks" => $tasks]
         ));
+    }
+
+    public function getTasksAction($id_space, $id_project) {
+        $taskModel = new SeTask();
+        return $taskModel->getByProject($id_project, $id_space);
+    }
+
+    public function setTaskAction($id_space, $id_project) {
+        $taskData = $this->request->params()['task'];
+        $taskModel = new SeTask();
+        $taskModel->set($taskData['id'], $id_space, $id_project, $taskData['state'], $taskData['title'], $taskData['content']);
     }
 
     protected function createEditEntryForm($id_space, $lang) {

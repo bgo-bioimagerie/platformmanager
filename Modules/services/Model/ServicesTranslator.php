@@ -129,6 +129,13 @@ class ServicesTranslator {
         return "Kanban";
     }
 
+    public static function KanbanBoard($lang) {
+        if ($lang == "fr") {
+            return "Tableau kanban";
+        }
+        return "Kanban board";
+    }
+
     public static function UseKanban($lang) {
         if ($lang == "fr") {
             return "Utiliser les Kanbans";
