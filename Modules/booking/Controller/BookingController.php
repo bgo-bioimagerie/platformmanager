@@ -874,9 +874,9 @@ class BookingController extends BookingabstractController {
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
-        $detailedView = true;
-        if ($detailedViewRequest == 'simple') {
-            $detailedView = false;
+        $detailedView = false;
+        if ($detailedViewRequest == 'detailed') {
+            $detailedView = true;
         }
 
         // view

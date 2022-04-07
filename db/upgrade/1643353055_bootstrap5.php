@@ -27,6 +27,7 @@ class CoreUpgradeDB1643353055 extends Model {
       $sql = "UPDATE core_space_menus SET icon=? WHERE icon=?";
       $this->runRequest($sql, [$value, 'glyphicon '.$key]);
     }
+    Configuration::getLogger()->info("[db][upgrade] Apply bootstrap5, done!");
   }
 }
 $db = new CoreUpgradeDB1643353055();

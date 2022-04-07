@@ -48,7 +48,7 @@
                         <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>
                     </div>
                    <div class="card-body">
-                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%">
+                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%; max-width:200px">
                         <p><small>{{space.description.substr(0, 50)}}</small></p>
                         <div>
                             <small v-if="space.support">
@@ -81,8 +81,8 @@
                         <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                     </div>
                     <div class="card-body">
-                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%"><?php } ?>
-                        <?php if(strlen($item['description']) > 50) { echo substr($item["description"], 0, 50)."..."; } else { echo $item['description']; } ?>
+                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%; max-width:200px"><?php } ?>
+                        <?php if(strlen($item['description']) > 50) { echo '<p>'.substr($item["description"], 0, 50).'...</p>'; } else { echo '<p>'.$item['description'].'</p>'; } ?>
                         </div>
                     <div class="card-footer">
                         <small>

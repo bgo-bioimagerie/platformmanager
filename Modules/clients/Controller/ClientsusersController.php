@@ -108,4 +108,10 @@ class ClientsusersController extends ClientsController {
         $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
     }
 
+    public function getClientUsersAction($id_space, $id_client) {
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $modelClientUser = new ClClientUser();
+        $this->render(['data' => ['elements' => $modelClientUser->getClientUsersAccounts($id_client, $id_space)]]);
+    }
+
 }

@@ -1,5 +1,34 @@
 # Changes
 
+## 2.6.0
+
+* [booking] in booking invoice details, show related bookings
+* [core] remove lasting references to ec classes
+* [booking] fix closed days hidding in summary view
+* [booking_settings] add getDefault to BkNightWE class 
+* [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
+* [core] on user join request, request a comment from user to be added to email
+* [booking] add to scheduling option to force usage of packages to an area
+* [booking] hide nightwe entries if pricing does not exists anymore
+* [helpdesk] do not send ticket reply if mail coming from helpdesk
+* [mail] add support for custom headers
+* [booking][supplementaries] avoid having two sups with the same name for the same resource 
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
+* [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
+
+## 2.5.2
+
+* [services] user is no longer mandatory in project and order forms
+
+## 2.5.1
+
+* [space] fix pending accounts bug
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
@@ -10,6 +39,7 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607

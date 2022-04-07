@@ -40,7 +40,7 @@ abstract class CoresecureController extends CorecookiesecureController {
                 $key = $modelUser->getRememberKey($authArray[0]);
                 if ($key == $authArray[1]) {
                     // update the cookie
-                    $key = sha1($this->generateRandomKey());
+                    $key = hash('sha512', $this->generateRandomKey());
                     $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
                         throw new PfmAuthException('cannot set the cookie in coresecure', 403);
@@ -52,7 +52,6 @@ abstract class CoresecureController extends CorecookiesecureController {
                     // redirect
                     return 2;
                 } else {
-
                     setcookie('auth', '', time() - 3600);
                     $this->redirectNoRemoveHeader("coreconnection");
                     return 0;

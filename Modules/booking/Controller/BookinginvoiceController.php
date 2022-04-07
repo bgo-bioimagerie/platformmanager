@@ -585,6 +585,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->get($id_space, $id_invoice);
 
+        $modelBk = new BkCalendarEntry();
+        $entries = $modelBk->getInvoiceEntries($id_space, $id_invoice);
+        $modelResource = new ResourceInfo();
+        $resources = $modelResource->getBySpace($id_space);
+        $rmap = [];
+        foreach($resources as $r) {
+            $rmap[$r['id']] = $r['name'];
+        }
+
         $table = new TableView();
         $table->setTitle(BookinginvoiceTranslator::Details($lang) . ": " . $invoiceInfo["number"], 3);
 
@@ -597,7 +606,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         );
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml, 'entries' => $entries, 'resources' => $rmap));
     }
 
 }

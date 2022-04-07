@@ -41,7 +41,7 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
     $dayselected = $kind == 'day' ? 'selected':'';
     $dayareaselected = $kind == 'dayarea' ? 'selected':'';
     $weekselected = $kind == 'week' ? 'selected':'';
-    $weekareaselected = $kind == 'weekarea' ? 'actselectedive':'';
+    $weekareaselected = $kind == 'weekarea' ? 'selected':'';
     $monthselected = $kind == 'month' ? 'selected':'';
 
     $html .= '<script>function switchView(view) {
