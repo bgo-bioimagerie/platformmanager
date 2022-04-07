@@ -25,8 +25,9 @@
                 <div class="p-2 alert alert-secondary">
                     <h3>Backlog</h3>
                     <draggable id="backlog" class="list-group kanban-column" :list="arrBacklog" group="tasks" @change="changeState($event, 'backlog')">
-                        <div class="list-group-item" v-for="element in arrBacklog" :key="element.title">
+                        <div class="list-group-item" v-for="element in arrBacklog" :key="element.title" @click="showContent($event, element)">
                             {{element.title}}
+                            <input v-show=element.contentVisible type="textArea">{{element.content}}</input>
                         </div>
                     </draggable>
                 </div>
@@ -36,8 +37,9 @@
                 <div class="p-2 alert alert-primary">
                     <h3>In progress</h3>
                     <draggable id="inProgress" class="list-group kanban-column" :list="arrInProgress" group="tasks" @change="changeState($event, 'inProgress')">
-                        <div class="list-group-item" v-for="element in arrInProgress" :key="element.title">
+                        <div class="list-group-item" v-for="element in arrInProgress" :key="element.title" @click="showContent($event, element)">
                             {{element.title}}
+                            <input v-if=element.contentVisible type="textArea">{{element.content}}</input>
                         </div>
                     </draggable>
                 </div>
@@ -47,8 +49,9 @@
                 <div class="p-2 alert alert-success">
                     <h3>Done</h3>
                     <draggable id="done" class="list-group kanban-column" :list="arrDone" group="tasks" @change="changeState($event, 'done')">
-                        <div class="list-group-item" v-for="element in arrDone" :key="element.title">
+                        <div class="list-group-item" v-for="element in arrDone" :key="element.title" @click="showContent($event, element)">
                             {{element.title}}
+                            <input v-show=element.contentVisible type="textArea">{{element.content}}</input>
                         </div>
                     </draggable>
                 </div>
@@ -79,6 +82,7 @@ let app = new Vue({
     },
     created () {
         this.tasks.forEach(task => {
+            task.contentVisible = false;
             switch(task.state) {
                 case "0":
                     this.arrBacklog.push(task)
@@ -96,6 +100,10 @@ let app = new Vue({
         });
     },
     methods: {
+        showContent(event, task) {
+            console.log("in showContent")
+            task.contentVisible = !task.contentVisible;
+        },
         changeState(event, tasksList) {
             if (event.added) {
                 let newState = null;
@@ -122,15 +130,18 @@ let app = new Vue({
         },
         add() {
             if(this.newTask) {
-                this.arrBacklog.push({title: this.newTask});
-                this.updateTask({
-                    id: 0,
+                this.newTask = {
+                    id: 0, // can cause duplicated ids
                     id_space: this.id_space,
                     id_project: this.id_project,
                     state: 0,
                     title: this.newTask,
-                    content: ""
-                });
+                    content: "",
+                    contentVisible: false
+                };
+                this.updateTask(this.newTask); // => should return taskid from bdd, then this.newTask.id = id
+                this.tasks.push(this.newTask);
+                this.arrBacklog.push(this.newTask);
                 this.newTask = "";
             }
         },
@@ -150,6 +161,9 @@ let app = new Vue({
             let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
             fetch(apiRoute, cfg, true);
         },
+        deleteTask() {
+
+        }
     }
 });
 </script>
@@ -157,6 +171,9 @@ let app = new Vue({
 <style>
     .kanban-column {
         min-height: 300px;
+    }
+    .comment {
+        min-height: 50px;
     }
 </style>
 
