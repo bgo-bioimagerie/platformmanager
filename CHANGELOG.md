@@ -13,6 +13,9 @@
 * [booking] hide nightwe entries if pricing does not exists anymore
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
+* [booking][supplementaries] avoid having two sups with the same name for the same resource 
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
 

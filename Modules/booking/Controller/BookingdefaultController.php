@@ -312,7 +312,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
         $quantities = "";
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
@@ -801,7 +801,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // quantities
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
         $qDataValue = array();

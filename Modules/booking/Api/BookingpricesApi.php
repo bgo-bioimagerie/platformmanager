@@ -56,7 +56,7 @@ class BookingpricesApi extends CoresecureController {
                 $data['bel_' . $bel['id']] = $modelPrices->getWePrice($id_space, $residArray[0], $bel["id"]);
             }
         } else if ($residArray[1] == "pk") {
-            $p = $modelPackage->getByPackageID($id_space, $residArray[2], $residArray[0]);
+            $p = $modelPackage->getBySupID($id_space, $residArray[2], $residArray[0]);
             $data['resource'] = $resourceName . " " . $p['name'];
             foreach($belongings as $bel){
                 $data['bel_' . $bel['id']] = $modelPrices->getPackagePrice($id_space, $residArray[2], $residArray[0], $bel["id"]);
