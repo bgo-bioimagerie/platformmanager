@@ -473,7 +473,7 @@ class EventHandler {
     }
 
     public function invoiceDelete($msg) {
-        $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
+        $this->logger->debug('[invoiceDelete][nothing to do]', ['id_invoice' => $msg['invoice']['id']]);
     }
 
     public function statRequest($msg) {
@@ -558,6 +558,15 @@ class EventHandler {
         } else {
             $cv->deleteRequest($id_space, 'invoices', $rid);
         }
+    }
+
+    public function pricingDeleteRequest($msg){
+        $id_space = $msg['space']['id'];
+        $id_pricing = $msg['pricing']['id'];
+        $pricing = $msg['pricing']['name'];
+        $this->logger->debug('[pricingDelete]', ['id_pricing' => $id_pricing, 'id_space' => $id_space]);
+        $m = new CoreHistory();
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "Pricing  $pricing deleted");
     }
 
     public function invoiceRequest($msg) {
@@ -706,6 +715,9 @@ class EventHandler {
                 case Events::ACTION_STATISTICS_REQUEST:
                     $this->statRequest($data);
                     break;
+                case Events::ACTION_CLIENT_PRICING_DELETE:
+                    $this->pricingDeleteRequest($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -755,6 +767,9 @@ class Events {
     public const ACTION_SERVICE_PROJECT_DELETE = 711;
 
     public const ACTION_STATISTICS_REQUEST = 800;
+
+    public const ACTION_CLIENT_PRICING_CREATE = 900;
+    public const ACTION_CLIENT_PRICING_DELETE = 901;
 
     private static $connection;
     private static $channel;

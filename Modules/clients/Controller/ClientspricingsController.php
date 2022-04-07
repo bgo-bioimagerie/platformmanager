@@ -9,6 +9,9 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Controller/ClientsController.php';
 
+
+require_once 'Modules/booking/Model/BkNightWE.php';
+
 /**
  * 
  * @author sprigent
@@ -134,7 +137,21 @@ class ClientspricingsController extends ClientsController {
                     $form->getParameter("type"),
                     $form->getParameter("display_order"),
                     $form->getParameter("txtcolor"),
-                );
+            );
+
+            $bkm = new BkNightWE();
+            $bkdefault = $bkm->getDefault();
+            $bk_id = $bkm->setPricing(
+                $newId,
+                $id_space,
+                $bkdefault['tarif_unique'],
+                $bkdefault['tarif_night'],
+                $bkdefault['night_start'],
+                $bkdefault['night_end'],
+                $bkdefault['tarif_we'],
+                $bkdefault['choice_we']
+            );
+            Configuration::getLogger()->debug('[clients][pricing] create related bknightwe', ['bke' => $bk_id]);
 
             $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
             $_SESSION["flashClass"] = "success";
@@ -166,9 +183,36 @@ class ClientspricingsController extends ClientsController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+
+        $clientModel = new ClClient();
+        $clients = $clientModel->getPricingClients($id_space, $id);
+        if($clients) {
+            $_SESSION['flash'] = 'Some client use this pricing, cannot delete it!';
+            $_SESSION['flashClass'] = 'danger';
+            return $this->redirect("clpricings/" . $id_space);
+        }
+
+        $p = $this->pricingModel->get($id_space, $id);
+        if(!$p){
+            throw new PfmParamException('pricing not found', 404);
+        }
         
         // query to delete the provider
         $this->pricingModel->delete($id_space, $id);
+        Configuration::getLogger()->debug('[clients][pricing] delete', ['id' => $id]);
+
+        $bkem = new BkNightWE();
+        $bke = $bkem->getPricing($id, $id_space);
+        if($bke) {
+            Configuration::getLogger()->debug('[clients][pricing] delete related bknightwe', ['bke' => $bke['id']]);
+            $bkem->delete($id_space, $bke['id']);
+        }
+
+        Events::send([
+            "action" => Events::ACTION_CLIENT_PRICING_DELETE,
+            "space" => ["id" => intval($id_space)],
+            "pricing" => ["id" => intval($id), "name" => $p['name']]
+        ]);
         
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);

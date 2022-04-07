@@ -20,6 +20,8 @@ require_once 'Modules/resources/Model/ReEventData.php';
 require_once 'Modules/resources/Model/ReResps.php';
 require_once 'Modules/resources/Model/ReRespsStatus.php';
 require_once 'Modules/booking/Model/BkAccess.php';
+require_once 'Modules/booking/Model/BkRestrictions.php';
+
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
@@ -158,7 +160,9 @@ class ResourcesinfoController extends ResourcesBaseController {
             if (!$modelBkAccess->get($id_space, $id)) {
                 $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'    
             }
-            
+            $modelBkRestrictions = new BkRestrictions();
+            $modelBkRestrictions->add($id_space, $id, 0, 0);
+
             // upload image
             $target_dir = "data/resources/";
             if (array_key_exists("image", $_FILES) && $_FILES["image"]["name"] != "") {
@@ -550,7 +554,9 @@ class ResourcesinfoController extends ResourcesBaseController {
         if ($modelBkAccess->get($id_space, $id)) {
             $modelBkAccess->delete($id_space, $id);
         }
-        
+
+        $modelBkRestrictions = new BkRestrictions();
+        $modelBkRestrictions->deleteByResource($id_space, $id);
 
         $this->redirect("resources/" . $id_space);
     }

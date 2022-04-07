@@ -30,13 +30,11 @@ class BookingrestrictionsController extends BookingsettingsController {
         
         $model = new BkRestrictions();
         $modelResource = new ResourceInfo();
-        $model->init($id_space);
+        // $model->init($id_space);
         $data = $model->getForSpace($id_space);
         for($i = 0 ; $i < count($data); $i++){
             $data[$i]["resource"] = $modelResource->getName($id_space, $data[$i]["id_resource"]);
         }
-        
-        //print_r($data);
         
         $table = new TableView();
         $table->setTitle(BookingTranslator::BookingRestriction($lang));

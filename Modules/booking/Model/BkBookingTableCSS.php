@@ -77,7 +77,7 @@ class BkBookingTableCSS extends Model {
      *
      * @param string $name name of the Area
      */
-    private function addAreaCss($id_space, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
+    public function addAreaCss($id_space, $id_area, $header_background, $header_color, $header_font_size, $resa_font_size, $header_height, $line_height) {
 
         $sql = "insert into bk_bookingcss(id_area, header_background, header_color, header_font_size, 
 										  resa_font_size, header_height, line_height, id_space)"
@@ -142,8 +142,13 @@ class BkBookingTableCSS extends Model {
      * @param number $id Area ID
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
+        $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
+    }
+
+    public function deleteByArea($id_space, $id_area) {
+        $sql = "UPDATE bk_bookingcss set deleted=1,deleted_at=NOW() WHERE id_area=? AND id_space=?";
+        $this->runRequest($sql, array($id_area, $id_space));
     }
 
 }
