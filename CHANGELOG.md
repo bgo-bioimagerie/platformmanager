@@ -1,5 +1,9 @@
 # Changes
 
+## 2.5.2
+
+* [services] user is no longer mandatory in project and order forms
+
 ## 2.5.1
 
 * [space] fix pending accounts bug
