@@ -233,7 +233,7 @@ class FormAdd {
                     } else if ($this->types[$j] == "label"){
                         $html .= $formHtml->inlineLabel($this->names[$j], $this->values[$j][$i], true);
                     } else {
-                        $html .= "error undefine form input type " . $this->types[$j];
+                        $html .= "error undefined form input type " . $this->types[$j];
                     }
                     $html .= "</td>";
                 }

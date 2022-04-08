@@ -223,7 +223,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
         $formAdd->addFloat("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
         $formAdd->addFloat("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
-        //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
 
@@ -416,7 +415,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item, $lang);
-        //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
             if( $d[2] > 0 ){
@@ -568,8 +566,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $time_day += $resaDayNightWe['nb_hours_day'];
                     $time_night += $resaDayNightWe['nb_hours_night'];
                     $time_we += $resaDayNightWe['nb_hours_we'];
-
-                    //$time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
                 }
                 $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
             }

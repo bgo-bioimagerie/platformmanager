@@ -41,7 +41,6 @@ class InvoicesconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelSpace = new CoreSpace();
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
@@ -57,23 +56,21 @@ class InvoicesconfigController extends CoresecureController {
             $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $id_space);
             $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
 
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // options
         $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
         if ($formUseInvoiceDatePaid->check()) {
             $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang),
             $formPeriod->getHtml($lang)
         );
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     function checkTemplate($id_space) {

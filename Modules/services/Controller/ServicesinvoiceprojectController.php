@@ -36,7 +36,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
      */
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
 
     }
@@ -90,8 +89,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         // generate pdf
         if ($pdf == 1) {
-            $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
-            return;
+            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
         }
 
         //print_r($id_items);
@@ -138,8 +136,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 "space" => ["id" => intval($id_space)],
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
-            $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
-            return;
+            return $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
         }
         
 
@@ -383,7 +380,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
         $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
