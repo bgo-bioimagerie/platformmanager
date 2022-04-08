@@ -27,7 +27,7 @@ Variables:
     td    { vertical-align: top; }
     -->
 </style>
-<page backcolor="#FEFEFE" backimg="data/invoices/bas_page.png" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
+<page backcolor="#FEFEFE" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
     <bookmark title="Lettre" level="0" ></bookmark>
     <table cellspacing="0" style="width: 100%; text-align: center; font-size: 14px">
         <tr style="height: 50px; background-color: #107E9C; padding: 15px"><td colspan="2"><h3>{{company.name}}</h3></td></tr>
@@ -145,7 +145,7 @@ Variables:
 </page>
 
 {% if details %}
-<page backcolor="#FEFEFE" backimg="data/invoices/bas_page.png" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
+<page backcolor="#FEFEFE" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
 	{{ details | raw }}
 </page>
 {% endif %}

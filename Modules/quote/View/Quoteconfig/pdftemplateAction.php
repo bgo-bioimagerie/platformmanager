@@ -18,14 +18,13 @@
         <?php if ($formDownload) {
             echo $formDownload;
             echo $formPreview;
-        } else {
+        }
         ?>
         <div class="row">
             <div class="col-xs-12 col-lg-12">
                 <a href="externals/pfm/templates/quote_template.twig" download="template.twig" target="_blank" rel="noreferrer,noopener"><button style="margin: 10px;" class="btn btn-primary">Download example template</button></a>
             </div>
         </div>
-        <?php } ?>
         <?php echo $formUpload ?>
     </div>
 

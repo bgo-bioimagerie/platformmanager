@@ -442,7 +442,6 @@ class QuotelistController extends QuoteController {
         $unit = $data['unit'] ?? '';
         $resp = $data['resp'];
         $address = $data['address'];
-        $adress = $data['address'];
         $table = $data['table'];
         $total = $data['total'];
         $useTTC = $data['useTTC'];
@@ -468,7 +467,6 @@ class QuotelistController extends QuoteController {
                 'approval_number' => ''
             ];
         }
-
 
         if(!file_exists('data/quote/'.$id_space.'/template.twig') && file_exists('data/quote/'.$id_space.'/template.php')) {
             // backwark, templates were in PHP and no twig template available use old template
@@ -510,13 +508,14 @@ class QuotelistController extends QuoteController {
         }
 
         // convert in PDF
+        $out = __DIR__."/../../../data/quote/$id_space/quote_".$resp.$number.".pdf";
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content);
 
             if($toFile || getenv("PFM_MODE") == "test") {
-                $html2pdf->Output(__DIR__."/../../../data/quote/$id_space/quote_".$resp.$number.".pdf", 'F');
+                $html2pdf->Output($out, 'F');
             } else {
                 $html2pdf->Output("quote_" . $resp . '.pdf');
             }
@@ -524,7 +523,7 @@ class QuotelistController extends QuoteController {
         } catch (Exception $e) {
            throw new PfmException('PDF conversion error: '.$e->getMessage());
         }
-        return __DIR__."/../../../data/quote/$id_space/quote_".$resp.$number.".pdf";
+        return $out;
     }
 
     private function makePDFTable($tableData, $lang) {

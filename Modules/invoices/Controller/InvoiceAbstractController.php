@@ -19,7 +19,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
      */
     public abstract function editAction($id_space, $id_invoice, $pdf);
     
-        /**
+    /**
      * To delete the invoice data in the content tables
      */
     public abstract function deleteAction($id_space, $id_invoice);
@@ -27,7 +27,6 @@ abstract class InvoiceAbstractController extends InvoicesController {
 
     public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en') {
         $address = nl2br($address);
-        $adress = $address; // backwark compat
         $date = CoreTranslator::dateFromEn($date, $lang);
         
         $modelInvoice = new InInvoice();
@@ -61,7 +60,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
         } else {
             $template = 'data/invoices/'.$id_space.'/template.twig';
             if(!file_exists($template)){
-                $template = 'externals/pfm/templates/invoice_template.twig';
+                $template = 'externals/pfm/templates/invoices_template.twig';
             }
             Configuration::getLogger()->debug('[invoices][pdf]', ['template' => $template]);
 
@@ -89,19 +88,20 @@ abstract class InvoiceAbstractController extends InvoicesController {
         }
         
         // convert in PDF
+        $out = __DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf";
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content);
             if($toFile || getenv("PFM_MODE") == "test") {
-                $html2pdf->Output(__DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf", 'F');
+                $html2pdf->Output($out, 'F');
             } else {
                 $html2pdf->Output($unit . "_" . $resp . "_" . $number . '.pdf');
             }
         } catch (Exception $e) {
             throw new PfmException("Pdf generation error: " . $e, 500);
         }
-        return __DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf";
+        return $out;
     }
 
 }
