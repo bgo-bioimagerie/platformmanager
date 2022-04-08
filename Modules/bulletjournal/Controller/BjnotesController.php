@@ -112,4 +112,11 @@ class BjnotesController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditevent/".$id_space);
         return $form->getHtml($lang);
     }
+
+    public function deletenoteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $modelNote = new BjNote();
+        $modelNote->delete($id_space, $id);
+        return null;
+    }
 }

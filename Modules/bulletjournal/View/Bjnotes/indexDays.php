@@ -18,7 +18,7 @@
                 <span style="text-transform: uppercase; font-weight: bold; color: #666;">
                     <?php echo date("l d F", mktime(0, 0, 0, $month, $i, $year)) ?>
                 </span>
-                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span style="color: #666;" class="bi-plus"></span>
 
                 </button>
@@ -81,7 +81,13 @@
                             ?>
 
                             <td><?php echo $priorityVal ?></td>
-                            <td><span class="<?php echo $typeicon ?>"></span></td>
+                            <td style="padding: 10px">
+                                <span
+                                    <?php if($dnote['type'] == 1){ ?>
+                                    onclick="deleteNote(<?php echo $id_space ?>,<?php echo $dnote['id'] ?>)" 
+                                    <?php } ?>
+                                    class="<?php echo $typeicon ?>"></span>
+                            </td>
                             <?php
                             $openlink = "opennote";
                             if ($dnote["type"] == 2) {
