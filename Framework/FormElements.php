@@ -653,7 +653,7 @@ class FormTypeaheadElement extends FormInputElement {
     private function getOptions(): string {
         $html = sprintf('<datalist id="%s_ta_list">', $this->id);
         foreach ($this->options as $id => $name) {
-            $html .= sprintf('<option value="%s"/>', $name)."\n";
+            $html .= sprintf('<option x-id="%s" value="%s"/>', $id, $name)."\n";
         }
         $html .= '</datalist>'."\n";
         return $html;
