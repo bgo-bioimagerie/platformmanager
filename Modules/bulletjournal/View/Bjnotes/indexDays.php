@@ -38,7 +38,7 @@
                         $d = "0" . $i;
                     }
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
-                        $typeicon = "bi-x-square-fill";
+                        $typeicon = "";
                         if ($dnote["type"] == 2) {
                             $typeicon = "bi-asterisk";
                             if ($dnote["migrated"] == 1) {
@@ -80,14 +80,15 @@
                             }
                             ?>
 
-                            <td><?php echo $priorityVal ?></td>
+                            
                             <td style="padding: 10px">
-                                <span
-                                    <?php if($dnote['type'] == 1){ ?>
+                                <span class="bi-x-square-fill"
                                     onclick="deleteNote(<?php echo $id_space ?>,<?php echo $dnote['id'] ?>)" 
-                                    <?php } ?>
-                                    class="<?php echo $typeicon ?>"></span>
+                                ></span>
+
+                                <?php if($typeicon) { ?><span class="<?php echo $typeicon ?>"></span><?php } ?>
                             </td>
+                            <td><?php echo $priorityVal ?></td>
                             <?php
                             $openlink = "opennote";
                             if ($dnote["type"] == 2) {

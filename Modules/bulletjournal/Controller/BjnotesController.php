@@ -5,6 +5,9 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
 require_once 'Modules/bulletjournal/Model/BjNote.php';
+require_once 'Modules/bulletjournal/Model/BjEvent.php';
+require_once 'Modules/bulletjournal/Model/BjTask.php';
+
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
@@ -117,6 +120,11 @@ class BjnotesController extends CoresecureController {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelNote = new BjNote();
         $modelNote->delete($id_space, $id);
+        $modelEvent = new BjEvent();
+        $modelEvent->delete($id_space, $id);
+        $modelTask = new BjTask();
+        $modelTask->delete($id_space, $id);
         return null;
     }
+
 }
