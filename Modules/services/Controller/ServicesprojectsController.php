@@ -488,8 +488,7 @@ class ServicesprojectsController extends ServicesController {
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
-            "tasks" => $tasks,
-            "data" => ["tasks" => $tasks]
+            "tasks" => $tasks
         ));
     }
 
@@ -504,7 +503,6 @@ class ServicesprojectsController extends ServicesController {
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
         $id = $taskModel->set($taskData['id'], $id_space, $id_project, $taskData['state'], $taskData['title'], $taskData['content']);
-        Configuration::getLogger()->debug("[TEST]", ['newTask_id' => $id]);
         $this->render(['data' => ['id' => $id]]);
 
     }

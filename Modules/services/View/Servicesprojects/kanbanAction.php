@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col form-inline">
                 <input type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
-                <button class="ml-2 btn btn-primary" @click="add" style="margin:5px;">Add</button>
+                <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;">Add</button>
             </div>
         </div>
 
@@ -25,11 +25,12 @@
                 <div class="p-2 alert" v-bind:class="column.color">
                     <h3>{{column.title}}</h3>
                     <draggable :id="column.name" class="list-group kanban-column" :list="column.tasks" group="tasks" @change="changeState($event, cindex)">
-                        <div class="list-group-item" v-for="element in column.tasks" :key="element.title" @click="showContent($event, element)">
+                        <div class="list-group-item" style="cursor:grab;" v-for="element in column.tasks" :key="element.title">
                             {{element.title}}
-                            <div class="bi bi-trash" style="display:inline" @click="deleteTask(element)"></div>
-                            <div class="hidable" v-show="element.contentVisible">
-                                <textarea class="contentArea">{{element.content}}</textarea>
+                            <button class="bi bi-arrow-right round" @click="showContent($event, element)"></button>
+                            <div class="bi bi-trash" @click="deleteTask(element)"></div>
+                            <div class="hidable mt-3" v-show="element.contentVisible">
+                                <textarea class="contentArea" @blur="updateTaskContent($event, element)">{{element.content}}</textarea>
                             </div>
                         </div>
                     </draggable>
@@ -42,6 +43,7 @@
 
 
 <script type="module">
+
 import draggable from '/externals/node_modules/vuedraggable/src/vuedraggable.js';
 
 
@@ -75,20 +77,45 @@ let app = new Vue({
             });
         },
         showContent(event, task) {
-            task.contentVisible = !task.contentVisible;
-            let hidables = event.target.getElementsByClassName("hidable");
-            [...hidables].forEach(hidable => {
-                hidable.style.display = task.contentVisible ? "" : "none";
-            });
+            if (!event.target.classList.contains("contentArea")) {
+                task.contentVisible = !task.contentVisible;
+                this.updateHidables(event.target.parentElement, task);
+            }
         },
         changeState(event, columnIndex) {
             if (event.added) {
                 let newState = columnIndex;
-                event.added.element.state = newState; 
+                event.added.element.state = newState;
+                event.added.element.contentVisible = false;
+
+                let draggableElement = document.getElementById(this.columns[columnIndex].name);
+                this.updateHidables(draggableElement, event.added.element);
                 this.updateTask(event.added.element);
             }
         },
-        async addTask() {
+        updateHidables(parentElement, task) {
+            let arrowClasses = task.contentVisible
+                ? ['bi-arrow-down', 'bi-arrow-right']
+                : ['bi-arrow-right', 'bi-arrow-down'];
+            if (event.target && event.target.nodeName == "BUTTON") {
+                event.target.classList.add(arrowClasses[0]);
+                event.target.classList.remove(arrowClasses[1]);
+            }
+            let hidables = parentElement.getElementsByClassName("hidable");
+            [...hidables].forEach(hidable => {
+                if (task.contentVisible) {
+                    hidable.style.display = "";
+                    hidable.focus();
+                } else {
+                    hidable.style.display = "none";
+                }
+            });
+        },
+        updateTaskContent(event, task) {
+            task.content = event.target.value;
+            this.updateTask(task);
+        },
+        async addTask(task=null) {
             if(this.newTask) {
                 this.newTask = {
                     id: 0,
@@ -126,22 +153,25 @@ let app = new Vue({
                 });
         },
         deleteTask(task) {
-            let tasks = this.columns[task.state].tasks;
-            tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
-            const headers = new Headers();
-            headers.append('Content-Type','application/json');
-            headers.append('Accept', 'application/json');
-            const cfg = {
-                headers: headers,
-                method: 'POST',
-                body: null
-            };
-            cfg.body = JSON.stringify({
-                task: task
-            });
-            let targetUrl = `/servicesprojects/deletetask/`
-            let apiRoute = targetUrl + this.id_space + "/" + task.id;
-            fetch(apiRoute, cfg, true)
+            if (confirm("You are about to delete " + task.title + "?")) {
+                let tasks = this.columns[task.state].tasks;
+                tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
+                const headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+                const cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: null
+                };
+                cfg.body = JSON.stringify({
+                    task: task
+                });
+                let targetUrl = `/servicesprojects/deletetask/`
+                let apiRoute = targetUrl + this.id_space + "/" + task.id;
+                fetch(apiRoute, cfg, true)
+            }
+            
         }
     }
 });
@@ -151,14 +181,29 @@ let app = new Vue({
     .kanban-column {
         min-height: 300px;
     }
+    .list-group-item {
+        align-content: right;
+    }
     .contentArea {
         min-height: 150px;
+        max-width: 100%;
     }
     .bi-trash {
-        position: absolute;
-        right: 5px;
+        display:inline;
+        position: relative;
+        float: right;
         background-color: transparent;
         color: orangered;
+        cursor:pointer;
+    }
+    .round {
+        background-color: transparent;        
+        border-color: transparent;
+        padding: 5px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 100%
     }
 </style>
 
