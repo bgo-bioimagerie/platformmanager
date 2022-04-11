@@ -13,6 +13,7 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/services/Model/SeTask.php';
+require_once 'Modules/services/Model/SeTaskCategory.php';
 
 require_once 'Modules/services/Model/StockShelf.php';
 
@@ -475,6 +476,13 @@ class ServicesprojectsController extends ServicesController {
         $lang = $this->getLanguage();
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
+        
+        $categoryModel = new SeTaskCategory();
+        $categories = $categoryModel->getByProject($id_project, $id_space);
+
+        for($i=0; $i<count($categories); $i++) {
+            $categories[$i]['tasks'] = [];
+        }
 
         $modelProject = new SeProject();
         $projectName = $modelProject->getName($id_space ,$id_project);
@@ -482,20 +490,17 @@ class ServicesprojectsController extends ServicesController {
         $headerInfo["projectId"] = $id_project;
         $headerInfo["curentTab"] = "kanban";
 
+        Configuration::getLogger()->debug("[TEST]", ["categories" => $categories]);
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
-            "tasks" => $tasks
+            "tasks" => $tasks,
+            "categories" => $categories
         ));
-    }
-
-    public function getTasksAction($id_space, $id_project) {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
-        $taskModel = new SeTask();
-        return $taskModel->getByProject($id_project, $id_space);
     }
 
     public function setTaskAction($id_space, $id_project) {
@@ -511,6 +516,21 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
         return $taskModel->delete($id_space, $id_task);
+    }
+
+    public function setTaskCategoryAction($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $categoryData = $this->request->params()['category'];
+        $categoryModel = new SeTaskCategory();
+        $id = $categoryModel->set($categoryData['id'], $id_space, $id_project, $categoryData['title'], $categoryData['position'], $categoryData['color']);
+        $this->render(['data' => ['id' => $id]]);
+
+    }
+
+    public function deleteTaskCategoryAction($id_space, $id_category) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $taskModel = new SeTask();
+        return $taskModel->delete($id_space, $id_category);
     }
 
     protected function createEditEntryForm($id_space, $lang) {

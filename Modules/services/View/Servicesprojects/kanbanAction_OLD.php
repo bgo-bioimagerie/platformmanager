@@ -6,7 +6,7 @@
     <div class="col-12">
         <h3> <?php echo $projectName ?> </h3>
     </div>
-
+    
     <div class="col-12">
         <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
     </div>
@@ -21,12 +21,12 @@
 
         <div class="row mt-3">
 
-            <div class="col-md-3" v-for="(category, cindex) in categories">
+            <div class="col-md-3" v-for="(category, catIndex) in categories">
                 <div class="p-2 alert" v-bind:class="category.color">
                     <h3>{{category.title}}</h3>
-                    <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeState($event, cindex)">
-                        <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
-                            {{element.title}}
+                    <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeState($event, catIndex)">
+                        <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.uniqueState">
+                            {{element.title}} {{element.uniqueState}}
                             <button class="bi bi-arrow-right round" @click="showContent($event, element)"></button>
                             <div class="bi bi-trash" @click="deleteTask(element)"></div>
                             <div class="hidable mt-3" v-show="element.contentVisible">
@@ -52,29 +52,33 @@ let app = new Vue({
     data () {
         return {
             newTask: "",
-            categories: <?php echo json_encode($categories);?>,
+            /* categories: [
+                {name: "backlog", title: "Backlog", color: "alert-secondary", position: 0, tasks: []},
+                {name: "inProgress", title: "In progress", color: "alert-primary", position: 1, tasks: []},
+                {name: "done", title: "Done", color: "alert-success", position: 3, tasks: []}
+            ], */
             id_space: "<?php echo $id_space ?>",
             id_project: "<?php echo $id_project ?>",
-            tasks: <?php echo json_encode($tasks);?>
+            tasks: <?php echo json_encode($tasks);?>,
+            categories: <?php echo json_encode($categories);?>
         }
     },
-    created () {
-        console.log("this.categories: ", this.categories)
+    created() {
         this.categories.forEach(category => {
             category.name = category.title.replace(/\s/g, '').toLowerCase();
+            category.tasks = [];
         });
+        console.log("categories: ", this.categories);
         this.tasks.forEach(task => {
+            task.uniqueState = task.state + "_" + task.id;
             task.contentVisible = false;
-            this.categories[task.state].tasks.push(task)
+            this.categories[task.state].tasks.push(task);
         });
     },
+    
     methods: {
-        getTaskById(id) {
-            this.tasks.forEach(task => {
-                if (id == task.id) {
-                    return task;
-                }
-            });
+        editCategory(event) {
+            console.log(event);
         },
         showContent(event, task) {
             if (!event.target.classList.contains("contentArea")) {
@@ -82,22 +86,34 @@ let app = new Vue({
                 this.updateHidables(event.target.parentElement, task);
             }
         },
-        changeState(event, categoryIndex) {
+        async changeState(event, catIndex) {
+            console.log("event: ", event, "catIndex", catIndex);
+            if (event.removed) {
+                console.log("old category tasks: ", this.categories[catIndex].tasks);
+            }
             if (event.added) {
-                let newState = categoryIndex;
+                console.log("event.added")
+                let newState = catIndex;
                 event.added.element.state = newState;
+                event.added.element.uniqueState = newState + "_" + event.added.element.id;
                 event.added.element.contentVisible = false;
 
-                let draggableElement = document.getElementById(this.categories[categoryIndex].name);
+                // this.categories[catIndex].tasks.push(event.added.element);
+                console.log("new category tasks: ", this.categories[catIndex].tasks[0]);
+                
+                // tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
+                
+                let draggableElement = document.getElementById(this.categories[catIndex].name);
                 this.updateHidables(draggableElement, event.added.element);
                 this.updateTask(event.added.element);
             }
         },
         updateHidables(parentElement, task) {
+            console.log("in updatehidable")
             let arrowClasses = task.contentVisible
                 ? ['bi-arrow-down', 'bi-arrow-right']
                 : ['bi-arrow-right', 'bi-arrow-down'];
-            if (event.target && event.target.nodeName == "BUTTON") {
+            if (event && event.target.nodeName == "BUTTON") {
                 event.target.classList.add(arrowClasses[0]);
                 event.target.classList.remove(arrowClasses[1]);
             }
@@ -124,15 +140,18 @@ let app = new Vue({
                     state: 0,
                     title: this.newTask,
                     content: "",
-                    contentVisible: false
+                    contentVisible: false,
+                    uniqueState: ""
                 };
-                await this.updateTask(this.newTask)
-                this.tasks.push(this.newTask);
-                this.categories[0].tasks.push(this.newTask);
+                task = await this.updateTask(this.newTask)
+                task.uniqueState = task.state + "_" + task.id
+                this.tasks.push(task);
+                this.categories[0].tasks.push(task);
                 this.newTask = "";
             }
         },
         async updateTask(task) {
+            console.log(this.categories[task.state].tasks)
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');
@@ -151,6 +170,7 @@ let app = new Vue({
                 then(data => {
                     task.id = data.id;
                 });
+            return task;
         },
         deleteTask(task) {
             if (confirm("You are about to delete " + task.title + "?")) {
@@ -171,7 +191,7 @@ let app = new Vue({
                 let apiRoute = targetUrl + this.id_space + "/" + task.id;
                 fetch(apiRoute, cfg, true)
             }
-
+            
         }
     }
 });
@@ -209,4 +229,4 @@ let app = new Vue({
 
 <?php include 'Modules/services/View/Servicesprojects/editscript.php';  ?>
 
-<?php endblock(); ?> 
+<?php endblock(); ?>

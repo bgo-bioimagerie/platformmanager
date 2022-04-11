@@ -14,7 +14,6 @@ class SeTask extends Model {
     }
 
     public function createTable() {
-        // TODO: [tracking] complete db columns
         $sql = "CREATE TABLE IF NOT EXISTS `se_task` (
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL,

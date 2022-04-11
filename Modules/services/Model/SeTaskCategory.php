@@ -1,0 +1,78 @@
+<?php
+
+require_once 'Framework/Model.php';
+
+/**
+ * Class defining the tracking sheet for se_projects
+ *
+ * @author Sylvain Prigent
+ */
+class SeTaskCategory extends Model {
+
+        public function __construct() {
+        $this->tableName = "se_task_category";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_task_category` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL,
+            `id_project` int NOT NULL,
+            `title` varchar(120) NOT NULL DEFAULT '',
+            `position` int NOT NULL,
+            `color` varchar(7) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
+    }
+
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM se_task_category WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    public function getByProject($id_project, $id_space) {
+        $sql = "SELECT * FROM se_task_category WHERE id_space=? AND id_project=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        $categories = $req->fetchAll();
+        if (empty($categories)) {
+            $categories = $this->getDefaultCategories();
+        }
+        return $categories;
+    }
+
+    public function getDefaultCategories() {
+        $cat1 = ["title" => "Backlog", "position" => 0, "color" => "alert-secondary"];
+        $cat2 = ["title" => "In Progress", "position" => 1, "color" => "alert-primary"];
+        $cat3 = ["title" => "Done", "position" => 2, "color" => "alert-success"];
+        return array($cat1, $cat2, $cat3);
+    }
+    
+    public function set($id, $id_space, $id_project, $title, $position, $color) {
+        if ($this->isTaskCategory($id_space, $id)) {
+            $sql = "UPDATE se_task_category SET id_project=?, title=?, position=?, color=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $title, $position, $color, $id, $id_space));
+            return $id;
+        } else {
+            $sql = "INSERT INTO se_task_category (id_project, title, position, color, id_space) VALUES (?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $title, $position, $color, $id_space));
+            return $this->getDatabase()->lastInsertId();
+        }
+    }
+    
+    public function isTaskCategory($id_space, $id) {
+        $sql = "SELECT * FROM se_task_category WHERE id=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id, $id_space));
+        if ($req->rowCount() == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function delete($id_space, $id) {
+        $sql = "UPDATE se_task_category SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($id, $id_space));
+    }
+
+}
