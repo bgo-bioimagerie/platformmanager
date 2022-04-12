@@ -522,13 +522,12 @@ class ServicesprojectsController extends ServicesController {
         $categoryModel = new SeTaskCategory();
         $id = $categoryModel->set($categoryData['id'], $id_space, $id_project, $categoryData['title'], $categoryData['position'], $categoryData['color']);
         $this->render(['data' => ['id' => $id]]);
-
     }
 
     public function deleteTaskCategoryAction($id_space, $id_category) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
-        $taskModel = new SeTask();
-        return $taskModel->delete($id_space, $id_category);
+        $categoryModel = new SeTaskCategory();
+        return $categoryModel->delete($id_space, $id_category);
     }
 
     protected function createEditEntryForm($id_space, $lang) {

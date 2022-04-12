@@ -43,15 +43,15 @@ class SeTaskCategory extends Model {
     }
 
     public function getDefaultCategories() {
-        $cat1 = ["id" => "", "title" => "Backlog", "position" => 0, "color" => "alert-secondary"];
-        $cat2 = ["id" => "", "title" => "In Progress", "position" => 1, "color" => "alert-primary"];
-        $cat3 = ["id" => "", "title" => "Done", "position" => 2, "color" => "alert-success"];
+        $cat1 = ["title" => "Backlog", "position" => 0, "color" => "#292b2c"];
+        $cat2 = ["title" => "In Progress", "position" => 1, "color" => "#0275d8 "];
+        $cat3 = ["title" => "Done", "position" => 2, "color" => "#5cb85c "];
         return array($cat1, $cat2, $cat3);
     }
 
     public function createDefaultCategories($id_space, $id_project) {
         $categories = $this->getDefaultCategories();
-        for($i=0; $i < $categories; $i++) {
+        for($i=0; $i < count($categories); $i++) {
             $sql = "INSERT INTO se_task_category (id_project, title, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
             $this->runRequest($sql, array($id_project, $categories[$i]['title'], $categories[$i]['position'], $categories[$i]['color'], $id_space));
             $categories[$i]['id'] = $this->getDatabase()->lastInsertId(); 
