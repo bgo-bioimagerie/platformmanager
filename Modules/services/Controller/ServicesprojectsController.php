@@ -490,8 +490,6 @@ class ServicesprojectsController extends ServicesController {
         $headerInfo["projectId"] = $id_project;
         $headerInfo["curentTab"] = "kanban";
 
-        Configuration::getLogger()->debug("[TEST]", ["categories" => $categories]);
-
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,

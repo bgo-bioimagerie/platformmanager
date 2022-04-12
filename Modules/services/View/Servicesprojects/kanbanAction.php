@@ -14,29 +14,37 @@
     <div id="board" class="container mt-5">
         <div class="row">
             <div class="col form-inline">
-                <input type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
+                <label for="newTask">New task</label>
+                <input id="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
                 <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;">Add</button>
             </div>
+
+            <div class="col form-inline">
+                <label for="newCat">New Category</label>
+                <input id="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
+                <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;">Add</button>
+            </div>
+
         </div>
 
         <div class="row mt-3">
-
-            <div class="col-md-3" v-for="(category, cindex) in categories">
-                <div class="p-2 alert" v-bind:class="category.color">
-                    <h3>{{category.title}}</h3>
-                    <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeState($event, cindex)">
-                        <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
-                            {{element.title}}
-                            <button class="bi bi-arrow-right round" @click="showContent($event, element)"></button>
-                            <div class="bi bi-trash" @click="deleteTask(element)"></div>
-                            <div class="hidable mt-3" v-show="element.contentVisible">
-                                <textarea class="contentArea" @blur="updateTaskContent($event, element)">{{element.content}}</textarea>
+            <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
+                <div class="category col-md-3" v-for="(category, cindex) in categories" style="display:inline-flex">
+                    <div class="p-2 alert" v-bind:class="category.color">
+                        <h3>{{category.title}}</h3>
+                        <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
+                            <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
+                                {{element.title}}
+                                <button class="bi bi-arrow-right round" @click="showTaskContent($event, element)"></button>
+                                <div class="bi bi-trash" @click="deleteTask(element)"></div>
+                                <div class="hidable mt-3" v-show="element.contentVisible">
+                                    <textarea class="contentArea" @blur="updateTaskContent($event, element)">{{element.content}}</textarea>
+                                </div>
                             </div>
-                        </div>
-                    </draggable>
+                        </draggable>
+                    </div>
                 </div>
-            </div>
-
+            </draggable>
         </div>
     </div>
 </div>
@@ -52,6 +60,7 @@ let app = new Vue({
     data () {
         return {
             newTask: "",
+            newCategory: "",
             categories: <?php echo json_encode($categories);?>,
             id_space: "<?php echo $id_space ?>",
             id_project: "<?php echo $id_project ?>",
@@ -59,7 +68,6 @@ let app = new Vue({
         }
     },
     created () {
-        console.log("this.categories: ", this.categories)
         this.categories.forEach(category => {
             category.name = category.title.replace(/\s/g, '').toLowerCase();
         });
@@ -76,13 +84,13 @@ let app = new Vue({
                 }
             });
         },
-        showContent(event, task) {
+        showTaskContent(event, task) {
             if (!event.target.classList.contains("contentArea")) {
                 task.contentVisible = !task.contentVisible;
                 this.updateHidables(event.target.parentElement, task);
             }
         },
-        changeState(event, categoryIndex) {
+        changeTaskState(event, categoryIndex) {
             if (event.added) {
                 let newState = categoryIndex;
                 event.added.element.state = newState;
@@ -91,6 +99,16 @@ let app = new Vue({
                 let draggableElement = document.getElementById(this.categories[categoryIndex].name);
                 this.updateHidables(draggableElement, event.added.element);
                 this.updateTask(event.added.element);
+            }
+        },
+        changeCategoryPosition(event) {
+            if (event.moved) {
+                event.moved.element.position = event.moved.newIndex;
+                this.categories.forEach((category, index) => {
+                    category.position = index;
+                });
+                this.logCatPositions();
+                this.updateCategories();
             }
         },
         updateHidables(parentElement, task) {
@@ -147,10 +165,50 @@ let app = new Vue({
             let targetUrl = `/servicesprojects/settask/`;
             let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
             await fetch(apiRoute, cfg, true).
-                then((response) => response.json()) .
+                then((response) => response.json()).
                 then(data => {
                     task.id = data.id;
                 });
+        },
+
+        async addCategory(category=null) {
+            // TODO alter table to setr default values on db columns dates
+            if(this.newCategory) {
+                this.newCategory = {
+                    id: 0,
+                    id_space: this.id_space,
+                    id_project: this.id_project,
+                    position: this.categories.length,
+                    title: this.newCategory,
+                    color: "", // TODO => set that in hexa
+                };
+                // TODO: check if ok for id => looks OK
+                this.categories.push(this.newCategory);
+                await this.updateCategories();
+                this.newCategory = "";
+            }
+        },
+        async updateCategories() {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/settaskcategory/`;
+            let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
+            this.categories.forEach(async category => {
+                cfg.body = JSON.stringify({
+                    category: category
+                });
+                await fetch(apiRoute, cfg, true).
+                    then((response) => response.json()).
+                    then(data => {
+                        category.id = data.id;
+                });
+            });
         },
         deleteTask(task) {
             if (confirm("You are about to delete " + task.title + "?")) {
@@ -180,6 +238,7 @@ let app = new Vue({
 <style>
     .kanban-category {
         min-height: 300px;
+        min-width: 250px;
     }
     .list-group-item {
         align-content: right;
@@ -204,6 +263,9 @@ let app = new Vue({
         display: inline-block;
         font-size: 12px;
         border-radius: 100%
+    }
+    label {
+        display: block;
     }
 </style>
 
