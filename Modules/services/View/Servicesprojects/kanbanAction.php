@@ -25,7 +25,6 @@
                 <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" value="#000000" @keyup.enter="addCategory"/>
                 <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;">Add</button>
             </div>
-
         </div>
 
         <div class="row mt-3">
@@ -34,6 +33,7 @@
                     <div :id=category.id class="p-2 alert">
                         <div class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
                         <h3>{{category.title}}</h3>
+
                         <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{element.title}}
@@ -44,6 +44,7 @@
                                 </div>
                             </div>
                         </draggable>
+
                     </div>
                 </div>
             </draggable>
@@ -97,7 +98,6 @@ let app = new Vue({
                 }
             });
         },
-
         getRGBAColor(category, opacity=0.5) {
             let h = category.color.substring(1,7);
             let r = parseInt(h.substring(0,2),16);
@@ -193,9 +193,7 @@ let app = new Vue({
                     task.id = data.id;
                 });
         },
-
         async addCategory(category=null) {
-            // TODO alter table to setr default values on db columns dates
             if(this.newCategory) {
                 this.newCategory = {
                     id: 0,
@@ -262,7 +260,6 @@ let app = new Vue({
                 });
                 // remove category
                 this.categories.splice(this.categories.indexOf(this.categories.find(element => element.id == category.id)), 1);
-                // TODO: think about category's tasks => should we delete them ?
                 const headers = new Headers();
                 headers.append('Content-Type','application/json');
                 headers.append('Accept', 'application/json');

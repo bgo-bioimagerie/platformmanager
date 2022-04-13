@@ -117,19 +117,7 @@ class ServicesController extends CoresecureController {
             $html .= $htmlStock;
         }
 
-        /* $servicesusetrackingsheet = $modelCoreConfig->getParamSpace("servicesusetrackingsheet", $id_space);
-        if ($servicesusetrackingsheet == 1) {
-            $htmlTrackingsheet = file_get_contents("Modules/services/View/Services/navbarstock.php");
-
-            $htmlTrackingsheet = str_replace("{{id_space}}", $id_space, $htmlTrackingsheet);
-            $htmlTrackingsheet = str_replace("{{Stock}}", strtoupper(ServicesTranslator::TrackingSheet($lang)), $htmlTrackingsheet);
-            $htmlTrackingsheet = str_replace("{{Stocks}}", ServicesTranslator::TrackingSheet($lang), $htmlTrackingsheet);
-
-            $html .= $htmlTrackingsheet;
-        } */
-
         $htmlListing = file_get_contents("Modules/services/View/Services/navbarlisting.php");
-
         $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);
         $htmlListing = str_replace("{{Listing}}", strtoupper(ServicesTranslator::Listing($lang)), $htmlListing);
         $htmlListing = str_replace("{{services}}", ServicesTranslator::services($lang), $htmlListing);
@@ -137,7 +125,6 @@ class ServicesController extends CoresecureController {
         $html .= $htmlListing;
 
         $html.= "</div>";
-  
 
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);
