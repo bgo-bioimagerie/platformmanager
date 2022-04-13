@@ -22,7 +22,7 @@
             <div class="col form-inline">
                 <label for="newCat">New Category</label>
                 <input id="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
-                <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" value="#000000" @keyup.enter="addCategory"/>
+                <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px" value="#000000"/>
                 <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;">Add</button>
             </div>
         </div>
@@ -32,7 +32,13 @@
                 <div class="category col-md-3" v-for="(category, cindex) in categories" style="display:inline-flex">
                     <div :id=category.id class="p-2 alert">
                         <div class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
-                        <h3>{{category.title}}</h3>
+                        <h3>
+                            {{category.title}}
+                            <button class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
+                        </h3>
+                        
+                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" value="category.color" @change="editCategoryColor($event, category)"/>
+                        
 
                         <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
@@ -54,9 +60,7 @@
 
 
 <script type="module">
-
 import draggable from '/externals/node_modules/vuedraggable/src/vuedraggable.js';
-
 
 let app = new Vue({
     el: '#board',
@@ -98,6 +102,25 @@ let app = new Vue({
                 }
             });
         },
+        editCategory(event, category) {
+            console.log("category.color: ", category.color);
+            let categoryName = category.title// event.target.innerText;
+            let newName = prompt("Rename category", categoryName);
+            if (newName != null) {
+                category.title = newName;
+                category.name = category.title.replace(/\s/g, '').toLowerCase();
+                // let colorInput = event.target.parentElement.parentElement.getElementsByClassName("categoryColorInput")[0];
+                let colorInput = document.getElementById(category.id).getElementsByClassName("categoryColorInput")[0];
+                colorInput.click();
+            }
+            this.updateCategories();
+        },
+
+        editCategoryColor(event, category) {
+            category.color = event.target.value;
+            this.updateCategories();
+        },
+
         getRGBAColor(category, opacity=0.5) {
             let h = category.color.substring(1,7);
             let r = parseInt(h.substring(0,2),16);
@@ -291,14 +314,14 @@ let app = new Vue({
     }
     .contentArea {
         min-height: 150px;
-        max-width: 100%;
+        max-width: 200px;
     }
     .deleteBtn {
         display:inline;
         position: relative;
         float: right;
         background-color: transparent;
-        color: orangered;
+        color: red;
         cursor:pointer;
     }
     .round {
