@@ -52,6 +52,7 @@ RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
 
 ADD php_logs.ini /usr/local/etc/php/conf.d/php_logs.ini
 ADD php_timezone.ini /usr/local/etc/php/conf.d/tz.ini
+ADD php_pfm.ini /usr/local/etc/php/conf.d/pfm.ini
 ADD apache2/platformmanager.conf /etc/apache2/conf-enabled/platformmanager.conf
 ADD apache2/000-default.conf /etc/apache2/sites-enabled/000-default.conf
 

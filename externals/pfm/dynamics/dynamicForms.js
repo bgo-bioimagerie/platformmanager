@@ -53,6 +53,9 @@ export class DynamicForms {
         fetch(apiRoute, cfg, true).
             then((response) => response.json()).
             then(data => {
+                if (target.addEmptyItem) {
+                    data.elements.unshift("");
+                }
                 switch (targetElement.nodeName) {
                     case "SELECT":
                         let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
@@ -117,6 +120,30 @@ export class DynamicForms {
         let newItem = items[lastIndex];
         newItem.id = itemsName + lastIndex.toString();
         return newItem.id;
+    }
+
+     /**
+     * If two boolean input values must be related (example: if input1 == true, input2 must be equal to true)
+     * functions to apply must be determinated in rules parameter
+     * Rules parameter must contain 2 functions (one by input). If needed, second function can be empty
+     *  
+     * @param {string} firstInput id of the first input
+     * @param {string} secondInput id of the second input    
+     * @param {Array[function]} rules Array of functions
+     * @param {boolean} formadd if true, will loop over lines for which HTMLElement name === inputname + '[]'  to apply rules on each one
+     */
+    linkBooleanInputs(firstInput, secondInput, rules, formadd = false) {
+        const inputs1 = formadd ? document.getElementsByName(firstInput + "[]") : [document.getElementById(input1)];
+        const inputs2 = formadd ? document.getElementsByName(secondInput + "[]") : [document.getElementById(input2)];
+        let bothInputs = [inputs1, inputs2];
+
+        bothInputs.forEach((inputs, i) => {
+            inputs.forEach((input, j) => {
+                input.addEventListener("change", () => {
+                    rules[i](bothInputs[0][j], bothInputs[1][j]);
+                });
+            });
+        });
     }
 
 }

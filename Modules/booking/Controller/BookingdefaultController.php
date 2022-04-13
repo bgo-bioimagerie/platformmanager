@@ -264,7 +264,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "" || $hour_endH == "" || $hour_endM == "") {
-            throw new PfmParamException("invalid end date");
+            throw new PfmParamException("invalid end date, missing end date or time");
         }
 
         if($all_day_long == 1){
@@ -312,7 +312,7 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
         $quantities = "";
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
@@ -475,7 +475,7 @@ class BookingdefaultController extends BookingabstractController {
             // every week
             else if ($periodic_option == 3) {
 
-                $periodic_week = $this->request->getParameter("periodic_week");
+                $periodic_week = intval($this->request->getParameter("periodic_week"));
                 $modelPeriodic->setPeriod($id_space ,$id_period, $periodic_option, $periodic_week);
                 $step = $periodic_week * 7 * 24 * 3600;
                 $pass = -$step;
@@ -801,7 +801,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // quantities
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
         $qDataValue = array();

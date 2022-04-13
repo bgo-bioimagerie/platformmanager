@@ -3,6 +3,9 @@
 ## 2.6.0
 
 * [services] feature kanban for project management
+* [booking] in booking invoice details, show related bookings
+* [core] remove lasting references to ec classes
+* [booking] fix closed days hidding in summary view
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
@@ -11,7 +14,16 @@
 * [booking] hide nightwe entries if pricing does not exists anymore
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
+* [booking][supplementaries] avoid having two sups with the same name for the same resource 
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
 * [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
+* [bulletjournal] fixes on creation and edit
+
+## 2.5.2
+
+* [services] user is no longer mandatory in project and order forms
 
 ## 2.5.1
 

@@ -618,9 +618,9 @@ class BkCalendarEntry extends Model {
 
     /**
      * Check if a new entry is in conflic with an existing entries
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
+     * @param int $start_time
+     * @param int $end_time
+     * @param array $resources_id
      * @param string $reservation_id
      * @return boolean
      */

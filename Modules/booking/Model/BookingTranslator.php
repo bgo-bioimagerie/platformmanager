@@ -166,13 +166,6 @@ class BookingTranslator {
         return "Quantities";
     }
 
-    public static function Quantities_saved($lang) {
-        if ($lang == "fr") {
-            return "Les quantités ont été sauvegardées";
-        }
-        return "Quantities have been saved";
-    }
-
     public static function SupplementariesInfo($lang) {
         if ($lang == "fr") {
             return "Informations sup";
@@ -746,6 +739,28 @@ class BookingTranslator {
         return "Packages have been saved";
     }
 
+    public static function Sups_saved($supType, $lang) {
+        $supName = BookingTranslator::$supType($lang);
+        if ($lang == "fr") {
+            return "Les " . $supName . " ont été sauvegardé(e)s";
+        }
+        return $supName . " have been saved";
+    }
+
+    public static function Sup_resource_exists($supName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return $supName . " est déjà affecté à la ressource " . $resourceName;
+        }
+        return $supName . " is already affected to resource " . $resourceName;
+    }
+
+    public static function Package_resource_exists($packageName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return "Le forfait " . $packageName . " contient déjà la ressource " . $resourceName;
+        }
+        return "Resource " . $resourceName . " already in package " . $packageName;
+    }
+
     public static function Is_mandatory($lang) {
         if ($lang == "fr") {
             return "Champ obligatoire";
@@ -758,13 +773,6 @@ class BookingTranslator {
             return "Utiliser comme unité de facturation";
         }
         return "Use as invoicing unit";
-    }
-
-    public static function Supplementaries_saved($lang) {
-        if ($lang == "fr") {
-            return "Les suppléments ont été sauvegardés";
-        }
-        return "Supplementaries have been saved";
     }
 
     static public function Use_Package($lang) {

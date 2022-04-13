@@ -895,9 +895,9 @@ class ServicesTranslator {
 
     public static function InCharge($lang) {
         if ($lang == "fr") {
-            return "Personne en charge du projet";
+            return "Personne en charge du projet (visa)";
         }
-        return "Manager in charge";
+        return "Manager in charge (visa)";
     }
 
     public static function PersonInChargeIsMandatory($lang) {

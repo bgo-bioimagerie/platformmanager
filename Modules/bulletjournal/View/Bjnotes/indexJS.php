@@ -1,5 +1,16 @@
 <script>
 
+        function deleteNote(id_space, id) {
+            fetch(`/bjnotes/${id_space}/${id}`,
+                {method: 'DELETE'})
+            .then(() => {
+                    document.getElementById('tableline_' + id).remove();
+            })
+            .catch(err => {
+                    console.error('failed to delete note');
+            });
+        }
+
         function showAddNoteForm(year, month, day, is_month) {
 
             var lang = '<?php echo $lang; ?>';
@@ -299,6 +310,7 @@ for ($i = 0; $i < count($notes); $i++) {
     ?>
             $("#<?php echo $openlink ?>_<?php echo $notes[$i]["id"] ?>").click(function () {
                 //alert("edit note clicked");
+                console.log('clicked', this.id);
                 var strid = this.id;
                 var arrayid = strid.split("_");
     <?php
