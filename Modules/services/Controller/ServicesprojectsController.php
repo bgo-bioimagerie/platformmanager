@@ -518,12 +518,21 @@ class ServicesprojectsController extends ServicesController {
         $modelProject = new SeProject();
         $projectName = $modelProject->getName($id_space ,$id_project);
 
+        $textContent = [
+            "newTask" => ServicesTranslator::NewTask($lang),
+            "newCategory" => ServicesTranslator::NewCategory($lang),
+            "renameCategory" => ServicesTranslator::RenameCategory($lang),
+            "deleteTask" => ServicesTranslator::DeleteTask($lang),
+            "deleteCategory" => ServicesTranslator::DeleteCategory($lang),
+        ];
+
         $headerInfo["projectId"] = $id_project;
         $headerInfo["curentTab"] = "kanban";
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
+            "textContent" => json_encode($textContent),
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,

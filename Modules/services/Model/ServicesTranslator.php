@@ -1065,4 +1065,44 @@ class ServicesTranslator {
         return $seType;
     }
 
+    public static function NewTask($lang) {
+        if ($lang == "fr") {
+            return "Nouvelle tâche";
+        } else {
+            return "New task";
+        }
+    }
+
+    public static function NewCategory($lang) {
+        if ($lang == "fr") {
+            return "Nouvelle catégorie";
+        } else {
+            return "New category";
+        }
+    }
+
+    public static function RenameCategory($lang) {
+        if ($lang == "fr") {
+            return "Renommer la catégorie";
+        } else {
+            return "Rename category";
+        }
+    }
+
+    public static function DeleteTask($lang) {
+        if ($lang == "fr") {
+            return "Vous êtes sur le point de supprimer la tâche ";
+        } else {
+            return "You are about to delete task ";
+        }
+    }
+
+    public static function DeleteCategory($lang) {
+        if ($lang == "fr") {
+            return "Vous êtes sur le point de supprimer cette catégorie. Cela supprimera également les tâches qui lui sont affectées";
+        } else {
+            return "You are about to delete this category. Related tasks will also be deleted";
+        }
+    }
+
 }

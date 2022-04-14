@@ -15,23 +15,23 @@
     <div id="board" class="container mt-5">
         <div class="row">
             <div class="col form-inline">
-                <label for="newTask">New task</label>
+                <label for="newTask">{{"{{textContent.newTask}}"}}</label>
                 <input id="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
-                <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;">Add</button>
+                <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;"><strong>+</strong></button>
             </div>
 
             <div class="col form-inline">
-                <label for="newCat">New Category</label>
+                <label for="newCat">{{"{{textContent.newCategory}}"}}</label>
                 <input id="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
                 <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px" value="#000000"/>
-                <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;">Add</button>
+                <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;"><strong style="font-size=30px">+</strong></button>
             </div>
         </div>
 
         <div class="row mt-3">
             <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
                 <div class="category col-md-3" v-for="(category, cindex) in categories" style="display:inline-flex">
-                    <div :id=category.id class="p-2 alert">
+                    <div :id=category.id class="p-2 alert" style="cursor:grab;">
                         <div class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
                         <h3>
                             {{"{{category.title}}"}}
@@ -69,10 +69,11 @@ let app = new Vue({
             newTask: "",
             newCategory: "",
             newCategoryColor: "#000000",
-            categories: {{ categories | raw }},
             id_space: {{ id_space }},
             id_project: {{ id_project }},
-            tasks: {{ tasks | raw }}
+            tasks: {{ tasks | raw }},
+            categories: {{ categories | raw }},
+            textContent: {{ textContent | raw }}
         }
     },
     created () {
@@ -104,7 +105,7 @@ let app = new Vue({
         },
         editCategory(event, category) {
             let categoryName = category.title
-            let newName = prompt("Rename category", categoryName);
+            let newName = prompt(this.textContent.renameCategory, categoryName);
             if (newName != null) {
                 category.title = newName;
                 category.name = category.title.replace(/\s/g, '').toLowerCase();
@@ -113,6 +114,8 @@ let app = new Vue({
             }
             this.updateCategories();
         },
+
+        // TODO: add editTask function ?
 
         editCategoryColor(event, category) {
             category.color = event.target.value;
@@ -253,7 +256,7 @@ let app = new Vue({
             });
         },
         deleteTask(task, displayAlert=true) {
-            if (!displayAlert || confirm("You are about to delete " + task.title + "?")) {
+            if (!displayAlert || confirm(this.textContent.deleteTask + task.title)) {
                 let tasks = this.categories[task.state].tasks;
                 tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
                 const headers = new Headers();
@@ -274,7 +277,7 @@ let app = new Vue({
 
         },
         deleteCategory(category) {
-            if (confirm("You are about to delete " + category.title + " category. Deleting it will also delete all related tasks" )) {
+            if (confirm(category.title + ": " + this.textContent.deleteCategory )) {
                 // remove tasks
                 category.tasks.forEach(task => {
                     this.deleteTask(task, false);
