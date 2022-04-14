@@ -38,7 +38,7 @@ class ServicesprojectsController extends ServicesController {
             "sheet" => ServicesTranslator::Sheet($lang),
             "followup" => ServicesTranslator::FollowUp($lang),
             "closing" => ServicesTranslator::Closing($lang),
-            "samplereturn" => ServicesTranslator::SampleReturn($lang),
+            "sample" => ServicesTranslator::StockSamples($lang),
             "kanban" => ServicesTranslator::KanbanBoard($lang),
         ];
     }
