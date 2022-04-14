@@ -21,12 +21,27 @@ require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
+
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
 class ServicesprojectsController extends ServicesController {
+
+    protected $tabsNames;
+
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
+        $lang = $this->getLanguage();
+        $this->tabsNames = [
+            "sheet" => ServicesTranslator::Sheet($lang),
+            "followup" => ServicesTranslator::FollowUp($lang),
+            "closing" => ServicesTranslator::Closing($lang),
+            "samplereturn" => ServicesTranslator::SampleReturn($lang),
+            "kanban" => ServicesTranslator::KanbanBoard($lang),
+        ];
+    }
 
     public function userAction($id_space) {
         if(!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
@@ -300,7 +315,7 @@ class ServicesprojectsController extends ServicesController {
                     $this->request->getParameter("samplereturn"),
                     CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang)
             );
-            
+        
             $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
             return $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id, [], ['project' => $project]);
@@ -312,6 +327,7 @@ class ServicesprojectsController extends ServicesController {
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
+            "tabsNames" => $this->tabsNames,
             "formHtml" => $form->getHtml($lang),
             "headerInfo" => $headerInfo,
             "projectName" => $project["name"],
@@ -357,8 +373,14 @@ class ServicesprojectsController extends ServicesController {
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "samplereturn";
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
-            "headerInfo" => $headerInfo, "projectName" => $project["name"]));
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tabsNames" => $this->tabsNames,
+            "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo,
+            "projectName" => $project["name"])
+        );
     }
 
     public function sheetAction($id_space, $id) {
@@ -423,8 +445,14 @@ class ServicesprojectsController extends ServicesController {
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "sheet";
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang),
-            "headerInfo" => $headerInfo, "projectName" => $projectName));
+        $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tabsNames" => $this->tabsNames,
+            "formHtml" => $form->getHtml($lang),
+            "headerInfo" => $headerInfo,
+            "projectName" => $projectName)
+        );
     }
 
     public function followupAction($id_space, $id) {
@@ -463,9 +491,12 @@ class ServicesprojectsController extends ServicesController {
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
+            "tabsNames" => $this->tabsNames,
             "projectName" => $projectName,
-            "tableHtml" => $tableHtml, "headerInfo" => $headerInfo,
-            "formedit" => $formEdit, "projectEntries" => $items,
+            "tableHtml" => $tableHtml,
+            "headerInfo" => $headerInfo,
+            "formedit" => $formEdit,
+            "projectEntries" => $items,
             "id_project" => $id,
             "data" => ["entries" => $items]
         ));
@@ -489,15 +520,15 @@ class ServicesprojectsController extends ServicesController {
 
         $headerInfo["projectId"] = $id_project;
         $headerInfo["curentTab"] = "kanban";
-
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
+            "tabsNames" => $this->tabsNames,
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
-            "tasks" => $tasks,
-            "categories" => $categories
+            "tasks" => json_encode($tasks),
+            "categories" => json_encode($categories)
         ));
     }
 

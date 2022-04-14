@@ -141,6 +141,9 @@ abstract class Controller {
             ]);
         }
 
+        // Access to $_SESSION attributes from twig templates
+        $this->twig->addGlobal('session', $_SESSION);
+
         if($request->getParameterNoException('theme')) {
             $theme = $request->getParameterNoException('theme');
             if($theme == 'switch') {

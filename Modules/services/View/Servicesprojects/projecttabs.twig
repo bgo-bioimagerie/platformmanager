@@ -1,0 +1,23 @@
+{% block content %}
+
+<div  class="row" style="margin-bottom: 15px">
+    <form name="projectTab" method="get" action="projectedittab/"><br>
+    <div class="offset-3 col-6 text-center">
+        <div class="btn-group" data-toggle="buttons">
+            {% for tab, tabName in tabsNames %}
+                {% set active = headerInfo["curentTab"] == tab ? "active" : "" %}
+                <button
+                    class="btn btn-outline-dark {{ active }}"
+                    type="button"
+                    onclick="location.href = '/servicesprojectsheet/{{id_space}}/{{headerInfo["projectId"]}}'">
+                    {{ tabName }}
+                </button>
+            {% endfor %}
+            {# didn't convert next line. Doesn't seem to be used anyway #}
+            {# <?php $_SESSION["id_project"] = $headerInfo["projectId"]; ?> #}
+        </div>
+    </div>
+    </form>
+</div>
+
+{% endblock %}
