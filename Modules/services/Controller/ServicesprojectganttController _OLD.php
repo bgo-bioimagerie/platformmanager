@@ -23,12 +23,6 @@ class ServicesprojectganttController extends ServicesController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-
-     /* TODO: gérer les autorisations par projet ?
-     * ajouter visu sur tâches au click sur projet
-     * => ajouter des dates aux tâches
-     *
-    */
     public function indexAction($id_space, $allPeriod = 0, $incharge = "") {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
@@ -78,11 +72,12 @@ class ServicesprojectganttController extends ServicesController {
 
         // format into json
         $modelUser = new CoreUser();
-        $projectsjson = "[";        
+        $projectsjson = "[";
         $first = true;
         $modelClient = new ClClient();
         $modelBelonging = new ClPricing();
         foreach ($projects as $proj) {
+
             $belInfo = $modelClient->get($id_space, $proj["id_resp"]);
             
             $bkColor = 'col' . $belInfo["id"];
@@ -151,19 +146,17 @@ class ServicesprojectganttController extends ServicesController {
 
 
         $personInCharge = $modelVisa->getAll($id_space);
-        
-        $data = array(
+        //print_r($personInCharge);
+        // render 
+        $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
-            'projects' => json_encode($projects),
-            'projectsjson' => $projectsjson,
+            'projectsjson' => json_encode($projectsjson),
             'personInCharge' => $personInCharge,
             'activeGantt' => $incharge,
             'css' => $css,
             'allPeriod' => $allPeriod
-        );
-        // render
-        $this->render($data,"indexAction");
+                ), "indexAction");
     }
 
 }

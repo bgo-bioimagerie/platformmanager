@@ -13,35 +13,32 @@
         {% endif %}
         
     </div>
-    <div id="gantt">
-        <div class="col-12">
-            <div class="text-center">
-                <div class="btn-group btn-group-sm">
-                    {% set active = activeGantt == "" ? "active" : "" %}
+    
+    <div class="col-12">
+        <div class="text-center">
+            <div class="btn-group btn-group-sm">
+
+                {% set active = activeGantt == "" ? "active" : "" %}
+                <button
+                    class="btn btn-outline-dark {{ active }}"
+                    onclick="location.href = 'servicesprojectgantt/{{id_space}}'">
+                        All projects {# ServicesTranslator::All_projects($lang) #}
+                    </button>
+                
+                {% for pic in personInCharge %}
+                    {% set active = activeGantt == pic["id"] ? "active" : "" %}
                     <button
                         class="btn btn-outline-dark {{ active }}"
-                        onclick="location.href = 'servicesprojectgantt/{{id_space}}'">
-                            All projects {# ServicesTranslator::All_projects($lang) #}
-                        </button>
-                    
-                    
-                    
-                    {% for pic in personInCharge %}
-                        {% set active = activeGantt == pic["id"] ? "active" : "" %}
-                        <button
-                            class="btn btn-outline-dark {{ active }}"
-                            onclick="location.href = 'servicesprojectgantt/{{id_space}}/{{allPeriod}}/{{pic['id']}}'">
-                                {{ pic["user_name"] }}
-                        </button>                    
-                    {% endfor %}
-                        
-                        
-                        
-                </div>
-            </div> 
-        </div>
+                        onclick="location.href = 'servicesprojectgantt/{{id_space}}/{{allPeriod}}/{{pic['id']}}'">
+                            {{ pic["user_name"] }}
+                    </button>                    
+                {% endfor %}    
 
+            </div>
+        </div> 
+    </div>
 
+    <div id="gantt" class="col-12">
         <g-gantt-chart
             :chart-start="myChartStart"
             :chart-end="myChartEnd"
@@ -77,11 +74,15 @@ let app = new Vue({
 
     data(){
         return {
+           projects: {{ projects | raw }},
+
+
+
         myChartStart: "2020-03-01 00:00",
         myChartEnd: "2020-03-03 00:00",
         rows: [
             {
-            label: "My row #1",
+            label: "My row #1", // nom du projet
             bars: [
                 {
                 myStart: "2020-03-01 12:10",
@@ -104,32 +105,43 @@ let app = new Vue({
             }
         ]
         }
+    },
+    created() {
+        console.log("projects: ", this.projects);
+        this.generateRows();
+    },
+    methods: {
+        generateRows() {
+            this.projects.forEach(project => {
+                row = this.getRowFromProject(project);
+                this.rows.push(row);
+            });
+        },
+        getRowFromProject(project) {
+            console.log("project.name: ", project.name);
+            let row = {
+                label: "",
+                bars: [],
+            };
+            let label = "";
+            let myStart = ""; // => in bars; = taskStartDate
+            let myEnd = ""; // => in bars; = taskEndDate
+            let bars = [];
+
+            row.label = project.name;
+            // row.bars = [];
+
+
+
+
+
+
+            return row;
+        },
+
     }
 
 });
-    
-    /* $(function () {
-
-        "use strict";
-
-        $(".gantt").gantt({
-            source: {{ projectsjson }},
-            scale: "weeks",
-            minScale: "weeks",
-            maxScale: "months",
-            itemsPerPage: 100,
-            onItemClick: function (data) {
-                //alert("Item clicked - show some details");
-            },
-            onAddClick: function (dt, rowId) {
-                //alert("Empty space clicked - add an item!");
-            },
-            onRender: function () {
-                // console.log("chart rendered");
-            }
-        });
-        //prettyPrint();
-    }); */
     
 </script>
 
