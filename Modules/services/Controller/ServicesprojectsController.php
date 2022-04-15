@@ -545,7 +545,16 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
-        $id = $taskModel->set($taskData['id'], $id_space, $id_project, $taskData['state'], $taskData['title'], $taskData['content']);
+        $id = $taskModel->set(
+            $taskData['id'],
+            $id_space,
+            $id_project,
+            $taskData['state'],
+            $taskData['title'],
+            $taskData['content'],
+            $taskData['start_date'],
+            $taskData['end_date']
+        );
         $this->render(['data' => ['id' => $id]]);
 
     }

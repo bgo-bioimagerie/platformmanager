@@ -16,13 +16,13 @@
         <div class="row">
             <div class="col form-inline">
                 <label for="newTask">{{"{{textContent.newTask}}"}}</label>
-                <input id="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
+                <input id="newTask" name="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
                 <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;"><strong>+</strong></button>
             </div>
 
             <div class="col form-inline">
                 <label for="newCat">{{"{{textContent.newCategory}}"}}</label>
-                <input id="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
+                <input id="newCat" name="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
                 <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px" value="#000000"/>
                 <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;"><strong style="font-size=30px">+</strong></button>
             </div>
@@ -37,17 +37,21 @@
                             {{"{{category.title}}"}}
                             <button class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
                         </h3>
-                        
                         <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" value="category.color" @change="editCategoryColor($event, category)"/>
                         
-
-                        <draggable :id="category.name" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
+                        <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.title}}"}}
                                 <button class="bi bi-arrow-right round" @click="showTaskContent($event, element)"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
                                 <div class="hidable mt-3" v-show="element.contentVisible">
                                     <textarea class="contentArea" @blur="updateTaskContent($event, element)">{{element.content}}</textarea>
+                                    <div class="col form-inline">
+                                        <label for="start_date">start date</label>
+                                        <input type="date" class="form-control" name="start_date" :value="element.start_date" @change="updateTaskDate($event, element)">
+                                        <label for="end_date">end date</label>
+                                        <input type="date" class="form-control" name="end_date" :value="element.end_date" @change="updateTaskDate($event, element)">
+                                    </div>
                                 </div>
                             </div>
                         </draggable>
@@ -149,6 +153,20 @@ let app = new Vue({
                 this.updateTask(event.added.element);
             }
         },
+        updateTaskDate(event, task) {
+            switch (event.target.name) {
+                case "start_date":
+                    task.start_date = event.target.value;
+                    this.updateTask(task);
+                    break;
+                case "end_date":
+                    task.end_date = event.target.value;
+                    this.updateTask(task);
+                    break;
+                default:
+                    break;
+            }
+        },
         changeCategoryPosition(event) {
             if (event.moved) {
                 event.moved.element.position = event.moved.newIndex;
@@ -181,6 +199,7 @@ let app = new Vue({
             this.updateTask(task);
         },
         async addTask(task=null) {
+            let defaultDate = this.getDate();
             if(this.newTask) {
                 this.newTask = {
                     id: 0,
@@ -189,7 +208,9 @@ let app = new Vue({
                     state: 0,
                     title: this.newTask,
                     content: "",
-                    contentVisible: false
+                    contentVisible: false,
+                    start_date: defaultDate,
+                    end_date: defaultDate
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);
@@ -299,8 +320,14 @@ let app = new Vue({
                 let apiRoute = targetUrl + this.id_space + "/" + category.id;
                 fetch(apiRoute, cfg, true)
             }
-
-        }
+        },
+        getDate() {
+            let today = new Date();
+            let dd = String(today.getDate()).padStart(2, '0');
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let yyyy = today.getFullYear();
+            return yyyy + '-' + mm + '-' + dd;
+        },
     }
 });
 </script>

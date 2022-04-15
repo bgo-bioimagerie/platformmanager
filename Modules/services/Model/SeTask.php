@@ -21,6 +21,8 @@ class SeTask extends Model {
             `state` int NOT NULL,
             `title` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
+            `start_date` DATE,
+		    `end_date` DATE,
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -37,15 +39,21 @@ class SeTask extends Model {
         $req = $this->runRequest($sql, array($id_space, $id_project));
         return $req->fetchAll();
     }
+
+    public function getByPeriodForProject($id_project, $id_space, $beginPeriod, $endPeriod) {
+        $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND $id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_project, $beginPeriod, $endPeriod, $id_space));
+        return $req->fetchAll();
+    }
     
-    public function set($id, $id_space, $id_project, $state, $title, $content) {
+    public function set($id, $id_space, $id_project, $state, $title, $content, $start_date, $end_date) {
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, state=?, title=?, content=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $state, $title, $content, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, title=?, content=?, start_date=?, end_date=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $title, $content, $start_date, $end_date, $id, $id_space));
             return $id;
         } else {
-            $sql = "INSERT INTO se_task (id_project, state, title, content, id_space) VALUES (?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $state, $title, $content, $id_space));
+            $sql = "INSERT INTO se_task (id_project, state, title, content, start_date, end_date, id_space) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $title, $content, $start_date, $end_date, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }
