@@ -151,7 +151,7 @@ class ServicesprojectganttController extends ServicesController {
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
-            'projectsjson' => $projectsjson,
+            'projectsjson' => json_encode($projectsjson),
             'personInCharge' => $personInCharge,
             'activeGantt' => $incharge,
             'css' => $css,
