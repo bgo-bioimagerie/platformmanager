@@ -801,6 +801,26 @@ class BkCalendarEntry extends Model {
         return $req->fetchAll();
     }
 
+        /**
+     * Get all the entries of a given user within period
+     * @param unknown $user_id
+     * @return multitype:
+     */
+    public function getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS) {
+        $q = array('start' => $fromTS, 'end' => $toTS, 'id_space' => $id_space, 'id_user' => $id_user);
+        $sql = "SELECT bk_calendar_entry.*, resources.name as resource_name FROM bk_calendar_entry ";
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= " WHERE recipient_id=:id_user AND deleted=0 AND id_space=:id_space";
+        $sql .= " ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
+        (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
+        (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
+        (start_time <=:start AND end_time >= :end) 
+        ) ";
+        $sql .= " order by end_time DESC;";
+        $req = $this->runRequest($sql, $q);
+        return $req->fetchAll();
+    }
+
     /**
      * Get all the entries for a given user and a given resource
      * @param unknown $user_id
@@ -1057,6 +1077,16 @@ class BkCalendarEntry extends Model {
         ];
         Configuration::getLogger()->debug('[booking] compute_duration', $result);
         return $result;
+    }
+
+    function lastUser($id_space, $id){
+        $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete FROM bk_calendar_entry WHERE id_space=? AND recipient_id=?';
+        return $this->runRequest($sql, [$id_space, $id]);
+    }
+
+    function lastUserPeriod($id_space, $id, $from, $to){
+        $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete FROM bk_calendar_entry WHERE id_space=? AND recipient_id=? AND start_time>=? AND start_time<=?';
+        return $this->runRequest($sql, [$id_space, $id, $from, $to]);
     }
 
 }
