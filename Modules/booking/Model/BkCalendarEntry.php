@@ -810,13 +810,13 @@ class BkCalendarEntry extends Model {
         $q = array('start' => $fromTS, 'end' => $toTS, 'id_space' => $id_space, 'id_user' => $id_user);
         $sql = "SELECT bk_calendar_entry.*, resources.name as resource_name FROM bk_calendar_entry ";
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
-        $sql .= " WHERE recipient_id=:id_user AND deleted=0 AND id_space=:id_space";
-        $sql .= " ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
-        (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
-        (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
-        (start_time <=:start AND end_time >= :end) 
+        $sql .= " WHERE bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0 AND bk_calendar_entry.id_space=:id_space";
+        $sql .= " AND ((bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time > :start AND bk_calendar_entry.end_time <= :end) OR
+        (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start AND bk_calendar_entry.end_time <= :end) OR
+        (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
+        (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end) 
         ) ";
-        $sql .= " order by end_time DESC;";
+        $sql .= " order by bk_calendar_entry.end_time DESC;";
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
@@ -1081,12 +1081,17 @@ class BkCalendarEntry extends Model {
 
     function lastUser($id_space, $id){
         $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete FROM bk_calendar_entry WHERE id_space=? AND recipient_id=?';
-        return $this->runRequest($sql, [$id_space, $id]);
+        $res = $this->runRequest($sql, [$id_space, $id]);
+        return $res->rowCount() > 0 ? $res->fetch() : 0;
     }
 
     function lastUserPeriod($id_space, $id, $from, $to){
+        if(intval($from) == 0) {
+            return $this->lastUser($id_space, $id);
+        }
         $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete FROM bk_calendar_entry WHERE id_space=? AND recipient_id=? AND start_time>=? AND start_time<=?';
-        return $this->runRequest($sql, [$id_space, $id, $from, $to]);
+        $res = $this->runRequest($sql, [$id_space, $id, $from, $to]);
+        return $res->rowCount() > 0 ? $res->fetch() : 0;
     }
 
 }
