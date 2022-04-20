@@ -42,8 +42,9 @@ class BookingcaldavController  extends CorecookiesecureController {
                     $updates = $bm->lastUser($id_space, $id_user);
                    
                     $eTag = 0;
+                    Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
                     if($updates) {
-                        $eTag = max($updates['last_update'], $updates['last_delete']);
+                        $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
                     }
                     $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
                     break;
@@ -181,8 +182,8 @@ class BookingcaldavController  extends CorecookiesecureController {
                         Configuration::getLogger()->debug('?????????? time range found', ['xml' => $range->asXml(), 'start' => $range['start']]);
                         $trs = $range['start'];
                         $tre = $range['end'];
-                        $fromTS = DateTime::createFromFormat('Ymd\ThisP', $trs)->getTimestamp();
-                        $toTS = DateTime::createFromFormat('Ymd\ThisP', $tre)->getTimestamp();
+                        $fromTS = DateTime::createFromFormat('Ymd\THisP', $trs)->getTimestamp();
+                        $toTS = DateTime::createFromFormat('Ymd\THisP', $tre)->getTimestamp();
                     }
                     /*
                     if ($cf->tag == 'a:time-range') {
@@ -198,7 +199,7 @@ class BookingcaldavController  extends CorecookiesecureController {
                    
                 $eTag = 0;
                 if($updates) {
-                    $eTag = max(intval($updates['last_update']), intval($updates['last_delete']));
+                    $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
                 }
                 Configuration::getLogger()->debug('???? etag', ['p' => $eTag]);
 
@@ -242,8 +243,10 @@ class BookingcaldavController  extends CorecookiesecureController {
         Configuration::getLogger()->debug('???????? get booking between', ['f' => $fromTS, 't' => $toTS]);
         $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
         $eTag = 0;
+        Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
+
         if($updates) {
-            $eTag = max($updates['last_update'], $updates['last_delete']);
+            $eTag = max($updates['last_update'], $updates['last_delete'], $updates['last_start']);
         }
         $events = '';
         $bookings = [];
@@ -251,17 +254,19 @@ class BookingcaldavController  extends CorecookiesecureController {
             $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
         }
         foreach ($bookings as $booking) {
-            $start = date('Ymd', $booking['start_time']).'T'.date('his', $booking['start_time']);
-            $end = date('Ymd', $booking['end_time']).'T'.date('his', $booking['end_time']);
+            $start = date('Ymd', $booking['start_time']).'T'.date('His', $booking['start_time']).'Z';
+            $end = date('Ymd', $booking['end_time']).'T'.date('His', $booking['end_time']).'Z';
+            $desc = $booking['resource_name'].' - '.$booking['short_description'] ?? '';
             $events .= sprintf('BEGIN:VEVENT
 UID:%s
 SUMMARY:%s
-DESCRIPTION:
+DESCRIPTION:%s
 DTSTAMP:%s
 DTSTART:%s
 DTEND:%s
 STATUS:CONFIRMED
-END::VEVENT', $booking['id'], $booking['resource_name'], $start, $start, $end);
+END::VEVENT
+', $booking['id'], $booking['resource_name'], $desc, $start, $start, $end);
         }
         $ccalendar = '';
         if($events){
