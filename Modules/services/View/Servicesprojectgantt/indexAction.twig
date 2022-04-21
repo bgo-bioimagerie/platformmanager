@@ -38,112 +38,321 @@
         </div> 
     </div>
 
-    <div id="gantt" class="col-12">
-        <g-gantt-chart
-            :chart-start="myChartStart"
-            :chart-end="myChartEnd"
-        >
-            <g-gantt-row
-                v-for="row in rows"
-                :key="row.label"
+    <div id="gantt">
+        
+
+        <div id="contextmenu"
+            class="card d-none d-md-flex" 
+            width="100%"
+            height="28vh">
+
+            <div id="dateInputs" class="row m-3">
+                <div class="col-2">
+                    <label for="start_date" class="top-label">Period start</label>
+                    <input
+                        id="start_date"
+                        type="date"
+                        :value="chartStart"
+                        class="form-control"
+                        name="start_date"
+                        @change="updateChartDates">
+                </div>
+                <div class="col-2">
+                    <label for="end_date" class="top-label">Period end</label>
+                    <input
+                        id="end_date"
+                        type="date"
+                        :value="chartEnd"
+                        class="form-control"
+                        name="end_date"
+                        @change="updateChartDates">                 
+                </div>
+                <div class="col-2 mt-3" id="dateError" style="display:none">
+                    <span style="color:red;"> Period start must be lower </br> than period end</span>
+                </div>
+            </div>
+
+            <div class="row ms-3 mb-3">
+                <div class="col-2">
+                    <button id="showContextBtn" class="ml-2 btn btn-primary" @click="showAction">
+                        Show options
+                    </button>
+                </div>
+            </div>
+            <div id="contextmenuHidable">
+                <div class="row pa-2 m-3" v-if="showContextmenu">
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="hideTimeaxis"
+                            v-model="hideTimeaxis"/>
+                        <label for="hideTimeaxis" class="side-label">Hide timeaxis</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="pushOnOverlap"
+                            v-model="pushOnOverlap"/>
+                        <label for="pushOnOverlap" class="side-label">Push on overlap</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="grid"
+                            v-model="grid"/>
+                        <label for="grid" class="side-label">Grid</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="highlightOnHover"
+                            v-model="highlightOnHover"/>
+                        <label for="highlightOnHover" class="side-label">Highlight on hover</label>
+                    </div>
+
+                </div>
+
+                <div class="row pa-2 m-3" v-if="showContextmenu">
+                    <div class="col-3">
+                        <label for="theme" class="top-label">Theme</label>
+                        <select v-model="selectedTheme" name="theme" @change="updateContextmenuColor">
+                            <option v-for="theme in themes">{{"{{theme}}"}}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-3 slidecontainer">
+                        <label for="rowHeight" class="top-label">Row height</label>
+                        <input
+                            type="range"
+                            class="slider"
+                            name="rowHeight"
+                            v-model="rowHeight"
+                            :min="20"
+                            :max="100">
+                    </div>
+
+                    <div class="col-3 slidecontainer">
+                        <label for="rowLabelWidth" class="top-label">Row label width</label>
+                        <input
+                            type="range"
+                            class="slider"
+                            name="rowLabelWidth"
+                            v-model="rowLabelWidth"
+                            :min="10"
+                            :max="50">
+                    </div>
+
+                    <div class="col-3" hidden>
+                        <label for="highlightedHours" class="top-label">Highlighted hours</label>
+                        <select 
+                            v-model="highlightedHours"
+                            name="highlightedHours"
+                            multiple
+                            style="width:inherit;">
+                            <option v-for="hour in hours">{{"{{hour}}"}}</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="ganttastic-wrapper">
+            <g-gantt-chart
+                :chart-start="chartStart"
+                :chart-end="chartEnd"
+                :grid="grid"
+                :hide-timeaxis="hideTimeaxis"
+                :push-on-overlap="pushOnOverlap"
+                :highlighted-hours="highlightedHours"
+                :row-label-width="`${rowLabelWidth}%`"
+                :row-height="rowHeight"
+                :theme="selectedTheme"
+                @contextmenu-bar="onContextmenuBar($event)"
+                @dragend-bar="stoppedDraggingBar($event)"
+            >
+                <g-gantt-row 
+                v-for="row in rowList"
+                :key="row.title"
                 :label="row.label"
-                :bars="row.bars"
+                :bars="row.barList"
+                :highlight-on-hover="highlightOnHover"
                 bar-start="myStart"
                 bar-end="myEnd"
-                />
-        </g-gantt-chart>
+                >
+                <template #bar-label="{bar}">
+                    <img
+                    v-if="bar.image"
+                    :src="require(`@/assets/${bar.image}`)"
+                    alt="image"
+                    height="20"
+                    width="20"
+                    class="mr-1"
+                    >
+                    <span>{{bar.label}}</span>
+                </template>
+                </g-gantt-row>
+            </g-gantt-chart>
+        </div>
 
-
-    </div> 
-      
-    <div class="col-12">
-        <div class="gantt"></div>
     </div>
-    
 </div>
 
 <script src="externals/vueganttastic.js"></script>
+<script src="externals/node_modules/moment/min/moment.min.js"></script>
 
 <script>
+
 let app = new Vue({
     el: '#gantt',
     components:{
         'GGanttChart': ganttastic.GGanttChart,
         'GGanttRow': ganttastic.GGanttRow
     },
-
-    data(){
+    data() {
         return {
-           projects: {{ projects | raw }},
-
-
-
-        myChartStart: "2020-03-01 00:00",
-        myChartEnd: "2020-03-03 00:00",
-        rows: [
-            {
-            label: "My row #1", // nom du projet
-            bars: [
-                {
-                myStart: "2020-03-01 12:10",
-                myEnd: "2020-03-01 16:35"
-                }
-            ]
+            projects: {{ projects | raw}},
+            chartStart: "",
+            chartEnd: "",
+            pushOnOverlap: true,
+            grid: true,
+            rowHeight: 40,
+            rowLabelWidth: 15,
+            hideTimeaxis: false,
+            highlightOnHover: true,
+            hours: [...Array(24).keys()],
+            highlightedHours: [],
+            showContextmenu: false,
+            contextmenuTimeout: null,
+            contextmenuX: 0,
+            contextmenuY: 0,
+            dateError: false,
+            selectedTheme: "default",
+            themes: [
+                "default",
+                "vue",
+                "dark",
+                "material-blue",
+                "creamy",
+                "slumber",
+                "sky",
+                "crimson",
+                "grove",
+                "fuchsia",
+                "flare"
+            ],
+            themesColors: {
+                "default": {bg: "#F5F5F5", text:"#404040"},
+                "creamy": {bg: "#fff6f0", text:"#542d05"},
+                "crimson": {bg: "#db4f56", text:"white"},
+                "dark": {bg: "#353535", text:"white"},
+                "flare": {bg: "#5e5145", text:"white"},
+                "fuchsia": {bg: "#ff7da6", text:"white"},
+                "grove": {bg: "#72b585", text:"white"},
+                "material-blue":{bg: "#42a5f5", text:"white"},
+                "sky": {bg: "#d6f7ff", text:"#022c47"},
+                "slumber": {bg: "#35394d", text:"#ffe0b3"},
+                "vue": {bg: "#35495E", text:"white"}
             },
-            {
-            label: "My row #2",
-            bars: [
-                {
-                myStart: "2020-03-02 01:00",
-                myEnd: "2020-03-02 12:00"
-                },
-                {
-                myStart: "2020-03-02 13:00",
-                myEnd: "2020-03-02 22:00"
-                }
-            ]
-            }
-        ]
+            rowList: []
         }
     },
     created() {
-        console.log("projects: ", this.projects);
+        let dates = this.getDefaultDates();
+        this.chartStart = dates.start;
+        this.chartEnd = dates.end;
         this.generateRows();
+        this.updateContextmenuColor("default");
+    },
+    updated() {
     },
     methods: {
+        showAction() {
+            document.getElementById("contextmenuHidable").classList.toggle("expanded");
+            this.showContextmenu = !this.showContextmenu;
+            event.target.innerHTML = this.showContextmenu
+                ? "Hide options"
+                : "Show options";
+        },
+        updateContextmenuColor() {
+            let theme = event ? event.target.value : "default";
+            themeColors = this.themesColors[theme];
+            let contextMenu = document.getElementById("contextmenu");
+            contextmenu.style["background-color"] = themeColors.bg;
+            [...contextMenu.getElementsByTagName("label")].forEach(label => {
+                // console.log(themeColors.text);
+                label.style["color"] = themeColors.text;
+            });
+        },
+        getDefaultDates() {
+            let startDate = new Date();
+            let endDate = new Date();
+            endDate = endDate.setMonth(endDate.getMonth() + 1);
+            return {start: moment(startDate).format('YYYY-MM-DD'), end: moment(endDate).format('YYYY-MM-DD')};
+        },
         generateRows() {
             this.projects.forEach(project => {
                 row = this.getRowFromProject(project);
-                this.rows.push(row);
+                this.rowList.push(row);
             });
         },
         getRowFromProject(project) {
-            console.log("project.name: ", project.name);
             let row = {
                 label: "",
-                bars: [],
+                barList: [],
             };
-            let label = "";
-            let myStart = ""; // => in bars; = taskStartDate
-            let myEnd = ""; // => in bars; = taskEndDate
-            let bars = [];
+            let projectTimeSpan = {
+                myStart: project.date_open,
+                myEnd: project.time_limit
+            }
 
-            row.label = project.name;
-            // row.bars = [];
-
-
-
-
-
-
+            let name = project.name;
+            row.label = name.length > 20 ? name.slice(0, 25) + "..." : name;
+            row.barList.push(projectTimeSpan);
             return row;
         },
-
+        updateChartDates(event) {
+            console.log(document.getElementById("start_date").value);
+            switch (event.target.name) {
+                case "start_date":
+                    this.chartStart = event.target.value;
+                    break;
+                case "end_date":
+                    this.chartEnd = event.target.value;
+                    break;
+                default:
+                    break;
+            }
+            this.checkDates();
+        },
+        checkDates() {
+            let errorElement = document.getElementById("dateError");
+            if (this.chartStart > this.chartEnd) {
+                console.log("date error");
+                errorElement.style.display = "";
+                
+            } else {
+                console.log("dates OK");
+                errorElement.style.display = "none";
+            }
+        },
+        stoppedDraggingBar() {
+        },
+        onContextmenuBar(e) {
+            e.event.preventDefault()
+            this.contextmenuY = e.event.clientY
+            this.contextmenuX = e.event.clientX
+            this.showContextmenu = true
+            if(this.contextmenuTimeout){
+                clearTimeout(this.contextmenuTimeout)
+            }
+            this.contextmenuTimeout = setTimeout(() => this.showContextmenu = false, 3000)
+        }
     }
 
 });
     
 </script>
+
 
 <link href="externals/node_modules/@taitems/jquery-gantt/css/style.css" type="text/css" rel="stylesheet">
 <style type="text/css">
@@ -165,8 +374,25 @@ let app = new Vue({
     .fn-gantt .nav-link {
         padding: 0px;
     }
-    
-    {{ css }}
+
+    .top-label {
+        display:block;
+        margin-bottom: 5px;
+    }
+
+    .side-label {
+        margin-left: 5px;
+    }
+
+    #contextmenuHidable {
+        max-height: 0px;
+        overflow-y: hidden;
+        transition: all 0.5s linear;
+    }
+
+    #contextmenuHidable.expanded {
+        max-height: 1080px;
+    }
     
 </style>
 
