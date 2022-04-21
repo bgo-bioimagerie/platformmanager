@@ -202,6 +202,20 @@
 
 <script>
 
+THEMESCOLORS = {
+    "default": {bg: "#F5F5F5", text:"#404040"},
+    "creamy": {bg: "#fff6f0", text:"#542d05"},
+    "crimson": {bg: "#db4f56", text:"white"},
+    "dark": {bg: "#353535", text:"white"},
+    "flare": {bg: "#5e5145", text:"white"},
+    "fuchsia": {bg: "#ff7da6", text:"white"},
+    "grove": {bg: "#72b585", text:"white"},
+    "material-blue":{bg: "#42a5f5", text:"white"},
+    "sky": {bg: "#d6f7ff", text:"#022c47"},
+    "slumber": {bg: "#35394d", text:"#ffe0b3"},
+    "vue": {bg: "#35495E", text:"white"}
+};
+
 let app = new Vue({
     el: '#gantt',
     components:{
@@ -240,19 +254,6 @@ let app = new Vue({
                 "fuchsia",
                 "flare"
             ],
-            themesColors: {
-                "default": {bg: "#F5F5F5", text:"#404040"},
-                "creamy": {bg: "#fff6f0", text:"#542d05"},
-                "crimson": {bg: "#db4f56", text:"white"},
-                "dark": {bg: "#353535", text:"white"},
-                "flare": {bg: "#5e5145", text:"white"},
-                "fuchsia": {bg: "#ff7da6", text:"white"},
-                "grove": {bg: "#72b585", text:"white"},
-                "material-blue":{bg: "#42a5f5", text:"white"},
-                "sky": {bg: "#d6f7ff", text:"#022c47"},
-                "slumber": {bg: "#35394d", text:"#ffe0b3"},
-                "vue": {bg: "#35495E", text:"white"}
-            },
             rowList: []
         }
     },
@@ -275,11 +276,10 @@ let app = new Vue({
         },
         updateContextmenuColor() {
             let theme = event ? event.target.value : "default";
-            themeColors = this.themesColors[theme];
+            themeColors = THEMESCOLORS[theme];
             let contextMenu = document.getElementById("contextmenu");
             contextmenu.style["background-color"] = themeColors.bg;
             [...contextMenu.getElementsByTagName("label")].forEach(label => {
-                // console.log(themeColors.text);
                 label.style["color"] = themeColors.text;
             });
         },
@@ -311,7 +311,6 @@ let app = new Vue({
             return row;
         },
         updateChartDates(event) {
-            console.log(document.getElementById("start_date").value);
             switch (event.target.name) {
                 case "start_date":
                     this.chartStart = event.target.value;
@@ -327,11 +326,9 @@ let app = new Vue({
         checkDates() {
             let errorElement = document.getElementById("dateError");
             if (this.chartStart > this.chartEnd) {
-                console.log("date error");
                 errorElement.style.display = "";
                 
             } else {
-                console.log("dates OK");
                 errorElement.style.display = "none";
             }
         },
