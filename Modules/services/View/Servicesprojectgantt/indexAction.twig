@@ -42,7 +42,7 @@
         
 
         <div id="contextmenu"
-            class="card d-none d-md-flex" 
+            class="card d-none d-md-flex"
             width="100%"
             height="28vh">
 
@@ -114,7 +114,7 @@
                 <div class="row pa-2 m-3" v-if="showContextmenu">
                     <div class="col-3">
                         <label for="theme" class="top-label">Theme</label>
-                        <select v-model="selectedTheme" name="theme" @change="updateContextmenuColor">
+                        <select v-model="selectedTheme" name="theme" @change="updateColors">
                             <option v-for="theme in themes">{{"{{theme}}"}}</option>
                         </select>
                     </div>
@@ -138,7 +138,8 @@
                             name="rowLabelWidth"
                             v-model="rowLabelWidth"
                             :min="10"
-                            :max="50">
+                            :max="50"
+                            {# @change="updateBlankWidth" #}>
                     </div>
 
                     <div class="col-3" hidden>
@@ -157,6 +158,10 @@
         </div>
 
         <div id="ganttastic-wrapper">
+            <div class="g-timeaxis-month mt-3 ml-5">
+                <div id="blankSquare" style="width: 16%; float:left" class="p-2"></div>
+                <table id="monthList" class="d-inline-flex" style="width: 84%;"></table>
+            </div>
             <g-gantt-chart
                 :chart-start="chartStart"
                 :chart-end="chartEnd"
@@ -171,22 +176,22 @@
                 @dragend-bar="stoppedDraggingBar($event)"
             >
                 <g-gantt-row 
-                v-for="row in rowList"
-                :key="row.title"
-                :label="row.label"
-                :bars="row.barList"
-                :highlight-on-hover="highlightOnHover"
-                bar-start="myStart"
-                bar-end="myEnd"
+                    v-for="row in rowList"
+                    :key="row.title"
+                    :label="row.label"
+                    :bars="row.barList"
+                    :highlight-on-hover="highlightOnHover"
+                    bar-start="myStart"
+                    bar-end="myEnd"
                 >
                 <template #bar-label="{bar}">
                     <img
-                    v-if="bar.image"
-                    :src="require(`@/assets/${bar.image}`)"
-                    alt="image"
-                    height="20"
-                    width="20"
-                    class="mr-1"
+                        v-if="bar.image"
+                        :src="require(`@/assets/${bar.image}`)"
+                        alt="image"
+                        height="20"
+                        width="20"
+                        class="mr-1"
                     >
                     <span>{{bar.label}}</span>
                 </template>
@@ -203,17 +208,96 @@
 <script>
 
 THEMESCOLORS = {
-    "default": {bg: "#F5F5F5", text:"#404040"},
-    "creamy": {bg: "#fff6f0", text:"#542d05"},
-    "crimson": {bg: "#db4f56", text:"white"},
-    "dark": {bg: "#353535", text:"white"},
-    "flare": {bg: "#5e5145", text:"white"},
-    "fuchsia": {bg: "#ff7da6", text:"white"},
-    "grove": {bg: "#72b585", text:"white"},
-    "material-blue":{bg: "#42a5f5", text:"white"},
-    "sky": {bg: "#d6f7ff", text:"#022c47"},
-    "slumber": {bg: "#35394d", text:"#ffe0b3"},
-    "vue": {bg: "#35495E", text:"white"}
+    "default": {
+        primary: "#eeeeee",
+        secondary: "#E0E0E0",
+        ternary: "#F5F5F5",
+        hoverHighlight: "rgba(204, 216, 219, 0.5)",
+        text: "#404040",
+        background: "white"
+    },
+    "creamy": {
+        primary: "#ffe8d9",
+        secondary: "#fcdcc5",
+        ternary: "#fff6f0",
+        hoverHighlight: "rgba(230, 221, 202, 0.5)",
+        text: "#542d05",
+        background: "white"
+    },
+        "crimson": {
+        primary: "#a82039",
+        secondary: "#c41238",
+        ternary: "#db4f56",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "dark": {
+        primary: "#404040",
+        secondary: "#303030",
+        ternary: "#353535",
+        hoverHighlight: "rgba(159, 160, 161, 0.5)",
+        text: "white",
+        background: "#525252",
+        toast: "#1f1f1f"
+    },
+    "flare": {
+        primary: "#e08a38",
+        secondary: "#e67912",
+        ternary: "#5e5145",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "fuchsia": {
+        primary: "#de1d5a",
+        secondary: "#b50b41",
+        ternary: "#ff7da6",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "grove": {
+        primary: "#3d9960",
+        secondary: "#288542",
+        ternary: "#72b585",
+        hoverHighlight: "rgba(160, 219, 171, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "material-blue": {
+        primary: "#0D47A1",
+        secondary: "#1565C0",
+        ternary: "#42a5f5",
+        hoverHighlight: "rgba(110, 165, 196, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "sky": {
+        primary: "#b5e3ff",
+        secondary: "#a1d6f7",
+        ternary: "#d6f7ff",
+        hoverHighlight: "rgba(193, 202, 214, 0.5)",
+        text: "#022c47",
+        background: "white"
+    },
+    "slumber": {
+        primary: "#2c2e36",
+        secondary: "#2f3447",
+        ternary: "#35394d",
+        hoverHighlight: "rgba(179, 162, 127, 0.5)",
+        text: "#ffe0b3",
+        background: "#38383b",
+        toast: "#1f1f1f"
+    },
+    "vue": {
+        primary: "#258a5d",
+        secondary: "#41B883",
+        ternary: "#35495E",
+        hoverHighlight: "rgba(160, 219, 171, 0.5)",
+        text: "white",
+        background: "white"
+    }
 };
 
 let app = new Vue({
@@ -228,9 +312,9 @@ let app = new Vue({
             chartStart: "",
             chartEnd: "",
             pushOnOverlap: true,
-            grid: true,
+            grid: false,
             rowHeight: 40,
-            rowLabelWidth: 15,
+            rowLabelWidth: 16,
             hideTimeaxis: false,
             highlightOnHover: true,
             hours: [...Array(24).keys()],
@@ -258,13 +342,17 @@ let app = new Vue({
         }
     },
     created() {
+        let bkSqr = document.getElementById('blankSquare');
+        bkSqr.style.width = this.rowLabelWidth;
         let dates = this.getDefaultDates();
         this.chartStart = dates.start;
         this.chartEnd = dates.end;
         this.generateRows();
-        this.updateContextmenuColor("default");
+        this.updateColors();        
+        window.addEventListener("resize", this.adaptTimeaxis);
     },
-    updated() {
+    mounted() {
+        this.adaptTimeaxis();
     },
     methods: {
         showAction() {
@@ -274,13 +362,18 @@ let app = new Vue({
                 ? "Hide options"
                 : "Show options";
         },
-        updateContextmenuColor() {
+        updateColors() {
             let theme = event ? event.target.value : "default";
             themeColors = THEMESCOLORS[theme];
             let contextMenu = document.getElementById("contextmenu");
-            contextmenu.style["background-color"] = themeColors.bg;
+            contextmenu.style["background-color"] = themeColors.ternary;
             [...contextMenu.getElementsByTagName("label")].forEach(label => {
                 label.style["color"] = themeColors.text;
+            });
+            let monthHeaders = document.getElementsByClassName("monthHeader");
+            [...monthHeaders].forEach((monthHeader, index) => {
+                monthHeader.style["color"] = themeColors.text;
+                monthHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
             });
         },
         getDefaultDates() {
@@ -288,6 +381,62 @@ let app = new Vue({
             let endDate = new Date();
             endDate = endDate.setMonth(endDate.getMonth() + 1);
             return {start: moment(startDate).format('YYYY-MM-DD'), end: moment(endDate).format('YYYY-MM-DD')};
+        },
+        adaptTimeaxis() {
+            let duration  = moment(this.chartEnd).diff(moment(this.chartStart), 'days') + 1;
+            if (duration > 7 && document.getElementsByClassName("g-timeaxis-days")[0]) {
+                this.displayTimeaxisInMonth(duration);
+            }
+        },
+        displayTimeaxisInMonth(totalDays) {
+            let timeaxisDaysSection = document.getElementsByClassName("g-timeaxis-days")[0];
+            let monthList = this.getMonthInInterval(this.chartStart, this.chartEnd);
+            let monthSection = document.getElementById("monthList");
+            monthSection.innerHTML = "";
+
+            let totalWidth = monthSection.offsetWidth;
+            let totalRatio = 0;             
+            monthList.forEach((month, index) => {
+                let monthHeader = this.setMonthHeader(month, index, totalDays, totalWidth)
+                monthSection.appendChild(monthHeader);
+            });
+        },
+        setMonthHeader(month, index, totalDays, totalWidth) {
+            nbMonthDays = moment(month.end).diff(moment(month.start), 'days') + 1;
+            ratio = (nbMonthDays / totalDays);
+            let monthName = moment(month.start).format('MMMM');
+            let monthHeader = document.createElement("th");
+            let width = ratio * totalWidth;
+            monthHeader.innerHTML = width > 50 ? monthName : monthName.slice(0, 3);
+            monthHeader.style['width'] = width + "px";
+            monthHeader.style['word-wrap'] = "break-word";
+            monthHeader.style["color"] = themeColors.text;
+            monthHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
+            monthHeader.classList.add("monthHeader");
+            return monthHeader;
+        },
+        getMonthInInterval(startDate, endDate) {
+            let result = [];
+            let format = 'YYYY-MM-DD';
+            let start = moment(startDate, format);
+            let end = moment(endDate, format);
+            let endDateFormatted = end.format(format);
+            let counter = 0;
+            let monthStart;
+            while(start.isBefore(end)) {
+                monthStart = counter == 0 ? start.format(format) : start.startOf('month').format(format);
+                result.push({
+                    start: monthStart, 
+                    end: start.endOf('month').format(format)
+                });                
+                start.add(1, 'month');
+                counter++;
+            }
+            result.push({
+                start: end.startOf('month').format(format),
+                end: endDateFormatted
+            })
+            return result;
         },
         generateRows() {
             this.projects.forEach(project => {
@@ -322,6 +471,7 @@ let app = new Vue({
                     break;
             }
             this.checkDates();
+            this.adaptTimeaxis();
         },
         checkDates() {
             let errorElement = document.getElementById("dateError");
@@ -335,6 +485,7 @@ let app = new Vue({
         stoppedDraggingBar() {
         },
         onContextmenuBar(e) {
+            console.log("onContextmenuBar");
             e.event.preventDefault()
             this.contextmenuY = e.event.clientY
             this.contextmenuX = e.event.clientX
@@ -364,19 +515,18 @@ let app = new Vue({
         margin-top: 50px;
         margin-bottom: 25px;
     }
-    table th:first-child {
-        width: 150px;
+    table, th, td {
+        /* border: 1px solid black; */
+        text-align: center;
     }
 
     .fn-gantt .nav-link {
         padding: 0px;
     }
-
     .top-label {
         display:block;
         margin-bottom: 5px;
     }
-
     .side-label {
         margin-left: 5px;
     }
@@ -386,7 +536,6 @@ let app = new Vue({
         overflow-y: hidden;
         transition: all 0.5s linear;
     }
-
     #contextmenuHidable.expanded {
         max-height: 1080px;
     }
