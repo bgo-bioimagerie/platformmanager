@@ -9,7 +9,11 @@
             <ul class="nav navbar-nav">
                 {% if extraSpaceMenus %}
                     {% for menu in extraSpaceMenus %}
-                    <li class="nav-item"><a class="nav-link" href="{{menu.url}}"><button type="btn" class="btn btn-primary">{{menu.name}}</button></a></li>
+                        {% if menu.url %}
+                        <li class="nav-item"><a class="nav-link" href="{{menu.url}}"><button type="btn" class="btn btn-primary">{{menu.name}}</button></a></li>
+                        {% else %}
+                        <li class="nav-item"><a class="nav-link" href="javascript:window.location.href=window.location.href"><button type="btn" class="btn btn-primary">{{menu.name}}</button></a></li>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
             </ul>                 

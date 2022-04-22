@@ -16,6 +16,8 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+
 /**
  * 
  * @author sprigent
@@ -25,10 +27,16 @@ class BookingabstractController extends CoresecureController {
 
     public function spaceExtraMenus(){
         $lang = $this->getLanguage();
-        return [
+        $menu = [
             ['name' => BookingTranslator::booking($lang), 'url' => 'bookingdayarea/'.$this->currentSpace['id'].'/'],
             ['name' => BookingTranslator::journal($lang), 'url' => 'booking/'.$this->currentSpace['id'].'/journal']
         ];
+        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        if($plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+            $menu[] = ['name' => 'CalDAV: '.Configuration::get('public_url').'/caldav/'.$this->currentSpace['id'], 'url' => ''];
+
+        }
+        return $menu;
     }
 
     /**

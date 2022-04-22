@@ -19,6 +19,7 @@
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
 * [bulletjournal] fixes on creation and edit
+* [booking] add caldav support
 
 ## 2.5.2
 
