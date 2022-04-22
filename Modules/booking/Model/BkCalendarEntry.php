@@ -807,15 +807,18 @@ class BkCalendarEntry extends Model {
      * @return multitype:
      */
     public function getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS) {
-        $q = array('start' => $fromTS, 'end' => $toTS, 'id_space' => $id_space, 'id_user' => $id_user);
+        $q = array('id_space' => $id_space, 'id_user' => $id_user);
         $sql = "SELECT bk_calendar_entry.*, resources.name as resource_name FROM bk_calendar_entry ";
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
         $sql .= " WHERE bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0 AND bk_calendar_entry.id_space=:id_space";
-        $sql .= " AND ((bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time > :start AND bk_calendar_entry.end_time <= :end) OR
-        (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start AND bk_calendar_entry.end_time <= :end) OR
-        (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
-        (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end) 
-        ) ";
+        if($fromTS) {
+            $q['start'] = $fromTS;
+            $q['end'] = $toTS;
+            $sql .= " AND ((bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time > :start AND bk_calendar_entry.end_time <= :end) OR
+            (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start AND bk_calendar_entry.end_time <= :end) OR
+            (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
+            (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end)) ";
+        }
         $sql .= " order by bk_calendar_entry.end_time DESC;";
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll();

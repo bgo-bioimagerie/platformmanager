@@ -17,10 +17,28 @@ class BookingcaldavController  extends CorecookiesecureController {
 
 
     function propfindAction($id_space) {
+        $allowed = true;
         $id_user = $this->auth();
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
-            throw new PfmParamException('Caldav not available in your space plan');
+            Configuration::getLogger()->debug('Caldav not available in your space plan');
+            $allowed = false;
+        }
+        if($id_user == 0 || !$allowed) {
+            http_response_code(403);
+            header('Content-Type: text/xml');
+            echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
+            <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
+                <response>
+                    <href>/caldav/%s</href>
+                    <propstat>
+                        <prop/>
+                        <status>HTTP/1.1 403 Forbidden</status>
+                    </propstat>
+                </response>
+            </multistatus>
+            ', $id_space);
+            return;
         }
         $doc = new SimpleXMLElement(file_get_contents('php://input'));
         Configuration::getLogger()->debug("[caldav][propfind]", ['doc' => $doc->asXML()]);
@@ -28,11 +46,12 @@ class BookingcaldavController  extends CorecookiesecureController {
         $prop = $doc->xpath('a:prop');
         $result_props = [];
         foreach($prop as $node){
+            Configuration::getLogger()->debug('[caldav][propfind]', ['tag' => $node->tag]);
             switch ($node->tag) {
                 case 'current_user-privilege-set':
                     $result_props[] = '
                         <current-user-principal>
-                            <D:unauthenticated/>
+                            <D:read/>
                         </current-user-principal>';
                     break;
                 case 'getctag':
@@ -47,6 +66,9 @@ class BookingcaldavController  extends CorecookiesecureController {
                         $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
                     }
                     $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
+                    break;
+                case 'displayname':
+                    $result_props[] = sprintf('<d:displayname>%s<d:displayname>', 'Platform Manager bookings');
                     break;
                 default:
                     break;
@@ -88,21 +110,14 @@ class BookingcaldavController  extends CorecookiesecureController {
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
                 if ($ldapResult == "error") {
-                    return "Cannot connect to ldap using the given login and password";
-                } else {
-                    // update the user infos
-                    $um->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                    $userInfo = $um->getUserByLogin($login);
-                    if(!$userInfo['apikey']) {
-                        $um->newApiKey($userInfo['idUser']);
-                    }
-                    $um->isActive($login);
+                    Configuration::getLogger()->debug("[caldav] auth error", ['user' => $login]);
+                    return 0;
                 }
             }
         }
 
         try {
-        $user = $um->getUserBylogin($login);
+            $user = $um->getUserBylogin($login);
         } catch(Exception) {
             Configuration::getLogger()->debug('[caldav] user not found', ['login' => $login]);
         }
@@ -135,8 +150,7 @@ class BookingcaldavController  extends CorecookiesecureController {
         if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             throw new PfmParamException('Caldav not available in your space plan');
         }
-        // $m = new CoreSpace();
-        // $role = $m->getUserSpaceRole($id_space, $_SESSION['id_user']);
+
         $input = file_get_contents('php://input');
         $doc = new SimpleXMLElement($input);
         Configuration::getLogger()->debug("[caldav][report]", ['user' => $id_user, 'doc' => $doc->asXML(), 'name' => $doc->getName()]);
@@ -145,63 +159,32 @@ class BookingcaldavController  extends CorecookiesecureController {
         Configuration::getLogger()->debug("[caldav] get bookings for user");
         $fromTS = 0;
         $toTS = 0;
-        //  $xmlRoot = $doc->tag;
         $url = '';
         $bm = new BkCalendarEntry();
 
-        /*
-        foreach($doc->getDocNamespaces() as $strPrefix => $strNamespace) {
-            if(strlen($strPrefix)==0) {
-                $strPrefix="a"; //Assign an arbitrary namespace prefix.
-            }
-            $doc->registerXPathNamespace($strPrefix,$strNamespace);
-        }
-        */
         $doc->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
-        Configuration::getLogger()->debug('?????????? name', ['xml' => $doc->getName()]);
         if ($doc->getName() == 'calendar-query'){
-            Configuration::getLogger()->debug('??????????', ['xml' => 'calendar-query']);
             $filter = $doc->xpath('a:filter');
             if($filter) {
                 $filter[0]->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
-                Configuration::getLogger()->debug('?????????? filter found', ['xml' => $filter[0]->asXML()]);
                 $comp_filter = $filter[0]->xpath('a:comp-filter');
-                if($comp_filter){
-                    foreach ($comp_filter as $f) {
-                        Configuration::getLogger()->debug('?????????? comp-filter found', ['xml' => $f->asXml()]);
-                    }
-                } else {
-                    Configuration::getLogger()->debug('??????????', ['xml' => 'comp-filter not found']);
-                }
 
                 foreach($comp_filter as $cf){
-                    Configuration::getLogger()->debug('?????????? comp-filter found', ['xml' => $f->asXml()]);
                     $cf->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
                     $tr = $cf->xpath('//a:time-range');
                     foreach ($tr as $range) {
-                        Configuration::getLogger()->debug('?????????? time range found', ['xml' => $range->asXml(), 'start' => $range['start']]);
                         $trs = $range['start'];
                         $tre = $range['end'];
                         $fromTS = DateTime::createFromFormat('Ymd\THisP', $trs)->getTimestamp();
                         $toTS = DateTime::createFromFormat('Ymd\THisP', $tre)->getTimestamp();
                     }
-                    /*
-                    if ($cf->tag == 'a:time-range') {
-                        $trs = $cf->start;
-                        $tre = $cf->end;
-                        $fromTS = DateTime::createFromFormat(DateTime::ISO8601, $trs)->getTimestamp();
-                        $toTS = DateTime::createFromFormat(DateTime::ISO8601, $tre)->getTimestamp();
-                    }
-                    */
                 }
                 $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
-                Configuration::getLogger()->debug('???? last user period', ['p' => $updates]);
                    
                 $eTag = 0;
                 if($updates) {
                     $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
                 }
-                Configuration::getLogger()->debug('???? etag', ['p' => $eTag]);
 
                 $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
                     <multistatus xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
@@ -216,7 +199,6 @@ class BookingcaldavController  extends CorecookiesecureController {
                         </response>
                     </multistatus>
                 ', $id_space, $fromTS, $toTS, $eTag);
-                Configuration::getLogger()->debug('???????? caldav res', ['xml' => $data]);
                 http_response_code(207);
                 header('Content-Type: text/xml');
                 echo $data;
@@ -225,9 +207,7 @@ class BookingcaldavController  extends CorecookiesecureController {
 
         }
         if($doc->getName() == 'calendar-multiget'){
-                Configuration::getLogger()->debug('????, multti get', ['c' => $doc->children('DAV:')->asXML()]);
                 foreach($doc->children('DAV:') as $child) {
-                    Configuration::getLogger()->debug('????, multti get', ['x' => $child->asXML(), 'n' => $child->getName()]);
                     if($child->getName() != 'href') {
                         continue;
                     }
@@ -240,19 +220,16 @@ class BookingcaldavController  extends CorecookiesecureController {
                 }
 
         }
-        Configuration::getLogger()->debug('???????? get booking between', ['f' => $fromTS, 't' => $toTS]);
+
         $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
         $eTag = 0;
-        Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
 
         if($updates) {
             $eTag = max($updates['last_update'], $updates['last_delete'], $updates['last_start']);
         }
         $events = '';
-        $bookings = [];
-        if($fromTS && $toTS) {
-            $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
-        }
+        
+        $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
         foreach ($bookings as $booking) {
             $start = date('Ymd', $booking['start_time']).'T'.date('His', $booking['start_time']).'Z';
             $end = date('Ymd', $booking['end_time']).'T'.date('His', $booking['end_time']).'Z';
@@ -265,7 +242,7 @@ DTSTAMP:%s
 DTSTART:%s
 DTEND:%s
 STATUS:CONFIRMED
-END::VEVENT
+END:VEVENT
 ', $booking['id'], $booking['resource_name'], $desc, $start, $start, $end);
         }
         $ccalendar = '';
@@ -292,7 +269,6 @@ END:VCALENDAR
         </response>
         </multistatus>
         ', $url, $eTag, $ccalendar);
-        Configuration::getLogger()->debug('???????? caldav res', ['xml' => $data]);
         http_response_code(207);
         header('Content-Type: text/xml');
         echo $data;
