@@ -77,7 +77,6 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);  
         $form->setValidationButton(CoreTranslator::Save($lang), $this->formUrl . "/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }

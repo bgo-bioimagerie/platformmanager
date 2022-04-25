@@ -567,7 +567,7 @@ class BkCalendarEntry extends Model {
        return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
-    public function isConflictP($id_space, $start_time, $end_time, array $resources_id, $id_period) {
+    public function isConflictPeriod($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			(
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR

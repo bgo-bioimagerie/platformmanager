@@ -110,7 +110,7 @@ class ClientslistController extends ClientsController {
         
         $form->setValidationButton(CoreTranslator::Save($lang), "clclientedit/" . $id_space . "/" . $id);
         $form->setColumnsWidth(3, 9);
-        $form->setButtonsWidth(4, 8);
+
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clclients/" . $id_space);
 
         // Check if the form has been validated

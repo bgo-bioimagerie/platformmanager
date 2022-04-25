@@ -58,7 +58,6 @@ class BookingaccessibilitiesController extends BookingsettingsController {
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
-        $form->setButtonsWidth(2, 9);
 
         if ($form->check()) {
             $bkaccess = [];

@@ -138,7 +138,7 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "resources/" . $id_space);
-        $form->setButtonsWidth(3, 9);
+
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
@@ -513,7 +513,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $form->setFormAdd($formAdd, "");
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesresp/" . $id_space . "/" . $id_resource);
 
-        $form->setButtonsWidth(2, 9);
+
 
         if ($form->check()) {
 
