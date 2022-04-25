@@ -18,7 +18,7 @@
                 <span style="text-transform: uppercase; font-weight: bold; color: #666;">
                     <?php echo date("l d F", mktime(0, 0, 0, $month, $i, $year)) ?>
                 </span>
-                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenu1" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span style="color: #666;" class="bi-plus"></span>
 
                 </button>
@@ -38,7 +38,7 @@
                         $d = "0" . $i;
                     }
                     if ($dnote["date"] == $year . "-" . $month . "-" . $d) {
-                        $typeicon = "bi-x-square-fill";
+                        $typeicon = "";
                         if ($dnote["type"] == 2) {
                             $typeicon = "bi-asterisk";
                             if ($dnote["migrated"] == 1) {
@@ -80,8 +80,15 @@
                             }
                             ?>
 
+                            
+                            <td style="padding: 10px">
+                                <span class="bi-x-square-fill"
+                                    onclick="deleteNote(<?php echo $id_space ?>,<?php echo $dnote['id'] ?>)" 
+                                ></span>
+
+                                <?php if($typeicon) { ?><span class="<?php echo $typeicon ?>"></span><?php } ?>
+                            </td>
                             <td><?php echo $priorityVal ?></td>
-                            <td><span class="<?php echo $typeicon ?>"></span></td>
                             <?php
                             $openlink = "opennote";
                             if ($dnote["type"] == 2) {

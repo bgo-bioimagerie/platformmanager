@@ -18,6 +18,7 @@
 * [booking][supplementaries] can't add a resource to a sup in which it is already included
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
+* [bulletjournal] fixes on creation and edit
 
 ## 2.5.2
 

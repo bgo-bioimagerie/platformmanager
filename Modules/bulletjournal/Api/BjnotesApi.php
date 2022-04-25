@@ -161,15 +161,13 @@ class BjnotesApi extends CoresecureController {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelTask = new BjEvent();
         $data = $modelTask->getForNote($id_space, $id);
-
-        $lang = $this->getLanguage();
-        $data["startdate"] = CoreTranslator::dateFromEn(date('Y-m-d', $data["start_time"]), $lang);
-        $data["starthour"] = CoreTranslator::dateFromEn(date('H', $data["start_time"]), $lang);
-        $data["startmin"] = CoreTranslator::dateFromEn(date('i', $data["start_time"]), $lang);
+        $data["startdate"] = date('Y-m-d', $data["start_time"]);
+        $data["starthour"] = date('H', $data["start_time"]);
+        $data["startmin"] = date('i', $data["start_time"]);
         
-        $data["enddate"] = CoreTranslator::dateFromEn(date('Y-m-d', $data["end_time"]), $lang);
-        $data["endhour"] = CoreTranslator::dateFromEn(date('H', $data["end_time"]), $lang);
-        $data["endmin"] = CoreTranslator::dateFromEn(date('i', $data["end_time"]), $lang);
+        $data["enddate"] = date('Y-m-d', $data["end_time"]);
+        $data["endhour"] = date('H', $data["end_time"]);
+        $data["endmin"] = date('i', $data["end_time"]);
         
         echo json_encode($data);
     }
