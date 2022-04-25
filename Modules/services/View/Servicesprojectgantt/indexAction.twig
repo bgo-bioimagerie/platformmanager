@@ -183,8 +183,9 @@
                     :highlight-on-hover="highlightOnHover"
                     bar-start="myStart"
                     bar-end="myEnd"
+                    {# @click="displayProjectDetails" #}
                 >
-                <template #bar-label="{bar}">
+                <template #bar-label="{bar}" @click="displayProjectDetails">
                     <img
                         v-if="bar.image"
                         :src="require(`@/assets/${bar.image}`)"
@@ -193,7 +194,7 @@
                         width="20"
                         class="mr-1"
                     >
-                    <span>{{bar.label}}</span>
+                    <span>{{"{{bar.label}}"}}</span>
                 </template>
                 </g-gantt-row>
             </g-gantt-chart>
@@ -362,6 +363,9 @@ let app = new Vue({
                 ? "Hide options"
                 : "Show options";
         },
+        displayProjectDetails() {
+            console.log("hover and out");
+        },
         updateColors() {
             let theme = event ? event.target.value : "default";
             themeColors = THEMESCOLORS[theme];
@@ -439,24 +443,36 @@ let app = new Vue({
             return result;
         },
         generateRows() {
-            this.projects.forEach(project => {
-                row = this.getRowFromProject(project);
+            this.projects.forEach((project, index) => {
+                row = this.getRowFromProject(project, index);
                 this.rowList.push(row);
             });
+            console.log(this.rowList);
         },
-        getRowFromProject(project) {
+        getRowFromProject(project, index) {
+            let name = project.name;
             let row = {
-                label: "",
+                label: name.length > 20 ? name.slice(0, 25) + "..." : name,
                 barList: [],
             };
-            let projectTimeSpan = {
+
+            let projectData = {
+                label: name,
                 myStart: project.date_open,
-                myEnd: project.time_limit
+                myEnd: project.time_limit,
+                ganttBarConfig: {
+                    id: "project_" + index,
+                    background: "#e09b69",
+                    borderRadius: "20px",
+                    color: "black",
+                }
             }
 
-            let name = project.name;
-            row.label = name.length > 20 ? name.slice(0, 25) + "..." : name;
-            row.barList.push(projectTimeSpan);
+            
+
+            
+
+            row.barList.push(projectData);
             return row;
         },
         updateChartDates(event) {
@@ -486,14 +502,8 @@ let app = new Vue({
         },
         onContextmenuBar(e) {
             console.log("onContextmenuBar");
-            e.event.preventDefault()
-            this.contextmenuY = e.event.clientY
-            this.contextmenuX = e.event.clientX
-            this.showContextmenu = true
-            if(this.contextmenuTimeout){
-                clearTimeout(this.contextmenuTimeout)
-            }
-            this.contextmenuTimeout = setTimeout(() => this.showContextmenu = false, 3000)
+            e.event.preventDefault();
+            console.log(event.target);
         }
     }
 
