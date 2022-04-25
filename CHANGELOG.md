@@ -1,5 +1,9 @@
 # Changes
 
+## 2.5.3
+
+* [invoice][services] fix services invoices (invoice id not set) #637
+
 ## 2.5.2
 
 * [services] user is no longer mandatory in project and order forms
