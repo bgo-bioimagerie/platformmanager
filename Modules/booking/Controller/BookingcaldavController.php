@@ -4,10 +4,12 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
-class BookingcaldavController  extends CorecookiesecureController {
+class BookingcaldavController extends CorecookiesecureController {
 
     function discoveryAction($id_space) {
-        $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
+        $sm = new CoreSpace();
+        $space = $sm->getSpace($id_space);
+        $plan = new CorePlan($space['plan'], $space['plan_expire']);
         if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             throw new PfmParamException('Caldav not available in your space plan');
         }
@@ -19,6 +21,7 @@ class BookingcaldavController  extends CorecookiesecureController {
     function propfindAction($id_space) {
         $allowed = true;
         $id_user = $this->auth();
+
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             Configuration::getLogger()->debug('Caldav not available in your space plan');
@@ -30,7 +33,7 @@ class BookingcaldavController  extends CorecookiesecureController {
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
-                    <href>/caldav/%s</href>
+                    <href>/caldav/%s/</href>
                     <propstat>
                         <prop/>
                         <status>HTTP/1.1 403 Forbidden</status>
@@ -48,11 +51,17 @@ class BookingcaldavController  extends CorecookiesecureController {
         foreach($prop as $node){
             Configuration::getLogger()->debug('[caldav][propfind]', ['tag' => $node->tag]);
             switch ($node->tag) {
-                case 'current_user-privilege-set':
+                case 'current-user-principal':
                     $result_props[] = '
-                        <current-user-principal>
-                            <D:read/>
-                        </current-user-principal>';
+                        <D:current-user-principal>
+                            <D:href>/caldav/'.$id_space.'/</D:href>
+                        </D:current-user-principal>';
+                    break;
+                case 'current-user-privilege-set':
+                    $result_props[] = '
+                        <D:current-user-privilege-set>
+                            <D:privilege><D:read/></D:privilege>
+                        </D:current-user-privilege-set>';
                     break;
                 case 'getctag':
                     Configuration::getLogger()->debug('[caldav] get ctag');
@@ -68,7 +77,7 @@ class BookingcaldavController  extends CorecookiesecureController {
                     $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
                     break;
                 case 'displayname':
-                    $result_props[] = sprintf('<d:displayname>%s<d:displayname>', 'Platform Manager bookings');
+                    $result_props[] = sprintf('<D:displayname>%s<D:displayname>', 'Platform Manager bookings');
                     break;
                 default:
                     break;
@@ -77,7 +86,7 @@ class BookingcaldavController  extends CorecookiesecureController {
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
-                    <href>/caldav/%s</href>
+                    <href>/caldav/%s/</href>
                     <propstat>
                         <prop>
                         %s
@@ -136,7 +145,7 @@ class BookingcaldavController  extends CorecookiesecureController {
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
-                    <href>/caldav/%s</href>
+                    <href>/caldav/%s/</href>
                     <propstat>
                         <prop/>
                         <status>HTTP/1.1 401 Unauthorized</status>
