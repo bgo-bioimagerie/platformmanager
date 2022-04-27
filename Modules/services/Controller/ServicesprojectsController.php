@@ -556,7 +556,14 @@ class ServicesprojectsController extends ServicesController {
             $taskData['end_date']
         );
         $this->render(['data' => ['id' => $id]]);
+    }
 
+    public function getTasksAction($id_space, $id_project) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);        
+        $taskModel = new SeTask();
+        $tasks = $taskModel->getByProject($id_project, $id_space);
+        Configuration::getLogger()->debug("[TEST]", ["tasks" => $tasks]);
+        $this->render(['data' => ['tasks' => $tasks]]);
     }
 
     public function deleteTaskAction($id_space, $id_task) {

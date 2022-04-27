@@ -158,6 +158,8 @@
         </div>
 
         <div id="ganttastic-wrapper">
+        <!-- following input just here to update view at items change -->
+        <input hidden v-model="items"></input>
             <div class="g-timeaxis-month mt-3 ml-5">
                 <div id="blankSquare" style="width: 16%; float:left" class="p-2"></div>
                 <table id="monthList" class="d-inline-flex" style="width: 84%;"></table>
@@ -182,10 +184,9 @@
                     :bars="row.barList"
                     :highlight-on-hover="highlightOnHover"
                     bar-start="myStart"
-                    bar-end="myEnd"
-                    {# @click="displayProjectDetails" #}
+                    bar-end="myEnd"                    
                 >
-                <template #bar-label="{bar}" @click="displayProjectDetails">
+                <template #bar-label="{bar}">
                     <img
                         v-if="bar.image"
                         :src="require(`@/assets/${bar.image}`)"
@@ -194,7 +195,8 @@
                         width="20"
                         class="mr-1"
                     >
-                    <span>{{"{{bar.label}}"}}</span>
+                    <!-- TODO: make span width variable depnending on image presence-->
+                    <span style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
                 </template>
                 </g-gantt-row>
             </g-gantt-chart>
@@ -309,7 +311,9 @@ let app = new Vue({
     },
     data() {
         return {
-            projects: {{ projects | raw}},
+            items: {{ projects | raw}},
+            id_space: {{ id_space }},
+            itemsType: "project",
             chartStart: "",
             chartEnd: "",
             pushOnOverlap: true,
@@ -355,6 +359,17 @@ let app = new Vue({
     mounted() {
         this.adaptTimeaxis();
     },
+    updated() {
+        console.log("updated");
+        let bkSqr = document.getElementById('blankSquare');
+        bkSqr.style.width = this.rowLabelWidth;
+        let dates = this.getDefaultDates();
+        this.chartStart = dates.start;
+        this.chartEnd = dates.end;
+        this.generateRows();
+        this.updateColors();        
+        window.addEventListener("resize", this.adaptTimeaxis);
+    },
     methods: {
         showAction() {
             document.getElementById("contextmenuHidable").classList.toggle("expanded");
@@ -362,9 +377,6 @@ let app = new Vue({
             event.target.innerHTML = this.showContextmenu
                 ? "Hide options"
                 : "Show options";
-        },
-        displayProjectDetails() {
-            console.log("hover and out");
         },
         updateColors() {
             let theme = event ? event.target.value : "default";
@@ -443,36 +455,33 @@ let app = new Vue({
             return result;
         },
         generateRows() {
-            this.projects.forEach((project, index) => {
-                row = this.getRowFromProject(project, index);
+            this.items.forEach((item, index) => {
+                row = this.getRowFromItem(item, index);
                 this.rowList.push(row);
             });
             console.log(this.rowList);
         },
-        getRowFromProject(project, index) {
-            let name = project.name;
+        getRowFromItem(item, index) {
+            let name = item.name // || item.title; => seems to work, but generates infinite loop
             let row = {
+                id: 'item_' + item.id, // does that work ?
                 label: name.length > 20 ? name.slice(0, 25) + "..." : name,
                 barList: [],
             };
 
-            let projectData = {
+            let itemData = {
                 label: name,
-                myStart: project.date_open,
-                myEnd: project.time_limit,
+                myStart: item.date_open,
+                myEnd: item.time_limit,
                 ganttBarConfig: {
-                    id: "project_" + index,
+                    itemId: item.id,
                     background: "#e09b69",
                     borderRadius: "20px",
                     color: "black",
                 }
             }
 
-            
-
-            
-
-            row.barList.push(projectData);
+            row.barList.push(itemData);
             return row;
         },
         updateChartDates(event) {
@@ -502,9 +511,36 @@ let app = new Vue({
         },
         onContextmenuBar(e) {
             console.log("onContextmenuBar");
-            e.event.preventDefault();
+            // e.event.preventDefault();
             console.log(event.target);
-        }
+        },
+        async openItemContent(itemId) {
+            console.log("itemId: ", itemId);
+            this.itemsType = "task";
+            let project = this.items.find(item => item.id == itemId);
+            let tasks = await this.getProjectTasks(itemId);
+            console.log("tasks: ", tasks);
+            this.items = tasks;
+        },
+        async getProjectTasks(projectId) {
+            let tasks = [];
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/gettasks/`;
+            let apiRoute = targetUrl + this.id_space + "/" + projectId;
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    tasks = data.tasks;
+                });
+            return tasks;
+        },
     }
 
 });
