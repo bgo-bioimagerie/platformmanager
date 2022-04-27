@@ -679,7 +679,7 @@ END:VCALENDAR
                         $content = "The " . $resourceName . " booking $id  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time);
                     }
                     $email = new Email();
-                    $icalFile = sprintf('/tmp/%d.ical', $id_entry);
+                    $icalFile = sprintf('/tmp/%d.ics', $id_entry);
                     $handle = fopen($icalFile, 'w');
                     fwrite($handle, $ical);
                     fclose($handle);
