@@ -62,8 +62,42 @@ class BookingcaldavController extends CorecookiesecureController {
         $doc = new SimpleXMLElement(file_get_contents('php://input'));
         Configuration::getLogger()->debug("[caldav][propfind]", ['doc' => $doc->asXML()]);
         $doc->registerXPathNamespace('a', 'DAV:');
-        $prop = $doc->xpath('a:prop');
+        //$prop = $doc->xpath('a:prop');
         $result_props = [];
+        $currentUserPrincipal = $doc->xpath('//a:current-user-principal');
+        if(!empty($currentUserPrincipal)) {
+            $result_props[] = '
+                        <D:current-user-principal>
+                            <D:href>/caldav/'.$id_space.'/</D:href>
+                        </D:current-user-principal>';
+        }
+        $currentUserPrivilegeSet = $doc->xpath('//a:current-user-privilege-set');
+        if(!empty($currentUserPrivilegeSet)) {
+            $result_props[] = '
+            <D:current-user-privilege-set>
+                <D:privilege><D:read/></D:privilege>
+            </D:current-user-privilege-set>';
+        }
+        $cTag = $doc->xpath('//a:getctag');
+        if(!empty($cTag)) {
+            Configuration::getLogger()->debug('[caldav] get ctag');
+            $bm = new BkCalendarEntry();
+            
+            $updates = $bm->lastUser($id_space, $id_user);
+           
+            $eTag = 0;
+            Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
+            if($updates) {
+                $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
+            }
+            $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
+        }
+        $displayName = $doc->xpath('//a:displayname');
+        if(!empty($displayName)) {
+            $result_props[] = sprintf('<D:displayname>%s<D:displayname>', 'Platform Manager bookings');
+        }
+
+        /*
         foreach($prop as $node){
             Configuration::getLogger()->debug('[caldav][propfind]', ['tag' => $node->tag]);
             switch ($node->tag) {
@@ -99,6 +133,7 @@ class BookingcaldavController extends CorecookiesecureController {
                     break;
             }
         }
+        */
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
