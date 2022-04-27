@@ -550,7 +550,7 @@ class ServicesprojectsController extends ServicesController {
             $id_space,
             $id_project,
             $taskData['state'],
-            $taskData['title'],
+            $taskData['name'],
             $taskData['content'],
             $taskData['start_date'],
             $taskData['end_date']
@@ -576,7 +576,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $categoryData = $this->request->params()['category'];
         $categoryModel = new SeTaskCategory();
-        $id = $categoryModel->set($categoryData['id'], $id_space, $id_project, $categoryData['title'], $categoryData['position'], $categoryData['color']);
+        $id = $categoryModel->set($categoryData['id'], $id_space, $id_project, $categoryData['name'], $categoryData['position'], $categoryData['color']);
         $this->render(['data' => ['id' => $id]]);
     }
 

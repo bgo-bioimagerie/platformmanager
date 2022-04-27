@@ -18,7 +18,7 @@ class SeTaskCategory extends Model {
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL,
             `id_project` int NOT NULL,
-            `title` varchar(120) NOT NULL DEFAULT '',
+            `name` varchar(120) NOT NULL DEFAULT '',
             `position` int NOT NULL,
             `color` varchar(50) NOT NULL DEFAULT '',
             PRIMARY KEY (`id`)
@@ -43,30 +43,30 @@ class SeTaskCategory extends Model {
     }
 
     public function getDefaultCategories() {
-        $cat1 = ["title" => "Backlog", "position" => 0, "color" => "#292b2c"];
-        $cat2 = ["title" => "In Progress", "position" => 1, "color" => "#0275d8 "];
-        $cat3 = ["title" => "Done", "position" => 2, "color" => "#5cb85c "];
+        $cat1 = ["name" => "Backlog", "position" => 0, "color" => "#292b2c"];
+        $cat2 = ["name" => "In Progress", "position" => 1, "color" => "#0275d8 "];
+        $cat3 = ["name" => "Done", "position" => 2, "color" => "#5cb85c "];
         return array($cat1, $cat2, $cat3);
     }
 
     public function createDefaultCategories($id_space, $id_project) {
         $categories = $this->getDefaultCategories();
         for($i=0; $i < count($categories); $i++) {
-            $sql = "INSERT INTO se_task_category (id_project, title, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $categories[$i]['title'], $categories[$i]['position'], $categories[$i]['color'], $id_space));
+            $sql = "INSERT INTO se_task_category (id_project, name, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $categories[$i]['name'], $categories[$i]['position'], $categories[$i]['color'], $id_space));
             $categories[$i]['id'] = $this->getDatabase()->lastInsertId(); 
         }
         return $categories;
     }
     
-    public function set($id, $id_space, $id_project, $title, $position, $color) {
+    public function set($id, $id_space, $id_project, $name, $position, $color) {
         if ($this->isTaskCategory($id_space, $id)) {
-            $sql = "UPDATE se_task_category SET id_project=?, title=?, position=?, color=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $title, $position, $color, $id, $id_space));
+            $sql = "UPDATE se_task_category SET id_project=?, name=?, position=?, color=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $name, $position, $color, $id, $id_space));
             return $id;
         } else {
-            $sql = "INSERT INTO se_task_category (id_project, title, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $title, $position, $color, $id_space));
+            $sql = "INSERT INTO se_task_category (id_project, name, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $name, $position, $color, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }

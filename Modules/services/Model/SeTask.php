@@ -19,7 +19,7 @@ class SeTask extends Model {
             `id_space` int NOT NULL,
             `id_project` int NOT NULL,
             `state` int NOT NULL,
-            `title` varchar(120) NOT NULL DEFAULT '',
+            `name` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
             `start_date` DATE,
 		    `end_date` DATE,
@@ -46,14 +46,14 @@ class SeTask extends Model {
         return $req->fetchAll();
     }
     
-    public function set($id, $id_space, $id_project, $state, $title, $content, $start_date, $end_date) {
+    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date) {
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, state=?, title=?, content=?, start_date=?, end_date=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $state, $title, $content, $start_date, $end_date, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id, $id_space));
             return $id;
         } else {
-            $sql = "INSERT INTO se_task (id_project, state, title, content, start_date, end_date, id_space) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $state, $title, $content, $start_date, $end_date, $id_space));
+            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_space) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }
