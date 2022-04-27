@@ -67,16 +67,16 @@ class BookingcaldavController extends CorecookiesecureController {
         $currentUserPrincipal = $doc->xpath('//a:current-user-principal');
         if(!empty($currentUserPrincipal)) {
             $result_props[] = '
-                        <D:current-user-principal>
-                            <D:href>/caldav/'.$id_space.'/</D:href>
-                        </D:current-user-principal>';
+                        <d:current-user-principal>
+                            <d:href>/caldav/'.$id_space.'/</D:href>
+                        </d:current-user-principal>';
         }
         $currentUserPrivilegeSet = $doc->xpath('//a:current-user-privilege-set');
         if(!empty($currentUserPrivilegeSet)) {
             $result_props[] = '
-            <D:current-user-privilege-set>
-                <D:privilege><D:read/></D:privilege>
-            </D:current-user-privilege-set>';
+            <d:current-user-privilege-set>
+                <d:privilege><d:read/></d:privilege>
+            </d:current-user-privilege-set>';
         }
         $cTag = $doc->xpath('//a:getctag');
         if(!empty($cTag)) {
@@ -94,7 +94,7 @@ class BookingcaldavController extends CorecookiesecureController {
         }
         $displayName = $doc->xpath('//a:displayname');
         if(!empty($displayName)) {
-            $result_props[] = sprintf('<D:displayname>%s<D:displayname>', 'Platform Manager bookings');
+            $result_props[] = sprintf('<d:displayname>%s<d:displayname>', 'Platform Manager bookings');
         }
 
         /*
@@ -135,17 +135,17 @@ class BookingcaldavController extends CorecookiesecureController {
         }
         */
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
-            <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
-                <response>
-                    <href>/caldav/%s/</href>
-                    <propstat>
-                        <prop>
+            <d:multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
+                <d:response>
+                    <d:href>/caldav/%s/</d:href>
+                    <d:propstat>
+                        <d:prop>
                         %s
-                        </prop>
-                        <status>HTTP/1.1 200 OK</status>
-                    </propstat>
-                </response>
-            </multistatus>
+                        </d:prop>
+                        <d:status>HTTP/1.1 200 OK</d:status>
+                    </d:propstat>
+                </d:response>
+            </d:multistatus>
         ', $id_space, implode('', $result_props));
         http_response_code(207);
         header('Content-Type: text/xml');
