@@ -123,7 +123,7 @@ class BookingcaldavController extends CorecookiesecureController {
         }
         $displayName = $doc->xpath('//a:displayname');
         if(!empty($displayName)) {
-            $result_props[] = sprintf('<d:displayname>%s<d:displayname>', 'Platform Manager bookings');
+            $result_props[] = sprintf('<d:displayname>%s</d:displayname>', 'Platform Manager bookings');
         }
 
         /*
