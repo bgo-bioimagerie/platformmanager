@@ -158,8 +158,8 @@
         </div>
 
         <div id="ganttastic-wrapper">
-        <!-- following input just here to update view at items change -->
-        <input hidden v-model="items"></input>
+            <!-- following input just here to update view at items change -->
+            {# <input hidden v-model="itemsType"></input> #}
             <div class="g-timeaxis-month mt-3 ml-5">
                 <div id="blankSquare" style="width: 16%; float:left" class="p-2"></div>
                 <table id="monthList" class="d-inline-flex" style="width: 84%;"></table>
@@ -202,11 +202,14 @@
             </g-gantt-chart>
         </div>
 
+
     </div>
 </div>
 
 <script src="externals/vueganttastic.js"></script>
+{# <script src="externals/pfm/utils/Modal.vue"></script> #}
 <script src="externals/node_modules/moment/min/moment.min.js"></script>
+
 
 <script>
 
@@ -307,7 +310,8 @@ let app = new Vue({
     el: '#gantt',
     components:{
         'GGanttChart': ganttastic.GGanttChart,
-        'GGanttRow': ganttastic.GGanttRow
+        'GGanttRow': ganttastic.GGanttRow,
+        // 'Modal': modal
     },
     data() {
         return {
@@ -346,7 +350,7 @@ let app = new Vue({
             rowList: []
         }
     },
-    created() {
+    created() {        
         let bkSqr = document.getElementById('blankSquare');
         bkSqr.style.width = this.rowLabelWidth;
         let dates = this.getDefaultDates();
@@ -361,14 +365,6 @@ let app = new Vue({
     },
     updated() {
         console.log("updated");
-        let bkSqr = document.getElementById('blankSquare');
-        bkSqr.style.width = this.rowLabelWidth;
-        let dates = this.getDefaultDates();
-        this.chartStart = dates.start;
-        this.chartEnd = dates.end;
-        this.generateRows();
-        this.updateColors();        
-        window.addEventListener("resize", this.adaptTimeaxis);
     },
     methods: {
         showAction() {
@@ -469,10 +465,18 @@ let app = new Vue({
                 barList: [],
             };
 
+            let start = item.date_open || item.start_date;
+            let end = item.time_limit || item.end_date;
+
+            // make visible tasks that duration is less than or equal to 1 day
+            if (end == start) {
+                end = moment(end).add(1, "days").format('YYYY-MM-DD')
+            }
+
             let itemData = {
                 label: name,
-                myStart: item.date_open,
-                myEnd: item.time_limit,
+                myStart: start,
+                myEnd: end,
                 ganttBarConfig: {
                     itemId: item.id,
                     background: "#e09b69",
@@ -515,14 +519,26 @@ let app = new Vue({
             console.log(event.target);
         },
         async openItemContent(itemId) {
-            console.log("itemId: ", itemId);
-            this.itemsType = "task";
-            let project = this.items.find(item => item.id == itemId);
-            let tasks = await this.getProjectTasks(itemId);
-            console.log("tasks: ", tasks);
-            this.items = tasks;
+            if (this.itemsType == "project") {
+                console.log("display project tasks");
+                this.itemsType = "task";
+                let project = this.items.find(item => item.id == itemId);
+                let tasks = await this.getProjectTasks(itemId);
+                this.items = tasks;
+                this.chartStart = project.date_open;
+                this.chartEnd = project.time_limit;
+                this.generateRows();
+                this.updateColors();
+            } else if (this.itemsType == "task") {
+                console.log("display task details");
+                let project = this.items.find(item => item.id == itemId);
+                this.openTaskPopup();
+            } else {
+                console.log("nothing to display");
+            }
         },
         async getProjectTasks(projectId) {
+            console.log("in getProjectTasks");
             let tasks = [];
             const headers = new Headers();
             headers.append('Content-Type','application/json');
@@ -539,7 +555,14 @@ let app = new Vue({
                 then(data => {
                     tasks = data.tasks;
                 });
-            return tasks;
+                return tasks;
+        },
+        openTaskPopup() {
+            popup = window.open(window.location.href, "task details", 'height=200, width=150');
+            if (window.focus) {
+                popup.focus();
+            }
+            return false;
         },
     }
 
