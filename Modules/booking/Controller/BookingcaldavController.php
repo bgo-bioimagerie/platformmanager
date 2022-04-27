@@ -70,7 +70,7 @@ class BookingcaldavController extends CorecookiesecureController {
         if(!empty($currentUserPrincipal)) {
             $result_props[] = '
                         <d:current-user-principal>
-                            <d:href>/caldav/'.$id_space.'/</D:href>
+                            <d:href>/caldav/'.$id_space.'/</d:href>
                         </d:current-user-principal>';
         }
         $currentUserPrivilegeSet = $doc->xpath('//a:current-user-privilege-set');
