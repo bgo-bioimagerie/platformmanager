@@ -103,8 +103,8 @@ class BookingcaldavController extends CorecookiesecureController {
         if(!empty($supportedCalendarComponentSet)) {
             $result_props[] = '
             <cal:supported-calendar-component-set>
-                <comp name="VEVENT" />
-            </scal:upported-calendar-component-set>';
+                <cal:comp name="VEVENT" />
+            </cal:supported-calendar-component-set>';
         }
 
         $cTag = $doc->xpath('//cs:getctag');
