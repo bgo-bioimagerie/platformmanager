@@ -27,7 +27,23 @@ class BookingcaldavController extends CorecookiesecureController {
             Configuration::getLogger()->debug('Caldav not available in your space plan');
             $allowed = false;
         }
-        if($id_user == 0 || !$allowed) {
+        if($id_user == 0) {
+            http_response_code(401);
+            header('Content-Type: text/xml');
+            echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
+            <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
+                <response>
+                    <href>/caldav/%s/</href>
+                    <propstat>
+                        <prop/>
+                        <status>HTTP/1.1 401 Unauthorized</status>
+                    </propstat>
+                </response>
+            </multistatus>
+            ', $id_space);
+            return;
+        }
+        if(!$allowed) {
             http_response_code(403);
             header('Content-Type: text/xml');
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
