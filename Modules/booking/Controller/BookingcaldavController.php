@@ -30,6 +30,7 @@ class BookingcaldavController extends CorecookiesecureController {
         if($id_user == 0) {
             http_response_code(401);
             header('Content-Type: text/xml');
+            header('WWW-Authenticate: Basic realm="server"');
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
@@ -62,6 +63,7 @@ class BookingcaldavController extends CorecookiesecureController {
         $doc = new SimpleXMLElement(file_get_contents('php://input'));
         Configuration::getLogger()->debug("[caldav][propfind]", ['doc' => $doc->asXML()]);
         $doc->registerXPathNamespace('a', 'DAV:');
+        $doc->registerXPathNamespace('cs', 'http://calendarserver.org/ns/');
         //$prop = $doc->xpath('a:prop');
         $result_props = [];
         $currentUserPrincipal = $doc->xpath('//a:current-user-principal');
@@ -78,7 +80,7 @@ class BookingcaldavController extends CorecookiesecureController {
                 <d:privilege><d:read/></d:privilege>
             </d:current-user-privilege-set>';
         }
-        $cTag = $doc->xpath('//a:getctag');
+        $cTag = $doc->xpath('//cs:getctag');
         if(!empty($cTag)) {
             Configuration::getLogger()->debug('[caldav] get ctag');
             $bm = new BkCalendarEntry();
