@@ -106,12 +106,12 @@ class BookingcaldavController extends CorecookiesecureController {
             <d:supported-report-set>
                 <d:supported-report>
                     <d:report>
-                        <cal:calendar-multiget />
+                        <C:calendar-multiget />
                     </d:report>
                 </d:supported-report>
                 <d:supported-report>
                     <d:report>
-                        <cal:calendar-query />
+                        <C:calendar-query />
                     </d:report>
                 </d:supported-report>
             </d:supported-report-set>';
