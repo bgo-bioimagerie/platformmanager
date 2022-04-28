@@ -99,6 +99,24 @@ class BookingcaldavController extends CorecookiesecureController {
                 <d:href>/caldav/'.$id_space.'/</d:href>
             </C:calendar-home-set>';           
         }
+
+        $supportedReportSet = $doc->xpath('//a:supported-report-set');
+        if(!empty($supportedReportSet)) {
+            $result_props[] = '
+            <d:supported-report-set>
+                <d:supported-report>
+                    <d:report>
+                        <cal:calendar-multiget />
+                    </d:report>
+                </d:supported-report>
+                <d:supported-report>
+                    <d:report>
+                        <cal:calendar-query />
+                    </d:report>
+                </d:supported-report>
+            </d:supported-report-set>';
+        }
+
         $supportedCalendarComponentSet = $doc->xpath('//C:supported-calendar-component-set');
         if(!empty($supportedCalendarComponentSet)) {
             $result_props[] = '
