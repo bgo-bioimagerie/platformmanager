@@ -63,7 +63,7 @@ class BookingcaldavController extends CorecookiesecureController {
         $doc = new SimpleXMLElement(file_get_contents('php://input'));
         Configuration::getLogger()->debug("[caldav][propfind]", ['doc' => $doc->asXML()]);
         $doc->registerXPathNamespace('a', 'DAV:');
-        $doc->registerXPathNamespace('cal', 'urn:ietf:params:xml:ns:caldav');
+        $doc->registerXPathNamespace('C', 'urn:ietf:params:xml:ns:caldav');
         $doc->registerXPathNamespace('cs', 'http://calendarserver.org/ns/');
         //$prop = $doc->xpath('a:prop');
         $result_props = [];
@@ -88,23 +88,23 @@ class BookingcaldavController extends CorecookiesecureController {
             $result_props[] = '
             <d:resourcetype>
                 <d:collection />
-                <cal:calendar/>
+                <C:calendar/>
             </d:resourcetype>';
         }
 
-        $calendarHomeSet = $doc->xpath('//cal:calendar-home-set');
+        $calendarHomeSet = $doc->xpath('//C:calendar-home-set');
         if(!empty($calendarHomeSet)) {
             $result_props[] = '
-            <cal:calendar-home-set>
+            <C:calendar-home-set>
                 <d:href>/caldav/'.$id_space.'/</d:href>
-            </cal:calendar-home-set>';           
+            </C:calendar-home-set>';           
         }
-        $supportedCalendarComponentSet = $doc->xpath('//cal:supported-calendar-component-set');
+        $supportedCalendarComponentSet = $doc->xpath('//C:supported-calendar-component-set');
         if(!empty($supportedCalendarComponentSet)) {
             $result_props[] = '
-            <cal:supported-calendar-component-set>
-                <cal:comp name="VEVENT" />
-            </cal:supported-calendar-component-set>';
+            <C:supported-calendar-component-set>
+                <C:comp name="VEVENT" />
+            </C:supported-calendar-component-set>';
         }
 
         $cTag = $doc->xpath('//cs:getctag');
@@ -126,45 +126,8 @@ class BookingcaldavController extends CorecookiesecureController {
             $result_props[] = sprintf('<d:displayname>%s</d:displayname>', 'Platform Manager bookings');
         }
 
-        /*
-        foreach($prop as $node){
-            Configuration::getLogger()->debug('[caldav][propfind]', ['tag' => $node->tag]);
-            switch ($node->tag) {
-                case 'current-user-principal':
-                    $result_props[] = '
-                        <D:current-user-principal>
-                            <D:href>/caldav/'.$id_space.'/</D:href>
-                        </D:current-user-principal>';
-                    break;
-                case 'current-user-privilege-set':
-                    $result_props[] = '
-                        <D:current-user-privilege-set>
-                            <D:privilege><D:read/></D:privilege>
-                        </D:current-user-privilege-set>';
-                    break;
-                case 'getctag':
-                    Configuration::getLogger()->debug('[caldav] get ctag');
-                    $bm = new BkCalendarEntry();
-                    
-                    $updates = $bm->lastUser($id_space, $id_user);
-                   
-                    $eTag = 0;
-                    Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
-                    if($updates) {
-                        $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
-                    }
-                    $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
-                    break;
-                case 'displayname':
-                    $result_props[] = sprintf('<D:displayname>%s<D:displayname>', 'Platform Manager bookings');
-                    break;
-                default:
-                    break;
-            }
-        }
-        */
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
-            <d:multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/" xmlns:cal="urn:ietf:params:xml:ns:caldav">
+            <d:multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/" xmlns:C="urn:ietf:params:xml:ns:caldav">
                 <d:response>
                     <d:href>/caldav/%s/</d:href>
                     <d:propstat>
