@@ -206,8 +206,6 @@
                 :row-label-width="`${rowLabelWidth}%`"
                 :row-height="rowHeight"
                 :theme="selectedTheme"
-                @contextmenu-bar="onContextmenuBar($event)"
-                @dragend-bar="stoppedDraggingBar($event)"
             >
                 <g-gantt-row 
                     v-for="row in rowList"
@@ -399,7 +397,6 @@ let app = new Vue({
         this.adaptTimeaxis();
     },
     updated() {
-        console.log("updated");
         this.adaptTimeaxis();
     },
     methods: {
@@ -490,7 +487,6 @@ let app = new Vue({
                 row = this.getRowFromItem(item, index);
                 this.rowList.push(row);
             });
-            console.log(this.rowList);
         },
         getRowFromItem(item, index) {
             let name = item.name // || item.title; => seems to work, but generates infinite loop
@@ -546,13 +542,6 @@ let app = new Vue({
                 errorElement.style.display = "none";
             }
         },
-        stoppedDraggingBar() {
-        },
-        onContextmenuBar(e) {
-            console.log("onContextmenuBar");
-            // e.event.preventDefault();
-            console.log(event.target);
-        },
         async openItemContent(itemId) {
             if (this.itemsType == "project") {
                 this.itemsType = "task";
@@ -562,17 +551,16 @@ let app = new Vue({
                 this.items = tasks;
                 this.chartStart = project.date_open;
                 this.chartEnd = project.time_limit;
+                this.rowList = [];
                 this.generateRows();
                 this.updateColors();
             } else if (this.itemsType == "task") {
-                console.log("display task details");
                 this.openTaskPopup(itemId);
             } else {
-                console.log("nothing to display");
+                console.err("nothing to display");
             }
         },
         async getProjectTasks(projectId) {
-            console.log("in getProjectTasks");
             let tasks = [];
             const headers = new Headers();
             headers.append('Content-Type','application/json');
@@ -592,10 +580,8 @@ let app = new Vue({
                 return tasks;
         },
         openTaskPopup(taskId) {
-            console.log("opening modal");
             let task = this.items.find(item => item.id == taskId);
             this.selectedTask = task;
-            console.log("selectedTask: ", this.selectedTask);
             this.showModal = true;
         },
         gotoKanban() {
