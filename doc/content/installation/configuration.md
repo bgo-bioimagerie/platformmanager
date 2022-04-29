@@ -18,11 +18,12 @@ Mandatory sections are:
 * Admin: super administrator information (created at install if not exists),
   admin secrets (password, apikey) *should* not be exposed in config file and
   should rather be defined via env variables (see below).
+* Amqp: rabbitmq connection information, used for events and statistics
+  to dialog with pfm-events process
+* smtp: mail settings
 
 Optional sections:
 
-* Amqp: rabbitmq connection information, used for events and statistics
-  to dialog with pfm-events process
 * Influxdb: Influxdb connection information
 * Openid: external authentication systems credentials
 
