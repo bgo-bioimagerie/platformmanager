@@ -35,10 +35,14 @@
                 {% endfor %}    
 
             </div>
-        </div> 
+        </div>
     </div>
 
-    <div id="gantt">
+                    
+
+    <div id="gantt" class="container">
+
+            
         
 
         <div id="contextmenu"
@@ -157,6 +161,34 @@
             </div>
         </div>
 
+        <div id="taskContent" v-if="showModal">
+            <div class="modal-dialog modal-mask" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                        <button type="button"
+                            class="btn-close"
+                            data-dismiss="modal"
+                            @click="showModal = false"
+                            aria-label="Close">
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{"{{selectedTask.content}}"}}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            @click="gotoKanban">
+                            Go to kanban board
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <div id="ganttastic-wrapper">
             <!-- following input just here to update view at items change -->
             {# <input hidden v-model="itemsType"></input> #}
@@ -196,7 +228,10 @@
                         class="mr-1"
                     >
                     <!-- TODO: make span width variable depnending on image presence-->
-                    <span style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    <span v-if="itemsType=='project'" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    {# <span v-if="itemsType=='task'" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span> #}
+                    <span v-if="itemsType=='task'" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                   
                 </template>
                 </g-gantt-row>
             </g-gantt-chart>
@@ -207,9 +242,7 @@
 </div>
 
 <script src="externals/vueganttastic.js"></script>
-{# <script src="externals/pfm/utils/Modal.vue"></script> #}
 <script src="externals/node_modules/moment/min/moment.min.js"></script>
-
 
 <script>
 
@@ -311,13 +344,14 @@ let app = new Vue({
     components:{
         'GGanttChart': ganttastic.GGanttChart,
         'GGanttRow': ganttastic.GGanttRow,
-        // 'Modal': modal
     },
     data() {
         return {
             items: {{ projects | raw}},
             id_space: {{ id_space }},
             itemsType: "project",
+            projectId: null,
+            showModal: false,
             chartStart: "",
             chartEnd: "",
             pushOnOverlap: true,
@@ -334,6 +368,7 @@ let app = new Vue({
             contextmenuY: 0,
             dateError: false,
             selectedTheme: "default",
+            selectedTask: "",
             themes: [
                 "default",
                 "vue",
@@ -365,6 +400,7 @@ let app = new Vue({
     },
     updated() {
         console.log("updated");
+        this.adaptTimeaxis();
     },
     methods: {
         showAction() {
@@ -406,8 +442,7 @@ let app = new Vue({
             let monthSection = document.getElementById("monthList");
             monthSection.innerHTML = "";
 
-            let totalWidth = monthSection.offsetWidth;
-            let totalRatio = 0;             
+            let totalWidth = monthSection.offsetWidth;         
             monthList.forEach((month, index) => {
                 let monthHeader = this.setMonthHeader(month, index, totalDays, totalWidth)
                 monthSection.appendChild(monthHeader);
@@ -520,8 +555,8 @@ let app = new Vue({
         },
         async openItemContent(itemId) {
             if (this.itemsType == "project") {
-                console.log("display project tasks");
                 this.itemsType = "task";
+                this.projectId = itemId;
                 let project = this.items.find(item => item.id == itemId);
                 let tasks = await this.getProjectTasks(itemId);
                 this.items = tasks;
@@ -531,8 +566,7 @@ let app = new Vue({
                 this.updateColors();
             } else if (this.itemsType == "task") {
                 console.log("display task details");
-                let project = this.items.find(item => item.id == itemId);
-                this.openTaskPopup();
+                this.openTaskPopup(itemId);
             } else {
                 console.log("nothing to display");
             }
@@ -557,13 +591,22 @@ let app = new Vue({
                 });
                 return tasks;
         },
-        openTaskPopup() {
-            popup = window.open(window.location.href, "task details", 'height=200, width=150');
-            if (window.focus) {
-                popup.focus();
-            }
-            return false;
+        openTaskPopup(taskId) {
+            console.log("opening modal");
+            let task = this.items.find(item => item.id == taskId);
+            this.selectedTask = task;
+            console.log("selectedTask: ", this.selectedTask);
+            this.showModal = true;
         },
+        gotoKanban() {
+            if (this.projectId) {
+                let kanbanUrl = "servicesprojects/kanban/" + this.id_space + "/" + this.projectId;
+                window.location = kanbanUrl;
+            } else {
+                alert("there's no mathcing project");
+            }
+            
+        }
     }
 
 });
@@ -585,7 +628,6 @@ let app = new Vue({
         margin-bottom: 25px;
     }
     table, th, td {
-        /* border: 1px solid black; */
         text-align: center;
     }
 
@@ -598,6 +640,14 @@ let app = new Vue({
     }
     .side-label {
         margin-left: 5px;
+    }
+
+    .modal-dialog {
+        position: absolute;
+        z-index: 9;
+        left: 50%;
+        right: 50%;
+        min-width: 300px;
     }
 
     #contextmenuHidable {

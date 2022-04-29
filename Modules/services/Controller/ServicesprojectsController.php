@@ -562,7 +562,6 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);        
         $taskModel = new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
-        Configuration::getLogger()->debug("[TEST]", ["tasks" => $tasks]);
         $this->render(['data' => ['tasks' => $tasks]]);
     }
 
