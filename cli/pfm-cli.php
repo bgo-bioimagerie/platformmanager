@@ -23,6 +23,8 @@ function version()
     }
 
 $cli = Cli::create()
+    ->command('config')
+    ->description('show configuration')
     ->command('upgrade')
     ->description('create a new upgrade file')
     ->opt('desc', 'description', '', 'string')
@@ -59,6 +61,21 @@ $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'config':
+            $params = Configuration::getParameters();
+            foreach ($params as $key => $value) {
+                    if(is_array($value)) {
+                            foreach ($value as $val) {
+                                    if(is_array($val)) {
+                                            continue;
+                                    }
+                                    echo $key."[] = $val\n";
+                            }
+                            continue;
+                    }
+                    echo "$key = $value\n";
+            } 
+            break;
         case 'upgrade':
             $ts = time();
             if(!file_exists('db/upgrade')){

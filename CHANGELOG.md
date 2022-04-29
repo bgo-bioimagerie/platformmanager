@@ -19,6 +19,7 @@
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
 * [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
 
 ## 2.5.3
 
