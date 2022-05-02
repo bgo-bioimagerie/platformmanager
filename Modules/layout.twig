@@ -19,7 +19,14 @@
             <script src="externals/vuejs/vue.min.js"></script>
         {% endif %}
 
-        <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        {% if context.theme and context.theme == 'dark' %}
+            <link rel="stylesheet" href="externals/pfm/dark-mode/bootstrap-night.css">
+        {% else %}
+            <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        {% endif %}
+
+
+
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
         <script src="externals/node_modules/jquery/dist/jquery.min.js"></script>
@@ -32,7 +39,7 @@
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
-    <body style="background-color: #e7ecf0;">
+    <body>
         {% block navbar %}
             {{navbar | raw}}
         {% endblock %}

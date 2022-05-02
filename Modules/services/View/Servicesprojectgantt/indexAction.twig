@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{{ context.theme }}
+
 <div class="pm-table">
     
     <div class="col-12">
@@ -38,12 +40,8 @@
         </div>
     </div>
 
-                    
-
+    {% set inheritedTheme = context.theme %}
     <div id="gantt" class="container">
-
-            
-        
 
         <div id="contextmenu"
             class="card d-none d-md-flex"
@@ -189,13 +187,20 @@
         </div>
 
 
-        <div id="ganttastic-wrapper">
-            <!-- following input just here to update view at items change -->
-            {# <input hidden v-model="itemsType"></input> #}
-            <div class="g-timeaxis-month mt-3 ml-5">
-                <div id="blankSquare" style="width: 16%; float:left" class="p-2"></div>
-                <table id="monthList" class="d-inline-flex" style="width: 84%;"></table>
+        <div class="monthAxis mt-3 ml-5">
+            <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
+            <div class="col d-inline-flex" style="width: 84%;">
+                <table id="monthList" class="d-inline-flex" style="width: 100%;"></table>
             </div>
+        </div>
+        <div class="weeksAxis ml-5">
+            <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
+            <div class="col d-inline-flex" style="width: 84%;">
+                <table id="weekList" class="d-inline-flex" style="width: 100%;"></table>
+            </div>
+        </div>
+
+        <div id="ganttastic-wrapper">
             <g-gantt-chart
                 :chart-start="chartStart"
                 :chart-end="chartEnd"
@@ -342,6 +347,7 @@ let app = new Vue({
     components:{
         'GGanttChart': ganttastic.GGanttChart,
         'GGanttRow': ganttastic.GGanttRow,
+
     },
     data() {
         return {
@@ -365,7 +371,7 @@ let app = new Vue({
             contextmenuX: 0,
             contextmenuY: 0,
             dateError: false,
-            selectedTheme: "default",
+            selectedTheme: "{{inheritedTheme}}" == "dark" ? "dark" : "default",
             selectedTask: "",
             themes: [
                 "default",
@@ -383,14 +389,16 @@ let app = new Vue({
             rowList: []
         }
     },
-    created() {        
+    created() {
+        
+        console.log("selectedTheme: ", this.selectedTheme);
         let bkSqr = document.getElementById('blankSquare');
         bkSqr.style.width = this.rowLabelWidth;
         let dates = this.getDefaultDates();
         this.chartStart = dates.start;
         this.chartEnd = dates.end;
         this.generateRows();
-        this.updateColors();        
+        this.updateColors();
         window.addEventListener("resize", this.adaptTimeaxis);
     },
     mounted() {
@@ -408,8 +416,9 @@ let app = new Vue({
                 : "Show options";
         },
         updateColors() {
-            let theme = event ? event.target.value : "default";
+            let theme = event ? event.target.value : this.selectedTheme;
             themeColors = THEMESCOLORS[theme];
+            let bkSqr = document.getElementById('blankSquare');
             let contextMenu = document.getElementById("contextmenu");
             contextmenu.style["background-color"] = themeColors.ternary;
             [...contextMenu.getElementsByTagName("label")].forEach(label => {
@@ -431,18 +440,29 @@ let app = new Vue({
             let duration  = moment(this.chartEnd).diff(moment(this.chartStart), 'days') + 1;
             if (duration > 7 && document.getElementsByClassName("g-timeaxis-days")[0]) {
                 this.displayTimeaxisInMonth(duration);
+                this.displayTimeaxisInWeeks(duration);
             }
         },
         displayTimeaxisInMonth(totalDays) {
-            let timeaxisDaysSection = document.getElementsByClassName("g-timeaxis-days")[0];
-            let monthList = this.getMonthInInterval(this.chartStart, this.chartEnd);
+            let monthList = this.getMonthInterval(this.chartStart, this.chartEnd);
             let monthSection = document.getElementById("monthList");
             monthSection.innerHTML = "";
-
-            let totalWidth = monthSection.offsetWidth;         
+            let totalWidth = monthSection.offsetWidth;
             monthList.forEach((month, index) => {
-                let monthHeader = this.setMonthHeader(month, index, totalDays, totalWidth)
+                let monthHeader = this.setMonthHeader(month, index, totalDays, totalWidth);
                 monthSection.appendChild(monthHeader);
+            });
+        },
+        // TODO: handle and integrate that
+        displayTimeaxisInWeeks(totalDays) {
+            let weekList = this.getWeeksInterval(this.chartStart, this.chartEnd);
+            let weekSection = document.getElementById("weekList");
+            weekSection.innerHTML = "";
+
+            let totalWidth = weekSection.offsetWidth;
+            weekList.forEach((week, index) => {
+                let weeksHeader = this.setWeeksHeader(week, index, totalDays, totalWidth);
+                weekSection.appendChild(weeksHeader);
             });
         },
         setMonthHeader(month, index, totalDays, totalWidth) {
@@ -459,7 +479,44 @@ let app = new Vue({
             monthHeader.classList.add("monthHeader");
             return monthHeader;
         },
-        getMonthInInterval(startDate, endDate) {
+        setWeeksHeader(week, index, totalDays, totalWidth) {
+            nbWeekDays = moment(week.end).diff(moment(week.start), 'days') + 1;
+            ratio = (nbWeekDays / totalDays);
+            let weekName = moment(week.start).week();
+            let weeksHeader = document.createElement("th");
+            let width = ratio * totalWidth;
+            weeksHeader.innerHTML = width > 50 ? weekName : WeekName.slice(0, 3);
+            weeksHeader.style['width'] = width + "px";
+            weeksHeader.style['word-wrap'] = "break-word";
+            weeksHeader.style["color"] = themeColors.text;
+            weeksHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
+            weeksHeader.classList.add("weeksHeader");
+            return weeksHeader;
+        },
+        getWeeksInterval(startDate, endDate) {
+            let result = [];
+            let format = 'YYYY-MM-DD';
+            let start = moment(startDate, format);
+            let end = moment(endDate, format);
+            let endDateFormatted = end.format(format);
+            let counter = 0;
+            let weekStart;
+            while(start.isBefore(end)) {
+                weekStart = counter == 0 ? start.format(format) : start.startOf('week').format(format);
+                result.push({
+                    start: weekStart, 
+                    end: start.endOf('week').format(format)
+                });                
+                start.add(1, 'week');
+                counter++;
+            }
+            result.push({
+                start: end.startOf('week').format(format),
+                end: endDateFormatted
+            })
+            return result;
+        },
+        getMonthInterval(startDate, endDate) {
             let result = [];
             let format = 'YYYY-MM-DD';
             let start = moment(startDate, format);
