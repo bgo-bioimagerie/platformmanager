@@ -444,101 +444,72 @@ let app = new Vue({
             }
         },
         displayTimeaxisInMonth(totalDays) {
-            let monthList = this.getMonthInterval(this.chartStart, this.chartEnd);
+            let monthList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'month');
             let monthSection = document.getElementById("monthList");
             monthSection.innerHTML = "";
             let totalWidth = monthSection.offsetWidth;
             monthList.forEach((month, index) => {
-                let monthHeader = this.setMonthHeader(month, index, totalDays, totalWidth);
+                let monthHeader = this.setTimeaxisHeader(month, index, totalDays, totalWidth, 'month');
                 monthSection.appendChild(monthHeader);
             });
         },
         // TODO: handle and integrate that
         displayTimeaxisInWeeks(totalDays) {
-            let weekList = this.getWeeksInterval(this.chartStart, this.chartEnd);
+            let weekList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'week');
             let weekSection = document.getElementById("weekList");
             weekSection.innerHTML = "";
 
             let totalWidth = weekSection.offsetWidth;
             weekList.forEach((week, index) => {
-                let weeksHeader = this.setWeeksHeader(week, index, totalDays, totalWidth);
+                let weeksHeader = this.setTimeaxisHeader(week, index, totalDays, totalWidth, 'week');
                 weekSection.appendChild(weeksHeader);
             });
         },
-        setMonthHeader(month, index, totalDays, totalWidth) {
-            nbMonthDays = moment(month.end).diff(moment(month.start), 'days') + 1;
-            ratio = (nbMonthDays / totalDays);
-            let monthName = moment(month.start).format('MMMM');
-            let monthHeader = document.createElement("th");
+        setTimeaxisHeader(period, index, totalDays, totalWidth, timeUnit) {
+            let nbDays = moment(period.end).diff(moment(period.start), 'days') + 1;
+            let ratio = (nbDays / totalDays);
+            let header = document.createElement("th");
             let width = ratio * totalWidth;
-            monthHeader.innerHTML = width > 50 ? monthName : monthName.slice(0, 3);
-            monthHeader.style['width'] = width + "px";
-            monthHeader.style['word-wrap'] = "break-word";
-            monthHeader.style["color"] = themeColors.text;
-            monthHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
-            monthHeader.classList.add("monthHeader");
-            return monthHeader;
+
+            let periodName = "";
+            if (timeUnit === "week") {
+                periodName = moment(period.start).week();
+                header.innerHTML = (width > 40 || (periodName-1)%10 == 0) ? periodName : "";
+            } else if (timeUnit === "month") {
+                periodName = moment(period.start).format('MMMM');
+                header.innerHTML = width > 80 ? periodName : periodName.slice(0, 3);
+            }
+
+            header.style['width'] = width + "px";
+            header.style["color"] = themeColors.text;
+            header.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
+            header.classList.add("header");
+            return header;
         },
-        setWeeksHeader(week, index, totalDays, totalWidth) {
-            nbWeekDays = moment(week.end).diff(moment(week.start), 'days') + 1;
-            ratio = (nbWeekDays / totalDays);
-            let weekName = moment(week.start).week();
-            let weeksHeader = document.createElement("th");
-            let width = ratio * totalWidth;
-            weeksHeader.innerHTML = width > 50 ? weekName : WeekName.slice(0, 3);
-            weeksHeader.style['width'] = width + "px";
-            weeksHeader.style['word-wrap'] = "break-word";
-            weeksHeader.style["color"] = themeColors.text;
-            weeksHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
-            weeksHeader.classList.add("weeksHeader");
-            return weeksHeader;
-        },
-        getWeeksInterval(startDate, endDate) {
+        getTimeIntervals(startDate, endDate, timeUnit) {
             let result = [];
             let format = 'YYYY-MM-DD';
             let start = moment(startDate, format);
             let end = moment(endDate, format);
             let endDateFormatted = end.format(format);
             let counter = 0;
-            let weekStart;
+            let periodStart;
             while(start.isBefore(end)) {
-                weekStart = counter == 0 ? start.format(format) : start.startOf('week').format(format);
+                periodStart = counter == 0 ? start.format(format) : start.startOf(timeUnit).format(format);
                 result.push({
-                    start: weekStart, 
-                    end: start.endOf('week').format(format)
+                    start: periodStart, 
+                    end: start.endOf(timeUnit).format(format)
                 });                
-                start.add(1, 'week');
+                start.add(1, timeUnit);
                 counter++;
             }
             result.push({
-                start: end.startOf('week').format(format),
+                start: end.startOf(timeUnit).format(format),
                 end: endDateFormatted
             })
             return result;
         },
-        getMonthInterval(startDate, endDate) {
-            let result = [];
-            let format = 'YYYY-MM-DD';
-            let start = moment(startDate, format);
-            let end = moment(endDate, format);
-            let endDateFormatted = end.format(format);
-            let counter = 0;
-            let monthStart;
-            while(start.isBefore(end)) {
-                monthStart = counter == 0 ? start.format(format) : start.startOf('month').format(format);
-                result.push({
-                    start: monthStart, 
-                    end: start.endOf('month').format(format)
-                });                
-                start.add(1, 'month');
-                counter++;
-            }
-            result.push({
-                start: end.startOf('month').format(format),
-                end: endDateFormatted
-            })
-            return result;
-        },
+
         generateRows() {
             this.items.forEach((item, index) => {
                 row = this.getRowFromItem(item, index);
