@@ -553,7 +553,8 @@ class ServicesprojectsController extends ServicesController {
             $taskData['name'],
             $taskData['content'],
             $taskData['start_date'],
-            $taskData['end_date']
+            $taskData['end_date'],
+            $taskData['services']
         );
         $this->render(['data' => ['id' => $id]]);
     }

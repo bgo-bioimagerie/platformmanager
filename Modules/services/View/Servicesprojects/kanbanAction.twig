@@ -227,7 +227,8 @@ let app = new Vue({
                     content: "",
                     contentVisible: false,
                     start_date: null,
-                    end_date: null
+                    end_date: null,
+                    services: []
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);

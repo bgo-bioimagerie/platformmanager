@@ -2,8 +2,6 @@
 
 {% block content %}
 
-{{ context.theme }}
-
 <div class="pm-table">
     
     <div class="col-12">
@@ -452,7 +450,6 @@ let app = new Vue({
                 monthSection.appendChild(monthHeader);
             });
         },
-        // TODO: handle and integrate that
         displayTimeaxisInWeeks(totalDays) {
             let weekList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'week');
             let weekSection = document.getElementById("weekList");
