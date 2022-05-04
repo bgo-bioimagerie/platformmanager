@@ -29,6 +29,35 @@
         </div>
 
         <div class="row mt-3">
+
+            <div id="taskContent" v-if="showModal">
+                <div class="modal-dialog modal-mask" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                            <button type="button"
+                                class="btn-close"
+                                data-dismiss="modal"
+                                @click="showModal = false"
+                                aria-label="Close">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="details">Details</label>
+                            <textarea id="taskDetails" class="contentArea" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
+                        </div>
+                        <div class="modal-footer">
+                            <div class="col form-inline">
+                                <label for="start_date">start date</label>
+                                <input id="taskStartDate" type="date" class="form-control" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
+                                <label for="end_date">end date</label>
+                                <input id="taskEndDate" type="date" class="form-control" name="end_date" :value="selectedTask.end_date" @change="updateTaskDate($event, selectedTask)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
                 <div class="category col-md-3" v-for="(category, cindex) in categories" style="display:inline-flex">
                     <div :id=category.id class="p-2 alert" style="cursor:grab;">
@@ -42,17 +71,8 @@
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.name}}"}}
-                                <button class="bi bi-arrow-right round" @click="showTaskContent($event, element)"></button>
+                                <button class="bi bi-pencil-square round" @click="showTaskContent($event, element)"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
-                                <div class="hidable mt-3" v-show="element.contentVisible">
-                                    <textarea class="contentArea" @blur="updateTaskContent($event, element)">{{element.content}}</textarea>
-                                    <div class="col form-inline">
-                                        <label for="start_date">start date</label>
-                                        <input type="date" class="form-control" name="start_date" :value="element.start_date" @change="updateTaskDate($event, element)">
-                                        <label for="end_date">end date</label>
-                                        <input type="date" class="form-control" name="end_date" :value="element.end_date" @change="updateTaskDate($event, element)">
-                                    </div>
-                                </div>
                             </div>
                         </draggable>
 
@@ -77,7 +97,9 @@ let app = new Vue({
             id_project: {{ id_project }},
             tasks: {{ tasks | raw }},
             categories: {{ categories | raw }},
-            textContent: {{ textContent | raw }}
+            textContent: {{ textContent | raw }},
+            showModal: false,
+            selectedTask: null
         }
     },
     created () {
@@ -90,14 +112,10 @@ let app = new Vue({
         });
     },
     mounted () {
-        this.categories.forEach(category => {
-            this.getRGBAColor(category);
-        });
+        this.updateCategoriesColors();
     },
     updated() {
-        this.categories.forEach(category => {
-            this.getRGBAColor(category);
-        });
+        this.updateCategoriesColors();
     },
     methods: {
         getTaskById(id) {
@@ -119,13 +137,15 @@ let app = new Vue({
             this.updateCategories();
         },
 
-        // TODO: add editTask function ?
-
         editCategoryColor(event, category) {
             category.color = event.target.value;
             this.updateCategories();
         },
-
+        updateCategoriesColors() {
+            this.categories.forEach(category => {
+                this.getRGBAColor(category);
+            });
+        },
         getRGBAColor(category, opacity=0.5) {
             let h = category.color.substring(1,7);
             let r = parseInt(h.substring(0,2),16);
@@ -137,10 +157,8 @@ let app = new Vue({
             categoryGroup.style.backgroundColor = rgbaColor;
         },
         showTaskContent(event, task) {
-            if (!event.target.classList.contains("contentArea")) {
-                task.contentVisible = !task.contentVisible;
-                this.updateHidables(event.target.parentElement, task);
-            }
+            this.selectedTask = task;
+            this.showModal = true;
         },
         changeTaskState(event, categoryIndex) {
             if (event.added) {
@@ -199,7 +217,6 @@ let app = new Vue({
             this.updateTask(task);
         },
         async addTask(task=null) {
-            let defaultDate = this.getDate();
             if(this.newTask) {
                 this.newTask = {
                     id: 0,
@@ -209,8 +226,8 @@ let app = new Vue({
                     name: this.newTask,
                     content: "",
                     contentVisible: false,
-                    start_date: defaultDate,
-                    end_date: defaultDate
+                    start_date: null,
+                    end_date: null
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);
@@ -341,8 +358,8 @@ let app = new Vue({
         align-content: right;
     }
     .contentArea {
-        min-height: 150px;
-        max-width: 200px;
+        /* min-height: 250px; */
+        min-width: 350px;
     }
     .deleteBtn {
         display:inline;
@@ -361,8 +378,25 @@ let app = new Vue({
         font-size: 12px;
         border-radius: 100%
     }
+    .modal-dialog {
+        position: absolute;
+        z-index: 9;
+        left: 50%;
+        right: 50%;
+        min-width: 400px;
+    }
+
     label {
         display: block;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
     }
 </style>
 

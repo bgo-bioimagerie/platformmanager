@@ -231,9 +231,9 @@
                         class="mr-1"
                     >
                     <!-- TODO: make span width variable depnending on image presence-->
-                    <span v-if="itemsType=='project'" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    <span v-if="itemsType=='project'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
                     {# <span v-if="itemsType=='task'" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span> #}
-                    <span v-if="itemsType=='task'" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    <span v-if="itemsType=='task'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
                    
                 </template>
                 </g-gantt-row>
@@ -390,8 +390,6 @@ let app = new Vue({
         }
     },
     created() {
-        
-        console.log("selectedTheme: ", this.selectedTheme);
         let bkSqr = document.getElementById('blankSquare');
         bkSqr.style.width = this.rowLabelWidth;
         let dates = this.getDefaultDates();
@@ -403,6 +401,7 @@ let app = new Vue({
     },
     mounted() {
         this.adaptTimeaxis();
+        // this.hideTimeaxis = true;
     },
     updated() {
         this.adaptTimeaxis();
@@ -473,7 +472,7 @@ let app = new Vue({
 
             let periodName = "";
             if (timeUnit === "week") {
-                periodName = moment(period.start).week();
+                periodName = "S" + moment(period.start).week();
                 header.innerHTML = (width > 40 || (periodName-1)%10 == 0) ? periodName : "";
             } else if (timeUnit === "month") {
                 periodName = moment(period.start).format('MMMM');
