@@ -6,19 +6,22 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 class BookingcaldavController extends CorecookiesecureController {
 
-    function discoveryAction($id_space) {
-        $sm = new CoreSpace();
-        $space = $sm->getSpace($id_space);
-        $plan = new CorePlan($space['plan'], $space['plan_expire']);
-        if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
-            throw new PfmParamException('Caldav not available in your space plan');
+    function discoveryAction($id_space=0) {
+        if($id_space) {
+            $sm = new CoreSpace();
+            $space = $sm->getSpace($id_space);
+            $plan = new CorePlan($space['plan'], $space['plan_expire']);
+            if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+                throw new PfmParamException('Caldav not available in your space plan');
+            }
         }
-        header('Allow: OPTIONS,GET,REPORT,PROPFIND');
+        header('Allow: OPTIONS,REPORT,PROPFIND');
         header('DAV: 2, calendar-access');
     }
 
 
-    function propfindAction($id_space) {
+
+    function propfindAction($id_space, $id_cal=0) {
         $allowed = true;
         $id_user = $this->auth();
 
@@ -34,14 +37,14 @@ class BookingcaldavController extends CorecookiesecureController {
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
-                    <href>/caldav/%s/</href>
+                    <href>/caldav/%s/%s/</href>
                     <propstat>
                         <prop/>
                         <status>HTTP/1.1 401 Unauthorized</status>
                     </propstat>
                 </response>
             </multistatus>
-            ', $id_space);
+            ', $id_space, $id_cal);
             return;
         }
         if(!$allowed) {
@@ -50,18 +53,21 @@ class BookingcaldavController extends CorecookiesecureController {
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
             <multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/">
                 <response>
-                    <href>/caldav/%s/</href>
+                    <href>/caldav/%s/%s/</href>
                     <propstat>
                         <prop/>
                         <status>HTTP/1.1 403 Forbidden</status>
                     </propstat>
                 </response>
             </multistatus>
-            ', $id_space);
+            ', $id_space, $id_cal);
             return;
         }
+
+        $depth = $_SERVER['HTTP_DEPTH'] ?? '0';
+
         $doc = new SimpleXMLElement(file_get_contents('php://input'));
-        Configuration::getLogger()->debug("[caldav][propfind]", ['doc' => $doc->asXML()]);
+        Configuration::getLogger()->debug("[caldav][propfind]", ['depth' => $depth, 'doc' => $doc->asXML()]);
         $doc->registerXPathNamespace('a', 'DAV:');
         $doc->registerXPathNamespace('C', 'urn:ietf:params:xml:ns:caldav');
         $doc->registerXPathNamespace('cs', 'http://calendarserver.org/ns/');
@@ -71,7 +77,7 @@ class BookingcaldavController extends CorecookiesecureController {
         if(!empty($currentUserPrincipal)) {
             $result_props[] = '
                         <d:current-user-principal>
-                            <d:href>/caldav/'.$id_space.'/</d:href>
+                            <d:href>/caldav/'.$id_space.'/'.$id_cal.'/</d:href>
                         </d:current-user-principal>';
         }
         $currentUserPrivilegeSet = $doc->xpath('//a:current-user-privilege-set');
@@ -85,18 +91,18 @@ class BookingcaldavController extends CorecookiesecureController {
 
         $resourceType = $doc->xpath('//a:resourcetype');
         if(!empty($resourceType)) {
-            $result_props[] = '
-            <d:resourcetype>
-                <d:collection />
-                <C:calendar/>
-            </d:resourcetype>';
+            if($depth==1){
+                $result_props[] = '<d:resourcetype><cal:calendar/></d:resourcetype>';
+            } else {
+                $result_props[] = '<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>';
+            }
         }
 
         $calendarHomeSet = $doc->xpath('//C:calendar-home-set');
         if(!empty($calendarHomeSet)) {
             $result_props[] = '
             <C:calendar-home-set>
-                <d:href>/caldav/'.$id_space.'/</d:href>
+                <d:href>/caldav/'.$id_space.'/1/</d:href>
             </C:calendar-home-set>';           
         }
 
@@ -125,29 +131,71 @@ class BookingcaldavController extends CorecookiesecureController {
             </C:supported-calendar-component-set>';
         }
 
+
+        $contentTag = $doc->xpath('//a:getcontenttype');
+        if(!empty($contentTag)) {
+            if($depth==0) {
+                $result_props[] = '<d:getcontenttype>httpd/unix-directory</d:getcontenttype>';
+            } else {
+                $result_props[] = '<d:getcontenttype>text/calendar; charset=utf-8; component=vevent</d:getcontenttype>';
+            }
+        }
+
+        $geteTag = $doc->xpath('//a:getetag');
+        if(!empty($geteTag) && $depth==1) {
+            Configuration::getLogger()->debug('[caldav] get etag');
+            $bm = new BkCalendarEntry();
+            
+            $updates = $bm->lastUser($id_space, $id_user);
+        
+            $eTag = 0;
+            Configuration::getLogger()->debug('[caldav] get etag', ['u' => $updates]);
+            if($updates) {
+                $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
+            }
+            $result_props[] = sprintf('<d:getetag>"%s"</d:getetag>', $eTag);
+        }
         $cTag = $doc->xpath('//cs:getctag');
         if(!empty($cTag)) {
             Configuration::getLogger()->debug('[caldav] get ctag');
             $bm = new BkCalendarEntry();
             
             $updates = $bm->lastUser($id_space, $id_user);
-           
+        
             $eTag = 0;
-            Configuration::getLogger()->debug('[caldav] get ctag', ['u' => $updates]);
+            Configuration::getLogger()->debug('[caldav] get etag', ['u' => $updates]);
             if($updates) {
                 $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
             }
-            $result_props[] = sprintf('<CS:getctag>%s<CS:getctag>', $eTag);
-        }
-        $displayName = $doc->xpath('//a:displayname');
-        if(!empty($displayName)) {
-            $result_props[] = sprintf('<d:displayname>%s</d:displayname>', 'Platform Manager bookings');
+            $result_props[] = sprintf('<d:getctag>"%s"</d:getctag>', $eTag);
         }
 
+        $displayName = $doc->xpath('//a:displayname');
+        if(!empty($displayName)) {
+            if($depth == 1) {
+                $result_props[] = '<d:displayname>bookings</d:displayname>';
+            } else {
+                $result_props[] = sprintf('<d:displayname>%s</d:displayname>', $this->currentSpace['name']);
+            }
+        }
+
+        $extra_response = [];
+        if(1==0&& $depth==1 && !empty($resourceType)){
+            $extra_response[] = sprintf('<d:response>
+            <d:href>/caldav/%s/0/</d:href>
+            <d:propstat>
+                <d:prop>
+                    <d:getcontenttype>httpd/unix-directory</d:getcontenttype>
+                    <d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>
+                </d:prop>
+                <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+        </d:response>', $id_space);
+        }
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
-            <d:multistatus xmlns:d="DAV:" xmlns:CS="http://calendarserver.org/ns/" xmlns:C="urn:ietf:params:xml:ns:caldav">
+            <d:multistatus xmlns:d="DAV:" xmlns:cs="http://calendarserver.org/ns/" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:cal="urn:ietf:params:xml:ns:caldav">
                 <d:response>
-                    <d:href>/caldav/%s/</d:href>
+                    <d:href>/caldav/%s/%s/</d:href>
                     <d:propstat>
                         <d:prop>
                         %s
@@ -155,8 +203,9 @@ class BookingcaldavController extends CorecookiesecureController {
                         <d:status>HTTP/1.1 200 OK</d:status>
                     </d:propstat>
                 </d:response>
+                %s
             </d:multistatus>
-        ', $id_space, implode('', $result_props));
+        ', $id_space, $id_cal, implode("\n", $result_props), implode("\n", $extra_response));
         http_response_code(207);
         header('Content-Type: text/xml');
         echo $data;
@@ -285,8 +334,10 @@ class BookingcaldavController extends CorecookiesecureController {
                     $urlElts = explode('/', $url);
                     $info = $urlElts[count($urlElts)-1];
                     $queryElts = explode('-', str_replace('.ics', '', $info));
+                    if(count($queryElts) == 2){
                     $fromTS = intval($queryElts[0]);
                     $toTS = intval($queryElts[1]);
+                    }
                 }
 
         }
