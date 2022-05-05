@@ -445,7 +445,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"ConfirmDelete($id, '$name')\" value=\"Delete\">";
+        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"Confirm".$this->tableID."Delete($id, '$name')\" value=\"Delete\">";
     }
 
     /**
@@ -456,7 +456,7 @@ class TableView {
      */
     private function addDeleteScript() {
         $html = "<script type=\"text/javascript\">";
-        $html .= "function ConfirmDelete(id, name)";
+        $html .= "function Confirm".$this->tableID."Delete(id, name)";
         $html .= "{";
         $html .= '	if (confirm(`Delete ${name} ?`))';
         $html .= '		location.href=`'.$this->deleteURL . '/${id}`;';
