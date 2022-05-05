@@ -22,6 +22,10 @@
 * [cli] add config option to display configuration
 * [invoice][booking] manage case where total hours = 0
 
+## 2.5.4
+
+* [core][antibodies] fix acowner table definition and fix delete javascript function #638
+
 ## 2.5.3
 
 * [invoice][services] fix services invoices (invoice id not set) #637
