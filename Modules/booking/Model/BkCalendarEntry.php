@@ -1038,9 +1038,14 @@ class BkCalendarEntry extends Model {
         $nb_hours_night = round($nb_night / 3600, 2);
         $nb_hours_we = round($nb_we / 3600, 2);
         $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
-        $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
-        $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
-        $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+        $ratio_bookings_day = 0;
+        $ratio_bookings_night = 0;
+        $ratio_bookings_we = 0;
+        if($totalHours > 0) {
+            $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+            $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+            $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+        }
 
         $result = [
             'total' => $total_duration,

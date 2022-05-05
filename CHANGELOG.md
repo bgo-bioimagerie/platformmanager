@@ -20,6 +20,7 @@
 * [core] catch email errors and log them
 * [bulletjournal] fixes on creation and edit
 * [cli] add config option to display configuration
+* [invoice][booking] manage case where total hours = 0
 
 ## 2.5.3
 
