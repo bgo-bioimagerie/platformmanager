@@ -23,6 +23,7 @@
 * [invoice][booking] manage case where total hours = 0
 * [core] add login button on welcome page
 * [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
 
 ## 2.5.4
 
