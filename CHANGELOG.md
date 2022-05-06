@@ -21,6 +21,7 @@
 * [bulletjournal] fixes on creation and edit
 * [cli] add config option to display configuration
 * [invoice][booking] manage case where total hours = 0
+* [core] add login button on welcome page
 
 ## 2.5.4
 

@@ -123,12 +123,13 @@
                 <div class="col-12 text-dark bg-light text-center m-3" id ="welcome" style="min-height: 400px">
                     <?php if($content) { echo $content; } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
-                        <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
-                        <?php if(Configuration::get('allow_registration', 0)) { ?>
-                            OR
-                            <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
-                        <?php } ?>
                     <?php } ?>
+                    <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
+                    <?php if(Configuration::get('allow_registration', 0)) { ?>
+                        OR
+                        <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
+                    <?php } ?>
+                    
                 </div>
             </div>
             <?php } ?>
