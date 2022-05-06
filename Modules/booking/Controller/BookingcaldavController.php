@@ -153,6 +153,8 @@ class BookingcaldavController extends CorecookiesecureController {
             if($updates) {
                 $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
             }
+            // TODO for debug, remove
+            $eTag = time();
             $result_props[] = sprintf('<d:getetag>"%s"</d:getetag>', $eTag);
         }
         $cTag = $doc->xpath('//cs:getctag');
@@ -348,12 +350,14 @@ class BookingcaldavController extends CorecookiesecureController {
         if($updates) {
             $eTag = max($updates['last_update'], $updates['last_delete'], $updates['last_start']);
         }
+        // TODO for debug, remove
+        $eTag = time();
         $events = '';
         
         $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
         foreach ($bookings as $booking) {
-            $start = date('Ymd', $booking['start_time']).'T'.date('His', $booking['start_time']).'Z';
-            $end = date('Ymd', $booking['end_time']).'T'.date('His', $booking['end_time']).'Z';
+            $start = date('Ymd', $booking['start_time']).'T'.date('His', $booking['start_time']).'';
+            $end = date('Ymd', $booking['end_time']).'T'.date('His', $booking['end_time']).'';
             $desc = $booking['resource_name'].' - '.$booking['short_description'] ?? '';
             $events .= sprintf('BEGIN:VEVENT
 UID:%s

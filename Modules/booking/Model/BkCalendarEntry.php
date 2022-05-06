@@ -819,7 +819,7 @@ class BkCalendarEntry extends Model {
             (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
             (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end)) ";
         }
-        $sql .= " order by bk_calendar_entry.end_time DESC;";
+        $sql .= " order by bk_calendar_entry.end_time ASC;";
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
