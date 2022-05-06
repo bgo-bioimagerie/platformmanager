@@ -517,11 +517,8 @@ class ServicesprojectsController extends ServicesController {
         foreach($projectServices as $projectService) {
             array_push($services, $serviceModel->getItem($id_space, $projectService['id_service']));
         }
-
-
-        foreach($tasks as $task) {
-            // TODO: deal with that
-            $task['services'] = $taskModel->getTaskServices($id_space, $task['id']);
+        for($i=0; $i<count($tasks); $i++) {
+            $tasks[$i]['services'] = $taskModel->getTaskServices($id_space, $tasks[$i]['id']);
         }
         
         $categoryModel = new SeTaskCategory();
@@ -562,7 +559,6 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
-        Configuration::getLogger()->debug("[TEST]", ["task services" => $taskData['services']]);
         $id = $taskModel->set(
             $taskData['id'],
             $id_space,

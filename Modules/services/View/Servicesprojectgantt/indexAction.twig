@@ -424,14 +424,20 @@ let app = new Vue({
             let monthHeaders = document.getElementsByClassName("monthHeader");
             [...monthHeaders].forEach((monthHeader, index) => {
                 monthHeader.style["color"] = themeColors.text;
-                monthHeader.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
+                monthHeader.style["background-color"] = 
+                    index % 2 == 0
+                    ? themeColors.secondary
+                    : themeColors.primary;
             });
         },
         getDefaultDates() {
             let startDate = new Date();
             let endDate = new Date();
             endDate = endDate.setMonth(endDate.getMonth() + 1);
-            return {start: moment(startDate).format('YYYY-MM-DD'), end: moment(endDate).format('YYYY-MM-DD')};
+            return {
+                start: moment(startDate).format('YYYY-MM-DD'),
+                end: moment(endDate).format('YYYY-MM-DD')
+            };
         },
         adaptTimeaxis() {
             let duration  = moment(this.chartEnd).diff(moment(this.chartStart), 'days') + 1;
@@ -478,7 +484,10 @@ let app = new Vue({
 
             header.style['width'] = width + "px";
             header.style["color"] = themeColors.text;
-            header.style["background-color"] = index%2 == 0 ? themeColors.secondary : themeColors.primary;
+            header.style["background-color"] =
+                index % 2 == 0
+                ? themeColors.secondary
+                : themeColors.primary;
             header.classList.add("header");
             return header;
         },
@@ -491,7 +500,10 @@ let app = new Vue({
             let counter = 0;
             let periodStart;
             while(start.isBefore(end)) {
-                periodStart = counter == 0 ? start.format(format) : start.startOf(timeUnit).format(format);
+                periodStart =
+                    counter == 0
+                    ? start.format(format)
+                    : start.startOf(timeUnit).format(format);
                 result.push({
                     start: periodStart, 
                     end: start.endOf(timeUnit).format(format)

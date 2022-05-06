@@ -57,7 +57,7 @@
                                     :value="selectedTask.services"
                                     @change="updateTaskServices($event, selectedTask)"
                                 >
-                                    <option v-for="service in projectServices" {# value="" #}>
+                                    <option v-for="service in projectServices" :value=service.id>
                                         {{"{{service.name}}"}}
                                     </option>
                                 </select>
@@ -135,7 +135,6 @@ let app = new Vue({
     },
     methods: {
         updateTaskServices(event, task) {
-            console.log("in updateTaskServices");
             task.services.push(event.target.value);
             this.updateTask(task);
         },
