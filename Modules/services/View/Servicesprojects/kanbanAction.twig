@@ -47,10 +47,25 @@
                             <textarea id="taskDetails" class="contentArea" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
                         </div>
                         <div class="modal-footer">
-                            <div class="col form-inline">
-                                <label for="start_date">start date</label>
+                            <div class="row form-inline">
+                                <label for="services">Services</label>
+                                <select
+                                    id="taskServices"
+                                    :list="projectServices"
+                                    class="form-control"
+                                    name="services"
+                                    :value="selectedTask.services"
+                                    @change="updateTaskServices($event, selectedTask)"
+                                >
+                                    <option v-for="service in projectServices" {# value="" #}>
+                                        {{"{{service.name}}"}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="row form-inline">
+                                <label for="start_date">Start date</label>
                                 <input id="taskStartDate" type="date" class="form-control" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
-                                <label for="end_date">end date</label>
+                                <label for="end_date">End date</label>
                                 <input id="taskEndDate" type="date" class="form-control" name="end_date" :value="selectedTask.end_date" @change="updateTaskDate($event, selectedTask)">
                             </div>
                         </div>
@@ -97,6 +112,7 @@ let app = new Vue({
             id_project: {{ id_project }},
             tasks: {{ tasks | raw }},
             categories: {{ categories | raw }},
+            projectServices: {{ projectServices | raw }},
             textContent: {{ textContent | raw }},
             showModal: false,
             selectedTask: null
@@ -118,6 +134,11 @@ let app = new Vue({
         this.updateCategoriesColors();
     },
     methods: {
+        updateTaskServices(event, task) {
+            console.log("in updateTaskServices");
+            task.services.push(event.target.value);
+            this.updateTask(task);
+        },
         getTaskById(id) {
             this.tasks.forEach(task => {
                 if (id == task.id) {

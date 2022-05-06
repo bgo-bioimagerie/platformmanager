@@ -578,6 +578,7 @@ let app = new Vue({
                 this.rowList = [];
                 this.generateRows();
                 this.updateColors();
+                this.adaptTimeaxis();
             } else if (this.itemsType == "task") {
                 this.openTaskPopup(itemId);
             } else {

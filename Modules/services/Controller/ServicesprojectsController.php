@@ -505,8 +505,24 @@ class ServicesprojectsController extends ServicesController {
     public function kanbanAction($id_space, $id_project) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
+
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
+
+        $projectModel = new SeProject();
+        $projectServices = $projectModel->getProjectServicesDefault($id_space, $id_project);
+        $serviceModel = new SeService();
+        $services = array();
+
+        foreach($projectServices as $projectService) {
+            array_push($services, $serviceModel->getItem($id_space, $projectService['id_service']));
+        }
+
+
+        foreach($tasks as $task) {
+            // TODO: deal with that
+            $task['services'] = $taskModel->getTaskServices($id_space, $task['id']);
+        }
         
         $categoryModel = new SeTaskCategory();
         $categories = $categoryModel->getByProject($id_project, $id_space);
@@ -537,7 +553,8 @@ class ServicesprojectsController extends ServicesController {
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
             "tasks" => json_encode($tasks),
-            "categories" => json_encode($categories)
+            "categories" => json_encode($categories),
+            "projectServices" => json_encode($services)
         ));
     }
 
@@ -545,6 +562,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
+        Configuration::getLogger()->debug("[TEST]", ["task services" => $taskData['services']]);
         $id = $taskModel->set(
             $taskData['id'],
             $id_space,

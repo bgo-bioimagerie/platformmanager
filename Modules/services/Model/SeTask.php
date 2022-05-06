@@ -91,7 +91,7 @@ class SeTask extends Model {
 
     ///// TASK_SERVICE METHODS /////
 
-    public function getServicesForTask($id_space, $id_task) {
+    public function getTaskServices($id_space, $id_task) {
         $sql = "SELECT * FROM se_task_service WHERE id_space=? AND id_task=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_task));
         return $req->fetchAll();
@@ -123,7 +123,7 @@ class SeTask extends Model {
     }
 
     public function deleteAllTaskServices($id_space, $id_task) {
-        $task_services = $this->getServicesForTask($id_space, $id_task);
+        $task_services = $this->getTaskServices($id_space, $id_task);
         if (!empty($task_services)) {
             foreach($task_services as $task_service) {
                 $this->deleteTaskService($id_space, $id_task, $task_service['id']);
