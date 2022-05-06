@@ -153,7 +153,6 @@ abstract class FormElement {
         if ($this->isMandatory()) {
             $reqTxt = ' *';
         }
-        Configuration::getLogger()->error('???????,',['l' => $this->label]);
         return <<<HTML
         <label class="{$this->getLabelSize()} col-form-label">{$this->label}{$reqTxt}</label>
         HTML;
