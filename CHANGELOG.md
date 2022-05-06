@@ -22,6 +22,7 @@
 * [cli] add config option to display configuration
 * [invoice][booking] manage case where total hours = 0
 * [core] add login button on welcome page
+* [booking] for multi slot bookings, do not display next slot content
 
 ## 2.5.4
 
