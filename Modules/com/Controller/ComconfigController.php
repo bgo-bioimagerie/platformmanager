@@ -94,7 +94,7 @@ class ComconfigController extends CoresecureController {
         $form->addSelect("use_space_home_page", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useSpaceHomePage);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -117,7 +117,7 @@ class ComconfigController extends CoresecureController {
         $form->addText("twitter_consumer_secret", ComTranslator::ConsumerKeySecret($lang), false, $twitter_consumer_secret);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

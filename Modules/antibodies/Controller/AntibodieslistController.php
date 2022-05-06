@@ -301,7 +301,6 @@ class AntibodieslistController extends AntibodiesController {
                 CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
             $catalogForm->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . '/' . $id);
             $catalogForm->setColumnsWidth(2, 10);
-            $catalogForm->setButtonsWidth(2, 0);
             
             if ($catalogForm->check()) {
                 $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
@@ -497,7 +496,6 @@ class AntibodieslistController extends AntibodiesController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);
-        $form->setButtonsWidth(2, 9);
         return $form;
     }
 

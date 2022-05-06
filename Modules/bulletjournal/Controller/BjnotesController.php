@@ -80,7 +80,7 @@ class BjnotesController extends CoresecureController {
         $form->addDate("formnotedate", CoreTranslator::Date($lang), true, "");
         $form->addTextArea("formnotecontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditnotequery/".$id_space);
         return $form->getHtml($lang);
     }
@@ -95,7 +95,7 @@ class BjnotesController extends CoresecureController {
         $form->addDate("formtaskdeadline", BulletjournalTranslator::Deadline($lang), false, "");
         $form->addTextArea("formtaskcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjedittask/".$id_space);
         return $form->getHtml($lang);
     }
@@ -111,7 +111,7 @@ class BjnotesController extends CoresecureController {
         //$form->addHour("formeventdateendhour", BulletjournalTranslator::HourEnd($lang), true);
         $form->addTextArea("formeventcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditevent/".$id_space);
         return $form->getHtml($lang);
     }

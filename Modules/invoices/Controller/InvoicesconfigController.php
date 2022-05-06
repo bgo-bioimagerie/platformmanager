@@ -41,7 +41,6 @@ class InvoicesconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelSpace = new CoreSpace();
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
@@ -57,23 +56,21 @@ class InvoicesconfigController extends CoresecureController {
             $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $id_space);
             $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
 
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // options
         $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
         if ($formUseInvoiceDatePaid->check()) {
             $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang),
             $formPeriod->getHtml($lang)
         );
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     function checkTemplate($id_space) {
@@ -172,7 +169,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUpload->addUpload("template", "");
         $formUpload->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/" . $id_space);
         $formUpload->setColumnsWidth(0, 12);
-        $formUpload->setButtonsWidth(2, 10);
+
         if ($formUpload->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
                 mkdir('data/invoices/' . $id_space, 0755, true);
@@ -212,7 +209,7 @@ class InvoicesconfigController extends CoresecureController {
         $formUploadImages->setTitle(InvoicesTranslator::UploadImages($lang));
         $formUploadImages->addUpload("image", "");
         $formUploadImages->setValidationButton(CoreTranslator::Ok($lang), "invoicepdftemplate/" . $id_space);
-        $formUploadImages->setButtonsWidth(2, 10);
+
         $formUploadImages->setColumnsWidth(0, 12);
         if ($formUploadImages->check()) {
             if (!file_exists('data/invoices/' . $id_space)) {
@@ -271,7 +268,7 @@ class InvoicesconfigController extends CoresecureController {
         $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useDatePaid);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -286,7 +283,7 @@ class InvoicesconfigController extends CoresecureController {
         $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

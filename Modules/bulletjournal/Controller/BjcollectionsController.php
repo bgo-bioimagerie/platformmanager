@@ -48,7 +48,7 @@ class BjcollectionsController extends CoresecureController {
         $form->setTitle(BulletjournalTranslator::Edit_collection($lang));
         $form->addText("name", CoreTranslator::Name($lang), true, $collection["name"]);
         $form->setValidationButton(CoreTranslator::Ok($lang), "bjcollectionsedit/".$id_space."/".$id);
-        $form->setButtonsWidth(2, 9);
+
         if($form->check()){
             $model->set($id, $id_space, $form->getParameter("name"));
             $this->redirect("bjcollections/".$id_space);

@@ -38,7 +38,7 @@ class CoreinstallController extends Controller {
         $form->addPassword("password", coreTranslator::password($lang), false);
         $form->addText("db_name", coreTranslator::db_name($lang), true, "");
         $form->setValidationButton(coreTranslator::Next($lang), "install");
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
 

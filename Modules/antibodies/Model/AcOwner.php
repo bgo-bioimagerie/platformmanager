@@ -20,7 +20,7 @@ class AcOwner extends Model {
      */
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
-                    `id` int(11) NOT NULL,
+                    `id` int(11) NOT NULL AUTO_INCREMENT,
                     `id_anticorps` int(11) NOT NULL,
                     `id_utilisateur` int(11) NOT NULL,	
                     `disponible` int(2) NOT NULL,		

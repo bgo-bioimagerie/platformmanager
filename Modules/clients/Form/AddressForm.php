@@ -39,7 +39,7 @@ class AddressForm extends FormGenerator{
         $this->form->addText("country", ClientsTranslator::Country($this->lang), true, $this->getData("country"));
         
         $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl); 
-        $this->form->setButtonsWidth(2, 10);
+
     }
    
     public function save(){

@@ -73,7 +73,7 @@ class ComnewsController extends ComController {
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "comnewsedit/" . $id_space);
         $form->setColumnsWidth(2, 10);
-        $form->setButtonsWidth(1, 11);
+
 
         if ($form->check()) {
             // edit database

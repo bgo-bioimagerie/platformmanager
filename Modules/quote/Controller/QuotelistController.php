@@ -147,7 +147,7 @@ class QuotelistController extends QuoteController {
         }
 
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
         if ($form->check()) {
@@ -300,7 +300,7 @@ class QuotelistController extends QuoteController {
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
             $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));
@@ -402,7 +402,6 @@ class QuotelistController extends QuoteController {
 
         // generate pdf
         $address = nl2br($info["address"]);
-        $adress = $address; // backwark compat
         $resp = $info["recipient"];
         $clientInfos["email"] = "";
         if (is_array($info["client"]) && !empty($info["client"])) {
@@ -456,11 +455,8 @@ class QuotelistController extends QuoteController {
         // convert in PDF
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
-            //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
-            //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
             $html2pdf->writeHTML($content);
-            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>";
             $html2pdf->Output(QuoteTranslator::quote($lang) . "_" . $resp . '.pdf');
             return;
         } catch (Exception $e) {
@@ -484,8 +480,6 @@ class QuotelistController extends QuoteController {
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
 
-        //print_r($invoice);
-        $total = 0;
         foreach ($tableData as $d) {
 
             $table .= "<tr>";
@@ -494,7 +488,6 @@ class QuotelistController extends QuoteController {
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'], 2, ',', ' ') . " &euro;</td>";
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'] * $d['quantity'], 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
-            $total += $d['total'];
         }
         $table .= "</table>";
         return $table;
