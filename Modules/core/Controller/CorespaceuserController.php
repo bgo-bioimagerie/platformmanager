@@ -65,9 +65,9 @@ class CorespaceuserController extends CorespaceaccessController {
         $modelSpace = new CoreSpace();
         $moduleRole = CoreSpace::$INACTIF;
         if (in_array('clients', $modules)) {
-            $moduleRole = $modelSpace->getSpaceMenusRole('clients', $id_space);
+            $moduleRole = $modelSpace->getSpaceMenusRole($id_space, 'clients');
         }
-        if ($moduleRole > CoreSpace::$INACTIF) {
+        if ($moduleRole) {
             $clientsUsersCTRL = new ClientsuseraccountsController($this->request);
             $clientsUserForm = $clientsUsersCTRL->generateClientsUserForm($id_space, $id_user, $todo);
             $clientsUserFormHtml = $clientsUserForm->getHtml($lang);
@@ -88,9 +88,9 @@ class CorespaceuserController extends CorespaceaccessController {
         $bkHistoryTableHtml = "";
         $moduleRole = CoreSpace::$INACTIF;
         if (in_array('booking', $modules)) {
-            $moduleRole = $modelSpace->getSpaceMenusRole('clients', $id_space);
+            $moduleRole = $modelSpace->getSpaceMenusRole($id_space, 'booking');
         }
-        if ($moduleRole > CoreSpace::$INACTIF) {
+        if ($moduleRole) {
             $bookingAuthCTRL = new BookingauthorisationsController($this->request);
             $bkAuthAddForm = $bookingAuthCTRL->generateBkAuthAddForm($id_space, $id_user, "corespaceuseredit", $lang, $todo);
             $bkAuthAddFormHtml = $bkAuthAddForm->getHtml($lang);
