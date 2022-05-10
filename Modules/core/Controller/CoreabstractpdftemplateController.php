@@ -214,7 +214,6 @@ abstract class PfmTemplateController extends CoresecureController {
         $formUpload->addUpload("template", "");
         $formUpload->setValidationButton(CoreTranslator::Ok($lang), "/$module/$id_space/pdftemplate");
         $formUpload->setColumnsWidth(0, 12);
-        $formUpload->setButtonsWidth(2, 10);
         if ($formUpload->check()) {
             if (!file_exists('data/'.$module.'/' . $id_space)) {
                 mkdir('data/'.$module.'/' . $id_space, 0755, true);

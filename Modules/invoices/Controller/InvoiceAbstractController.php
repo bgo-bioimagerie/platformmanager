@@ -41,7 +41,7 @@ abstract class InvoiceAbstractController extends InvoicesController {
         $company = $clcm->getForSpace($id_space);
         if(!isset($company['name'])) {
             $company = [
-                'name' => $this->currentSpace['name'],
+                'name' => $space['name'],
                 'address' => '',
                 'city' => '',
                 'zipcode' => '',
