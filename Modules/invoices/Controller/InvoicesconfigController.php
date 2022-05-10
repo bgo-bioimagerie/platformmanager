@@ -44,6 +44,8 @@ class InvoicesconfigController extends PfmTemplateController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $modelCoreConfig = new CoreConfig();
+
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
         if ($formMenusactivation->check()) {
@@ -58,23 +60,21 @@ class InvoicesconfigController extends PfmTemplateController {
             $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $id_space);
             $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
 
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // options
         $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
         if ($formUseInvoiceDatePaid->check()) {
             $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
-            $this->redirect("invoicesconfig/" . $id_space);
-            return;
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang),
             $formPeriod->getHtml($lang)
         );
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     public function pdftemplateAction($id_space) {
@@ -96,7 +96,7 @@ class InvoicesconfigController extends PfmTemplateController {
         $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useDatePaid);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -111,7 +111,7 @@ class InvoicesconfigController extends PfmTemplateController {
         $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

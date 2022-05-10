@@ -164,8 +164,8 @@ class ServicesInvoice extends InvoiceModel {
         $number = $modelInvoice->getNextNumber($id_space);
         $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
-        foreach($contentAll['services'] as $s){
-            $modelProject->setServiceInvoice($id_space, $s['id'], $id_invoice);
+        foreach($contentAll['servicesToInvoice'] as $s){
+            $modelProject->setServiceInvoice($id_space, $s, $id_invoice);
         }
 
         $total_ht = $contentAll['total_ht'];
@@ -244,7 +244,7 @@ class ServicesInvoice extends InvoiceModel {
         for ($i = 0; $i < count($serviceList); $i++) {
             $content .= $serviceList[$i]['id'] . "=" . $serviceList[$i]['quantity'] . "=" . $serviceList[$i]['unitprice'] . "=" . $serviceList[$i]['comment'] . ";";
         }
-        return ['total_ht' => $total_ht, 'content' => $content, 'services' => $serviceList];
+        return ['total_ht' => $total_ht, 'content' => $content, 'services' => $serviceList, 'servicesToInvoice' => $servicesToInvoice];
     }
     
     public function invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang) {
@@ -282,7 +282,10 @@ class ServicesInvoice extends InvoiceModel {
         foreach($projectServices as $projectService){
             $name = $ssm->getName($id_space, $projectService['id']);
             $content["count"][] = array("id" => $projectService['id'], "label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
-            $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
+            // $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
+        }
+        foreach($projectsContent['servicesToInvoice'] as $s){
+            $modelProject->setServiceInvoice($id_space, $s, $id_invoice);
         }
 
         return $content;

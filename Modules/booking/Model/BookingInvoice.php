@@ -152,7 +152,7 @@ class BookingInvoice extends InvoiceModel {
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
 
             // get list of quantities
-            $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($id_space, $res["id"]);
+            $calQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"]);
             $calQuantities = ($calQuantities != null) ? $calQuantities : [];
 
             // tell if there's an invoicing unit for this resource amongst quantities and get its ID

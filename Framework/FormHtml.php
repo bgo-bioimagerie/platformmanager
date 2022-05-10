@@ -231,12 +231,11 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
-     * @param type $lang
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function date($validated, $label, $name, $value, $lang, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function date($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
 
         $star = "";
         if ($required != "") {
@@ -263,7 +262,7 @@ class FormHtml {
      * @param type $lang
      * @return string
      */
-    static public function inlineDate($name, $value, $vect = false, $lang = "en") {
+    static public function inlineDate($name, $value, $vect = false) {
 
         $vectv = "";
         if ($vect) {
@@ -284,15 +283,12 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
-     * @param type $lang
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function hour($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+    static public function hour($validated, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        //echo "hours values html = ";
-        //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-12 col-md-" . $inputWidth . "'>";
@@ -311,10 +307,8 @@ class FormHtml {
         return $html;
     }
 
-    static public function datetime($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+    static public function datetime($validated, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        //echo "hours values html = ";
-        //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"col-12\">";
         $html .= "<div class=\"mb-3 row" . $validated . "\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";

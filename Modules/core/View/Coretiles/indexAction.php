@@ -50,7 +50,7 @@
                         }
                         ?>
                         <div class="card">
-                        <?php if(isset($icon)) {?><img class="card-img-top" src="<?php echo $icon ?>" alt="logo" style="width: 100%"><?php } ?>
+                        <?php if(isset($icon)) {?><img class="card-img-top" src="<?php echo $icon ?>" alt="logo" style="width: 100%; max-width:200px"><?php } ?>
                         <div class="card-header" style="background-color:<?php echo $color ?>">
                             <a href="<?php echo $key ?>"><?php echo $value ?></a>
                         </div>
@@ -75,8 +75,8 @@
 
                             <!-- DESC -->
                             <div class="card-body">
-                            <?php if(isset($item["image"])) {?><img class="card-img-top" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%"><?php } ?>
-                                <?php echo $item["description"] ?>
+                                <?php if(isset($item["image"])) {?><img class="card-img-top" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%; max-width:200px"><?php } ?>
+                                <p><?php echo $item["description"] ?></p>
                             </div>
                             <div class="card-footer">
                                 <small class="mb-1">

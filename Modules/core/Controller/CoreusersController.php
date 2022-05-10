@@ -128,7 +128,7 @@ class CoreusersController extends CoresecureController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coreusers");
-        $form->setButtonsWidth(3, 8);
+
 
 
         $rolesTableHtml  = '';
@@ -139,7 +139,7 @@ class CoreusersController extends CoresecureController {
             $formPwd->addPassword("pwd", CoreTranslator::New_password($lang));
             $formPwd->addPassword("pwdconfirm", CoreTranslator::New_password($lang));
             $formPwd->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
-            $formPwd->setButtonsWidth(3, 8);
+
 
 
             $csm = new CoreSpace();
@@ -336,7 +336,7 @@ class CoreusersController extends CoresecureController {
         $formPwd->addPassword("pwd", CoreTranslator::New_password($lang));
         $formPwd->addPassword("confirm", CoreTranslator::Confirm($lang));
         $formPwd->setValidationButton(CoreTranslator::Save($lang), "coremyaccount");
-        $formPwd->setButtonsWidth(3, 8);
+
 
         if ($formPwd->check()) {
 
@@ -396,7 +396,7 @@ class CoreusersController extends CoresecureController {
             $choicesidview,
             $lang
         );
-        $form->setButtonsWidth(4, 8);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "coreuserslanguageedit");
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
 

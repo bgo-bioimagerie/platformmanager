@@ -2,6 +2,8 @@
 
 ## 2.6.0
 
+* [booking] in booking invoice details, show related bookings
+* [core] remove lasting references to ec classes
 * [booking] fix closed days hidding in summary view
 * [booking_settings] add getDefault to BkNightWE class 
 * [core] remove lasting references to ec classes
@@ -11,8 +13,29 @@
 * [booking] hide nightwe entries if pricing does not exists anymore
 * [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
+* [booking][supplementaries] avoid having two sups with the same name for the same resource 
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
+* [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
+* [invoice][booking] manage case where total hours = 0
+* [core] add login button on welcome page
+* [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+
+## 2.5.4
+
+* [core][antibodies] fix acowner table definition and fix delete javascript function #638
+
+## 2.5.3
+
+* [invoice][services] fix services invoices (invoice id not set) #637
+
+## 2.5.2
+
+* [services] user is no longer mandatory in project and order forms
 
 ## 2.5.1
 

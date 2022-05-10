@@ -281,7 +281,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, $project["samplereturndate"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             
@@ -335,7 +335,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addTextArea("samplescomment", ServicesTranslator::Comment($lang), false, $project["samplescomment"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsample/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $modelProject->setSampleStock(
@@ -383,10 +383,10 @@ class ServicesprojectsController extends ServicesController {
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
 
-        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
-        $form->addSelect("id_resp", CoreTranslator::Responsible($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
+        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
 
         $newIDs = array(1, 2, 3);
         $newNames = array(CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
@@ -402,11 +402,11 @@ class ServicesprojectsController extends ServicesController {
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
-
-            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), $value["date_close"], $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
+            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $id_user, CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), $value["date_close"], $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
 
             $modelProject->setOrigin($id_space, $id, $this->request->getParameter("id_origin"));
             $modelProject->setInCharge($id_space ,$id, $this->request->getParameter("in_charge"));
@@ -483,7 +483,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "");
 
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojecteditentryquery/" . $id_space);
         return $form->getHtml($lang);
     }
@@ -540,11 +540,11 @@ class ServicesprojectsController extends ServicesController {
         $modelVisa = new SeVisa();
         $inChargeList = $modelVisa->getForList($id_space);
 
-        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
+        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
         // id_client is denominated id_resp in se_project table
         $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $value["id_resp"]);
-        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
-        $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
+        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
 
         $newIDs = array("", 1, 2, 3);
         $newNames = array("", CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
@@ -585,11 +585,11 @@ class ServicesprojectsController extends ServicesController {
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
-
-            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_client"), $this->request->getParameter("id_user"), CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
+            $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
+            $id_project = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_client"), $id_user, CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang), $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
             $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
             $modelProject->setInCharge($id_space, $id_project, $this->request->getParameter("in_charge"));
 

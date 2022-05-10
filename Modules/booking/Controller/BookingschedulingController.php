@@ -119,7 +119,7 @@ class BookingschedulingController extends BookingsettingsController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setColumnsWidth(3, 9);
-        $form->setButtonsWidth(3, 9);
+
 
 
         if($bkScheduling["force_packages"] ?? 0) {

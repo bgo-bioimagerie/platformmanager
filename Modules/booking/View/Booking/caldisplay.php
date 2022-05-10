@@ -148,11 +148,10 @@ th {
 							<?php } ?>
 						<?php } else { ?>
 						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+							<?php if(!$hcalEntry['expand']) { ?>
 							<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
-							<?php if($calEntry['text'] && $hcalEntry['expand']) {
-								echo '<div>'.$hcalEntry['hstart'].' - '.$hcalEntry['hend'].'</div>';
-							}?>
 							</a>
+							<?php } ?>
 						</div>
 						<?php } ?>
 					</td>

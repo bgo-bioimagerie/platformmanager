@@ -49,7 +49,7 @@ Variables:
     <br>
     <div style="width: 100%">
         <div style="display:inline-block; vertical-align:top;">
-            <table cellspacing="0" style="width: 100%; text-align: left;font-size: 10pt">
+            <table style="width: 100%; text-align: left;font-size: 10pt">
                 <tr>
                     <td style="width:50%;">
                         <strong>{{company.name}}</strong><br/>
@@ -60,7 +60,7 @@ Variables:
                 <tr>   
                     <td style="width:50%;">
                         Personne à contacter :
-                        <b>{{space.contact}}</b><br/>
+                        <strong>{{space.contact}}</strong><br/>
 						Couriel : {{company.email}}<br/>	
                         Tél : {{company.tel}}<br/>
 
@@ -105,7 +105,7 @@ Variables:
     </p>
 
     {{ table | raw }}
-    <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
+    <table style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
         <tr>
             <th style="width: 87%; text-align: right;">Total : </th>
             <th style="width: 13%; text-align: right;">{{ total | number_format(2, ',', ' ')}} &euro;</th>
@@ -113,7 +113,7 @@ Variables:
     </table>
     {% if useTTC %}
         <br>
-        <table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
+        <table style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
             <tr>
                 <th style="width: 87%; text-align: right;">TVA 20%: </th>
                 <th style="width: 13%; text-align: right;">{{ (0.2 * total) | number_format(2, ',', ' ')}} &euro;</th>
@@ -126,7 +126,7 @@ Variables:
     {% endif %}
     <br>
     <nobreak>
-        <table cellspacing="0" style="width: 100%; text-align: left;">
+        <table style="width: 100%; text-align: left;">
 
             <tr>
                 <td style="width:60%; color:red;">
@@ -136,7 +136,7 @@ Variables:
 
                 </td>
                 <td style="width:40%; border: 1px dashed #000;">
-                    <b>Bon pour accord le :</b><br>
+                    <strong>Bon pour accord le :</strong><br>
                     Cachet et signature :<br>
                 </td>
             </tr>

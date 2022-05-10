@@ -7,6 +7,11 @@ class Constants {
     const COLOR_BLACK = '#000000';
     const COLOR_WHITE = '#ffffff';
 
+    const DATEALL_FORMAT = 'Y-m-d H:i:s';
+    const DATETIME_FORMAT = 'Y-m-d H:i';
+    const DATE_FORMAT = 'Y-m-d';
+    const TIME_FORMAT = 'H:i';
+
 }
 
 ?>

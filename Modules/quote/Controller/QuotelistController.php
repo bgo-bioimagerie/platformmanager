@@ -149,7 +149,7 @@ class QuotelistController extends QuoteController {
         }
 
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
         if ($form->check()) {
@@ -302,7 +302,7 @@ class QuotelistController extends QuoteController {
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
             $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));
@@ -517,7 +517,7 @@ class QuotelistController extends QuoteController {
             if($toFile || getenv("PFM_MODE") == "test") {
                 $html2pdf->Output($out, 'F');
             } else {
-                $html2pdf->Output("quote_" . $resp . '.pdf');
+                $html2pdf->Output(QuoteTranslator::quote($lang) . $resp . '.pdf');
             }
             
         } catch (Exception $e) {

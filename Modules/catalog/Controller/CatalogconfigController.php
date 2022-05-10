@@ -117,7 +117,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_antibodies);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -132,7 +132,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addSelect("ca_use_resources", CatalogTranslator::Resources_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_resources);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -149,7 +149,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addUpload("CaPublicPageLogo", CatalogTranslator::Logo($lang));
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

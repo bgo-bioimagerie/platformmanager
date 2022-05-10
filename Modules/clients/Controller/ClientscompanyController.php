@@ -65,7 +65,7 @@ class ClientscompanyController extends ClientsController {
         }
 
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
-        $form->setButtonsWidth(4, 8);
+
 
         // Check if the form has been validated
         if ($form->check()) {

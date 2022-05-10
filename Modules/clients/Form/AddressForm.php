@@ -43,7 +43,6 @@ class AddressForm extends FormGenerator{
         } else {
             $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl); 
         }
-        $this->form->setButtonsWidth(2, 10);
     }
    
     public function save(){

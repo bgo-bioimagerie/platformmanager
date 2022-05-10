@@ -51,7 +51,6 @@ class ClCompany extends Model {
         if ($clCompany === false) {
             return [];
         }
-        //$clCompany = !($clCompany === false) ?: [];
         return $clCompany;
     }
 

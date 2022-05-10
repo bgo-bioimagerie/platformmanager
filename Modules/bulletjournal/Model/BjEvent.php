@@ -32,7 +32,7 @@ class BjEvent extends Model {
     public function getForNote($id_space, $id_note) {
         $sql = "SELECT bj_events.*, bj_notes.* FROM bj_events "
                 . "INNER JOIN bj_notes ON bj_events.id_note=bj_notes.id "
-                . "WHERE bj_events.id_note=? AND id_space=? AND deleted=0";
+                . "WHERE bj_events.id_note=? AND bj_events.id_space=? AND bj_events.deleted=0";
         return $this->runRequest($sql, array($id_note, $id_space))->fetch();
     }
 

@@ -80,7 +80,7 @@ class MailerconfigController extends CoresecureController {
         $form->addSelect("MailerSetCopyToFrom", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $MailerSetCopyToFrom);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -95,7 +95,7 @@ class MailerconfigController extends CoresecureController {
         $form->addSelect("mailerEdit", "", array(CoreTranslator::Manager($lang), CoreTranslator::Admin($lang)), array(CoreSpace::$MANAGER, CoreSpace::$ADMIN), $mailEdit);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
