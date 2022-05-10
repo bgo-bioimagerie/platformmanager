@@ -33,8 +33,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $_SESSION["openedNav"] = "invoices";
     }
 
@@ -62,7 +62,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     public function editAction($id_space, $id_invoice, $pdf = 0) {
-
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();

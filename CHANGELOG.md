@@ -24,6 +24,7 @@
 * [core] add login button on welcome page
 * [booking] for multi slot bookings, do not display next slot content
 * [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
 
 ## 2.5.4
 
