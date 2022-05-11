@@ -124,3 +124,7 @@ And .env file should define (according to variables used):
   * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
   * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
   * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set
+
+### Install
+
+See [install](./upgrade)

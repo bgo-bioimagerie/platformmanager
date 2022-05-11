@@ -22,6 +22,23 @@ class ClCompany extends Model {
         $this->primaryKey = "id";
     }
 
+    public function default($id_space) {
+        return [
+            "id" => 0,
+            "id_space" => $id_space,
+            "name" => "",
+            "address" => "",
+            "zipcode" => "",
+            "city" => "",
+            "county" => "",
+            "country" => "",
+            "tel" => "",
+            "fax" => "",
+            "email" => "",
+            "approval_number" => ""
+        ];
+    }
+
     /**
      * Get the clCompany for this space
      * @param string|int $id_space 
@@ -34,7 +51,6 @@ class ClCompany extends Model {
         if ($clCompany === false) {
             return [];
         }
-        //$clCompany = !($clCompany === false) ?: [];
         return $clCompany;
     }
 

@@ -109,7 +109,9 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
 				if($calEntry['end_time'] > $end) {
 					$calEntry['end_time'] = $end;
 				}
-				$calEntry['expand'] = true;
+				if($i>0){
+					$calEntry['expand'] = true;
+				}
 				$cal[] = $calEntry;
 				$calEntry['start_time'] += $size_bloc_resa;
 			}

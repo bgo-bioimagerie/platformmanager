@@ -20,6 +20,21 @@
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
 * [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
+* [invoice][booking] manage case where total hours = 0
+* [core] add login button on welcome page
+* [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
+* [antibodies] fix tissus image column width #643
+
+## 2.5.4
+
+* [core][antibodies] fix acowner table definition and fix delete javascript function #638
+
+## 2.5.3
+
+* [invoice][services] fix services invoices (invoice id not set) #637
 
 ## 2.5.2
 

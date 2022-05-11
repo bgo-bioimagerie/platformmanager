@@ -45,7 +45,7 @@ class InvoicesBaseTest extends BaseTest {
         }
         $this->assertTrue($invoicesEnabled);
 
-        $template = __DIR__."/../externals/pfm/templates/invoice_template.twig";
+        $template = __DIR__."/../externals/pfm/templates/invoices_template.twig";
         copy($template, "/tmp/test.twig");
         $_FILES = ["template" => ["error" => 0, "name" => "test.twig", "tmp_name" => "/tmp/test.twig", "size" => filesize($template)]];
         $req = $this->request([

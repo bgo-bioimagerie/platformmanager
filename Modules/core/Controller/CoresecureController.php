@@ -152,7 +152,7 @@ abstract class CoresecureController extends CorecookiesecureController {
         $form->addColor($module."DisplayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
 
         $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -181,7 +181,7 @@ abstract class CoresecureController extends CorecookiesecureController {
         $form->addText($module."MenuName", CoreTranslator::Name($lang), false, $menuName);
 
         $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

@@ -3,7 +3,7 @@ title: "Requirements"
 date: 2021-06-23T15:52:39+02:00
 weight: 1
 ---
-## Install from source
+## Base requirements
 
 * Database: mysql > 5.6, tested on 8
 * PHP:
@@ -29,9 +29,15 @@ Apache should also have specific pfm configuration:
     </Directory>
 
 * Rabbitmq server for additional services (pfm-events, etc.)
+* Redis
 * Influxdb server for statistics (optional)
-* Redis for prometheus statistics support (optional for prometheus, mandatory for module antibodies)
 
 ## Install with docker
 
 You just need docker and docker-compose ;-)
+
+See [docker](./docker)
+
+## Install from source
+
+See [source](./source)

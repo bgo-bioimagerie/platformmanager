@@ -567,7 +567,7 @@ class BkCalendarEntry extends Model {
        return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
-    public function isConflictP($id_space, $start_time, $end_time, array $resources_id, $id_period) {
+    public function isConflictPeriod($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			(
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR
@@ -1038,9 +1038,14 @@ class BkCalendarEntry extends Model {
         $nb_hours_night = round($nb_night / 3600, 2);
         $nb_hours_we = round($nb_we / 3600, 2);
         $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
-        $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
-        $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
-        $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+        $ratio_bookings_day = 0;
+        $ratio_bookings_night = 0;
+        $ratio_bookings_we = 0;
+        if($totalHours > 0) {
+            $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+            $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+            $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+        }
 
         $result = [
             'total' => $total_duration,

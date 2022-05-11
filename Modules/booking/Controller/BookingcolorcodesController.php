@@ -81,7 +81,6 @@ class BookingcolorcodesController extends BookingsettingsController {
         
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes/".$id_space);
-        $form->setButtonsWidth(3, 9);
         
         if ($form->check()){
             

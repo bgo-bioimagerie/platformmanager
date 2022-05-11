@@ -77,7 +77,7 @@ class StatisticsglobalController extends StatisticsController {
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
         $form->setValidationButton(CoreTranslator::Ok($lang), 'statisticsglobal/' . $id_space);
-        $form->setButtonsWidth(2, 8);
+
 
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);

@@ -73,7 +73,7 @@ class StatisticsconfigController extends CoresecureController {
         $form->addDate("statisticsperiodend", StatisticsTranslator::statisticsperiodend($lang), true, $projectperiodend);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "statisticsconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

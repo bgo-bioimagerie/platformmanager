@@ -122,7 +122,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addText("SeProjectDelayWarning", "", false, $SeProjectDelayWarning);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -137,7 +137,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addDate("projectperiodend", ServicesTranslator::projectperiodend($lang), true, $projectperiodend);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -157,7 +157,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesusecommand", ServicesTranslator::UseCommand($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusecommand);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -172,7 +172,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusestock);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

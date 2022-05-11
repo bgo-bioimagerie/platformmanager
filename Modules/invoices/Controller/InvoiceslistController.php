@@ -207,7 +207,7 @@ class InvoiceslistController extends InvoicesController {
         else{
             $form->addHidden("date_paid", "");
         }
-        $form->setButtonsWidth(3, 8);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceinfo/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "invoices/" . $id_space);
 

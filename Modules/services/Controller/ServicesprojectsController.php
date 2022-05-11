@@ -298,7 +298,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, $project["samplereturndate"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             
@@ -353,7 +353,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addTextArea("samplescomment", ServicesTranslator::Comment($lang), false, $project["samplescomment"]);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsample/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $modelProject->setSampleStock(
@@ -426,7 +426,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
@@ -614,7 +614,7 @@ class ServicesprojectsController extends ServicesController {
         $form->addTextArea("formservicecomment", ServicesTranslator::Comment($lang), false, "");
 
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojecteditentryquery/" . $id_space);
         return $form->getHtml($lang);
     }
@@ -716,7 +716,7 @@ class ServicesprojectsController extends ServicesController {
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");

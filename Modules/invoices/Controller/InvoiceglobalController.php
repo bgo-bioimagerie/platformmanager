@@ -329,7 +329,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
 
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
         return $form;
@@ -347,7 +347,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $resps = $modelClients->getForList($id_space);
         
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
         return $form;

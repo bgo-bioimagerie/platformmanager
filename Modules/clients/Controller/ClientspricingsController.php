@@ -122,7 +122,7 @@ class ClientspricingsController extends ClientsController {
 
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clpricings/" . $id_space);
-        $form->setButtonsWidth(4, 8);
+
 
         // Check if the form has been validated
         if ($form->check()) {
