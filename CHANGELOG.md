@@ -16,6 +16,7 @@
 * [mail] add support for custom headers
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
+* [antibodies] use bootstrap modals and fix some menu urls
 
 ### Bug fixes
 
