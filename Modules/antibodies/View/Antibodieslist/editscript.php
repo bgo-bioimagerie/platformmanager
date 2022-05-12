@@ -1,6 +1,8 @@
 <?php ?>
 
 <script>
+
+
     $(document).ready(function () {
 
         $("#hider").hide();
