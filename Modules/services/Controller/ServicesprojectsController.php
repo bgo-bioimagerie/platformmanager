@@ -383,66 +383,87 @@ class ServicesprojectsController extends ServicesController {
         );
     }
 
-    public function sheetAction($id_space, $id) {
-
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
-        $lang = $this->getLanguage();
-
-        $form = new Form($this->request, "projectEditForm");
+    protected function generateProjectForm($id_space, $id, $lang) {
 
         $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id_space, $id);
+        $form = new Form($this->request, "projectEditForm");
 
         // ADD USERS SELECTION
         $projectUsers = $modelProject->getProjectUsersIds($id_space, $id);
         $projectUserIds = [];
         foreach($projectUsers as $pUser) {
             array_push($projectUserIds, $pUser['id_user']);
-        }
-        
+        }        
+
+        $value = null;
+        $items = array();
         if ($id > 0) {
-            $value = $modelProject->getEntry($id_space, $id);
+            $value = $modelProject->getEntry($id_space , $id);
+            $items = $modelProject->getProjectServices($id_space, $id);
             array_push($projectUserIds, $value['id_user']);
         } else {
+            $form->setTitle(ServicesTranslator::Add_projects($lang), 3);
             $value = $modelProject->defaultEntryValues();
+            $items = array("dates" => array(), "services" => array(), "quantities" => array(),
+                "comment" => array());
         }
+
         $projectUserIds = array_unique($projectUserIds);
 
         $modelUser = new CoreUser();
-        $modelClients = new ClClient();
-        $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
-        $resps = $modelClients->getForList($id_space);
-
+        $modelClient = new ClClient();
         $modelVisa = new SeVisa();
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
+        $clients = $modelClient->getForList($id_space);
         $inChargeList = $modelVisa->getForList($id_space);
 
-        $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
-        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
+        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
+        // id_client is denominated id_resp in se_project table
+        $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $value["id_resp"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-        $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
+        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
 
-        $newIDs = array(1, 2, 3);
-        $newNames = array(CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
+        $newIDs = array("", 1, 2, 3);
+        $newNames = array("", CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
 
-        $form->addSelect("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
-        $form->addSelect("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
+        $form->addSelectMandatory("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
+        $form->addSelectMandatory("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
 
         $modelOrigin = new SeOrigin();
         $origins = $modelOrigin->getForList($id_space);
-        $form->addSelect("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
+        $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
-        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), false, $value["time_limit"]);
+        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, $value["time_limit"]);
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
+        if ($id > 0) {
+            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $value["date_close"]);
+        } else {
+            $form->addHidden("date_close", $value["date_close"]);
+        }
 
         $formAddProjectUsers = new FormAdd($this->request, "project_users");
         $formAddProjectUsers->addSelect("users", CoreTranslator::Users($lang), $users["names"], $users["ids"], $projectUserIds);
         $formAddProjectUsers->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAddProjectUsers, CoreTranslator::Users($lang));
 
+        return $form;
+
+    }
+
+    public function sheetAction($id_space, $id) {
+
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $lang = $this->getLanguage();
+
+        $modelProject = new SeProject();
+        $projectName = $modelProject->getName($id_space, $id);
+
+        $form = $this->generateProjectForm($id_space, $id, $lang);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
+
         if ($form->check()) {
-            $id = $this->updateProject($id, $id_space, $lang, $value['date_close']);
+            $id = $this->updateProject($id, $id_space, $lang);
 
             $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
@@ -658,87 +679,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $form = new Form($this->request, "projectEditForm");
-        $form->setTitle(ServicesTranslator::Add_projects($lang), 3);
-
-        $modelProject = new SeProject();
-
-         // ADD USERS SELECTION
-         $projectUsers = $modelProject->getProjectUsersIds($id_space, $id);
-         $projectUserIds = [];
-         foreach($projectUsers as $pUser) {
-             array_push($projectUserIds, $pUser['id_user']);
-         }
-         
-         $projectUserIds = array_unique($projectUserIds);
-
-        if ($id > 0) {
-            $value = $modelProject->getEntry($id_space , $id);
-            $items = $modelProject->getProjectServices($id_space, $id);
-            array_push($projectUserIds, $value['id_user']);
-        } else {
-            $value = $modelProject->defaultEntryValues();
-            $items = array("dates" => array(), "services" => array(), "quantities" => array(),
-                "comment" => array());
-        }
-
-        $modelUser = new CoreUser();
-        $modelClient = new ClClient();
-        $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
-        $clients = $modelClient->getForList($id_space);
-
-        $modelVisa = new SeVisa();
-        $inChargeList = $modelVisa->getForList($id_space);
-
-        $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
-        // id_client is denominated id_resp in se_project table
-        $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $value["id_resp"]);
-        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-        $form->addSelectMandatory("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
-
-        $newIDs = array("", 1, 2, 3);
-        $newNames = array("", CoreTranslator::no($lang), ServicesTranslator::Academique($lang), ServicesTranslator::Industry($lang));
-
-        $form->addSelectMandatory("new_team", ServicesTranslator::New_team($lang), $newNames, $newIDs, $value["new_team"]);
-        $form->addSelectMandatory("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
-
-        $modelOrigin = new SeOrigin();
-        $origins = $modelOrigin->getForList($id_space);
-        $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
-
-        $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, $value["time_limit"]);
-        $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
-        if ($id > 0) {
-            $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $value["date_close"]);
-        } else {
-            $form->addHidden("date_close", $value["date_close"]);
-        }
-
-        $formAddProjectUsers = new FormAdd($this->request, "project_users");
-        $formAddProjectUsers->addSelect("users", CoreTranslator::Users($lang), $users["names"], $users["ids"], $projectUserIds);
-        $formAddProjectUsers->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
-        $form->setFormAdd($formAddProjectUsers, CoreTranslator::Users($lang));
-
-        if ($id > 0) {
-            $modelServices = new SeService();
-            $services = $modelServices->getForList($id_space);
-
-            $formAddServices = new FormAdd($this->request, "projectEditForm");
-
-            $trDates = array();
-            foreach ($items["dates"] as $d) {
-                $trDates[] = CoreTranslator::dateFromEn($d, $lang);
-            }
-
-            $formAddServices->addDate("date", CoreTranslator::Date($lang), $trDates);
-            $formAddServices->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-            $formAddServices->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
-            $formAddServices->addText("comment", ServicesTranslator::Comment($lang), $items["comments"]);
-            $formAddServices->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
-            $form->addSeparator(ServicesTranslator::Services_list($lang));
-            $form->setFormAdd($formAddServices);
-        }
-
+        $form = $this->generateProjectForm($id_space, $id, $lang);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $id_space . "/" . $id);
 
         if ($form->check()) {
@@ -749,11 +690,10 @@ class ServicesprojectsController extends ServicesController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    protected function updateProject($id, $id_space, $lang, $date_close=null) {
+    protected function updateProject($id, $id_space, $lang) {
         $modelProject = new SeProject();
         $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
         $pic = $this->request->getParameter("in_charge");
-        $date_close = !$date_close ? CoreTranslator::dateToEn($this->request->getParameterNoException("date_close"), $lang) : $date_close;
         $id_project =
             $modelProject->setProject(
                 $id,
@@ -762,7 +702,7 @@ class ServicesprojectsController extends ServicesController {
                 $this->request->getParameter("id_client"),
                 $id_user,
                 CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang),
-                $date_close,
+                CoreTranslator::dateToEn($this->request->getParameterNoException("date_close"), $lang),
                 $this->request->getParameter("new_team"),
                 $this->request->getParameter("new_project"),
                 CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang)
