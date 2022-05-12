@@ -103,11 +103,11 @@
                 <?php if ($userCanEdit) { ?>	
                     <input type="submit" class="btn btn-primary" value="Save" />
                     <?php if ($id_reservation > 0) { ?>
-                        <button id="deletebookingbutton" type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>
+                        <button onclick="showDelete()" id="deletebookingbutton" type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>
                     <?php
                         if ($id_period > 0){
                             ?>
-                            <button id="deletebookingperiodbutton" type="button" class="btn btn-danger"><?php echo BookingTranslator::DeletePeriod($lang) ?></button>
+                            <button onclick="showDeletePeriod()" id="deletebookingperiodbutton" type="button" class="btn btn-danger"><?php echo BookingTranslator::DeletePeriod($lang) ?></button>
                         <?php 
                         }
                     }
@@ -208,20 +208,48 @@ if ($packageChecked > 0) {
 <!--  *************  -->
 <!--  Popup windows  -->
 <!--  *************  -->
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-12"></div> 
-<div id="entriespopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
+<div id="entriespopup_box" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><?php echo CoreTranslator::Delete($lang) ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <?php echo $formDelete ?>
+        </div>
+        <div class="modal-footer">
+        </div>
+        </div>
+    </div>
 </div>
-<?php echo $formDelete ?>
-</div> 
-
-<div id="entriesperiodpopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="entriesperiodbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a>
+<div id="entriesperiodpopup_box" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><?php echo BookingTranslator::DeletePeriod($lang) ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <?php echo $formDeletePeriod ?>
+        </div>
+        <div class="modal-footer">
+        </div>
+        </div>
+    </div>
 </div>
-<?php echo $formDeletePeriod ?>
-</div> 
 
-<?php include 'Modules/booking/View/Bookingdefault/deletescript.php'; ?>
+<script>
+    function showDelete() {
+        let myModal = new bootstrap.Modal(document.getElementById('entriespopup_box'))
+        myModal.show();
+    }
+
+    function showDeletePeriod() {
+        let myModal = new bootstrap.Modal(document.getElementById('entriesperiodpopup_box'))
+        myModal.show();
+    }
+
+</script>
 
 <?php endblock(); ?>
