@@ -27,11 +27,6 @@
     
 </div>
 
-<!--  *************  -->
-<!--  Popup windows  -->
-<!--  *************  -->
-
-
 <div id="tissuspopup_box" class="modal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
