@@ -619,6 +619,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a id="tissus_link" href="" download rel="noreferrer,noopeneer"><button type="button" class="btn btn-secondary">Download</button></a>
       </div>
     </div>
   </div>
@@ -630,9 +631,11 @@
         $("#imagepopup_box").hide();
     });
 
-    function viewImage(id, imageFile) {
+    function viewImage(id, imageFile, imageUrl) {
         let img = document.getElementById('tissus_image')
         img.src = imageFile
+        let link = document.getElementById('tissus_link')
+        link.href = imageFile
         let myModal = new bootstrap.Modal(document.getElementById('imagepopup_box'))
         myModal.show();
     }
