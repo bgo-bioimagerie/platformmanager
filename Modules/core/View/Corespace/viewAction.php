@@ -6,9 +6,6 @@
 <?php
     if ($showCom) {
 ?>
-<!--  *************  -->
-<!--  Popup window  -->
-<!--  *************  -->
 
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
