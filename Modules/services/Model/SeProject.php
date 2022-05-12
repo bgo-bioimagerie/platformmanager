@@ -62,6 +62,16 @@ class SeProject extends Model {
 		);";
 
         $this->runRequest($sql2);
+
+        $sql3 = "CREATE TABLE IF NOT EXISTS `se_project_user` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_user` int(11) NOT NULL,
+            `id_project` int(11) NOT NULL,
+            `id_space` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+        );";
+
+        $this->runRequest($sql3);
     }
 
     public function setSampleStock($id_space, $id, $samplestocked, $id_cabinet, $cabinetcomment){
@@ -804,6 +814,54 @@ class SeProject extends Model {
             return $req->fetchAll();
         }
         return [];
+    }
+
+    ///// SE_PROJECT_USER METHODS /////
+
+    public function getProjectUsers($id_space, $id_project) {
+        $sql = "SELECT * FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        return $req->fetchAll();
+    }
+
+    public function getProjectUsersIds($id_space, $id_project) {
+        $sql = "SELECT id_user FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        return $req->fetchAll();
+    }
+
+    public function setProjectUser($id_space, $id_user, $id_project) {
+        if ($this->isProjectUser($id_space, $id_user, $id_project)) {
+            $sql = "UPDATE se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
+                $this->runRequest($sql, array($id_space, $id_user, $id_project));
+        } else {
+            $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
+            $this->runRequest($sql, array($id_space, $id_user, $id_project));
+            return $this->getDatabase()->lastInsertId();
+        }
+    }
+
+    public function isProjectUser($id_space, $id_user, $id_project) {
+        $sql = "SELECT * FROM se_project_user WHERE id_user=? AND id_project=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_user, $id_project, $id_space));
+        if ($req->rowCount() == 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function deleteProjectUser($id_space, $id_user, $id_project) {
+        $sql = "UPDATE se_project_user SET deleted=1,deleted_at=NOW() WHERE id_user=? AND id_project=? AND id_space=?";
+        $this->runRequest($sql, array($id_user, $id_project, $id_space));
+    }
+
+    public function deleteAllProjectUsers($id_space, $id_user) {
+        $project_users = $this->getProjectUsers($id_space, $id_user);
+        if (!empty($project_users)) {
+            foreach($project_users as $project_user) {
+                $this->deleteProjectUser($id_space, $id_user, $project_user['id']);
+            }
+        }
     }
 
 }

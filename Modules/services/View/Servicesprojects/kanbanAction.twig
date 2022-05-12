@@ -48,6 +48,22 @@
                         </div>
                         <div class="modal-footer">
                             <div class="row form-inline">
+                                <label for="pic">Person in charge</label>
+                                <select
+                                    id="pic"
+                                    :list="personsInProject"
+                                    class="form-control"
+                                    name="pic"
+                                    :value="selectedTask.pic"
+                                    @change="updatePersonInCharge($event, selectedTask)"
+                                >
+                                    <option v-if="personsInProject.length == 0" value="" disabled selected hidden>No persons are affected to this project</option>
+                                    <option v-else v-for="person in personsInProject" :value=person.id>
+                                        {{"{{person.name}}"}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="row form-inline">
                                 <label for="services">Services</label>
                                 <select
                                     id="taskServices"
@@ -57,7 +73,8 @@
                                     :value="selectedTask.services"
                                     @change="updateTaskServices($event, selectedTask)"
                                 >
-                                    <option v-for="service in projectServices" :value=service.id>
+                                    <option v-if="projectServices.length == 0" value="" disabled selected hidden>No services are affected to this project</option>
+                                    <option v-else v-for="service in projectServices" :value=service.id>
                                         {{"{{service.name}}"}}
                                     </option>
                                 </select>
@@ -135,6 +152,9 @@ let app = new Vue({
     },
     methods: {
         updateTaskServices(event, task) {
+            console.log('task.services: ', task.services);
+            
+            console.log("target.value: ", event.target.value);
             task.services.push(event.target.value);
             this.updateTask(task);
         },

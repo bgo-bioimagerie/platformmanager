@@ -96,6 +96,12 @@ class SeTask extends Model {
         return $req->fetchAll();
     }
 
+    public function getTaskServicesIds($id_space, $id_task) {
+        $sql = "SELECT 'service_id' FROM se_task_service WHERE id_space=? AND id_task=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_task));
+        return $req->fetchAll();
+    }
+
     public function setTaskService($id_space, $id_task, $id_service) {
         if ($this->isTaskService($id_space, $id_task, $id_service)) {
             $sql = "UPDATE se_task_service (id_space, id_task, id_service) VALUES (?, ?, ?)";
