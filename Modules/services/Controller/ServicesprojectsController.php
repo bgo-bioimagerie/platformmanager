@@ -417,7 +417,7 @@ class ServicesprojectsController extends ServicesController {
         $inChargeList = $modelVisa->getForList($id_space);
 
         $form->addText("name", ServicesTranslator::No_identification($lang), false, $value["name"]);
-        $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
+        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $value["id_resp"]);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
         $form->addSelect("in_charge", ServicesTranslator::InCharge($lang), $inChargeList["names"], $inChargeList["ids"], $value["in_charge"]);
 
@@ -442,26 +442,7 @@ class ServicesprojectsController extends ServicesController {
         $form->setFormAdd($formAddProjectUsers, CoreTranslator::Users($lang));
 
         if ($form->check()) {
-            $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
-            $id = $modelProject->setProject($id, $id_space, $this->request->getParameter("name"), $this->request->getParameter("id_resp"), $id_user, CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang), $value["date_close"], $this->request->getParameter("new_team"), $this->request->getParameter("new_project"), CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang));
-
-            $modelProject->setOrigin($id_space, $id, $this->request->getParameter("id_origin"));
-            $modelProject->setInCharge($id_space ,$id, $this->request->getParameter("in_charge"));
-
-             // add project users
-             $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);
-             $formProjectUserIds = $this->request->getParameter("users");
-
-             // TODO: factorize that with editaction
-             $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
-
-             foreach($toDeleteList as $toDelete) {
-                $modelProject->deleteProjectUser($id_space, $toDelete['id_user'], $id);
-             }
-             foreach($formProjectUserIds as $user_id) {
-                 $modelProject->setProjectUser($id_space, $user_id, $id);
-             }
-
+            $id = $this->updateProject($id, $id_space, $lang, $value['date_close']);
 
             $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
@@ -761,43 +742,49 @@ class ServicesprojectsController extends ServicesController {
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-            $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
-            $pic = $this->request->getParameter("in_charge");
-            $id_project =
-                $modelProject->setProject(
-                    $id,
-                    $id_space,
-                    $this->request->getParameter("name"),
-                    $this->request->getParameter("id_client"),
-                    $id_user,
-                    CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang),
-                    CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
-                    $this->request->getParameter("new_team"),
-                    $this->request->getParameter("new_project"),
-                    CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang)
-                );
-            $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
-            $modelProject->setInCharge($id_space, $id_project, $pic);
-
-            // add project users 
-            $formProjectUserIds = $this->request->getParameter("users");
-            if($id>0) {
-                // remove deleted users
-                $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);
-                $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
-                foreach($toDeleteList as $toDelete) {
-                    $modelProject->deleteProjectUser($id_space, $toDelete['id_user'], $id);
-                }
-            }
-             
-            foreach($formProjectUserIds as $user_id) {
-                $modelProject->setProjectUser($id_space, $user_id, $id_project);
-            }
-            
+            $id_project = $this->updateProject($id, $id_space, $lang);
             return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['project' => ['id' => $id_project]]);
         }
-
+        
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+    }
+
+    protected function updateProject($id, $id_space, $lang, $date_close=null) {
+        $modelProject = new SeProject();
+        $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
+        $pic = $this->request->getParameter("in_charge");
+        $date_close = !$date_close ? CoreTranslator::dateToEn($this->request->getParameterNoException("date_close"), $lang) : $date_close;
+        $id_project =
+            $modelProject->setProject(
+                $id,
+                $id_space,
+                $this->request->getParameter("name"),
+                $this->request->getParameter("id_client"),
+                $id_user,
+                CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang),
+                $date_close,
+                $this->request->getParameter("new_team"),
+                $this->request->getParameter("new_project"),
+                CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang)
+            );
+        $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
+        $modelProject->setInCharge($id_space, $id_project, $pic);
+
+        // add project users 
+        $formProjectUserIds = $this->request->getParameter("users");
+        if($id>0) {
+            // remove deleted users
+            $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);
+            $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
+            foreach($toDeleteList as $toDelete) {
+                $modelProject->deleteProjectUser($id_space, $toDelete['id_user'], $id);
+            }
+        }
+            
+        foreach($formProjectUserIds as $user_id) {
+            $modelProject->setProjectUser($id_space, $user_id, $id_project);
+        }
+        return $id_project;
     }
 
     public function exportAction($id_space, $id) {
