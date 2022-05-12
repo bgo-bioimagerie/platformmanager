@@ -10,7 +10,7 @@
     
     <div class="col-12"> 
         <?php if( count($news) > 0 && count($tweets) == 0 ){ ?>   
-        <div class="col-6 offset-3"> 
+        <div class="col-12"> 
             <?php include("Modules/com/View/Comhome/news.php"); ?>
          </div> 
         <?php } else if(count($tweets) > 0 && count($news) == 0){ ?>   
