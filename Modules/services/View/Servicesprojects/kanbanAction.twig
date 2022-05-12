@@ -50,16 +50,16 @@
                             <div class="row form-inline">
                                 <label for="pic">Person in charge</label>
                                 <select
-                                    id="pic"
-                                    :list="personsInProject"
+                                    id="taskUser"
+                                    :list="projectUsers"
                                     class="form-control"
-                                    name="pic"
-                                    :value="selectedTask.pic"
-                                    @change="updatePersonInCharge($event, selectedTask)"
+                                    name="taskUser"
+                                    :value="selectedTask.user"
+                                    @change="updateTaskUser($event, selectedTask)"
                                 >
-                                    <option v-if="personsInProject.length == 0" value="" disabled selected hidden>No persons are affected to this project</option>
-                                    <option v-else v-for="person in personsInProject" :value=person.id>
-                                        {{"{{person.name}}"}}
+                                    <option v-if="projectUsers.length == 0" value="" disabled selected hidden>No users are affected to this project</option>
+                                    <option v-else v-for="user in projectUsers" :value=user.id>
+                                        {{"{{user.name}}"}}
                                     </option>
                                 </select>
                             </div>
@@ -130,6 +130,7 @@ let app = new Vue({
             tasks: {{ tasks | raw }},
             categories: {{ categories | raw }},
             projectServices: {{ projectServices | raw }},
+            projectUsers: {{ projectUsers | raw }},
             textContent: {{ textContent | raw }},
             showModal: false,
             selectedTask: null
@@ -152,10 +153,11 @@ let app = new Vue({
     },
     methods: {
         updateTaskServices(event, task) {
-            console.log('task.services: ', task.services);
-            
-            console.log("target.value: ", event.target.value);
             task.services.push(event.target.value);
+            this.updateTask(task);
+        },
+        updateTaskUser(event, task) {
+            task.user = event.target.value;
             this.updateTask(task);
         },
         getTaskById(id) {
@@ -268,7 +270,8 @@ let app = new Vue({
                     contentVisible: false,
                     start_date: null,
                     end_date: null,
-                    services: []
+                    services: [],
+                    user: null
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);

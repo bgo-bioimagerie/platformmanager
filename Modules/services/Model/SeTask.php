@@ -18,6 +18,7 @@ class SeTask extends Model {
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(11) NOT NULL,
             `id_project` int(11) NOT NULL,
+            'id_user' int(11),
             `state` int(11) NOT NULL,
             `name` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
@@ -50,19 +51,31 @@ class SeTask extends Model {
         return $req->fetchAll();
     }
 
+    public function getByUser($id_user, $id_space) {
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_user=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_user));
+        return $req->fetchAll();
+    }
+
+    public function getByProjectAndUser($id_project, $id_user, $id_space) {
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? id_user=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project, $id_user));
+        return $req->fetchAll();
+    }
+
     public function getByPeriodForProject($id_project, $id_space, $beginPeriod, $endPeriod) {
         $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND $id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_project, $beginPeriod, $endPeriod, $id_space));
         return $req->fetchAll();
     }
     
-    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $serviceIds) {
+    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $serviceIds, $id_user) {        
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id, $id_space));
         } else {
-            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_space) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_space));
+            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_user, id_space) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         }
         if (!empty($serviceIds)) {

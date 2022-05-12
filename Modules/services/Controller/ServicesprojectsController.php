@@ -1,5 +1,7 @@
 <?php
 
+use Monolog\Handler\LogEntriesHandler;
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -559,6 +561,13 @@ class ServicesprojectsController extends ServicesController {
 
         $modelProject = new SeProject();
         $projectName = $modelProject->getName($id_space ,$id_project);
+        $seProjectUsers = $modelProject->getProjectUsersIds($id_space, $id_project);
+        $projectUsers = array();
+
+        $modelUser = new CoreUser();
+        foreach($seProjectUsers as $seProjectUser) {
+            array_push($projectUsers, $modelUser->getUser($seProjectUser['id_user']));
+        }
 
         $textContent = [
             "newTask" => ServicesTranslator::NewTask($lang),
@@ -580,7 +589,8 @@ class ServicesprojectsController extends ServicesController {
             "id_project" => $id_project,
             "tasks" => json_encode($tasks),
             "categories" => json_encode($categories),
-            "projectServices" => json_encode($services)
+            "projectServices" => json_encode($services),
+            "projectUsers" => json_encode($projectUsers)
         ));
     }
 
@@ -598,7 +608,8 @@ class ServicesprojectsController extends ServicesController {
             $taskData['content'],
             $taskData['start_date'],
             $taskData['end_date'],
-            $taskData['services']
+            $taskData['services'],
+            $taskData['user']
         );
         $this->render(['data' => ['id' => $id]]);
     }
