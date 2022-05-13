@@ -36,6 +36,10 @@ class Email extends Model {
         $mail->isSMTP();
         $mail->Host = Configuration::get('smtp_host');
         $mail->Port = Configuration::get('smtp_port');
+        if(Configuration::get('smtp_tls', false)) {
+            $mail->SMTPSecure = false;
+            $mail->SMTPAutoTLS = false;
+        }
         $mail->CharSet = "utf-8";
         $mail->SetFrom($from, $fromName);
         $mail->Subject = $subject;
