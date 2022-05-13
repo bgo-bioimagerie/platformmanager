@@ -398,16 +398,12 @@ class ServicesprojectsController extends ServicesController {
         }        
 
         $value = null;
-        $items = array();
         if ($id > 0) {
             $value = $modelProject->getEntry($id_space , $id);
-            $items = $modelProject->getProjectServices($id_space, $id);
             array_push($projectUserIds, $value['id_user']);
         } else {
             $form->setTitle(ServicesTranslator::Add_projects($lang), 3);
             $value = $modelProject->defaultEntryValues();
-            $items = array("dates" => array(), "services" => array(), "quantities" => array(),
-                "comment" => array());
         }
 
         $projectUserIds = array_unique($projectUserIds);
@@ -723,6 +719,8 @@ class ServicesprojectsController extends ServicesController {
 
         // add project users 
         $formProjectUserIds = $this->request->getParameter("users");
+        array_push($formProjectUserIds, $id_user);
+        
         if($id>0) {
             // remove deleted users
             $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);

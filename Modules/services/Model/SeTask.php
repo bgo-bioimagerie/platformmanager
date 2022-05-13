@@ -69,7 +69,7 @@ class SeTask extends Model {
         return $req->fetchAll();
     }
     
-    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $serviceIds, $id_user) {        
+    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user) {        
         if ($this->isTask($id_space, $id)) {
             $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id, $id_space));
@@ -78,9 +78,9 @@ class SeTask extends Model {
             $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         }
-        if (!empty($serviceIds)) {
-            foreach($serviceIds as $serviceId) {
-                $this->setTaskService($id_space, $id, $serviceId);
+        if (!empty($services)) {
+            foreach($services as $service) {
+                $this->setTaskService($id_space, $id, $service);
             }
         }
 

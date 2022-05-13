@@ -45,41 +45,38 @@
                         <div class="modal-body">
                             <label for="details">Details</label>
                             <textarea id="taskDetails" class="contentArea" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
+                        
+                            <label for="taskUser">Person in charge</label>
+                            <select
+                                id="taskUser"
+                                :list="projectUsers"
+                                class="form-control"
+                                name="taskUser"
+                                :value="selectedTask.user"
+                                @change="updateTaskUser($event, selectedTask)">
+                                <option v-if="projectUsers.length == 0" value="" disabled selected hidden>No users are affected to this project</option>
+                                <option v-else v-for="user in projectUsers" :value=user.id>
+                                    {{"{{user.name}}"}}
+                                </option>
+                            </select>
+                                                    
+                            <label for="services">Services</label>
+                            <select
+                                id="taskServices"
+                                :list="projectServices"
+                                class="form-control"
+                                name="services"
+                                {# :value="selectedTask.services[0].id" #}
+                                @change="updateTaskServices($event, selectedTask)">
+                                <option v-if="projectServices.length == 0" value="" disabled selected hidden>No services are affected to this project</option>
+                                <option v-else v-for="service in projectServices" :value=service.id>
+                                    {{"{{service.name}}"}}
+                                </option>
+                            </select>
                         </div>
-                        <div class="modal-footer">
-                            <div class="row form-inline">
-                                <label for="pic">Person in charge</label>
-                                <select
-                                    id="taskUser"
-                                    :list="projectUsers"
-                                    class="form-control"
-                                    name="taskUser"
-                                    :value="selectedTask.user"
-                                    @change="updateTaskUser($event, selectedTask)"
-                                >
-                                    <option v-if="projectUsers.length == 0" value="" disabled selected hidden>No users are affected to this project</option>
-                                    <option v-else v-for="user in projectUsers" :value=user.id>
-                                        {{"{{user.name}}"}}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="row form-inline">
-                                <label for="services">Services</label>
-                                <select
-                                    id="taskServices"
-                                    :list="projectServices"
-                                    class="form-control"
-                                    name="services"
-                                    :value="selectedTask.services"
-                                    @change="updateTaskServices($event, selectedTask)"
-                                >
-                                    <option v-if="projectServices.length == 0" value="" disabled selected hidden>No services are affected to this project</option>
-                                    <option v-else v-for="service in projectServices" :value=service.id>
-                                        {{"{{service.name}}"}}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="row form-inline">
+
+                        <div class="modal-footer">    
+                            <div class="row form-control">
                                 <label for="start_date">Start date</label>
                                 <input id="taskStartDate" type="date" class="form-control" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
                                 <label for="end_date">End date</label>
