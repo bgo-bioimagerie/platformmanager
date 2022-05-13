@@ -6,6 +6,8 @@ class InvoicesRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/invoices/[i:id_space]/[i:id_invoice]/details', 'invoices/invoiceglobal/details', 'invoices_details');
+        $router->map('GET|POST', '/invoices/[i:id_space]/pdftemplate', 'invoices/invoicesconfig/pdftemplate', 'invoices_pdftemplate');
+        $router->map('GET|POST', '/invoices/[i:id_space]/pdftemplatedelete/[:name]', 'invoices/invoicesconfig/pdftemplatedelete', 'invoices_pdftemplate_delete');
     }
     
     public function listRoutes(){

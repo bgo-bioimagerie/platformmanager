@@ -23,6 +23,8 @@ function version()
     }
 
 $cli = Cli::create()
+    ->command('config')
+    ->description('show configuration')
     ->command('upgrade')
     ->description('create a new upgrade file')
     ->opt('desc', 'description', '', 'string')

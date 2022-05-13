@@ -3,7 +3,7 @@
     
 <?php startblock('content') ?>
 <div class="container">
-<div class="pm-form row">
+<div class="pm-form row mb-3">
     <form role="form" class="form-horizontal" action="bookingblockquery/<?php echo $id_space ?>"
           method="post">
 
@@ -15,13 +15,13 @@
             </h3>
         </div>
 
-        <div class="col-12">
-            <?php if ($errormessage != "") {
-                ?>
-                <div class="alert alert-danger text-center">
-                    <p><?php echo $errormessage ?></p>
-                </div>
-            <?php } ?>
+        <div class="form-group mb-3">
+            <label for="reason" class="control-label col-3"><?php echo BookingTranslator::Reason($lang) ?></label>
+                <select class="form-select" id="reason" name="reason">
+                    <option value="<?php echo BkCalendarEntry::$REASON_BOOKING; ?>"><?php echo BookingTranslator::BlockReason(BkCalendarEntry::$REASON_BOOKING, $lang) ?></option>
+                    <option selected value="<?php echo BkCalendarEntry::$REASON_HOLIDAY; ?>"><?php echo BookingTranslator::BlockReason(BkCalendarEntry::$REASON_HOLIDAY, $lang) ?></option>
+                    <option value="<?php echo BkCalendarEntry::$REASON_MAINTENANCE; ?>"><?php echo BookingTranslator::BlockReason(BkCalendarEntry::$REASON_MAINTENANCE, $lang) ?></option>
+                </select>
         </div>
 
         <div class="form-group mb-3">
@@ -106,7 +106,7 @@
         <div class="form-group">
             <label for="color_code_id" class="control-label col-3"><?php echo BookingTranslator::Color_code($lang) ?></label>
             <div class="col-8 mb-3">
-                <select class="form-select" id="color_code_id" name="color_code_id" <?php echo $readOnlyGlobal ?>>
+                <select class="form-select" id="color_code_id" name="color_code_id">
                     <?php
                     $colorID = 1;
                     foreach ($colorCodes as $colorCode) {
@@ -132,6 +132,10 @@
         </div>
     </form>
 </div>
+</div>
+
+<div class="pm-form row">
+    <?php echo $blocked; ?>
 </div>
 
 </div>

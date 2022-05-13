@@ -87,7 +87,7 @@ class ClientsuseraccountsController extends ClientsController {
         } 
 
         $form->setValidationButton(CoreTranslator::Add($lang), $validationUrl);
-        $form->setButtonsWidth(4, 8);
+
         return $form;
     }
 

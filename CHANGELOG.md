@@ -1,5 +1,38 @@
 # Changes
 
+## 2.6.0
+
+### Features / enhancements
+
+* [cli] add config option to display configuration
+* [core] add login button on welcome page
+* [booking] in booking invoice details, show related bookings
+* [booking_settings] add getDefault to BkNightWE class
+* [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
+* [core] on user join request, request a comment from user to be added to email
+* [booking] add to scheduling option to force usage of packages to an area
+* [booking] hide nightwe entries if pricing does not exists anymore
+* [mail] add support for custom headers
+* [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
+
+### Bug fixes
+
+* [bulletjournal] fixes on creation and edit
+* [booking][supplementaries] avoid having two sups with the same name for the same resource
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
+* [helpdesk] do not send ticket reply if mail coming from helpdesk
+* [core] remove lasting references to ec classes
+* [booking] fix closed days hidding in summary view
+* [invoice][booking] manage case where total hours = 0
+* [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
+* [antibodies] fix tissus image column width #643
+* [resources] fix resps cleanup, missing param
+
 ## 2.5.4
 
 * [core][antibodies] fix acowner table definition and fix delete javascript function #638
@@ -17,9 +50,12 @@
 * [space] fix pending accounts bug
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
 * [core][booking] layout fixes on booking edition (periodic)
+<<<<<<< HEAD
 * [booking] compute duration with 2 digits per minute
 * [booking] weekarea calendar, use summary view by default
 * [booking] if multiple prices are in db, pick first
+=======
+>>>>>>> develop
 
 ## 2.5.0
 
@@ -31,6 +67,7 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607

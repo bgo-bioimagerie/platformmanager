@@ -24,6 +24,8 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 
 require_once 'Modules/quote/Controller/QuoteController.php';
+
+require_once 'Modules/clients/Model/ClCompany.php';
 /**
  *
  * @author sprigent
@@ -147,7 +149,7 @@ class QuotelistController extends QuoteController {
         }
 
         $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quoteuser/" . $id_space . "/" . $id);
         
         if ($form->check()) {
@@ -300,7 +302,7 @@ class QuotelistController extends QuoteController {
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
         }
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "quotenew/" . $id_space . "/" . $id);
         if ($form->check()) {
             $pricing = $modelPricing->getPricingByClient($id_space,$form->getParameter('id_client'));
@@ -402,36 +404,87 @@ class QuotelistController extends QuoteController {
 
         // generate pdf
         $address = nl2br($info["address"]);
-        $adress = $address; // backwark compat
         $resp = $info["recipient"];
-        $clientInfos["email"] = "";
+        $clientInfos = ['email' => ''];
         if (is_array($info["client"]) && !empty($info["client"])) {
             $clientInfos = $info["client"];
             $clientInfos["email"] = $info["client"]["email"] ?? "";
         }
         $date = CoreTranslator::dateFromEn(date('Y-m-d'), 'fr');
         $useTTC = true;
-        $isquote = true;
-
         $details = "";
         $invoiceInfo["title"] = "";
         $invoiceInfo["module"] = QuoteTranslator::quote($lang);
         $number = "";
         $unit = "";
 
-        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
-            throw new PfmFileException("No template found", 404);
+        $this->generatePDF($id_space, [
+            'id' => $id,
+            'number' => $number,
+            'date' => $date,
+            'unit' => $unit,
+            'resp' => $resp,
+            'address' => $address,
+            'table' => $table,
+            'total' => $total,
+            'useTTC' => $useTTC,
+            'details' => $details,
+            'clientInfos' => $clientInfos,
+            'quoteInfos' => $invoiceInfo,
+        ], $lang);
+    }
+
+    public function generatePDF($id_space, $data, $lang='en', $toFile=false) {
+
+        $id = $data['id'];
+        $number = $data['number'];
+        $date = $data['date'];
+        $unit = $data['unit'] ?? '';
+        $resp = $data['resp'];
+        $address = $data['address'];
+        $table = $data['table'];
+        $total = $data['total'];
+        $useTTC = $data['useTTC'];
+        $details = $data['details'];
+        $clientInfos = $data['clientInfos'];
+        $quoteInfos = $data['quoteInfos'];
+        $isQuote = true;
+        $space = $this->currentSpace;
+
+        $translator = new QuoteTranslator();
+
+        $clcm = new ClCompany();
+        $company = $clcm->getForSpace($id_space);
+        if(!isset($company['name'])) {
+            $company = [
+                'name' => $this->currentSpace['name'],
+                'address' => '',
+                'city' => '',
+                'zipcode' => '',
+                'country' => '',
+                'tel' => '',
+                'email' => '',
+                'approval_number' => ''
+            ];
         }
 
-        if(!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
+        if(!file_exists('data/quote/'.$id_space.'/template.twig') && file_exists('data/quote/'.$id_space.'/template.php')) {
             // backwark, templates were in PHP and no twig template available use old template
+            $template = 'data/quote/'.$id_space.'/template.php';
+            Configuration::getLogger()->debug('[quote][pdf]', ['template' => $template]);
             ob_start();
-            include('data/invoices/'.$id_space.'/template.php');
+            include($template);
             $content = ob_get_clean();
         } else {
+            $template = 'data/quote/'.$id_space.'/template.twig';
+            if(!file_exists($template)){
+                $template = 'externals/pfm/templates/quote_template.twig';
+            }
+            Configuration::getLogger()->debug('[quote][pdf]', ['template' => $template]);
+
             $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../..');
             $twig = new \Twig\Environment($loader, []);
-            $content = $twig->render('data/invoices/'.$id_space.'/template.twig', [
+            $content = $twig->render($template, [
                 'id_space' => $id_space,
                 'id' => $id,
                 'number' => $number,
@@ -444,29 +497,33 @@ class QuotelistController extends QuoteController {
                 'total' => $total,
                 'useTTC' => $useTTC,
                 'details' => $details,
-                'clientInfos' => null,
-                'invoiceInfo' => $invoiceInfo,
-                'isquote' => $isquote
+                'clientInfos' => $clientInfos,
+                'invoiceInfo' => $quoteInfos,
+                'isquote' => $isQuote,
+                'translator' => $translator,
+                'lang' => $lang,
+                'company' => $company,
+                'space' => $space
             ]);
         }
 
-
-
-
         // convert in PDF
+        $out = __DIR__."/../../../data/quote/$id_space/quote_".$resp.$number.".pdf";
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
-            //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
-            //$html2pdf->writeHTML($content, isset($_GET['vuehtml']));
             $html2pdf->writeHTML($content);
-            //echo "name = " . $unit . "_" . $resp . " " . $number . '.pdf' . "<br/>";
-            $html2pdf->Output(QuoteTranslator::quote($lang) . "_" . $resp . '.pdf');
-            return;
+
+            if($toFile || getenv("PFM_MODE") == "test") {
+                $html2pdf->Output($out, 'F');
+            } else {
+                $html2pdf->Output(QuoteTranslator::quote($lang) . $resp . '.pdf');
+            }
+            
         } catch (Exception $e) {
-            echo $e;
-            exit;
+           throw new PfmException('PDF conversion error: '.$e->getMessage());
         }
+        return $out;
     }
 
     private function makePDFTable($tableData, $lang) {
@@ -483,9 +540,6 @@ class QuotelistController extends QuoteController {
 
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-
-        //print_r($invoice);
-        $total = 0;
         foreach ($tableData as $d) {
 
             $table .= "<tr>";
@@ -494,7 +548,6 @@ class QuotelistController extends QuoteController {
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'], 2, ',', ' ') . " &euro;</td>";
             $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d['unit_price'] * $d['quantity'], 2, ',', ' ') . " &euro;</td>";
             $table .= "</tr>";
-            $total += $d['total'];
         }
         $table .= "</table>";
         return $table;

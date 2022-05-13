@@ -169,7 +169,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkAuthorisationUseVisa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkAuthorisationUseVisa);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }
@@ -187,7 +186,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkCanUserEditStartedResa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkCanUserEditStartedResa);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
         
         return $form;
     }
@@ -202,7 +200,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkUseRecurentBooking", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkUseRecurentBooking);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }
@@ -223,7 +220,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(0,1,2,3), $BkDescriptionFields);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }
@@ -236,7 +232,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSeparator(BookingTranslator::EditReservationPlugin($lang));
         $form->addText("bkReservationPlugin", BookingTranslator::Url($lang), false, $bkReservationPlugin);
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
         
         return $form;
     } 
@@ -260,7 +255,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect('BkBookingMailingDelete', BookingTranslator::EmailWhenResaDelete($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkBookingMailingDelete);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }

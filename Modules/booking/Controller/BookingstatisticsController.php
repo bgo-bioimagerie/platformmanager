@@ -167,7 +167,7 @@ class BookingstatisticsController extends StatisticsController {
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
         $form->setValidationButton(CoreTranslator::Ok($lang), 'bookingreservationstats/' . $id_space);
-        $form->setButtonsWidth(2, 8);
+
 
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);

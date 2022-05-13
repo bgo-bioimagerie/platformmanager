@@ -198,5 +198,75 @@ class QuoteTranslator {
         }
         return "First, you must affect a pricing to your client in Clients module";
     }
+
+    public static function Name($lang) {
+        if ($lang == "fr") {
+            return "Name";
+        }
+        return "Name";
+    }
+
+    public static function currentTemplate($lang) {
+        if ($lang == "fr") {
+            return "Modèle actuel";
+        }
+        return "Current template";
+    }
+
+    public static function Download($lang) {
+        if ($lang == "fr") {
+            return "Télécharger";
+        }
+        return "Download";
+    }
+
+    public static function DownloadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Télécharger template";
+        }
+        return "Download template";
+    }
+
+    public static function TheTemplateHasBeenUploaded($lang) {
+        if ($lang == "fr") {
+            return "Le modèle à bien été téléversé";
+        }
+        return "The template has been uploaded";
+    }
+
+    public static function uploadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Téléverser modèle (format Twig)";
+        }
+        return "Upload template (Twig format)";
+    }
+
+    public static function Upload($lang) {
+        if ($lang == "fr") {
+            return "Téléverser";
+        }
+        return "Upload";
+    }
+
+    public static function UploadImages($lang) {
+        if ($lang == "fr") {
+            return "Téléverser images";
+        }
+        return "Upload images";
+    }
+
+    public static function Images($lang) {
+        if ($lang == "fr") {
+            return "Images";
+        }
+        return "Images";
+    }
+
+    public static function PDFTemplate($lang = "") {
+        if ($lang == "fr") {
+            return "Modèle de facture HTML - PDF";
+        }
+        return "HTML - PDF Template";
+    }
     
 }

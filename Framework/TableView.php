@@ -288,10 +288,10 @@ class TableView {
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
-                
+                $style = 'width: 1%; white-space: nowrap;';
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                        $html .= '<td style="width: 1%; white-space: nowrap;">';
+                        $html .= '<td style="'.$style.'">';
                         $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-sm btn-outline-dark\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
                         $html .= "</td>";
                     }
@@ -302,7 +302,7 @@ class TableView {
                     if ($this->editIndex != "") {
                         $idxVal = $dat[$this->editIndex];
                     }
-                    $html .= '<td style="width: 1%; white-space: nowrap;">';
+                    $html .= '<td style="'.$style.'">';
                     if($this->editJS){
                         $html .= "<button onclick=\"editentry('".$this->editURL . "_" . $idxVal."')\" id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-sm btn-primary\">Edit</button><span> </span>" ;
                     }
@@ -316,7 +316,7 @@ class TableView {
                     $html .= "</td>";
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
-                    $html .= '<td style="width: 1%; white-space: nowrap;">';
+                    $html .= '<td style="'.$style.'">';
                     $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
                     $html .= "</td>";
                     $addDelete = true;
@@ -445,7 +445,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"Confirm".$this->tableID."Delete($id, '$name')\" value=\"Delete\">";
+        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"Confirm".$this->tableID."Delete('$id', '$name')\" value=\"Delete\">";
     }
 
     /**

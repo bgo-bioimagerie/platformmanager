@@ -29,7 +29,7 @@ class ServicesbalanceController extends ServicesController {
         $form->addDate("period_end", ServicesTranslator::End_period($lang), true);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesbalance");
-        $form->setButtonsWidth(2, 9);
+
         
         if ($form->check()){
             $date_start = CoreTranslator::dateToEn($form->getParameter("period_begin"), $lang);

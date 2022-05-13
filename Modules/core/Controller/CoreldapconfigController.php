@@ -66,7 +66,7 @@ class CoreldapconfigController extends CoresecureController {
         $form->addText("ldap_user", CoreTranslator::ldapId($lang), false, $ldapConnect["ldap_user"], false, true);
         $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);        
         
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreldapconfig");
         
         if ($form->check()){

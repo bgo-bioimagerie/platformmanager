@@ -340,7 +340,6 @@
 
                     </tr>
                 </thead>
-
                 <tbody>
 <?php foreach ($anticorpsArray as $anticorps) : ?> 
 
@@ -395,7 +394,7 @@
 
 
                             <!-- TISSUS -->
-                            <td headers="tissues image" class="text-left" style="width:10%;background-color: #eeffee;">
+                            <td headers="tissues image" class="text-left" style="background-color: #eeffee;">
 
                                 <?php
                                 foreach ($anticorps['tissus'] as $tissus) {

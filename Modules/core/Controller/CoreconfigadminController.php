@@ -153,7 +153,7 @@ class CoreconfigadminController extends CoresecureController {
         $formMaintenance->addSelect("is_maintenance", CoreTranslator::InMaintenance($lang), array(CoreTranslator::No($lang), CoreTranslator::Yes($lang)), array(0, 1), $is_maintenance);
         $formMaintenance->addTextArea("maintenance_message", CoreTranslator::MaintenanceMessage($lang), false, $maintenance_message, false);
         $formMaintenance->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
-        $formMaintenance->setButtonsWidth(2, 9);
+
 
         return $formMaintenance;
     }
@@ -169,7 +169,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::Install_Repair_database($lang));
         $form->addComment(CoreTranslator::Install_Txt($lang));
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -184,7 +184,7 @@ class CoreconfigadminController extends CoresecureController {
         $form = new Form($this->request, "ldapForm");
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Config($lang), "coreconfigadmin");
         return $form;
     }
@@ -201,7 +201,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::Home($lang));
         $form->addText("default_home_path", CoreTranslator::Home_page($lang), true, $modelCoreConfig->getParam("default_home_path"));
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -221,7 +221,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::ConnectionPageData($lang));
         $form->addText("home_title", CoreTranslator::title($lang), false, $home_title);
         $form->addText("home_message", CoreTranslator::Description($lang), false, $home_message);
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -239,7 +239,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::SpaceIcons($lang));
         $form->addSelect("space_icon_type", CoreTranslator::Choice($lang), $choices, $choicesid, $value);
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -264,7 +264,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::non_active_users($lang));
         $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $value);
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -282,7 +282,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addSeparator(CoreTranslator::Admin($lang));
         $form->addText("admin_email", CoreTranslator::Email($lang), false, $value);
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -297,7 +297,7 @@ class CoreconfigadminController extends CoresecureController {
         $form = new Form($this->request, "backupForm");
         $form->addSeparator(CoreTranslator::Backup($lang));
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Run_backup($lang), "coreconfigadmin");
         return $form;
     }
@@ -321,7 +321,7 @@ class CoreconfigadminController extends CoresecureController {
         $form->addColor("navbar_text_color", CoreTranslator::Text_color($lang), false, $navbar_text_color);
         $form->addColor("navbar_text_highlight", CoreTranslator::Text_highlight($lang), false, $navbar_text_highlight);
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
@@ -343,7 +343,7 @@ class CoreconfigadminController extends CoresecureController {
 
         $form->addSelect("who_can_delete_user", CoreTranslator::Select($lang), $choices, $choicesid, $who_can_delete_user);
 
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
