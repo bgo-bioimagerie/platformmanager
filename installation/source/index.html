@@ -10,7 +10,7 @@
 
 
 
-    <meta name="description" content="Install from source code    Clone git repository from https://github.com/bgo-bioimagerie/platformmanager.
+    <meta name="description" content="Install from source code    About    Code is hosted in git repository from https://github.com/bgo-bioimagerie/platformmanager.
 Stable code is in master branch.
 Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
 Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.
@@ -951,7 +951,14 @@ See docker for available env variables to override defaults.">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
-</div><p>Clone git repository from <a class="gdoc-markdown__link" href="https://github.com/bgo-bioimagerie/platformmanager">https://github.com/bgo-bioimagerie/platformmanager</a>.</p>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="about">
+        About
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/source/#about" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor About" href="#about">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Code is hosted in git repository from <a class="gdoc-markdown__link" href="https://github.com/bgo-bioimagerie/platformmanager">https://github.com/bgo-bioimagerie/platformmanager</a>.</p>
 <p>Stable code is in <em>master</em> branch.</p>
 <p>Releases can also be download from <a class="gdoc-markdown__link" href="https://github.com/bgo-bioimagerie/platformmanager/releases">https://github.com/bgo-bioimagerie/platformmanager/releases</a>.</p>
 <p>Code contains some .htaccess to limit access to specific directories.
@@ -961,6 +968,103 @@ yourself based on .htaccess files definition.</p>
 appropriate setup.</p>
 <p>See <a class="gdoc-markdown__link" href="./docker/">docker</a> for available env variables to
 override defaults.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="debian-install">
+        Debian install
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/source/#debian-install" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Debian install" href="#debian-install">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><pre><code># base setup, adapt php8.X-mysql to your distribution package (apt-cache search php | grep mysql)
+sudo apt-get install apache2 php php-redis php-imap php-gd php8.X-mysql php-zip php-ldap php-imap composer git
+sudo a2enmod rewrite
+sudo a2enmod headers
+sudo a2enmod proxy_http
+sudo systemctl restart apache2
+</code></pre>
+<p>In the following we suppose you install pfm in /var/www/html/platformmanager path</p>
+<pre><code>cd /var/www/html
+git clone https://github.com/bgo-bioimagerie/platformmanager.git
+chown -R www-data platformmanager
+cd platformmanager
+# Install pfm dependencies
+sudo composer install
+</code></pre>
+<p>Copy from cloned repo to /etc/php/8.x/apache2/conf.d:</p>
+<ul>
+<li>docker/php_logs.ini to 99-pfmlogs.ini</li>
+<li>docker/php_timezone.ini to tz.ini to 99-pfmtz.ini</li>
+<li>docker/php_pfm.ini to 99-pfm.ini</li>
+</ul>
+<p>Copy from cloned repo to /etc/apache2/conf-enabled and update Directory path to your install path</p>
+<ul>
+<li>docker/apache2/000-default.conf</li>
+</ul>
+<p>Copy from cloned repo to /etc/apache2/sites-enabled and update ServerName/ServerAdmin/DocumentRoot
+to match your settings (DocumentRoot would be here /var/www/html/platformmanager):</p>
+<ul>
+<li>
+<p>docker/apache2/pfm.conf</p>
+<p>sudo service apache2 restart</p>
+</li>
+</ul>
+<p>Start pfm-events and pfm-helpdesk (optional) from bin directory (using systemd)</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="systemd">
+        Systemd
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/source/#systemd" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Systemd" href="#systemd">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>In /etc/systemd/system:</p>
+<ul>
+<li>
+<p>Pfm-events</p>
+<p>[Unit]
+Description=pfm-events service</p>
+<p>[Service]
+User=www-data
+PIDFile=/var/run/pfm-events.pid
+WorkingDirectory=/var/www/html/platformmanager
+ExecStart=php /var/www/html/platformmanager/bin/pfm-events.php
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true</p>
+<p>[Install]
+WantedBy=multi-user.target</p>
+</li>
+<li>
+<p>Pfm-helpdesk</p>
+<p>[Unit]
+Description=pfm-events service</p>
+<p>[Service]
+User=www-data
+PIDFile=/var/run/pfm-events.pid
+WorkingDirectory=/var/www/html/platformmanager
+ExecStart=php /var/www/html/platformmanager/bin/pfm-helpdesk.php
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+PrivateTmp=true</p>
+<p>[Install]
+WantedBy=multi-user.target</p>
+</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="configuration">
+        Configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/source/#configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Configuration" href="#configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Edit and update Config/conf.ini from Config/conf.ini.example</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="install">
+        Install
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/source/#install" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Install" href="#install">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>See <a class="gdoc-markdown__link" href="./upgrade">install</a></p>
 
     </article>
 

@@ -13,7 +13,7 @@
       <pubDate>Wed, 23 Jun 2021 15:52:39 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</guid>
-      <description>Install from source     Database: mysql &amp;gt; 5.6, tested on 8 PHP:  version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
+      <description>Base requirements     Database: mysql &amp;gt; 5.6, tested on 8 PHP:  version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
 &amp;lt;Location /update&amp;gt; Order deny,allow Deny from all Allow from 127.0.0.1 &amp;lt;/Location&amp;gt; &amp;lt;Directory &amp;quot;^${docroot}/data&amp;quot;&amp;gt; &amp;lt;FilesMatch &amp;quot;.</description>
     </item>
     
@@ -23,7 +23,7 @@
       <pubDate>Wed, 23 Jun 2021 18:13:29 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</guid>
-      <description>Install from source code    Clone git repository from https://github.com/bgo-bioimagerie/platformmanager.
+      <description>Install from source code    About    Code is hosted in git repository from https://github.com/bgo-bioimagerie/platformmanager.
 Stable code is in master branch.
 Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
 Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.

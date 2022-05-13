@@ -960,11 +960,12 @@ and the list of modules globally activated.</p>
 <li>Admin: super administrator information (created at install if not exists),
 admin secrets (password, apikey) <em>should</em> not be exposed in config file and
 should rather be defined via env variables (see below).</li>
+<li>Amqp: rabbitmq connection information, used for events and statistics
+to dialog with pfm-events process</li>
+<li>smtp: mail settings</li>
 </ul>
 <p>Optional sections:</p>
 <ul>
-<li>Amqp: rabbitmq connection information, used for events and statistics
-to dialog with pfm-events process</li>
 <li>Influxdb: Influxdb connection information</li>
 <li>Openid: external authentication systems credentials</li>
 </ul>

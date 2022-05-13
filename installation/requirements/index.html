@@ -10,7 +10,7 @@
 
 
 
-    <meta name="description" content="Install from source     Database: mysql &gt; 5.6, tested on 8 PHP:  version &gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
+    <meta name="description" content="Base requirements     Database: mysql &gt; 5.6, tested on 8 PHP:  version &gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
 &lt;Location /update&gt; Order deny,allow Deny from all Allow from 127.0.0.1 &lt;/Location&gt; &lt;Directory &quot;^${docroot}/data&quot;&gt; &lt;FilesMatch &quot;.">
 
 
@@ -941,9 +941,9 @@
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Requirements</h1>
         <div class="gdoc-page__anchorwrap">
-    <h2 id="install-from-source">
-        Install from source
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/#install-from-source" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Install from source" href="#install-from-source">
+    <h2 id="base-requirements">
+        Base requirements
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/#base-requirements" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Base requirements" href="#base-requirements">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
@@ -978,8 +978,8 @@
 </code></pre>
 <ul>
 <li>Rabbitmq server for additional services (pfm-events, etc.)</li>
+<li>Redis</li>
 <li>Influxdb server for statistics (optional)</li>
-<li>Redis for prometheus statistics support (optional for prometheus, mandatory for module antibodies)</li>
 </ul>
 <div class="gdoc-page__anchorwrap">
     <h2 id="install-with-docker">
@@ -989,6 +989,15 @@
         </a>
     </h2>
 </div><p>You just need docker and docker-compose ;-)</p>
+<p>See <a class="gdoc-markdown__link" href="./docker">docker</a></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="install-from-source">
+        Install from source
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/#install-from-source" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Install from source" href="#install-from-source">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>See <a class="gdoc-markdown__link" href="./source">source</a></p>
 
     </article>
 
