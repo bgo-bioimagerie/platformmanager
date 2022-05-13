@@ -108,7 +108,7 @@ class ClientslistController extends ClientsController {
         $form->addSelectMandatory("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
         $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "clclientedit/" . $id_space . "/" . $id);
+        $form->setValidationButton(CoreTranslator::Next($lang), "clclientedit/" . $id_space . "/" . $id);
         $form->setColumnsWidth(3, 9);
 
         $form->setCancelButton(CoreTranslator::Cancel($lang), "clclients/" . $id_space);

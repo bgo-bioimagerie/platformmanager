@@ -298,11 +298,15 @@ class Router {
      */
     private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
 
-        $id_space = isset($args['id_space']) ? $args['id_space'] : null;
+        $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
+
         $space = null;
-        if ($id_space) {
+        if ($id_space !== null) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
+            if(!$space) {
+                throw new PfmUserException('space not found', 404);
+            }
         }
 
 

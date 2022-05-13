@@ -15,6 +15,8 @@ Variables:
     clientInfos: optional customer info (clientInfo.name for example)
     invoiceInfo: invoice object
     isquote: boolean (if defined) to specify this is a quote and not an invoice
+    company: space company info
+    space: space info
     lang: current language ('en', 'fr')
 
 #}
@@ -25,17 +27,21 @@ Variables:
     td    { vertical-align: top; }
     -->
 </style>
-<page backcolor="#FEFEFE" backimg="data/invoices/bas_page.png" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
+<page backcolor="#FEFEFE" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
     <bookmark title="Lettre" level="0" ></bookmark>
     <table style="width: 100%; text-align: center; font-size: 14px">
+        <tr style="height: 50px; background-color: #107E9C; padding: 15px"><td colspan="2"><h3>{{company.name}}</h3></td></tr>
         <tr>
             <td style="width: 25%;">
-                <!--<img style="width: 100%;" src="data/invoices/{{id_space}}/MONLOGO.png" alt="Logo"><br>-->
+            {% if space.image %}
+                <img style="max-height: 100px;" src="{{space.image}}" alt="Logo"><br>
+
+            {% endif %}
             </td>
-            <td style="width: 75%; color: #444444;">
-                AVIS DES SOMMES A PAYER
-                <br/>
-                RELEVÉ N° : {{number}}
+            <td style="width: 75%; border: 1px">
+                {{translator.invoice(lang)}} - N° : {{number}}
+                <br/><br/>
+                {{company.city}}, le {{date }}
             </td>
         </tr>
     </table>
@@ -46,68 +52,42 @@ Variables:
             <table style="width: 100%; text-align: left;font-size: 10pt">
                 <tr>
                     <td style="width:50%;">
-                        My street <br/>	
-                        My Town	<br/><br/>
+                        <strong>{{company.name}}</strong><br/>
+                        {{company.address}}<br/>
+                        {{company.zipcode}} {{company.city}} - {{company.country}}
                     </td>
                 </tr>
                 <tr>   
                     <td style="width:50%;">
-                        Personne à contacter :	<br/>
-                        <strong>Someone</strong><br/>
-						Couriel : mon email<br/>	
-                        Tél : mon tel<br/>
+                        Personne à contacter :
+                        <strong>{{space.contact}}</strong><br/>
+						Couriel : {{company.email}}<br/>	
+                        Tél : {{company.tel}}<br/>
 
                     </td>
                 </tr>
             </table>
         </div>
-        <div style="width: 50%; margin-left:400px">
-            <table style="  text-align: left; font-size: 11pt; border-radius:7px; background-color:yellow; padding: 7px 7px 7px 7px;">
-                <tr>
-                    <td style="width:100%; ">
-                        {{ resp }} <br>
-                        {{ unit }} <br><br>
-                        {{ address | raw }} <br>
-                    </td>
-                </tr>
-            </table>
-            <br>
-            <table style="width: 100%; text-align: left;font-size: 10pt">
-                <tr>
-                    <td style="width:100%; ">Rennes, le {{date }}</td>
-                </tr>
-            </table>
+        <div style="margin-left: 400px; width: 300px; flex: auto; font-size: 11pt; border: 1px; border-radius:7px; padding: 7px 7px 7px 7px;">
+            {{ resp }} <br/> {{ unit }}<br>
+            {{ address | raw }}
+
         </div>
     </div>
     <div style="width: 100%; height:25px;">
     </div>
     <div style="width: 50%;">
-        <table style="width: 100%; text-align: left;font-size: 10pt">
-            <tr>   
-                <td style="width:100%; ">
-                    
-                    <table border="1" style="border-collapse:collapse; text-align:center;">
 
-                        <tr><td style="width:40%;">Unité : 453</td><td style="width:40%;">CR : ABCD</td></tr>
-                    </table>
-
-                </td>
-            </tr>
-        </table>
     </div>
-    <div style="width: 50%; margin-left:400px; margin-top: -25px;">
-        <table style="width: 100%; text-align: left;font-size: 10pt; border-collapse:collapse; text-align:center;">
-            <tr>
-                <td style="width:100%; margin-left:400px; margin-top:-150px;">  
-                    <br>
-                    <table border="1" style="border-collapse:collapse; text-align:center;">
-
-                        <tr><td style="width:25%;">453</td><td style="width:25%;"> {{ 'now' | date('Y') }}	</td><td style="width:25%;">12PL514-02X</td></tr>
-                        <tr><td>U.B</td><td>	Année</td><td>	CR	</td></tr>
-                        <tr><td colspan="3">(Référence à rappeler)	</td></tr>
-                    </table>
-                </td>
-            </tr>    
+    <div style="width: 50%; margin-top: -25px;">
+        <table style="width: 100%; text-align: left;font-size: 10pt; border: 1px; text-align:center;">
+                        <tr>
+                            <td style="width:25%; border: 1px">453</td>
+                            <td style="width:25%; border: 1px"> {{ 'now' | date('Y') }}	</td>
+                            <td style="width:25%; border: 1px;">{{company.approval_number}}</td>
+                        </tr>
+                        <tr><td style="border: 1px">U.B</td><td style="border: 1px">	Année</td><td style="border: 1px">	CR	</td></tr>
+                        <tr><td style="border: 1px" colspan="3">(Référence à rappeler)	</td></tr>
         </table>
     </div>
 
@@ -165,7 +145,7 @@ Variables:
 </page>
 
 {% if details %}
-<page backcolor="#FEFEFE" backimg="data/invoices/bas_page.png" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
+<page backcolor="#FEFEFE" backimgx="center" backimgy="bottom" backimgw="100%" backtop="0" backbottom="30mm" footer="date;heure;page" style="font-size: 12pt">
 	{{ details | raw }}
 </page>
 {% endif %}

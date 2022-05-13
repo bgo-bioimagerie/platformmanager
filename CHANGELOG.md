@@ -1,29 +1,42 @@
 # Changes
 
+## 2.7.0
+
+* [booking] add caldav support
+
 ## 2.6.0
 
+### Features / enhancements
+
+* [cli] add config option to display configuration
+* [core] add login button on welcome page
 * [booking] in booking invoice details, show related bookings
-* [core] remove lasting references to ec classes
-* [booking] fix closed days hidding in summary view
-* [booking_settings] add getDefault to BkNightWE class 
+* [booking_settings] add getDefault to BkNightWE class
 * [core] remove lasting references to ec classes
 * [core] add meta block to block robots indexing for some pages
 * [core] on user join request, request a comment from user to be added to email
 * [booking] add to scheduling option to force usage of packages to an area
 * [booking] hide nightwe entries if pricing does not exists anymore
-* [helpdesk] do not send ticket reply if mail coming from helpdesk
 * [mail] add support for custom headers
-* [booking][supplementaries] avoid having two sups with the same name for the same resource 
-* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
-* [booking][supplementaries] can't add a resource to a sup in which it is already included
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
+
+### Bug fixes
+
 * [bulletjournal] fixes on creation and edit
-* [booking] add caldav support
 * [cli] add config option to display configuration
+* [booking][supplementaries] avoid having two sups with the same name for the same resource
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
+* [helpdesk] do not send ticket reply if mail coming from helpdesk
+* [core] remove lasting references to ec classes
+* [booking] fix closed days hidding in summary view
 * [invoice][booking] manage case where total hours = 0
-* [core] add login button on welcome page
 * [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
+* [antibodies] fix tissus image column width #643
+* [resources] fix resps cleanup, missing param
 
 ## 2.5.4
 

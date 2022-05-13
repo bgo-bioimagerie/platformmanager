@@ -464,7 +464,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     public function generateSpaceAccessForm($id_space, $id_user, $todo=false) {
-        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        // $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
 
@@ -493,7 +493,7 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     public function validateSpaceAccessForm($id_space, $id_user, $form) {
-        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        // $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUserSpace = new CoreSpaceUser();
 
