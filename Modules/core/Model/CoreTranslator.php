@@ -2230,5 +2230,13 @@ class CoreTranslator {
         }
         return "HTML - PDF Template";
     }
+
+    public static function NotConnectedMode($lang) {
+        if($lang == "fr") {
+            return "Vous êtes en mode visiteur, il faut vous <a href=\"/coreconnection\">connecter</a> pour accéder à l'ensemble des fonctionnalités de cet espace";
+
+        }
+        return "You are in visitor mode, you should <a href=\"/coreconnection\">login</a> to access full space features";
+    }
     
 }
