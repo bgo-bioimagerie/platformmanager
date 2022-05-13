@@ -9,7 +9,7 @@ class CoreUpgradeDB1651744382 extends Model {
 		$sql = 'ALTER TABLE ac_j_user_anticorps ADD COLUMN id int(11) NOT NULL PRIMARY KEY AUTO_INCREMENT';
 		$this->runRequest($sql);
 	  } catch(Throwable) {
-		Configuration::getLogger()->warn("[db][upgrade] id column creation for ac_j_user_anticorps failed, this is fine as it may already exists");
+		Configuration::getLogger()->warning("[db][upgrade] id column creation for ac_j_user_anticorps failed, this is fine as it may already exists");
 	  }
 	  $sql = 'ALTER TABLE ac_j_user_anticorps MODIFY COLUMN id int(11) NOT NULL AUTO_INCREMENT';
 	  $this->runRequest($sql);
