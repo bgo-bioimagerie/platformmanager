@@ -33,7 +33,7 @@ class BookingabstractController extends CoresecureController {
         ];
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if($plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
-            $menu[] = ['name' => 'CalDAV: '.Configuration::get('public_url').'/caldav/'.$this->currentSpace['id'].'/', 'url' => ''];
+            $menu[] = ['name' => 'CalDAV: '.Configuration::get('public_url').'/caldav/'.$this->currentSpace['id'].'/0/', 'url' => ''];
 
         }
         return $menu;
