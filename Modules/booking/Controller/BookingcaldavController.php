@@ -368,7 +368,7 @@ DTSTART:%s
 DTEND:%s
 STATUS:CONFIRMED
 END:VEVENT
-', $booking['id'], $booking['resource_name'], $desc, $start, $start, $end);
+', $booking['id'].'@pfm-bookings', $booking['resource_name'], $desc, $start, $start, $end);
         }
         $ccalendar = '';
         if($events){
