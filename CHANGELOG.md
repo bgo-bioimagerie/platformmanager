@@ -3,6 +3,7 @@
 ## 2.6.1
 
 * [core] in visitor mode, add warning to user to login to access all features
+* [core] disable by default tls for smtp, allow to activate via config smtp_tls
 
 ## 2.6.0
 
