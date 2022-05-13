@@ -137,7 +137,7 @@ class BookingcaldavController extends CorecookiesecureController {
             if($depth==0) {
                 $result_props[] = '<d:getcontenttype>httpd/unix-directory</d:getcontenttype>';
             } else {
-                $result_props[] = '<d:getcontenttype>text/calendar; charset=utf-8; component=vevent</d:getcontenttype>';
+                $result_props[] = '<d:getcontenttype>text/calendar;charset=utf-8;component=vevent</d:getcontenttype>';
             }
         }
 
@@ -153,8 +153,6 @@ class BookingcaldavController extends CorecookiesecureController {
             if($updates) {
                 $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
             }
-            // TODO for debug, remove
-            $eTag = time();
             $result_props[] = sprintf('<d:getetag>"%s"</d:getetag>', $eTag);
         }
         $cTag = $doc->xpath('//cs:getctag');
@@ -350,16 +348,21 @@ class BookingcaldavController extends CorecookiesecureController {
         if($updates) {
             $eTag = max($updates['last_update'], $updates['last_delete'], $updates['last_start']);
         }
-        // TODO for debug, remove
-        $eTag = time();
-        $events = '';
         
         $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
+        $responses = '';
         foreach ($bookings as $booking) {
+            $created = strtotime($booking['created_at']);
+            $created = date('Ymd', $created).'T'.date('His', $created).'';
+            $modified = strtotime($booking['updated_at']);
+            $modified = date('Ymd', $modified).'T'.date('His', $modified).'';
             $start = date('Ymd', $booking['start_time']).'T'.date('His', $booking['start_time']).'';
             $end = date('Ymd', $booking['end_time']).'T'.date('His', $booking['end_time']).'';
-            $desc = $booking['resource_name'].' - '.$booking['short_description'] ?? '';
-            $events .= sprintf('BEGIN:VEVENT
+            $desc = $booking['resource_name'];
+            if ($booking['short_description']) {
+                $desc .= ' - '.$booking['short_description'];
+            }
+            $event = sprintf('BEGIN:VEVENT
 UID:%s
 SUMMARY:%s
 DESCRIPTION:%s
@@ -367,39 +370,37 @@ DTSTAMP:%s
 DTSTART:%s
 DTEND:%s
 STATUS:CONFIRMED
+LAST-MODIFIED: %s
 END:VEVENT
-', $booking['id'].'@pfm-bookings', $booking['resource_name'], $desc, $start, $start, $end);
-        }
-        $ccalendar = '';
-        if($events){
-            $ccalendar = sprintf('<C:calendar-data>BEGIN:VCALENDAR
-VERSION:2.0
+', $booking['id'].'@pfm-bookings', $booking['resource_name'], $desc, $created, $start, $end, $modified);
+
+            $responses .= sprintf('<response>
+<href>%s</href>
+<propstat>
+<prop>
+<getetag>"%d"</getetag>
+<C:calendar-data>BEGIN:VCALENDAR
 PRODID:-//Platform Manager.//CalDAV Server//EN
-%s
-END:VCALENDAR
-</C:calendar-data>', $events);
+VERSION:2.0
+%sEND:VCALENDAR
+</C:calendar-data>
+</prop>
+<status>HTTP/1.1 200 OK</status>
+</propstat>
+</response>
+', $url.$booking['id'].'/', $modified, $event);
         }
-        
+
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
         <multistatus xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
-        <response>
-        <href>%s</href>
-        <propstat>
-        <prop>
-        <getetag>"%d"</getetag>
         %s
-        </prop>
-        <status>HTTP/1.1 200 OK</status>
-        </propstat>
-        </response>
         </multistatus>
-        ', $url, $eTag, $ccalendar);
+        ', $responses);
         http_response_code(207);
         header('Content-Type: text/xml');
         echo $data;
     }
-
-
 }
+
 
 ?>
