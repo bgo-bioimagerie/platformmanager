@@ -543,8 +543,9 @@ class ServicesprojectsController extends ServicesController {
             array_push($services, $serviceModel->getItem($id_space, $projectService['id_service']));
         }
         for($i=0; $i<count($tasks); $i++) {
-            $tasks[$i]['services'] = $taskModel->getTaskServices($id_space, $tasks[$i]['id']);
+            $tasks[$i]['services'] = $taskModel->getTaskServicesIds($id_space, $tasks[$i]['id']);
         }
+        
         
         $categoryModel = new SeTaskCategory();
         $categories = $categoryModel->getByProject($id_project, $id_space);
@@ -594,6 +595,16 @@ class ServicesprojectsController extends ServicesController {
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
 
+        // delete removed services
+        if ($taskData['id'] > 0) {
+            $dbTaskServices = $taskModel->getTaskServices($id_space, $taskData['id']);
+            foreach ($dbTaskServices as $dbTaskService) {
+                if (!in_array($dbTaskService['id_service'], $taskData['services'])) {
+                    $taskModel->deleteTaskService($id_space, $taskData['id'], $dbTaskService['id_service']);
+                }
+            }
+        }
+
         $id = $taskModel->set(
             $taskData['id'],
             $id_space,
@@ -604,7 +615,7 @@ class ServicesprojectsController extends ServicesController {
             $taskData['start_date'],
             $taskData['end_date'],
             $taskData['services'],
-            $taskData['user']
+            $taskData['id_user']
         );
         $this->render(['data' => ['id' => $id]]);
     }

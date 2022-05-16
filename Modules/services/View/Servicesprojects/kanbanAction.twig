@@ -30,58 +30,58 @@
 
         <div class="row mt-3">
 
-            <div id="taskContent" v-if="showModal">
+            <div id="taskContent" class="modal-element" v-if="showModal">
                 <div class="modal-dialog modal-mask" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
                             <button type="button"
-                                class="btn-close"
+                                class="btn-close modal-element"
                                 data-dismiss="modal"
                                 @click="showModal = false"
                                 aria-label="Close">
                             </button>
                         </div>
                         <div class="modal-body">
-                            <label for="details">Details</label>
-                            <textarea id="taskDetails" class="contentArea" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
+                            <label for="details" class="modal-element">Details</label>
+                            <textarea id="taskDetails" class="contentArea modal-element" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
                         
-                            <label for="taskUser">Person in charge</label>
+                            <label for="taskUser" class="modal-element">Person in charge</label>
                             <select
                                 id="taskUser"
                                 :list="projectUsers"
-                                class="form-control"
+                                class="form-control modal-element"
                                 name="taskUser"
-                                :value="selectedTask.user"
+                                v-model="selectedTask.id_user"
                                 @change="updateTaskUser($event, selectedTask)">
-                                <option v-if="projectUsers.length == 0" value="" disabled selected hidden>No users are affected to this project</option>
-                                <option v-else v-for="user in projectUsers" :value=user.id>
+                                <option v-if="projectUsers.length == 0" value="" class="modal-element" disabled selected hidden>No users are affected to this project</option>
+                                <option v-else v-for="user in projectUsers" :value=user.id class="modal-element">
                                     {{"{{user.name}}"}}
                                 </option>
                             </select>
                                                     
-                            <label for="services">Services</label>
+                            <label for="services" class="modal-element">Services</label>
                             <select
                                 id="taskServices"
                                 :list="projectServices"
-                                class="form-control"
+                                class="form-control modal-element"
                                 name="services"
-                                {# :value="selectedTask.services[0].id" #}
+                                v-model="selectedTask.services"
                                 multiple
                                 @change="updateTaskServices($event, selectedTask)">
-                                <option v-if="projectServices.length == 0" value="" disabled selected hidden>No services are affected to this project</option>
-                                <option v-else v-for="service in projectServices" :value=service.id>
+                                <option v-if="projectServices.length == 0" value="" class="modal-element" disabled selected hidden>No services are affected to this project</option>
+                                <option v-else v-for="service in projectServices" :value=service.id class="modal-element">
                                     {{"{{service.name}}"}}
                                 </option>
                             </select>
                         </div>
 
                         <div class="modal-footer">    
-                            <div class="row form-control">
-                                <label for="start_date">Start date</label>
-                                <input id="taskStartDate" type="date" class="form-control" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
-                                <label for="end_date">End date</label>
-                                <input id="taskEndDate" type="date" class="form-control" name="end_date" :value="selectedTask.end_date" @change="updateTaskDate($event, selectedTask)">
+                            <div class="row form-control modal-element">
+                                <label for="start_date" class="modal-element">Start date</label>
+                                <input id="taskStartDate" type="date" class="form-control modal-element" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
+                                <label for="end_date" class="modal-element">End date</label>
+                                <input id="taskEndDate" type="date" class="form-control modal-element" name="end_date" :value="selectedTask.end_date" @change="updateTaskDate($event, selectedTask)">
                             </div>
                         </div>
                     </div>
@@ -101,7 +101,7 @@
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.name}}"}}
-                                <button class="bi bi-pencil-square round" @click="showTaskContent($event, element)"></button>
+                                <button class="bi bi-pencil-square round modal-element" @click="showTaskContent($event, element)"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
                             </div>
                         </draggable>
@@ -151,12 +151,27 @@ let app = new Vue({
         this.updateCategoriesColors();
     },
     methods: {
-        updateTaskServices(event, task) {
-            task.services.push(event.target.value);
+        getMultipleSelectValues(select) {
+            let result = [];
+            const options = select && select.options;
+            let opt;
+            for (var i=0, iLen=options.length; i<iLen; i++) {
+                opt = options[i];
+                if (opt.selected) {
+                    result.push(opt.value || opt.text);
+                }
+            }
+            return result;
+        },
+        updateTaskServices(event, task) {            
+            let selectedValues = this.getMultipleSelectValues(event.target);
+            selectedValues.forEach(value => {
+                task.services.push(value);
+            });
             this.updateTask(task);
         },
         updateTaskUser(event, task) {
-            task.user = event.target.value;
+            task.user = event.target.value;            
             this.updateTask(task);
         },
         getTaskById(id) {
@@ -200,6 +215,21 @@ let app = new Vue({
         showTaskContent(event, task) {
             this.selectedTask = task;
             this.showModal = true;
+            document.addEventListener('click', this.closeTaskPopup);
+        },
+        closeTaskPopup(event) {
+            let isModalElement = false;
+            const classes = event.target.classList;
+            // does classList contain a class with "modal-" ?
+            classes.forEach(className => {
+                if (className.includes('-') && className.split('-')[0] == "modal") {
+                    isModalElement = true;
+                }
+            });
+            if(!isModalElement) {
+                this.showModal = false;
+                document.removeEventListener('click', this.closeTaskPopup);
+            }
         },
         changeTaskState(event, categoryIndex) {
             if (event.added) {
@@ -270,7 +300,7 @@ let app = new Vue({
                     start_date: null,
                     end_date: null,
                     services: [],
-                    user: this.mainUser
+                    id_user: this.mainUser
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);

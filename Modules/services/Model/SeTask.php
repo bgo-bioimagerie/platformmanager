@@ -110,9 +110,14 @@ class SeTask extends Model {
     }
 
     public function getTaskServicesIds($id_space, $id_task) {
-        $sql = "SELECT 'service_id' FROM se_task_service WHERE id_space=? AND id_task=? AND deleted=0;";
+        $result = [];
+        $sql = "SELECT id_service FROM se_task_service WHERE id_space=? AND id_task=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_task));
-        return $req->fetchAll();
+        $response = $req->fetchAll();
+        foreach($response as $elem) {
+            array_push($result, $elem['id_service']);
+        }
+        return $result;
     }
 
     public function setTaskService($id_space, $id_task, $id_service) {
