@@ -226,13 +226,9 @@ class ServicesprojectsController extends ServicesController {
             $entriesArray[$i]["txtcolor"] = $pricingInfo["txtcolor"];
 
             $entriesArray[$i]["time_color"] = Constants::COLOR_WHITE;
-            if ($entriesArray[$i]["time_limit"] != "") {
-
-                if ($entriesArray[$i]["time_limit"] && strval($entriesArray[$i]["time_limit"]) != "0000-00-00") {
-                    $entriesArray[$i]["time_color"] = "#FFCC00";
-                }
+            if ($entriesArray[$i]["time_limit"] != "" && ($entriesArray[$i]["time_limit"] && strval($entriesArray[$i]["time_limit"]) != "0000-00-00")) {
+                $entriesArray[$i]["time_color"] = "#FFCC00";
             }
-
 
             $entriesArray[$i]["closed_color"] = Constants::COLOR_WHITE;
             if ($entriesArray[$i]["date_close"] && $entriesArray[$i]["date_close"] != "0000-00-00") {
@@ -537,10 +533,12 @@ class ServicesprojectsController extends ServicesController {
         $tasks = $taskModel->getByProject($id_project, $id_space);
 
         $projectModel = new SeProject();
+        $project = $projectModel->getEntry($id_space, $id_project);
         $projectServices = $projectModel->getProjectServicesDefault($id_space, $id_project);
+        
+
         $serviceModel = new SeService();
         $services = array();
-
         foreach($projectServices as $projectService) {
             array_push($services, $serviceModel->getItem($id_space, $projectService['id_service']));
         }
@@ -555,12 +553,12 @@ class ServicesprojectsController extends ServicesController {
             $categories[$i]['tasks'] = [];
         }
 
-        $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id_space ,$id_project);
-        $seProjectUsers = $modelProject->getProjectUsersIds($id_space, $id_project);
-        $projectUsers = array();
+        $projectName = $projectModel->getName($id_space ,$id_project);
+        $seProjectUsers = $projectModel->getProjectUsersIds($id_space, $id_project);
+        $projectMainUser = $project['id_user'];
 
         $modelUser = new CoreUser();
+        $projectUsers = array();
         foreach($seProjectUsers as $seProjectUser) {
             array_push($projectUsers, $modelUser->getUser($seProjectUser['id_user']));
         }
@@ -586,7 +584,8 @@ class ServicesprojectsController extends ServicesController {
             "tasks" => json_encode($tasks),
             "categories" => json_encode($categories),
             "projectServices" => json_encode($services),
-            "projectUsers" => json_encode($projectUsers)
+            "projectUsers" => json_encode($projectUsers),
+            "mainUser" => $projectMainUser
         ));
     }
 

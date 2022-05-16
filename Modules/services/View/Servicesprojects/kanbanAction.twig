@@ -67,6 +67,7 @@
                                 class="form-control"
                                 name="services"
                                 {# :value="selectedTask.services[0].id" #}
+                                multiple
                                 @change="updateTaskServices($event, selectedTask)">
                                 <option v-if="projectServices.length == 0" value="" disabled selected hidden>No services are affected to this project</option>
                                 <option v-else v-for="service in projectServices" :value=service.id>
@@ -129,6 +130,7 @@ let app = new Vue({
             projectServices: {{ projectServices | raw }},
             projectUsers: {{ projectUsers | raw }},
             textContent: {{ textContent | raw }},
+            mainUser: {{ mainUser }},
             showModal: false,
             selectedTask: null
         }
@@ -268,7 +270,7 @@ let app = new Vue({
                     start_date: null,
                     end_date: null,
                     services: [],
-                    user: null
+                    user: this.mainUser
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);

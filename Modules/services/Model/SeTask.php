@@ -3,7 +3,7 @@
 require_once 'Framework/Model.php';
 
 /**
- * Class defining the tracking sheet for se_projects
+ * Class defining projects tasks
  *
  * @author Sylvain Prigent
  */
