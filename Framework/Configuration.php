@@ -189,6 +189,10 @@ class Configuration {
         if(getenv('SMTP_PORT')) {
             self::$parameters['smtp_port']= intval(getenv('SMTP_PORT'));
         }
+        self::$parameters['smtp_tls']= false;
+        if(getenv('SMTP_TLS')) {
+            self::$parameters['smtp_tls']= boolval(getenv('SMTP_TLS'));
+        }
         if(getenv('DEBUG')) {
             self::$parameters['debug'] = boolval(getenv('DEBUG'));
         }
