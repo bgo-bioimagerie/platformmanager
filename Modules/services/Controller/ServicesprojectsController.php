@@ -747,7 +747,7 @@ class ServicesprojectsController extends ServicesController {
 
         // add project users
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
-            $formProjectUserIds = $this->request->getParameter("users");    
+            $formProjectUserIds = $this->request->getParameter("users");
         }
         array_push($formProjectUserIds, $id_user);
         
