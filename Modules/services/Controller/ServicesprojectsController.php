@@ -624,7 +624,25 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);        
         $taskModel = new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
-        $this->render(['data' => ['tasks' => $tasks]]);
+
+        $userModel = new CoreUser();
+        for($i=0; $i<count($tasks); $i++) {
+            $tasks[$i]['userName'] = $userModel->getUserFUllName($tasks[$i]['id_user']);
+        }
+        $this->render(['data' => ['elements' => $tasks]]);
+    }
+
+    public function getTaskServicesAction($id_space, $id_task) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $serviceModel = new SeService();
+        $taskModel = new SeTask();
+        $serviceIds = $taskModel->getTaskServicesIds($id_space, $id_task);
+
+        $services = [];
+        foreach($serviceIds as $serviceId) {
+            array_push($services, $serviceModel->getItem($id_space, $serviceId));
+        }
+        $this->render(['data' => ['elements' => $services]]);
     }
 
     public function deleteTaskAction($id_space, $id_task) {

@@ -10,6 +10,7 @@ class ServicesRouting extends Routing {
         $router->map('GET|POST', '/servicesprojects/kanban/[i:id_space]/[i:id_project]', 'services/servicesprojects/kanban', 'services_project_kanban');
         $router->map('GET|POST', '/servicesprojects/settask/[i:id_space]/[i:id_project]', 'services/servicesprojects/settask', 'services_project_settask');
         $router->map('GET|POST', '/servicesprojects/gettasks/[i:id_space]/[i:id_project]', 'services/servicesprojects/gettasks', 'services_project_gettasks');
+        $router->map('GET|POST', '/servicesprojects/gettaskservices/[i:id_space]/[i:id_task]', 'services/servicesprojects/gettaskservices', 'services_project_gettaskservices');
         $router->map('GET|POST', '/servicesprojects/deletetask/[i:id_space]/[i:id_task]', 'services/servicesprojects/deletetask', 'services_project_deletetask');
         $router->map('GET|POST', '/servicesprojects/settaskcategory/[i:id_space]/[i:id_project]', 'services/servicesprojects/settaskcategory', 'services_project_settaskcategory');
         $router->map('GET|POST', '/servicesprojects/deletetaskcategory/[i:id_space]/[i:id_category]', 'services/servicesprojects/deletetaskcategory', 'services_project_deletetaskcategory');

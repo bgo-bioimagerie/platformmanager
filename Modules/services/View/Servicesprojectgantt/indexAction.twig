@@ -160,6 +160,7 @@
         <div id="taskContent" v-if="showModal">
             <div class="modal-dialog modal-mask" role="document">
                 <div class="modal-content">
+
                     <div class="modal-header">
                         <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
                         <button type="button"
@@ -169,15 +170,34 @@
                             aria-label="Close">
                         </button>
                     </div>
+
                     <div class="modal-body">
-                        <p>{{"{{selectedTask.content}}"}}</p>
+                        <div>
+                            <label for="taskUser" style="font-weight:bold;">Affected to</label>
+                            <div name="taskUser">
+                                {{"{{selectedTask.userName}}"}}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="taskServices" style="font-weight:bold;">Related services</label>
+                            <div name="taskServices" v-for="service in selectedTask.services">
+                                {{"{{service.name}}"}}
+                            </div>
+                        </div>
+                        <div>            
+                            <label for="taskContent" style="font-weight:bold;">Details</label>
+                            <div name="taskContent">
+                                {{"{{selectedTask.content}}"}}
+                            </div>
+                        </div>
                     </div>
+
                     <div class="modal-footer">
                         <button
                             type="button"
                             class="btn btn-secondary"
                             @click="gotoKanban">
-                            Go to kanban board
+                            View in kanban board
                         </button>
                     </div>
                 </div>
@@ -517,7 +537,6 @@ let app = new Vue({
             })
             return result;
         },
-
         generateRows() {
             this.items.forEach((item, index) => {
                 row = this.getRowFromItem(item, index);
@@ -583,7 +602,7 @@ let app = new Vue({
                 this.itemsType = "task";
                 this.projectId = itemId;
                 let project = this.items.find(item => item.id == itemId);
-                let tasks = await this.getProjectTasks(itemId);
+                let tasks = await this.getProjectData('tasks', itemId);
                 this.items = tasks;
                 this.chartStart = project.date_open;
                 this.chartEnd = project.time_limit;
@@ -592,13 +611,14 @@ let app = new Vue({
                 this.updateColors();
                 this.adaptTimeaxis();
             } else if (this.itemsType == "task") {
-                this.openTaskPopup(itemId);
+                let services = await this.getProjectData('taskservices', itemId);
+                this.openTaskPopup(itemId, services);
             } else {
                 console.err("nothing to display");
             }
         },
-        async getProjectTasks(projectId) {
-            let tasks = [];
+        async getProjectData(elementCategory, elementId) {
+            let result = [];
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');
@@ -607,18 +627,19 @@ let app = new Vue({
                 method: 'POST',
                 body: null
             };
-            let targetUrl = `/servicesprojects/gettasks/`;
-            let apiRoute = targetUrl + this.id_space + "/" + projectId;
+            let targetUrl = `/servicesprojects/get` + elementCategory + `/`;
+            let apiRoute = targetUrl + this.id_space + "/" + elementId;
             await fetch(apiRoute, cfg, true).
                 then((response) => response.json()).
                 then(data => {
-                    tasks = data.tasks;
+                    result = data.elements;
                 });
-                return tasks;
+                return result;
         },
-        openTaskPopup(taskId) {
+        openTaskPopup(taskId, services) {
             let task = this.items.find(item => item.id == taskId);
             this.selectedTask = task;
+            this.selectedTask.services = services;
             this.showModal = true;
         },
         gotoKanban() {
