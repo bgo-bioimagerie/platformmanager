@@ -745,8 +745,10 @@ class ServicesprojectsController extends ServicesController {
         $modelProject->setOrigin($id_space ,$id_project, $this->request->getParameter("id_origin"));
         $modelProject->setInCharge($id_space, $id_project, $pic);
 
-        // add project users 
-        $formProjectUserIds = $this->request->getParameter("users");
+        // add project users
+        if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
+            $formProjectUserIds = $this->request->getParameter("users");    
+        }
         array_push($formProjectUserIds, $id_user);
         
         if($id>0) {
