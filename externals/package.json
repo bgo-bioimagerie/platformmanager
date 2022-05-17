@@ -3,8 +3,10 @@
     "@taitems/jquery-gantt": "^1.1.2",
     "bootstrap": "^5.1.3",
     "bootstrap-icons": "^1.7.2",
+    "browserify": "^17.0.0",
     "datatables.net-bs5": "^1.11.4",
     "lodash": "^4.16.0",
-    "marked": "^0.3.6"
+    "marked": "^4.0.16",
+    "vue": "^3.2.33"
   }
 }
