@@ -207,14 +207,14 @@
 
         <div class="monthAxis mt-3 ml-5">
             <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
-            <div class="col d-inline-flex" style="width: 84%;">
-                <table id="monthList" class="d-inline-flex" style="width: 100%;"></table>
+            <div id="monthListContainer" class="col d-inline-flex" style="width: 84%;">
+                {# Filled by js script #}
             </div>
         </div>
         <div class="weeksAxis ml-5">
             <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
-            <div class="col d-inline-flex" style="width: 84%;">
-                <table id="weekList" class="d-inline-flex" style="width: 100%;"></table>
+            <div id="weekListContainer" class="col d-inline-flex" style="width: 84%;">
+                {# Filled by js script #}
             </div>
         </div>
 
@@ -468,8 +468,14 @@ let app = new Vue({
         },
         displayTimeaxisInMonth(totalDays) {
             let monthList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'month');
-            let monthSection = document.getElementById("monthList");
-            monthSection.innerHTML = "";
+            let monthContainer = document.getElementById("monthListContainer");
+            monthContainer.innerHTML = "";
+            let monthSection = document.createElement("table");
+            monthSection.id = "monthList";
+            monthSection.ariaLabel="timeline in month";
+            monthSection.style['width'] = "100%";
+            monthContainer.appendChild(monthSection);
+            
             let totalWidth = monthSection.offsetWidth;
             monthList.forEach((month, index) => {
                 let monthHeader = this.setTimeaxisHeader(month, index, totalDays, totalWidth, 'month');
@@ -478,8 +484,14 @@ let app = new Vue({
         },
         displayTimeaxisInWeeks(totalDays) {
             let weekList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'week');
-            let weekSection = document.getElementById("weekList");
-            weekSection.innerHTML = "";
+            let weekContainer = document.getElementById("weekListContainer");
+            weekContainer.innerHTML = "";
+            let weekSection = document.createElement("table");
+            weekSection.id = "weekList";
+            weekSection.classList.add("d-inline-flex");
+            weekSection.ariaLabel="timeline in weeks";
+            weekSection.style['width'] = "100%";
+            weekContainer.appendChild(weekSection);
 
             let totalWidth = weekSection.offsetWidth;
             weekList.forEach((week, index) => {
