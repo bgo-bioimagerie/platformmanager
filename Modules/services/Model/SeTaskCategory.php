@@ -32,6 +32,12 @@ class SeTaskCategory extends Model {
         return $req->fetchAll();
     }
 
+    public function getById($id_space, $id_category) {
+        $sql = "SELECT * FROM se_task_category WHERE id=? id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_category, $id_space));
+        return $req->fetch();
+    }
+
     public function getByProject($id_project, $id_space) {
         $sql = "SELECT * FROM se_task_category WHERE id_space=? AND id_project=? AND deleted=0 ORDER BY position;";
         $req = $this->runRequest($sql, array($id_space, $id_project));

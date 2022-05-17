@@ -54,6 +54,19 @@ class ServicesprojectsController extends ServicesController {
         $this->render(['data' => ['projects' => $projects]]);
     }
 
+    /**
+     * checks if user is principal user or member of the project
+     * If not, checks if user has all authorizations for services module
+     * If not again, raises an exception
+     */
+    public function checkProjectAccessAuthorization($id_space, $id_project) {
+        $projectModel = new SeProject();
+        if (!($projectModel->isProjectUser($id_space, $_SESSION['id_user'], $id_project)
+                || $_SESSION['id_user'] == $projectModel->getResp($id_space, $id_project))) {
+            $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        }
+    }
+
     protected function getProjectPeriod($id_space, $year) {
         $modelCoreConfig = new CoreConfig();
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
