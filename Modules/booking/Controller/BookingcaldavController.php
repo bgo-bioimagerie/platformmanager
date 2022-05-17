@@ -298,6 +298,7 @@ class BookingcaldavController extends CorecookiesecureController {
                         $toTS = DateTime::createFromFormat('Ymd\THisP', $tre)->getTimestamp();
                     }
                 }
+                /*
                 $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
                    
                 $eTag = 0;
@@ -322,10 +323,11 @@ class BookingcaldavController extends CorecookiesecureController {
                 header('Content-Type: text/xml');
                 echo $data;
                 return;
+                */
             }
 
         }
-        if($doc->getName() == 'calendar-multiget'){
+        if(1==1){
                 foreach($doc->children('DAV:') as $child) {
                     if($child->getName() != 'href') {
                         continue;
@@ -373,7 +375,7 @@ STATUS:CONFIRMED
 LAST-MODIFIED: %s
 END:VEVENT
 ', $booking['id'].'@pfm-bookings', $booking['resource_name'], $desc, $created, $start, $end, $modified);
-
+            $url = sprintf("/caldav/%s/1/%d.ics", $id_space, $booking['id']);
             $responses .= sprintf('<response>
 <href>%s</href>
 <propstat>
@@ -388,7 +390,7 @@ VERSION:2.0
 <status>HTTP/1.1 200 OK</status>
 </propstat>
 </response>
-', $url.$booking['id'].'/', $modified, $event);
+', $url, $modified, $event);
         }
 
         $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
