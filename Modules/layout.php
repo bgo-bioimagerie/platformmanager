@@ -21,10 +21,10 @@
         <?php
         if($context['dev']) {
             /* echo '<script src="externals/vuejs/vue.js"></script>'; */
-            echo '<script src="externals/vuejs/vue3.js"></script>';
+            echo '<script src="externals/vuejs/vue.js"></script>';
             echo $context['_debugbarRenderer']->renderHead();
         } else {
-            echo '<script src="externals/vuejs/vue3.js"></script>';
+            echo '<script src="externals/vuejs/vue.js"></script>';
             /* echo '<script src="externals/vuejs/vue.min.js"></script>'; */
         }
         ?>

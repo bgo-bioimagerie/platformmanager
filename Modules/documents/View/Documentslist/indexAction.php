@@ -92,7 +92,7 @@ doclist.forEach((doc) => {
 ?>
 
 
-vue3.createApp({
+Vue.createApp({
     data () {
         return {
             docs: [],

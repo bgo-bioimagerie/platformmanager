@@ -170,7 +170,7 @@ let spaces = <?php echo json_encode($spaceMap); ?>;
 let resources = <?php echo json_encode($resources); ?>;
 let catalog = <?php echo json_encode($catalog); ?>;
 
-vue3.createApp({
+Vue.createApp({
     data () {
         return {
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,

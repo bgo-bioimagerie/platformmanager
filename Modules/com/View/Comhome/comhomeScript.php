@@ -28,7 +28,7 @@
 let popup_box = document.getElementById('popup_box');
 let hider = document.getElementById('hider');
 
-vue3.createApp({
+Vue.createApp({
     data() {
         return {
             newsList: new Array()

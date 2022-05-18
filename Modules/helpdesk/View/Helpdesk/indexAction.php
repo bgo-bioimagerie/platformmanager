@@ -210,7 +210,7 @@ blockquote {
 </div>
 <script>
 
-vue3.createApp({
+Vue.createApp({
     data () {
         return {
             selectAll: false,

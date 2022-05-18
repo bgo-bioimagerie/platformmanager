@@ -30,7 +30,7 @@
 let today = new Date();
 let yesterday = new Date();
 yesterday.setDate( today.getDate() - 1);
-vue3.createApp({
+Vue.createApp({
   data() {
     return {
       logs: <?php echo json_encode($logs);?>,

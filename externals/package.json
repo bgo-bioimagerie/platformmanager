@@ -5,7 +5,6 @@
     "bootstrap-icons": "^1.7.2",
     "datatables.net-bs5": "^1.11.4",
     "lodash": "^4.16.0",
-    "marked": "^4.0.16",
-    "vue": "^3.2.33"
+    "marked": "^4.0.16"
   }
 }
