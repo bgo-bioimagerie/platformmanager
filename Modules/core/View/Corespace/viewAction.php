@@ -157,21 +157,10 @@ foreach($spaceMenuItems as $item) {
 
 ?>
 
-<script type="module">
+<script>
 
-import { createApp } from '/externals/node_modules/vue/dist/vue.global.js'
-
-createApp({
-  data() {
-    return {
-      count: 0
-    }
-  }
-}).mount('#titles')
-
-/* var app = new Vue({
-    el: '#tiles',
-    data () {
+vue3.createApp({
+    data() {
         return {
             id_space: <?php echo $id_space ?>,
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -180,38 +169,37 @@ createApp({
         }
     },
     mounted: function() {
-        if(!this.logged) {
-            return
-        }
-        const headers = new Headers();
-                headers.append('Content-Type','application/json');
-                headers.append('Accept', 'application/json');
-        const cfg = {
-            headers: headers,
-            method: 'GET',
-        };
-        this.modules.forEach(mod => {
-            let modName = mod.replace(' ', '').toLowerCase();
-            if(!modName) {
-                return;
+            if(!this.logged) {
+                return
             }
-            fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
-            then((response) => response.json(), (error) => {}).
-            then(data => {
-                let n = {...this.notifs}
-                n[modName] = data.notifs
-                this.notifs = n
-            }).catch((error) => {
-                console.debug('failed to get notifications', modName, error);
-            })
+            const headers = new Headers();
+                    headers.append('Content-Type','application/json');
+                    headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'GET',
+            };
+            this.modules.forEach(mod => {
+                let modName = mod.replace(' ', '').toLowerCase();
+                if(!modName) {
+                    return;
+                }
+                fetch(`/core/tiles/${this.id_space}/module/${modName}/notifs`, cfg).
+                then((response) => response.json(), (error) => {}).
+                then(data => {
+                    let n = {...this.notifs}
+                    n[modName] = data.notifs
+                    this.notifs = n
+                }).catch((error) => {
+                    console.debug('failed to get notifications', modName, error);
+                })
 
-        });
-        
-    },
-    methods: {
-    }
-}) */
-
+            });
+            console.log("notifs: ", this.notifs)
+        },
+        methods: {
+        }
+}).mount('#tiles')
 
 </script>
 
