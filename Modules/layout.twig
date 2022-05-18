@@ -13,11 +13,9 @@
             {% block title %}{% endblock %}
         </title>
         {% if context.dev %}
-            {# <script src="externals/vuejs/vue.js"></script> #}
             <script src="externals/vuejs/vue.js"></script>
             {{context._debugbarRenderer.renderHead() | raw}}
         {% else %}
-            {# <script src="externals/vuejs/vue.min.js"></script> #}
             <script src="externals/vuejs/vue.js"></script>
         {% endif %}
 
