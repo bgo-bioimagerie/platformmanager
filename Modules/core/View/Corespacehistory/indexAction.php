@@ -30,12 +30,13 @@
 let today = new Date();
 let yesterday = new Date();
 yesterday.setDate( today.getDate() - 1);
-var app = new Vue({
-  el: '#logs',
-  data: {
-    logs: <?php echo json_encode($logs);?>,
-    fromFilter: yesterday,
-    toFilter: today
+vue3.createApp({
+  data() {
+    return {
+      logs: <?php echo json_encode($logs);?>,
+      fromFilter: yesterday,
+      toFilter: today
+    }
   },
   mounted() {
     this.refresh()
@@ -63,6 +64,6 @@ var app = new Vue({
             })
     }
   }
-})
+}).mount('#logs')
 </script>
 <?php endblock(); ?>
