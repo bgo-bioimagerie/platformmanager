@@ -13,10 +13,12 @@
             {% block title %}{% endblock %}
         </title>
         {% if context.dev %}
-            <script src="externals/vuejs/vue.js"></script>
+            {# <script src="externals/vuejs/vue.js"></script> #}
+            <script type="module" src="externals/node_modules/vue/dist/vue.global.js"></script>
             {{context._debugbarRenderer.renderHead() | raw}}
         {% else %}
-            <script src="externals/vuejs/vue.min.js"></script>
+            {# <script src="externals/vuejs/vue.min.js"></script> #}
+            <script type="module" src="externals/node_modules/vue/dist/vue.global.js"></script>
         {% endif %}
 
         <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">

@@ -157,10 +157,19 @@ foreach($spaceMenuItems as $item) {
 
 ?>
 
-<script>
+<script type="module">
 
+import { createApp } from '/externals/node_modules/vue/dist/vue.global.js'
 
-var app = new Vue({
+createApp({
+  data() {
+    return {
+      count: 0
+    }
+  }
+}).mount('#titles')
+
+/* var app = new Vue({
     el: '#tiles',
     data () {
         return {
@@ -201,7 +210,7 @@ var app = new Vue({
     },
     methods: {
     }
-})
+}) */
 
 
 </script>

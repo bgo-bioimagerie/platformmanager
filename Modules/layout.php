@@ -20,10 +20,12 @@
         </title>
         <?php
         if($context['dev']) {
-            echo '<script src="externals/vuejs/vue.js"></script>';
+            /* echo '<script src="externals/vuejs/vue.js"></script>'; */
+            echo '<script type="module" src="externals/node_modules/vue/dist/vue.global.js"></script>';
             echo $context['_debugbarRenderer']->renderHead();
         } else {
-            echo '<script src="externals/vuejs/vue.min.js"></script>';
+            echo '<script type="module" src="externals/node_modules/vue/dist/vue.global.js"></script>';
+            /* echo '<script src="externals/vuejs/vue.min.js"></script>'; */
         }
         ?>
         <?php if(isset($context['theme']) && $context['theme'] == 'dark') { ?>
