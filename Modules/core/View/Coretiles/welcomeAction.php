@@ -200,18 +200,19 @@ vue3.createApp({
                 then((response) => response.json()).
                 then(data => {
                     let bookings = []
-                    data.bookings.forEach((elem) => {
-                        let bdate = new Date(elem.start_time*1000);
-                        bookings.push({
-                            "id": elem.id,
-                            "id_space": elem.id_space,
-                            "resource": elem.resource,
-                            "id_resource": elem.resource_id,
-                            "space": elem.space,
-                            "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                    if (data.bookings) {
+                        data.bookings.forEach((elem) => {
+                            let bdate = new Date(elem.start_time*1000);
+                            bookings.push({
+                                "id": elem.id,
+                                "id_space": elem.id_space,
+                                "resource": elem.resource,
+                                "id_resource": elem.resource_id,
+                                "space": elem.space,
+                                "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                            });
                         });
-                    });
-
+                    }
                     this.bookings = bookings
                 })
         } catch(error) {
@@ -222,16 +223,17 @@ vue3.createApp({
                 then((response) => response.json()).
                 then(data => {
                     let projects = []
-                    data.projects.forEach((elem) => {
-                        projects.push({
-                            "id": elem.id,
-                            "id_space": elem.id_space,
-                            "name": elem.name,
-                            "space": elem.space,
-                            "date": elem.date_open
+                    if (data.projects) {
+                        data.projects.forEach((elem) => {
+                            projects.push({
+                                "id": elem.id,
+                                "id_space": elem.id_space,
+                                "name": elem.name,
+                                "space": elem.space,
+                                "date": elem.date_open
+                            });
                         });
-                    });
-
+                    }
                     this.projects = projects
                 })
         } catch(error) {

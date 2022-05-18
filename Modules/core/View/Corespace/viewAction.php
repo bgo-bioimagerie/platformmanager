@@ -193,7 +193,6 @@ vue3.createApp({
                 }).catch((error) => {
                     console.debug('failed to get notifications', modName, error);
                 })
-
             });
         },
         methods: {
