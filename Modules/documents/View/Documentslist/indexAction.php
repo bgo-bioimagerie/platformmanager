@@ -92,8 +92,7 @@ doclist.forEach((doc) => {
 ?>
 
 
-let app = new Vue({
-    el: '#doctree',
+vue3.createApp({
     data () {
         return {
             docs: [],
@@ -104,7 +103,7 @@ let app = new Vue({
         }
     },
     created () {
-            this.levels(this.level, this.path);
+        this.levels(this.level, this.path);
     },
     methods: {
         copyLink(doc) {
@@ -194,7 +193,7 @@ let app = new Vue({
             this.docs = data
         }
     }
-});
+}).mount('#doctree');
 
 </script>
 
