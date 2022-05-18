@@ -170,8 +170,7 @@ let spaces = <?php echo json_encode($spaceMap); ?>;
 let resources = <?php echo json_encode($resources); ?>;
 let catalog = <?php echo json_encode($catalog); ?>;
 
-var app = new Vue({
-    el: '#welcome',
+vue3.createApp({
     data () {
         return {
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -279,7 +278,7 @@ var app = new Vue({
     },
     methods: {
     }
-})
+}).mount('#welcome')
 
 
 </script>

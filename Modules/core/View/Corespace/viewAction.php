@@ -195,7 +195,6 @@ vue3.createApp({
                 })
 
             });
-            console.log("notifs: ", this.notifs)
         },
         methods: {
         }
