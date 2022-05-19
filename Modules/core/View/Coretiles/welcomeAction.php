@@ -170,8 +170,7 @@ let spaces = <?php echo json_encode($spaceMap); ?>;
 let resources = <?php echo json_encode($resources); ?>;
 let catalog = <?php echo json_encode($catalog); ?>;
 
-var app = new Vue({
-    el: '#welcome',
+Vue.createApp({
     data () {
         return {
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -201,18 +200,19 @@ var app = new Vue({
                 then((response) => response.json()).
                 then(data => {
                     let bookings = []
-                    data.bookings.forEach((elem) => {
-                        let bdate = new Date(elem.start_time*1000);
-                        bookings.push({
-                            "id": elem.id,
-                            "id_space": elem.id_space,
-                            "resource": elem.resource,
-                            "id_resource": elem.resource_id,
-                            "space": elem.space,
-                            "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                    if (data.bookings) {
+                        data.bookings.forEach((elem) => {
+                            let bdate = new Date(elem.start_time*1000);
+                            bookings.push({
+                                "id": elem.id,
+                                "id_space": elem.id_space,
+                                "resource": elem.resource,
+                                "id_resource": elem.resource_id,
+                                "space": elem.space,
+                                "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                            });
                         });
-                    });
-
+                    }
                     this.bookings = bookings
                 })
         } catch(error) {
@@ -223,16 +223,17 @@ var app = new Vue({
                 then((response) => response.json()).
                 then(data => {
                     let projects = []
-                    data.projects.forEach((elem) => {
-                        projects.push({
-                            "id": elem.id,
-                            "id_space": elem.id_space,
-                            "name": elem.name,
-                            "space": elem.space,
-                            "date": elem.date_open
+                    if (data.projects) {
+                        data.projects.forEach((elem) => {
+                            projects.push({
+                                "id": elem.id,
+                                "id_space": elem.id_space,
+                                "name": elem.name,
+                                "space": elem.space,
+                                "date": elem.date_open
+                            });
                         });
-                    });
-
+                    }
                     this.projects = projects
                 })
         } catch(error) {
@@ -279,7 +280,7 @@ var app = new Vue({
     },
     methods: {
     }
-})
+}).mount('#welcome')
 
 
 </script>

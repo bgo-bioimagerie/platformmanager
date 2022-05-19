@@ -28,10 +28,11 @@
 let popup_box = document.getElementById('popup_box');
 let hider = document.getElementById('hider');
 
-var newsView = new Vue({
-    el: '#news',
-    data: {
-        newsList: new Array(),
+Vue.createApp({
+    data() {
+        return {
+            newsList: new Array()
+        }
     },
     methods: {
         getNewsData() {
@@ -45,19 +46,21 @@ var newsView = new Vue({
             fetch(`getnews/<?php echo $id_space ?>`, cfg).
                 then((response) => response.json()).
                 then(data => {
-                    data.news.forEach((elem) => {
-                        this.newsList.push({
-                            "title": elem.title,
-                            "content": elem.content,
-                            "media": elem.media
+                    if (data.news) {
+                        data.news.forEach((elem) => {
+                            this.newsList.push({
+                                "title": elem.title,
+                                "content": elem.content,
+                                "media": elem.media
+                            });
                         });
-                    });
+                    }
                 }).
                 then(this.displayPopup());
         },
         displayPopup() {
             popup_box.style.display = "block";
-            popup_box.style.opacity = 1;  
+            popup_box.style.opacity = 1;
         },
         closePopup(event) {
             hider.style.opacity = 0;
@@ -69,5 +72,5 @@ var newsView = new Vue({
     beforeMount() {
         this.getNewsData();
     }
-})
+}).mount('#news')
 </script>
