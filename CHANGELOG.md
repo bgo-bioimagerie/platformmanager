@@ -1,6 +1,25 @@
 # Changes
 
+## 2.7.0
+
+### Features / enhancements
+
+* [antibodies] use bootstrap modals and fix some menu urls
+
+## 2.6.1
+
+* [core] in visitor mode, add warning to user to login to access all features
+* [core] disable by default tls for smtp, allow to activate via config smtp_tls
+
 ## 2.6.0
+
+### Warning
+
+Now, quote module manage its own template for pdf generation. Existing template is copied from invoices if exists at install time. If no template is available, a default example will be used.
+
+A warning is deplayed to inform you if no template is defined.
+
+Quote templates are configured the same way than invoice templates.
 
 ### Features / enhancements
 
@@ -16,7 +35,7 @@
 * [mail] add support for custom headers
 * [booking] weekarea calendar, use summary view by default
 * [core] catch email errors and log them
-* [antibodies] use bootstrap modals and fix some menu urls
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
 
 ### Bug fixes
 
@@ -30,7 +49,6 @@
 * [invoice][booking] manage case where total hours = 0
 * [booking] for multi slot bookings, do not display next slot content
 * [core] fix corespaceuseraccess when clients or booking modules are in inactive status
-* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
 * [antibodies] fix tissus image column width #643
 * [resources] fix resps cleanup, missing param
 

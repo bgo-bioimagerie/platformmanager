@@ -53,6 +53,7 @@ Following env variables can be used to override Config/conf.ini:
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
 * SMTP_FROM: support@genouest.org  # mail *from* address
+* SMTP_TLS: 0 # activate tls support for smtp, false by default
 * PFM_MODE: prod  # optional [dev|*prod*|test], dev mode adds a console in browser with sql info
 * PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)
 * PFM_ADMIN_EMAIL: admin@pfm.org  # superadmin email
