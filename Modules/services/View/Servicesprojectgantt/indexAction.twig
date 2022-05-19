@@ -360,8 +360,7 @@ THEMESCOLORS = {
     }
 };
 
-let app = new Vue({
-    el: '#gantt',
+Vue.createApp({
     components:{
         'GGanttChart': ganttastic.GGanttChart,
         'GGanttRow': ganttastic.GGanttRow,
@@ -665,7 +664,7 @@ let app = new Vue({
         }
     }
 
-});
+}).mount('#gantt');
     
 </script>
 

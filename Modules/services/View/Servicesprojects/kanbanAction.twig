@@ -114,10 +114,10 @@
 </div>
 
 <script type="module">
-import * as draggable from '/externals/vuedraggable.js';
+// TODO: replace by new draggable lib
+// import * as draggable from '/externals/vuedraggable.js';
 
-let app = new Vue({
-    el: '#board',
+Vue.createApp({
     data () {
         return {
             newTask: "",
@@ -419,7 +419,7 @@ let app = new Vue({
             return yyyy + '-' + mm + '-' + dd;
         },
     }
-});
+}).mount('#board');
 </script>
 
 <style>
