@@ -74,7 +74,7 @@ class EventHandler {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['action' => $action]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['action' => $action]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [

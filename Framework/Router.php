@@ -193,7 +193,7 @@ class Router {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['route' => $reqRoute]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
