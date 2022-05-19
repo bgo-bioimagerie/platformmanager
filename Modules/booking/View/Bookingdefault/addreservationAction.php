@@ -218,8 +218,6 @@ if ($packageChecked > 0) {
         <div class="modal-body">
             <?php echo $formDelete ?>
         </div>
-        <div class="modal-footer">
-        </div>
         </div>
     </div>
 </div>
@@ -232,8 +230,6 @@ if ($packageChecked > 0) {
         </div>
         <div class="modal-body">
             <?php echo $formDeletePeriod ?>
-        </div>
-        <div class="modal-footer">
         </div>
         </div>
     </div>

@@ -53,8 +53,6 @@
             dynamicForms.dynamicFields(sourceId, targets, spaceId, true);
         </script>
       </div>
-      <div class="modal-footer">
-      </div>
     </div>
   </div>
 </div>

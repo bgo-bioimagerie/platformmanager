@@ -18,8 +18,6 @@
       <div class="modal-body">
       <?php echo $formedit ?>
       </div>
-      <div class="modal-footer">
-      </div>
     </div>
   </div>
 </div>

@@ -30,8 +30,6 @@
         <div class="modal-body">
         <?php echo $noteForm ?>
         </div>
-        <div class="modal-footer">
-        </div>
         </div>
     </div>
 </div>
@@ -46,8 +44,6 @@
         <div class="modal-body">
         <?php echo $taskForm ?>
         </div>
-        <div class="modal-footer">
-        </div>
         </div>
     </div>
 </div>
@@ -61,8 +57,6 @@
         </div>
         <div class="modal-body">
         <?php echo $eventForm ?>
-        </div>
-        <div class="modal-footer">
         </div>
         </div>
     </div>

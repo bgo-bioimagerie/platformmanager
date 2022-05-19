@@ -37,8 +37,6 @@
       <div class="modal-body">
       <?php echo $formtissus ?>
       </div>
-      <div class="modal-footer">
-      </div>
     </div>
   </div>
 </div>
@@ -52,8 +50,6 @@
       </div>
       <div class="modal-body">
       <?php echo $formowner ?>
-      </div>
-      <div class="modal-footer">
       </div>
     </div>
   </div>
