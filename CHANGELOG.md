@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7
+
+[core] upgrade to vue3
+
 ## 2.6.1
 
 * [core] in visitor mode, add warning to user to login to access all features
