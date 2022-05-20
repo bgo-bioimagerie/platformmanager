@@ -97,8 +97,12 @@ class Email extends Model {
         $fm = new CoreFiles();
         foreach ($files as $file) {
             try {
+                if(is_string($file)){
+                    $mail->AddAttachment($file, basename($file));
+                } else {
                     $filePath = $fm->path($file);
                     $mail->AddAttachment($filePath, basename($file['name']));
+                }
             } catch(Exception $e) {
                 Configuration::getLogger()->error('[mail] failed to attach file', ['file' => $file]);
             }

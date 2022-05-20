@@ -5,6 +5,7 @@
 ### Features / enhancements
 
 * [antibodies] use bootstrap modals and fix some menu urls
+* [booking] add caldav support
 
 ## 2.6.1
 
@@ -40,6 +41,7 @@ Quote templates are configured the same way than invoice templates.
 ### Bug fixes
 
 * [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
 * [booking][supplementaries] avoid having two sups with the same name for the same resource
 * [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
 * [booking][supplementaries] can't add a resource to a sup in which it is already included

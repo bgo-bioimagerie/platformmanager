@@ -23,7 +23,7 @@ A reservation is defined by its:
 - Full description
 - [Color code](#color-code)
 - (optional) [Additional infos](#additional-info)
--  All day, _i.e._ does this reservation takes all day?
+- All day, i.e. does this reservation takes all day?
 - Beginning (date + time)
 - End (date + time)
 - (optional) Periodicity
@@ -110,6 +110,7 @@ Following, the different items of *Booking settings*, divided into 3 categories 
 ![booking_settings](../../../booking_settings_module_2.png)
 
 Set, for each [*area*](../resources/#area):
+
 - week days available for booking
 - daily time slot available for booking
 - booking blocs size (from 1/4 hour to 1 hour)
@@ -126,6 +127,7 @@ Set, for each [*area*](../resources/#area):
 Set the colors and text options of the calendar view interface.
 
 #### Accessibilities
+
 **Warning** *for versions < 2.2*
 Default booking authorizations show *User* by default, but are set to *Manager*
 
@@ -138,6 +140,7 @@ Same each time you add a new resource, its authorizations are set to *Manager* e
 Set booking authorizations (*User*, *Authorized users list*, *Manager*, *Admin*) by resource for members of your space.
 
 Options:
+
 - **User**: every user is authorized to book this resource
 - **Authorized users list**: only users with booking access for this resource's category are allowed to make a reservation (+ managers and admins)
 - **Manager**: only managers and admins are allowed to make a reservation
@@ -171,8 +174,6 @@ Set additional fields to the reservation form. Resource-relative.
 
 ![booking_settings](../../../booking_settings_module_9.png)
 
-
-
 ### Booking
 
 #### Block resources
@@ -205,6 +206,13 @@ Block resources so it can't be booked by users on this time period.
 
 ![booking_module](../../../booking_module_6.png)
 
+For spaces with caldav support enabled, the calendar view display a url in the navigation bar.
+This url can be used in user calendar client if caldav protocol is supported
+(recent Thunderbird or using btsync extension for example).
+
+Once user calendar client is configured with this URL and user account credentials, user can
+select the *booking* calendar and get his reservations displayed, and updated, on his computer.
+
 ### Booking a resource
 
 By clicking a "+" symbol, you can access the reservation interface.
@@ -212,6 +220,3 @@ By clicking a "+" symbol, you can access the reservation interface.
 ![booking_module](../../../booking_module_2.png)
 
 For elements description, see [item definition](#item-definition) and [related items definition](#related-items-definition)
-
-
-
