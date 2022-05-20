@@ -13,7 +13,7 @@
     </div>
 
     <div id="board" class="container mt-5">
-        {# <div class="row">
+        <div class="row">
             <div class="col form-inline">
                 <label for="newTask">{{"{{textContent.newTask}}"}}</label>
                 <input id="newTask" name="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
@@ -23,7 +23,7 @@
             <div class="col form-inline">
                 <label for="newCat">{{"{{textContent.newCategory}}"}}</label>
                 <input id="newCat" name="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
-                <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px" value="#000000"/>
+                <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px"/>
                 <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;"><strong style="font-size=30px">+</strong></button>
             </div>
         </div>
@@ -95,7 +95,7 @@
                             {{"{{category.name}}"}}
                             <button class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
                         </h3>
-                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" value="category.color" @change="editCategoryColor($event, category)"/>
+                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" {# value="category.color" #} @change="editCategoryColor($event, category)"/>
                         
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
@@ -108,23 +108,7 @@
                     </div>
                 </div>
             </draggable>
-        </div> #}
-
-
-        <div id="test">
-            <button type="button" @click="logDraggable">draggable</button>
-            <draggable class="dragArea list-group w-full" :list="list" @change="log">
-            TEST
-                <div
-                    class="list-styles"
-                    v-for="element in list"
-                    :key="element.name"
-                >
-                    {{"{{ element.name }}"}}
-                </div>
-            </draggable>
         </div>
-
     </div>
 </div>
 
@@ -133,34 +117,8 @@
 <script type="module">
 // TODO: replace by new draggable lib
 import * as VueDraggableNext from '/externals/vuedraggableNext.js';
-console.log(vueDraggableNext);
 
-const vm = Vue.createApp({
-  components: {
-    draggable: VueDraggableNext,
-  },
-  data() {
-    return {
-      enabled: true,
-      list: [
-        { name: '', id: 1 },
-        { name: '', id: 2 },
-        { name: '', id: 3 },
-      ],
-      dragging: false,
-    }
-  },
-  methods: {
-    log(event) {
-      console.log(event)
-    },
-    logDraggable() {
-        console.log("draggable: ", VueDraggableNext)
-    },
-  },
-}).mount('#test');
-
-/* Vue.createApp({
+Vue.createApp({
     data () {
         return {
             newTask: "",
@@ -179,13 +137,8 @@ const vm = Vue.createApp({
         }
     },
     components:{
-        'draggable': vuedraggableNext
+        draggable: vueDraggableNext.VueDraggableNext
     },
-    methods: {
-        log(event) {
-            console.log(event);
-        },
-    }
     created () {
         this.categories.forEach(category => {
             category.name = category.name.replace(/\s/g, '').toLowerCase();
@@ -470,7 +423,7 @@ const vm = Vue.createApp({
             return yyyy + '-' + mm + '-' + dd;
         },
     }
-}).mount('#board'); */
+}).mount('#board');
 </script>
 
 <style>
