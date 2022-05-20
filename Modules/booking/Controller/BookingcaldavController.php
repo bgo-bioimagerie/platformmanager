@@ -298,51 +298,24 @@ class BookingcaldavController extends CorecookiesecureController {
                         $toTS = DateTime::createFromFormat('Ymd\THisP', $tre)->getTimestamp();
                     }
                 }
-                /*
-                $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
-                   
-                $eTag = 0;
-                if($updates) {
-                    $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
-                }
-
-                $data = sprintf('<?xml version="1.0" encoding="utf-8" ?>
-                    <multistatus xmlns="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav">
-                        <response>
-                            <href>/caldav/%s/%d-%d.ics</href>
-                            <propstat>
-                                <prop>
-                                <getetag>"%d"</getetag>
-                                </prop>
-                                <status>HTTP/1.1 200 OK</status>
-                            </propstat>
-                        </response>
-                    </multistatus>
-                ', $id_space, $fromTS, $toTS, $eTag);
-                http_response_code(207);
-                header('Content-Type: text/xml');
-                echo $data;
-                return;
-                */
             }
 
         }
-        if(1==1){
-                foreach($doc->children('DAV:') as $child) {
-                    if($child->getName() != 'href') {
-                        continue;
-                    }
-                    $url = (string)$child;
-                    $urlElts = explode('/', $url);
-                    $info = $urlElts[count($urlElts)-1];
-                    $queryElts = explode('-', str_replace('.ics', '', $info));
-                    if(count($queryElts) == 2){
-                    $fromTS = intval($queryElts[0]);
-                    $toTS = intval($queryElts[1]);
-                    }
-                }
-
+        foreach($doc->children('DAV:') as $child) {
+            if($child->getName() != 'href') {
+                continue;
+            }
+            $url = (string)$child;
+            $urlElts = explode('/', $url);
+            $info = $urlElts[count($urlElts)-1];
+            $queryElts = explode('-', str_replace('.ics', '', $info));
+            if(count($queryElts) == 2){
+            $fromTS = intval($queryElts[0]);
+            $toTS = intval($queryElts[1]);
+            }
         }
+
+
 
         $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
         $eTag = 0;
