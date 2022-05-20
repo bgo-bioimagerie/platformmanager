@@ -1,5 +1,11 @@
 # Changes
 
+## 2.7.0
+
+### Features / enhancements
+
+* [antibodies] use bootstrap modals and fix some menu urls
+
 ## 2.6.1
 
 * [core] in visitor mode, add warning to user to login to access all features
