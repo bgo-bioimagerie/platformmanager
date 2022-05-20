@@ -6,16 +6,12 @@
 <?php
     if ($showCom) {
 ?>
-<!--  *************  -->
-<!--  Popup window  -->
-<!--  *************  -->
 
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
 <?php
     }
 ?>
-
 
 <?php
 if ($space['color'] == "") {
@@ -34,6 +30,16 @@ if ($space['color'] == "") {
         $navController = new ComtileController(new Request(array(), false));
         echo $navController->indexAction($id_space);
         ?>
+
+<?php
+if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
+?>
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info"><?php echo CoreTranslator::NotConnectedMode($lang) ?></div>
+    </div>
+</div>
+<?php } ?>
 
         <div class="page-header">
             <h2>

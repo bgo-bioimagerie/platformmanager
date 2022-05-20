@@ -19,25 +19,48 @@
 <!--  *************  -->
 <!--  Popup windows  -->
 <!--  *************  -->
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-12"></div> 
-<!--  note edit popup  -->
-<div id="notepopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="notebuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
-    <?php echo $noteForm ?>
-</div> 
-<div id="taskpopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="taskbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
-    <?php echo $taskForm ?>
-</div> 
-<div id="eventpopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="eventbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
+
+<div id="notepopup_box" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><?php echo BulletjournalTranslator::Notes($lang) ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <?php echo $noteForm ?>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div id="taskpopup_box" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><?php echo BulletjournalTranslator::Task($lang) ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+        <?php echo $taskForm ?>
+        </div>
+        </div>
+    </div>
+</div>
+
+<div id="eventpopup_box" class="modal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title"><?php echo BulletjournalTranslator::Event($lang) ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
         <?php echo $eventForm ?>
-</div> 
-<div id="collectionspopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="collectionsbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
-        <?php echo $collectionsForm ?>
-</div> 
+        </div>
+        </div>
+    </div>
+</div>
 
 
 <!--  ************  -->

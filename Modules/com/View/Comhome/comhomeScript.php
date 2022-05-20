@@ -1,34 +1,32 @@
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-
-<div id="hider" class="col-12"></div> 
-<div id="popup_box" class="pm_popup_box" style="display: none;">    
-    <div class="row">
-        <div id="content_section" class="col-12" style="text-align:center;">
-            <div id="news">
-                <div class="col-1 offset-11" style="text-align: right;">
-                    <a id="close"
-                        v-on:click="closePopup"
-                        class="bi-x-circle-fill"
-                        style="cursor:pointer;">
-                    </a>
-                </div>
-                <div v-for="news in newsList">
-                    <img :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
-                    <h3> {{ news.title }} </h3>
-                    <div v-html="news.content" style="margin:25px">
-                    </div>
-                </div>
+<div id="compopup_box" class="modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><?php echo ComTranslator::News($lang) ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="news" class="modal-body">
+        <div v-for="news in newsList">
+            <img v-if="news.media" :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
+            <h3> {{ news.title }} </h3>
+            <div v-html="news.content" style="margin:25px">
             </div>
         </div>
     </div>
+    </div>
+  </div>
 </div>
+
+
 
 <script>
 
-let popup_box = document.getElementById('popup_box');
-let hider = document.getElementById('hider');
+$(document).ready(function(){
+    newsView.getNewsData();
+})
 
-var newsView = new Vue({
+
+let newsView = new Vue({
     el: '#news',
     data: {
         newsList: new Array(),
@@ -56,18 +54,13 @@ var newsView = new Vue({
                 then(this.displayPopup());
         },
         displayPopup() {
-            popup_box.style.display = "block";
-            popup_box.style.opacity = 1;  
-        },
-        closePopup(event) {
-            hider.style.opacity = 0;
-            popup_box.style.opacity = 0;
-            popup_box.style.display = "none";
-            hider.style.display = "none";
+            let myModal = new bootstrap.Modal(document.getElementById('compopup_box'))
+            myModal.show();
         }
     },
     beforeMount() {
-        this.getNewsData();
+        
     }
 })
+
 </script>

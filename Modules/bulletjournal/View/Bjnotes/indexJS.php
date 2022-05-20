@@ -29,8 +29,8 @@
             $('#formnotename').val("");
             $('#formnotecontent').val("");
 
-            $("#hider").fadeIn("slow");
-            $('#notepopup_box').fadeIn("slow");
+            let myModal = new bootstrap.Modal(document.getElementById('notepopup_box'))
+            myModal.show();
         };
 
         function showAddTaskForm(year, month, day, is_month) {
@@ -52,8 +52,8 @@
             $('#formtaskdeadline').val("");
             $('#formtaskpriority').val("");
 
-            $("#hider").fadeIn("slow");
-            $('#taskpopup_box').fadeIn("slow");
+            let myModal = new bootstrap.Modal(document.getElementById('taskpopup_box'))
+            myModal.show();
         };
 
         function showAddEventForm(year, month, day, is_month) {
@@ -78,9 +78,20 @@
             $('#formeventname').val("");
             $('#formeventcontent').val("");
 
-            $("#hider").fadeIn("slow");
-            $('#eventpopup_box').fadeIn("slow");
+            let myModal = new bootstrap.Modal(document.getElementById('eventpopup_box'))
+            myModal.show();
         };
+
+        function showedit(id) {
+            var arrayid = id.split("_");
+            if(arrayid[0] == "opennote") {
+                showeditNoteForm(arrayid[1])
+            } else if(arrayid[0] == "opentask") {
+                showeditTaskForm(arrayid[1])
+            } else if(arrayid[0] == "openevent") {
+                showeditEventForm(arrayid[1])
+            }
+        }
 
         function showeditNoteForm(id) {
             $.post(
@@ -92,8 +103,8 @@
                         $('#formnotename').val(data.name);
                         $('#formnotecontent').val(data.content);
 
-                        $("#hider").fadeIn("slow");
-                        $('#notepopup_box').fadeIn("slow");
+                        let myModal = new bootstrap.Modal(document.getElementById('notepopup_box'))
+                        myModal.show();
                     },
                     'json'
                     );
@@ -112,8 +123,8 @@
                         $('#formtaskdeadline').val(data.deadline);
                         $('#formtaskpriority').val(data.priority);
 
-                        $("#hider").fadeIn("slow");
-                        $('#taskpopup_box').fadeIn("slow");
+                        let myModal = new bootstrap.Modal(document.getElementById('taskpopup_box'))
+                        myModal.show();
                     },
                     'json'
                     );
@@ -135,8 +146,8 @@
                         $('#formeventname').val(data.name);
                         $('#formeventcontent').val(data.content);
 
-                        $("#hider").fadeIn("slow");
-                        $('#eventpopup_box').fadeIn("slow");
+                        let myModal = new bootstrap.Modal(document.getElementById('eventpopup_box'))
+                        myModal.show();
                     },
                     'json'
                     );
@@ -184,7 +195,7 @@
                 openlink = "openevent";
             }
             //alert("pass 4 updateNoteListHtml ");
-            htmldata += "<td><a style=\"color:#666; cursor:pointer;\" id=\"" + openlink + "_" + data.id + "\">" + data.name + "</a></td>";
+            htmldata += "<td onclick=\"showedit('"+openlink+"_"+data.id+"')\"><a style=\"color:#666; cursor:pointer;\" id=\"" + openlink + "_" + data.id + "\">" + data.name + "</a></td>";
             //alert("pass 5 updateNoteListHtml ");            
             if (data.type === 2) {
                 var editTxt = "<?php echo BulletjournalTranslator::MarkAsDone($lang); ?>";
@@ -257,90 +268,20 @@
         };
 
 
+    function addnote(id) {
+        var arrayid = id.split("_");
+        showAddNoteForm(arrayid[0], arrayid[1], 1, 1);
+    }
+    function addtask(id) {
+        var arrayid = id.split("_");
+        showAddEventForm(arrayid[0], arrayid[1], 1, 1);
+    }
+    function addevent(id) {
+        var arrayid = id.split("_");
+        showAddEventForm(arrayid[0], arrayid[1], 1, 1);
+    }
 
     $(document).ready(function () {
-
-        $("#hider").hide();
-        $("#notebuttonclose").click(function () {
-            $("#hider").hide();
-            $('#notepopup_box').hide();
-        });
-        $("#taskbuttonclose").click(function () {
-            $("#hider").hide();
-            $('#taskpopup_box').hide();
-        });
-        $("#eventbuttonclose").click(function () {
-            $("#hider").hide();
-            $('#eventpopup_box').hide();
-        });
-
-
-        $("#addnote_<?php echo $year ?>_<?php echo $month ?>").click(function () {
-            //alert("add note clicked");
-            var strid = this.id;
-            var arrayid = strid.split("_");
-            showAddNoteForm(arrayid[1], arrayid[2], 1, 1);
-        });
-
-        $("#addtask_<?php echo $year ?>_<?php echo $month ?>").click(function () {
-            //alert("add note clicked");
-            var strid = this.id;
-            var arrayid = strid.split("_");
-            showAddTaskForm(arrayid[1], arrayid[2], 1, 1);
-        });
-
-        $("#addevent_<?php echo $year ?>_<?php echo $month ?>").click(function () {
-            //alert("add note clicked");
-            var strid = this.id;
-            var arrayid = strid.split("_");
-            showAddEventForm(arrayid[1], arrayid[2], 1, 1);
-        });
-<?php
-for ($i = 0; $i < count($notes); $i++) {
-    ?>
-
-    <?php
-    $openlink = "opennote";
-    if ($notes[$i]["type"] == 2) {
-        $openlink = "opentask";
-    }
-    if ($notes[$i]["type"] == 3) {
-        $openlink = "openevent";
-    }
-    ?>
-            $("#<?php echo $openlink ?>_<?php echo $notes[$i]["id"] ?>").click(function () {
-                //alert("edit note clicked");
-                console.log('clicked', this.id);
-                var strid = this.id;
-                var arrayid = strid.split("_");
-    <?php
-    if ($notes[$i]["type"] == 1) {
-        ?>
-                    showeditNoteForm(arrayid[1]);
-        <?php
-    }
-    ?>
-    <?php
-    if ($notes[$i]["type"] == 2) {
-        ?>
-                    showeditTaskForm(arrayid[1]);
-        <?php
-    }
-    ?>
-    <?php
-    if ($notes[$i]["type"] == 3) {
-        ?>
-                    showeditEventForm(arrayid[1]);
-        <?php
-    }
-    ?>
-
-            });
-    <?php
-}
-?>
-
-        
 
         $('#editNoteFormsubmit').click(function (e) {
             e.preventDefault();
@@ -351,11 +292,11 @@ for ($i = 0; $i < count($notes); $i++) {
                         if (data.isedit === 0) {
                             updateNoteListHtml(data);
                         }
-                        $("#hider").hide();
-                        $('#notepopup_box').hide();
                     },
                     'json'
-                    );
+            );
+            let myModal = new bootstrap.Modal(document.getElementById('notepopup_box'))
+            myModal.hide();
 
         });
 
@@ -368,11 +309,11 @@ for ($i = 0; $i < count($notes); $i++) {
                         if (data.isedit === 0) {
                             updateNoteListHtml(data);
                         }
-                        $("#hider").hide();
-                        $('#taskpopup_box').hide();
                     },
                     'json'
-                    );
+            );
+            let myModal = new bootstrap.Modal(document.getElementById('taskpopup_box'))
+            myModal.hide();
 
         });
 
@@ -385,11 +326,11 @@ for ($i = 0; $i < count($notes); $i++) {
                         if (data.isedit === 0) {
                             updateNoteListHtml(data);
                         }
-                        $("#hider").hide();
-                        $('#eventpopup_box').hide();
                     },
                     'json'
-                    );
+            );
+            let myModal = new bootstrap.Modal(document.getElementById('eventpopup_box'))
+            myModal.hide();
         });
 
         
