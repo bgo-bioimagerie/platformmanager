@@ -95,7 +95,7 @@
                             {{"{{category.name}}"}}
                             <button class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
                         </h3>
-                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" {# value="category.color" #} @change="editCategoryColor($event, category)"/>
+                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" @change="editCategoryColor($event, category)"/>
                         
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
@@ -199,7 +199,7 @@ Vue.createApp({
 
         editCategoryColor(event, category) {
             category.color = event.target.value;
-            this.updateCategories();
+            this.updateCategoriesColors();
         },
         updateCategoriesColors() {
             this.categories.forEach(category => {
@@ -266,6 +266,7 @@ Vue.createApp({
                 this.categories.forEach((category, index) => {
                     category.position = index;
                 });
+                this.updateCategoriesColors();
                 this.updateCategories();
             }
         },
