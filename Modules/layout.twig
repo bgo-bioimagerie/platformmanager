@@ -13,10 +13,10 @@
             {% block title %}{% endblock %}
         </title>
         {% if context.dev %}
-            <script src="externals/vuejs/vue.js"></script>
+            <script src="externals/vuejs/vue3.js"></script>
             {{context._debugbarRenderer.renderHead() | raw}}
         {% else %}
-            <script src="externals/vuejs/vue.js"></script>
+            <script src="externals/vuejs/vue3.js"></script>
         {% endif %}
 
         <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
