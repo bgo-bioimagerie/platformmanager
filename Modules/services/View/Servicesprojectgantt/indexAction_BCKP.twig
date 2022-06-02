@@ -1,0 +1,718 @@
+{% extends "Modules/layout.twig" %}
+
+{% block content %}
+
+<div class="pm-table">
+    
+    <div class="col-12">
+        
+        {% if allPeriod == 1 %}
+            <h3> GanttPeriod {# ServicesTranslator::GanttPeriod($lang) #} <h3/>
+        {% else %}
+             <h3> GanttOpened {# ServicesTranslator::GanttOpened($lang) #} <h3/>
+        {% endif %}
+        
+    </div>
+    
+    <div class="col-12">
+        <div class="text-center">
+            <div class="btn-group btn-group-sm">
+
+                {% set active = activeGantt == "" ? "active" : "" %}
+                <button
+                    class="btn btn-outline-dark {{ active }}"
+                    onclick="location.href = 'servicesprojectgantt/{{id_space}}'">
+                        All projects {# ServicesTranslator::All_projects($lang) #}
+                    </button>
+                
+                {% for pic in personInCharge %}
+                    {% set active = activeGantt == pic["id"] ? "active" : "" %}
+                    <button
+                        class="btn btn-outline-dark {{ active }}"
+                        onclick="location.href = 'servicesprojectgantt/{{id_space}}/{{allPeriod}}/{{pic['id']}}'">
+                            {{ pic["user_name"] }}
+                    </button>                    
+                {% endfor %}    
+
+            </div>
+        </div>
+    </div>
+
+    {% set inheritedTheme = context.theme %}
+    <div id="gantt" class="container">
+
+        <div id="contextmenu"
+            class="card d-none d-md-flex"
+            width="100%"
+            height="28vh">
+
+            <div id="dateInputs" class="row m-3">
+                <div class="col-2">
+                    <label for="start_date" class="top-label">Period start</label>
+                    <input
+                        id="start_date"
+                        type="date"
+                        :value="chartStart"
+                        class="form-control"
+                        name="start_date"
+                        @change="updateChartDates">
+                </div>
+                <div class="col-2">
+                    <label for="end_date" class="top-label">Period end</label>
+                    <input
+                        id="end_date"
+                        type="date"
+                        :value="chartEnd"
+                        class="form-control"
+                        name="end_date"
+                        @change="updateChartDates">                 
+                </div>
+                <div class="col-2 mt-3" id="dateError" style="display:none">
+                    <span style="color:red;"> Period start must be lower </br> than period end</span>
+                </div>
+            </div>
+
+            <div class="row ms-3 mb-3">
+                <div class="col-2">
+                    <button id="showContextBtn" class="ml-2 btn btn-primary" @click="showAction">
+                        Show options
+                    </button>
+                </div>
+            </div>
+            <div id="contextmenuHidable">
+                <div class="row pa-2 m-3" v-if="showContextmenu">
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="hideTimeaxis"
+                            v-model="hideTimeaxis"/>
+                        <label for="hideTimeaxis" class="side-label">Hide timeaxis</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="pushOnOverlap"
+                            v-model="pushOnOverlap"/>
+                        <label for="pushOnOverlap" class="side-label">Push on overlap</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="grid"
+                            v-model="grid"/>
+                        <label for="grid" class="side-label">Grid</label>
+                    </div>
+
+                    <div class="col-3">
+                        <input type="checkbox"
+                            name="highlightOnHover"
+                            v-model="highlightOnHover"/>
+                        <label for="highlightOnHover" class="side-label">Highlight on hover</label>
+                    </div>
+
+                </div>
+
+                <div class="row pa-2 m-3" v-if="showContextmenu">
+                    <div class="col-3">
+                        <label for="theme" class="top-label">Theme</label>
+                        <select v-model="selectedTheme" name="theme" @change="updateColors">
+                            <option v-for="theme in themes">{{"{{theme}}"}}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-3 slidecontainer">
+                        <label for="rowHeight" class="top-label">Row height</label>
+                        <input
+                            type="range"
+                            class="slider"
+                            name="rowHeight"
+                            v-model="rowHeight"
+                            :min="20"
+                            :max="100">
+                    </div>
+
+                    <div class="col-3 slidecontainer">
+                        <label for="rowLabelWidth" class="top-label">Row label width</label>
+                        <input
+                            type="range"
+                            class="slider"
+                            name="rowLabelWidth"
+                            v-model="rowLabelWidth"
+                            :min="10"
+                            :max="50"
+                            {# @change="updateBlankWidth" #}>
+                    </div>
+
+                    <div class="col-3" hidden>
+                        <label for="highlightedHours" class="top-label">Highlighted hours</label>
+                        <select 
+                            v-model="highlightedHours"
+                            name="highlightedHours"
+                            multiple
+                            style="width:inherit;">
+                            <option v-for="hour in hours">{{"{{hour}}"}}</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="taskContent" v-if="showModal">
+            <div class="modal-dialog modal-mask" role="document">
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                        <button type="button"
+                            class="btn-close"
+                            data-dismiss="modal"
+                            @click="showModal = false"
+                            aria-label="Close">
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div>
+                            <label for="taskUser" style="font-weight:bold;">Affected to</label>
+                            <div name="taskUser">
+                                {{"{{selectedTask.userName}}"}}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="taskServices" style="font-weight:bold;">Related services</label>
+                            <div name="taskServices" v-for="service in selectedTask.services">
+                                {{"{{service.name}}"}}
+                            </div>
+                        </div>
+                        <div>            
+                            <label for="taskContent" style="font-weight:bold;">Details</label>
+                            <div name="taskContent">
+                                {{"{{selectedTask.content}}"}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            @click="gotoKanban">
+                            View in kanban board
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="monthAxis mt-3 ml-5">
+            <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
+            <div id="monthListContainer" class="col d-inline-flex" style="width: 84%;">
+                {# Filled by js script #}
+            </div>
+        </div>
+        <div class="weeksAxis ml-5">
+            <div id="blankSquare" style="width: 16%; float:left" class="p-2 col"></div>
+            <div id="weekListContainer" class="col d-inline-flex" style="width: 84%;">
+                {# Filled by js script #}
+            </div>
+        </div>
+
+        <div id="ganttastic-wrapper">
+            <g-gantt-chart
+                :chart-start="chartStart"
+                :chart-end="chartEnd"
+                :grid="grid"
+                :hide-timeaxis="hideTimeaxis"
+                :push-on-overlap="pushOnOverlap"
+                :highlighted-hours="highlightedHours"
+                :row-label-width="`${rowLabelWidth}%`"
+                :row-height="rowHeight"
+                :theme="selectedTheme"
+            >
+                <g-gantt-row 
+                    v-for="row in rowList"
+                    :key="row.title"
+                    :label="row.label"
+                    :bars="row.barList"
+                    :highlight-on-hover="highlightOnHover"
+                    bar-start="myStart"
+                    bar-end="myEnd"                    
+                >
+                <template #bar-label="{bar}">
+                    <img
+                        v-if="bar.image"
+                        :src="require(`@/assets/${bar.image}`)"
+                        alt="image"
+                        height="20"
+                        width="20"
+                        class="mr-1"
+                    >
+                    <!-- TODO: make span width variable depnending on image presence-->
+                    <span v-if="itemsType=='project'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    {# <span v-if="itemsType=='task'" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span> #}
+                    <span v-if="itemsType=='task'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                   
+                </template>
+                </g-gantt-row>
+            </g-gantt-chart>
+        </div>
+
+
+    </div>
+</div>
+
+<script src="externals/vueganttastic.js"></script>
+<script src="externals/node_modules/moment/min/moment.min.js"></script>
+
+<script>
+
+THEMESCOLORS = {
+    "default": {
+        primary: "#eeeeee",
+        secondary: "#E0E0E0",
+        ternary: "#F5F5F5",
+        hoverHighlight: "rgba(204, 216, 219, 0.5)",
+        text: "#404040",
+        background: "white"
+    },
+    "creamy": {
+        primary: "#ffe8d9",
+        secondary: "#fcdcc5",
+        ternary: "#fff6f0",
+        hoverHighlight: "rgba(230, 221, 202, 0.5)",
+        text: "#542d05",
+        background: "white"
+    },
+        "crimson": {
+        primary: "#a82039",
+        secondary: "#c41238",
+        ternary: "#db4f56",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "dark": {
+        primary: "#404040",
+        secondary: "#303030",
+        ternary: "#353535",
+        hoverHighlight: "rgba(159, 160, 161, 0.5)",
+        text: "white",
+        background: "#525252",
+        toast: "#1f1f1f"
+    },
+    "flare": {
+        primary: "#e08a38",
+        secondary: "#e67912",
+        ternary: "#5e5145",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "fuchsia": {
+        primary: "#de1d5a",
+        secondary: "#b50b41",
+        ternary: "#ff7da6",
+        hoverHighlight: "rgba(196, 141, 141, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "grove": {
+        primary: "#3d9960",
+        secondary: "#288542",
+        ternary: "#72b585",
+        hoverHighlight: "rgba(160, 219, 171, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "material-blue": {
+        primary: "#0D47A1",
+        secondary: "#1565C0",
+        ternary: "#42a5f5",
+        hoverHighlight: "rgba(110, 165, 196, 0.5)",
+        text: "white",
+        background: "white"
+    },
+    "sky": {
+        primary: "#b5e3ff",
+        secondary: "#a1d6f7",
+        ternary: "#d6f7ff",
+        hoverHighlight: "rgba(193, 202, 214, 0.5)",
+        text: "#022c47",
+        background: "white"
+    },
+    "slumber": {
+        primary: "#2c2e36",
+        secondary: "#2f3447",
+        ternary: "#35394d",
+        hoverHighlight: "rgba(179, 162, 127, 0.5)",
+        text: "#ffe0b3",
+        background: "#38383b",
+        toast: "#1f1f1f"
+    },
+    "vue": {
+        primary: "#258a5d",
+        secondary: "#41B883",
+        ternary: "#35495E",
+        hoverHighlight: "rgba(160, 219, 171, 0.5)",
+        text: "white",
+        background: "white"
+    }
+};
+
+Vue.createApp({
+    components:{
+        'GGanttChart': ganttastic.GGanttChart,
+        'GGanttRow': ganttastic.GGanttRow,
+    },
+    data() {
+        return {
+            items: {{ projects | raw}},
+            id_space: {{ id_space }},
+            itemsType: "project",
+            projectId: null,
+            showModal: false,
+            chartStart: "",
+            chartEnd: "",
+            pushOnOverlap: true,
+            grid: false,
+            rowHeight: 40,
+            rowLabelWidth: 16,
+            hideTimeaxis: false,
+            highlightOnHover: true,
+            hours: [...Array(24).keys()],
+            highlightedHours: [],
+            showContextmenu: false,
+            contextmenuTimeout: null,
+            contextmenuX: 0,
+            contextmenuY: 0,
+            dateError: false,
+            selectedTheme: "{{inheritedTheme}}" == "dark" ? "dark" : "default",
+            selectedTask: "",
+            themes: [
+                "default",
+                "vue",
+                "dark",
+                "material-blue",
+                "creamy",
+                "slumber",
+                "sky",
+                "crimson",
+                "grove",
+                "fuchsia",
+                "flare"
+            ],
+            rowList: []
+        }
+    },
+    created() {
+        let bkSqr = document.getElementById('blankSquare');
+        bkSqr.style.width = this.rowLabelWidth;
+        let dates = this.getDefaultDates();
+        this.chartStart = dates.start;
+        this.chartEnd = dates.end;
+        this.generateRows();
+        this.updateColors();
+        window.addEventListener("resize", this.adaptTimeaxis);
+    },
+    mounted() {
+        this.adaptTimeaxis();
+        // this.hideTimeaxis = true;
+    },
+    updated() {
+        this.adaptTimeaxis();
+    },
+    methods: {
+        showAction() {
+            document.getElementById("contextmenuHidable").classList.toggle("expanded");
+            this.showContextmenu = !this.showContextmenu;
+            event.target.innerHTML = this.showContextmenu
+                ? "Hide options"
+                : "Show options";
+        },
+        updateColors() {
+            let theme = event ? event.target.value : this.selectedTheme;
+            themeColors = THEMESCOLORS[theme];
+            let bkSqr = document.getElementById('blankSquare');
+            let contextMenu = document.getElementById("contextmenu");
+            contextmenu.style["background-color"] = themeColors.ternary;
+            [...contextMenu.getElementsByTagName("label")].forEach(label => {
+                label.style["color"] = themeColors.text;
+            });
+            let monthHeaders = document.getElementsByClassName("monthHeader");
+            [...monthHeaders].forEach((monthHeader, index) => {
+                monthHeader.style["color"] = themeColors.text;
+                monthHeader.style["background-color"] = 
+                    index % 2 == 0
+                    ? themeColors.secondary
+                    : themeColors.primary;
+            });
+        },
+        getDefaultDates() {
+            let startDate = new Date();
+            let endDate = new Date();
+            endDate = endDate.setMonth(endDate.getMonth() + 1);
+            return {
+                start: moment(startDate).format('YYYY-MM-DD'),
+                end: moment(endDate).format('YYYY-MM-DD')
+            };
+        },
+        adaptTimeaxis() {
+            let duration  = moment(this.chartEnd).diff(moment(this.chartStart), 'days') + 1;
+            if (duration > 7 && document.getElementsByClassName("g-timeaxis-days")[0]) {
+                this.displayTimeaxisInMonth(duration);
+                this.displayTimeaxisInWeeks(duration);
+            }
+        },
+        displayTimeaxisInMonth(totalDays) {
+            let monthList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'month');
+            let monthContainer = document.getElementById("monthListContainer");
+            monthContainer.innerHTML = "";
+            let monthSection = document.createElement("table");
+            monthSection.id = "monthList";
+            monthSection.ariaLabel="timeline in month";
+            monthSection.style['width'] = "100%";
+            monthContainer.appendChild(monthSection);
+            
+            let totalWidth = monthSection.offsetWidth;
+            monthList.forEach((month, index) => {
+                let monthHeader = this.setTimeaxisHeader(month, index, totalDays, totalWidth, 'month');
+                monthSection.appendChild(monthHeader);
+            });
+        },
+        displayTimeaxisInWeeks(totalDays) {
+            let weekList = this.getTimeIntervals(this.chartStart, this.chartEnd, 'week');
+            let weekContainer = document.getElementById("weekListContainer");
+            weekContainer.innerHTML = "";
+            let weekSection = document.createElement("table");
+            weekSection.id = "weekList";
+            weekSection.classList.add("d-inline-flex");
+            weekSection.ariaLabel="timeline in weeks";
+            weekSection.style['width'] = "100%";
+            weekContainer.appendChild(weekSection);
+
+            let totalWidth = weekSection.offsetWidth;
+            weekList.forEach((week, index) => {
+                let weeksHeader = this.setTimeaxisHeader(week, index, totalDays, totalWidth, 'week');
+                weekSection.appendChild(weeksHeader);
+            });
+        },
+        setTimeaxisHeader(period, index, totalDays, totalWidth, timeUnit) {
+            let nbDays = moment(period.end).diff(moment(period.start), 'days') + 1;
+            let ratio = (nbDays / totalDays);
+            let header = document.createElement("th");
+            let width = ratio * totalWidth;
+
+            let periodName = "";
+            if (timeUnit === "week") {
+                periodName = "S" + moment(period.start).week();
+                header.innerHTML = (width > 40 || (periodName-1)%10 == 0) ? periodName : "";
+            } else if (timeUnit === "month") {
+                periodName = moment(period.start).format('MMMM');
+                header.innerHTML = width > 80 ? periodName : periodName.slice(0, 3);
+            }
+
+            header.style['width'] = width + "px";
+            header.style["color"] = themeColors.text;
+            header.style["background-color"] =
+                index % 2 == 0
+                ? themeColors.secondary
+                : themeColors.primary;
+            header.classList.add("header");
+            return header;
+        },
+        getTimeIntervals(startDate, endDate, timeUnit) {
+            let result = [];
+            let format = 'YYYY-MM-DD';
+            let start = moment(startDate, format);
+            let end = moment(endDate, format);
+            let endDateFormatted = end.format(format);
+            let counter = 0;
+            let periodStart;
+            while(start.isBefore(end)) {
+                periodStart =
+                    counter == 0
+                    ? start.format(format)
+                    : start.startOf(timeUnit).format(format);
+                result.push({
+                    start: periodStart, 
+                    end: start.endOf(timeUnit).format(format)
+                });                
+                start.add(1, timeUnit);
+                counter++;
+            }
+            result.push({
+                start: end.startOf(timeUnit).format(format),
+                end: endDateFormatted
+            })
+            return result;
+        },
+        generateRows() {
+            this.items.forEach((item, index) => {
+                row = this.getRowFromItem(item, index);
+                this.rowList.push(row);
+            });
+        },
+        getRowFromItem(item, index) {
+            let name = item.name // || item.title; => seems to work, but generates infinite loop
+            let row = {
+                id: 'item_' + item.id, // does that work ?
+                label: name.length > 20 ? name.slice(0, 25) + "..." : name,
+                barList: [],
+            };
+
+            let start = item.date_open || item.start_date;
+            let end = item.time_limit || item.end_date;
+
+            // make visible tasks that duration is less than or equal to 1 day
+            if (end == start) {
+                end = moment(end).add(1, "days").format('YYYY-MM-DD')
+            }
+
+            let itemData = {
+                label: name,
+                myStart: start,
+                myEnd: end,
+                ganttBarConfig: {
+                    itemId: item.id,
+                    background: "#e09b69",
+                    borderRadius: "20px",
+                    color: "black",
+                }
+            }
+
+            row.barList.push(itemData);
+            return row;
+        },
+        updateChartDates(event) {
+            switch (event.target.name) {
+                case "start_date":
+                    this.chartStart = event.target.value;
+                    break;
+                case "end_date":
+                    this.chartEnd = event.target.value;
+                    break;
+                default:
+                    break;
+            }
+            this.checkDates();
+            this.adaptTimeaxis();
+        },
+        checkDates() {
+            let errorElement = document.getElementById("dateError");
+            if (this.chartStart > this.chartEnd) {
+                errorElement.style.display = "";
+                
+            } else {
+                errorElement.style.display = "none";
+            }
+        },
+        async openItemContent(itemId) {
+            if (this.itemsType == "project") {
+                this.itemsType = "task";
+                this.projectId = itemId;
+                let project = this.items.find(item => item.id == itemId);
+                let tasks = await this.getProjectData('tasks', itemId);
+                this.items = tasks;
+                this.chartStart = project.date_open;
+                this.chartEnd = project.time_limit;
+                this.rowList = [];
+                this.generateRows();
+                this.updateColors();
+                this.adaptTimeaxis();
+            } else if (this.itemsType == "task") {
+                let services = await this.getProjectData('taskservices', itemId);
+                this.openTaskPopup(itemId, services);
+            } else {
+                console.err("nothing to display");
+            }
+        },
+        async getProjectData(elementCategory, elementId) {
+            let result = [];
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/get` + elementCategory + `/`;
+            let apiRoute = targetUrl + this.id_space + "/" + elementId;
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    result = data.elements;
+                });
+                return result;
+        },
+        openTaskPopup(taskId, services) {
+            let task = this.items.find(item => item.id == taskId);
+            this.selectedTask = task;
+            this.selectedTask.services = services;
+            this.showModal = true;
+        },
+        gotoKanban() {
+            if (this.projectId) {
+                let kanbanUrl = "servicesprojects/kanban/" + this.id_space + "/" + this.projectId;
+                window.location = kanbanUrl;
+            } else {
+                alert("there's no mathcing project");
+            }
+            
+        }
+    }
+
+}).mount('#gantt');
+    
+</script>
+
+
+<link href="externals/node_modules/@taitems/jquery-gantt/css/style.css" type="text/css" rel="stylesheet">
+<style type="text/css">
+
+    h1 {
+        margin: 40px 0 20px 0;
+    }
+    h2 {
+        font-size: 1.5em;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #DDD;
+        margin-top: 50px;
+        margin-bottom: 25px;
+    }
+    table, th, td {
+        text-align: center;
+    }
+
+    .fn-gantt .nav-link {
+        padding: 0px;
+    }
+    .top-label {
+        display:block;
+        margin-bottom: 5px;
+    }
+    .side-label {
+        margin-left: 5px;
+    }
+
+    .modal-dialog {
+        position: absolute;
+        z-index: 9;
+        left: 50%;
+        right: 50%;
+        min-width: 300px;
+    }
+
+    #contextmenuHidable {
+        max-height: 0px;
+        overflow-y: hidden;
+        transition: all 0.5s linear;
+    }
+    #contextmenuHidable.expanded {
+        max-height: 1080px;
+    }
+    
+</style>
+
+{% endblock %}
