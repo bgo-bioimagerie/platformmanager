@@ -7,6 +7,14 @@ class BookingRouting extends Routing{
     public function routes($router) {
         $router->map('GET', '/user/booking/future/[i:id_space]/[i:id_resource]', 'booking/booking/future', 'booking_list_future');
         $router->map('GET', '/booking/[i:id_space]/journal', 'booking/booking/journal', 'booking_journal');
+
+        $router->map('OPTIONS', '/caldav/[i:id_space]/', 'booking/bookingcaldav/discovery', 'booking_caldav_discovery_space');
+        $router->map('OPTIONS', '/caldav/[i:id_space]/0/', 'booking/bookingcaldav/discovery', 'booking_caldav_discovery_space_default');
+
+        $router->map('PROPFIND', '/caldav/[i:id_space]/[i:id_cal]/', 'booking/bookingcaldav/propfind', 'booking_caldav_propfind');
+        $router->map('PROPFIND', '/caldav/[i:id_space]/[i:id_cal]', 'booking/bookingcaldav/propfind', 'booking_caldav_propfind_notrailing'); // btsync sometimes force removal of trailing slash
+        $router->map('REPORT', '/caldav/[i:id_space]/1/', 'booking/bookingcaldav/report', 'booking_caldav_report');
+        $router->map('REPORT', '/caldav/[i:id_space]/0/', 'booking/bookingcaldav/report', 'booking_caldav_report_default');
     }
 
     

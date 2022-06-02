@@ -389,6 +389,9 @@ class BookingdefaultController extends BookingabstractController {
             $oldEntry = $modelCalEntry->getEntry($id_space, $id);
         }
 
+        $ical = null;
+        $id_entry = $id;
+
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
             $resources_id = [$id_resource];
@@ -425,6 +428,18 @@ class BookingdefaultController extends BookingabstractController {
                 $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
                 $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
                 $_SESSION["flashClass"] = 'success';
+                $ical = sprintf('BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pfm/pfm//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:%s
+DTSTAMP:%s
+DTSTART:%s
+DTEND:%s
+SUMMARY:%s
+END:VEVENT
+END:VCALENDAR
+', $id_entry, $start_time, $start_time, $end_time, $resource['name'].' '.$short_description);
 
             }
         } else {
@@ -644,6 +659,33 @@ class BookingdefaultController extends BookingabstractController {
         if($valid) {
             // do not send email if not valid
             $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
+
+            $modelResource = new ResourceInfo();
+            $resourceName = $modelResource->getName($id_space, $id_resource);
+            $modelUser = new CoreUser();
+            $userInfo = $modelUser->getInfo($recipient_id);
+            $userName = $userInfo["name"] . " " . $userInfo["firstname"];
+            $userEmail = $userInfo["email"];
+            if ($ical){
+                try {
+                    $subject = $resourceName . " has been booked";
+                    $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
+                    if($id > 0 && $oldEntry) {
+                        $subject = "[$id] $resourceName booking has been modified";
+                        $content = "The " . $resourceName . " booking $id  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time);
+                    }
+                    $email = new Email();
+                    $icalFile = sprintf('/tmp/%d.ics', $id_entry);
+                    $handle = fopen($icalFile, 'w');
+                    fwrite($handle, $ical);
+                    fclose($handle);
+                    $email->sendEmail($email->getFromEmail($this->currentSpace['shortname']), $this->currentSpace['name'], $userEmail, $subject, $content, files: [$icalFile]);
+                    unlink($icalFile);
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error('failed to send booking email to user', ['id' => $id_entry]);
+                }
+            }
+
             if($emailSpaceAdmins == 2){
                 // get resource name
                 $modelResource = new ResourceInfo();
@@ -657,7 +699,7 @@ class BookingdefaultController extends BookingabstractController {
                 $content = "The " . $resourceName . " has been booked from " . date(Constants::DATETIME_FORMAT, $start_time) . " to " . date(Constants::DATETIME_FORMAT, $end_time) . " by " . $userName;
                 if($id > 0 && $oldEntry) {
                     $subject = "[$id] $resourceName booking has been modified";
-                    $content = "The " . $resourceName . " booking $i  has been moved from " . date(Constants::DATETIME_FORMAT, $oldEntry['start_time'])." / ".date(Constants::DATETIME_FORMAT, $oldEntry['end_time']). " to " . date(Constants::DATETIME_FORMAT, $start_time)." / ".date(Constants::DATETIME_FORMAT, $end_time) . " by " . $userName;
+                    $content = "The " . $resourceName . " booking $id  has been moved from " . date(Constants::DATETIME_FORMAT, $oldEntry['start_time'])." / ".date(Constants::DATETIME_FORMAT, $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time) . " by " . $userName;
                 }
                 if( $BkUseRecurentBooking && $periodic_option > 1 ){
                     $content .= " with periodicity";
