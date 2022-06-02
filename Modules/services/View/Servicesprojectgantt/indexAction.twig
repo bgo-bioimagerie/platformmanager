@@ -1,7 +1,5 @@
 {% extends "Modules/layout.twig" %}
 
-
-
 {% block content %}
 
 <div class="pm-table">
@@ -40,29 +38,58 @@
         </div>
     </div>
 
+
     {% set inheritedTheme = context.theme %}
-    {# <div id="gantt" class="container">
-            <g-gantt-chart
-                chart-start="2021-07-12 12:00"
-                chart-end="2021-07-14 12:00"
-                precision="hour"
-                bar-start="2021-07-13 00:00"
-                bar-end="2021-07-14 02:00"
-            >
-                <g-gantt-row
-                label="My row 1"
-                :bars="row1BarList"
-                />
-                <g-gantt-row
-                label="My row 2"
-                :bars="row2BarList"
-                />
-            </g-gantt-chart>
 
+    <div id="gantt" class="container">
 
-    </div> #}
+        <div id="taskContent" v-if="showModal">
+            <div class="modal-dialog modal-mask" role="document">
+                <div class="modal-content">
 
-    <div id="gantt">        
+                    <div class="modal-header">
+                        <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                        <button type="button"
+                            class="btn-close"
+                            data-dismiss="modal"
+                            @click="showModal = false"
+                            aria-label="Close">
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div>
+                            <label for="taskUser" style="font-weight:bold;">Affected to</label>
+                            <div name="taskUser">
+                                {{"{{selectedTask.userName}}"}}
+                            </div>
+                        </div>
+                        <div>
+                            <label for="taskServices" style="font-weight:bold;">Related services</label>
+                            <div name="taskServices" v-for="service in selectedTask.services">
+                                {{"{{service.name}}"}}
+                            </div>
+                        </div>
+                        <div>            
+                            <label for="taskContent" style="font-weight:bold;">Details</label>
+                            <div name="taskContent">
+                                {{"{{selectedTask.content}}"}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button
+                            type="button"
+                            class="btn btn-secondary"
+                            @click="gotoKanban">
+                            View in kanban board
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <g-gantt-chart
             :chart-start="chartStart"
             :chart-end="chartEnd"
@@ -75,182 +102,61 @@
             :date-format="format"
         >
 
-            <g-gantt-row v-for="row in rows" :key="row.label"
-            :label="row.label"
-            :bars="row.bars"
-            highlight-on-hover
+            <g-gantt-row v-for="row in rowList"
+                :label="row.label"
+                :bars="row.barList"
+                highlight-on-hover
             />
+            <template #bar-label="{bar}">
+                <img
+                    v-if="bar.image"
+                    :src="require(`@/assets/${bar.image}`)"
+                    alt="image"
+                    height="20"
+                    width="20"
+                    class="mr-1"
+                >
+                <!-- TODO: make span width variable depnending on image presence-->
+                <span v-if="itemsType=='project'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                {# <span v-if="itemsType=='task'" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span> #}
+                <span v-if="itemsType=='task'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                
+            </template>
 
         </g-gantt-chart>
 
-        <button @click="addBar()">
-            Add bar
-        </button>
     </div>
 
 </div>
 
+{# // TODO: use dayjs lib included in ganttastic bundle instead of moment.js #}
 <script src="externals/node_modules/moment/min/moment.min.js"></script>
 <script src="/externals/vue-ganttastic/dist/main.js"></script>
 
 <script>
-//console.log('gg', pfmGant.gant())
-pfmGant.hello()
 
-//const { createApp, ref } = Vue
 let ref = pfmGant.vueRef()
 const createApp = pfmGant.vueCreateApp()
 const app = createApp({
-    setup(props, context) {
-        const chartStart = ref("21.03.2021 12:00")
-        const chartEnd = ref("15.07.2021 12:00")
-        const format = ref("DD.MM.YYYY HH:mm")
-        let id_space = {{ id_space }}
+    data() {
+        return {
+            chartStart: "01.06.2022 12:00",
+            chartEnd: "15.10.2022 12:00",
+            format: "DD.MM.YYYY HH:mm",
 
-        const rows = ref([
-            {
-            label: 'row1',
-            bars: [
-                {
-                    beginDate: "24.04.2021 13:00",
-                    endDate: "25.05.2021 19:00",
-                    ganttBarConfig: {
-                    id: "8621987329",
-                    label: "I'm in a bundle 1",
-                    bundle: "bundle1"
-                    }
-                }
-                ]
-            },
-            {
-            label: 'row2',
-            bars: [
-            {
-                beginDate: "24.04.2021 13:00",
-                endDate: "25.05.2021 19:00",
-                ganttBarConfig: {
-                id: "1592311887",
-                label: "I'm in a bundle 2",
-                bundle: "bundle2",
-                style: {
-                    background: "magenta"
-                }
-                }
-            },
-            {
-                beginDate: "01.01.2021 00:00",
-                endDate: "01.03.2021 00:00",
-                ganttBarConfig: {
-                id: "7716981641",
-                label: "Lorem ipsum dolor",
-                style: {
-                    background: "#b74b52"
-                }
-                }
-            },
-            {
-                beginDate: "15.06.2021 00:00",
-                endDate: "10.07.2021 00:00",
-                ganttBarConfig: {
-                id: "9716981641",
-                label: "Oh hey",
-                style: {
-                    background: "#69e064",
-                    borderRadius: "15px",
-                    color: "blue",
-                    fontSize: "10px"
-                }
-                }
-            }
-        ]
-            }
-        ])
-
-
-        const bars1 = ref([
-        {
-            beginDate: "24.04.2021 13:00",
-            endDate: "25.05.2021 19:00",
-            ganttBarConfig: {
-            id: "8621987329",
-            label: "I'm in a bundle 1",
-            bundle: "bundle2"
-            }
+            id_space: {{ id_space }},
+            items: {{ projects | raw}},
+            selectedTheme: "{{inheritedTheme}}" == "dark" ? "dark" : "default",
+            itemsType: "project",
+            showModal:false,
+            rowList: []
         }
-        ])
-        const bars2 = ref([
-        {
-            beginDate: "24.04.2021 13:00",
-            endDate: "25.05.2021 19:00",
-            ganttBarConfig: {
-            id: "1592311887",
-            label: "I'm in a bundle 2",
-            bundle: "bundle2",
-            style: {
-                background: "magenta"
-            }
-            }
-        },
-        {
-            beginDate: "01.01.2021 00:00",
-            endDate: "01.03.2021 00:00",
-            ganttBarConfig: {
-            id: "7716981641",
-            label: "Lorem ipsum dolor",
-            style: {
-                background: "#b74b52"
-            }
-            }
-        },
-        {
-            beginDate: "15.06.2021 00:00",
-            endDate: "10.07.2021 00:00",
-            ganttBarConfig: {
-            id: "9716981641",
-            label: "Oh hey",
-            style: {
-                background: "#69e064",
-                borderRadius: "15px",
-                color: "blue",
-                fontSize: "10px"
-            }
-            }
-        }
-        ])
-        const addBar = () => {
-            if (bars1.value.some(bar => bar.ganttBarConfig.id === "test1")) {
-                return
-            }
-            const bar = {
-                beginDate: "26.02.2021 00:00",
-                endDate: "26.03.2021 02:00",
-                ganttBarConfig: {
-                id: "test1",
-                hasHandles: true,
-                label: "Hello!",
-                style: {
-                    background: "#5484b7",
-                    borderRadius: "20px"
-                }
-                }
-            }
-            bars1.value.push(bar)
-        }
-        const count = ref(2)
-        return { count, bars1, bars2, chartStart, chartEnd, format, addBar, rows }
     },
     created() {
-        console.log("id_space: ", this.id_space);
         let dates = this.getDefaultDates();
         this.chartStart = dates.start;
         this.chartEnd = dates.end;
-        console.log("dates: ", dates);
-    },
-    mounted() {
-        console.log("mounted chartStart: ", this.chartStart);
-    },
-    updated() {
-        console.log("updated chartStart: ", this.chartStart);
+        this.generateRows();
     },
     methods: {
         getDefaultDates() {
@@ -258,10 +164,101 @@ const app = createApp({
             let endDate = new Date();
             endDate = endDate.setMonth(endDate.getMonth() + 1);
             return {
-                start: moment(startDate).format('DD.MM.YYYY HH:mm'),
-                end: moment(endDate).format('DD.MM.YYYY HH:mm')
+                start: moment(startDate).format(this.format),
+                end: moment(endDate).format(this.format)
             };
         },
+        generateRows() {
+            this.items.forEach((item, index) => {
+                row = this.getRowFromItem(item, index);
+                this.rowList.push(row);
+            });
+        },
+        getRowFromItem(item, index) {
+            let name = item.name // || item.title; => seems to work, but generates infinite loop
+            let row = {
+                id: 'item_' + item.id, // does that work ?
+                label: name.length > 20 ? name.slice(0, 25) + "..." : name,
+                barList: [],
+            };
+
+            let start = item.date_open || item.start_date;
+            let end = item.time_limit || item.end_date;
+
+            start = moment(start).format(this.format);
+            end = moment(end).format(this.format);
+            // make visible tasks that duration is less than or equal to 1 day
+            /* if (end == start) {
+                end = moment(end).add(1, "days").format(this.format)
+            } */
+
+            let itemData = {
+                label: name,
+                beginDate: start,
+                endDate: end,
+                ganttBarConfig: {
+                    itemId: item.id,
+                    background: "#e09b69",
+                    borderRadius: "20px",
+                    color: "black",
+                }
+            }
+
+            row.barList.push(itemData);
+            return row;
+        },
+        async openItemContent(itemId) {
+            if (this.itemsType == "project") {
+                this.itemsType = "task";
+                this.projectId = itemId;
+                let project = this.items.find(item => item.id == itemId);
+                let tasks = await this.getProjectData('tasks', itemId);
+                this.items = tasks;
+                this.chartStart = moment(project.date_open).format(this.format);
+                this.chartEnd = moment(project.time_limit).format(this.format);
+                this.rowList = [];
+                this.generateRows();
+            } else if (this.itemsType == "task") {
+                let services = await this.getProjectData('taskservices', itemId);
+                this.openTaskPopup(itemId, services);
+            } else {
+                console.err("nothing to display");
+            }
+        },
+        async getProjectData(elementCategory, elementId) {
+            let result = [];
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/get` + elementCategory + `/`;
+            let apiRoute = targetUrl + this.id_space + "/" + elementId;
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    result = data.elements;
+                });
+                return result;
+        },
+        openTaskPopup(taskId, services) {
+            let task = this.items.find(item => item.id == taskId);
+            this.selectedTask = task;
+            this.selectedTask.services = services;
+            this.showModal = true;
+        },
+        gotoKanban() {
+            if (this.projectId) {
+                let kanbanUrl = "servicesprojects/kanban/" + this.id_space + "/" + this.projectId;
+                window.location = kanbanUrl;
+            } else {
+                alert("there's no mathcing project");
+            }
+            
+        }
     }
   })
 
