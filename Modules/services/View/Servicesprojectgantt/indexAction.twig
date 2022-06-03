@@ -47,8 +47,8 @@
             class="card d-none d-md-flex mb-2"
             width="100%"
             height="28vh">
-
-            <div id="dateInputs" class="row m-3">
+            {{"{{dateInputStart}}"}}
+            <div id="options" class="row m-3">
                 <div class="col-2">
                     <label for="start_date" class="top-label">Period start</label>
                     <input
@@ -75,86 +75,11 @@
             </div>
 
             <div class="row ms-3 mb-3">
-                <div class="col-2">
-                    <button id="showContextBtn" class="ml-2 btn btn-primary" @click="showAction">
-                        Show options
-                    </button>
-                </div>
-            </div>
-            <div id="contextmenuHidable">
-                <div class="row pa-2 m-3" v-if="showContextmenu">
-                    <div class="col-3">
-                        <input type="checkbox"
-                            name="hideTimeaxis"
-                            v-model="hideTimeaxis"/>
-                        <label for="hideTimeaxis" class="side-label">Hide timeaxis</label>
-                    </div>
-
-                    <div class="col-3">
-                        <input type="checkbox"
-                            name="pushOnOverlap"
-                            v-model="pushOnOverlap"/>
-                        <label for="pushOnOverlap" class="side-label">Push on overlap</label>
-                    </div>
-
-                    <div class="col-3">
-                        <input type="checkbox"
-                            name="grid"
-                            v-model="grid"/>
-                        <label for="grid" class="side-label">Grid</label>
-                    </div>
-
-                    <div class="col-3">
-                        <input type="checkbox"
-                            name="highlightOnHover"
-                            v-model="highlightOnHover"/>
-                        <label for="highlightOnHover" class="side-label">Highlight on hover</label>
-                    </div>
-
-                </div>
-
-                <div class="row pa-2 m-3" v-if="showContextmenu">
-                    <div class="col-3">
-                        <label for="theme" class="top-label">Theme</label>
-                        <select v-model="selectedTheme" name="theme" @change="updateColors">
-                            <option v-for="theme in themes">{{"{{theme}}"}}</option>
-                        </select>
-                    </div>
-
-                    <div class="col-3 slidecontainer">
-                        <label for="rowHeight" class="top-label">Row height</label>
-                        <input
-                            type="range"
-                            class="slider"
-                            name="rowHeight"
-                            v-model="rowHeight"
-                            :min="20"
-                            :max="100">
-                    </div>
-
-                    <div class="col-3 slidecontainer">
-                        <label for="rowLabelWidth" class="top-label">Row label width</label>
-                        <input
-                            type="range"
-                            class="slider"
-                            name="rowLabelWidth"
-                            v-model="rowLabelWidth"
-                            :min="10"
-                            :max="50"
-                            >
-                    </div>
-
-                    <div class="col-3" hidden>
-                        <label for="highlightedHours" class="top-label">Highlighted hours</label>
-                        <select 
-                            v-model="highlightedHours"
-                            name="highlightedHours"
-                            multiple
-                            style="width:inherit;">
-                            <option v-for="hour in hours">{{"{{hour}}"}}</option>
-                        </select>
-                    </div>
-
+                <div class="col-3">
+                    <label for="theme" class="top-label">Theme</label>
+                    <select v-model="selectedTheme" name="theme" @change="updateColors">
+                        <option v-for="theme in themes">{{"{{theme}}"}}</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -259,10 +184,10 @@ const app = createApp({
             chartStart: "01.06.2022 12:00",
             chartEnd: "15.10.2022 12:00",
             format: "DD.MM.YYYY HH:mm",
-            dateInputFormat: "DD.MM.YYYY",
+            dateInputFormat: "YYYY-MM-DD",
 
-            dateInputStart: "01.06.2022",
-            dateInputEnd: "15.10.2022",
+            dateInputStart: "2022-06-01",
+            dateInputEnd: "2022-10-15",
 
             id_space: {{ id_space }},
             items: {{ projects | raw}},
@@ -276,13 +201,16 @@ const app = createApp({
     },
     created() {
         let dates = this.getDefaultDates();
-        this.chartStart = moment(dates.start).format(this.format);
-        this.chartEnd = moment(dates.end).format(this.format);
-        this.dateInputStart = dates.start;
-        this.dateInputEnd = dates.end;
+        this.setDates(dates.start, dates.end);
         this.generateRows();
     },
     methods: {
+        setDates(start, end) {
+            this.dateInputStart = moment(start).format(this.dateInputFormat);
+            this.dateInputEnd = moment(end).format(this.dateInputFormat);
+            this.chartStart = moment(start).format(this.format);
+            this.chartEnd = moment(end).format(this.format);
+        },
         getDefaultDates() {
             let startDate = new Date();
             let endDate = new Date();
@@ -338,8 +266,7 @@ const app = createApp({
                 let project = this.items.find(item => item.id == itemId);
                 let tasks = await this.getProjectData('tasks', itemId);
                 this.items = tasks;
-                this.chartStart = moment(project.date_open).format(this.format);
-                this.chartEnd = moment(project.time_limit).format(this.format);
+                this.setDates(project.date_open, project.time_limit);
                 this.rowList = [];
                 this.generateRows();
             } else if (this.itemsType == "task") {
