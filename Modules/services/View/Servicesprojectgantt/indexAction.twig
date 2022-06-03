@@ -47,7 +47,6 @@
             class="card d-none d-md-flex mb-2"
             width="100%"
             height="28vh">
-            {{"{{dateInputStart}}"}}
             <div id="options" class="row m-3">
                 <div class="col-2">
                     <label for="start_date" class="top-label">Period start</label>
@@ -134,7 +133,7 @@
             <g-gantt-chart
                 :chart-start="chartStart"
                 :chart-end="chartEnd"
-                precision="month"
+                :precision="ganttPrecision"
                 width="100%"
                 grid
                 :color-scheme="selectedTheme"
@@ -158,10 +157,19 @@
                         width="20"
                         class="mr-1"
                     >
-                    <!-- TODO: make span width variable depnending on image presence-->
-                    <span v-if="itemsType=='project'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
-                    {# <span v-if="itemsType=='task'" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover" style="width:100%; text-align:center;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span> #}
-                    <span v-if="itemsType=='task'" style="width:100%; text-align:center; cursor:pointer;" @click="openItemContent(bar.ganttBarConfig.itemId)">{{"{{bar.label}}"}}</span>
+                    <span
+                        v-if="itemsType=='project'"
+                        style="width:100%; text-align:center; cursor:pointer;"
+                        @click="openItemContent(bar.ganttBarConfig.itemId)">
+                        {{"{{bar.label}}"}}
+                    </span>
+                    
+                    <span
+                        v-if="itemsType=='task'"
+                        style="width:100%; text-align:center; cursor:pointer;"
+                        @click="openItemContent(bar.ganttBarConfig.itemId)">
+                        {{"{{bar.label}}"}}
+                    </span>
                     
                 </template>
             </g-gantt-chart>
@@ -170,7 +178,6 @@
 
 </div>
 
-{# // TODO: use dayjs lib included in ganttastic bundle instead of moment.js #}
 <script src="externals/node_modules/moment/min/moment.min.js"></script>
 <script src="/externals/vue-ganttastic/dist/main.js"></script>
 <script src="/externals/vue-ganttastic/colorThemes.js"></script>
@@ -185,9 +192,9 @@ const app = createApp({
             chartEnd: "15.10.2022 12:00",
             format: "DD.MM.YYYY HH:mm",
             dateInputFormat: "YYYY-MM-DD",
-
             dateInputStart: "2022-06-01",
             dateInputEnd: "2022-10-15",
+            ganttPrecision: "month",
 
             id_space: {{ id_space }},
             items: {{ projects | raw}},
@@ -202,14 +209,38 @@ const app = createApp({
     created() {
         let dates = this.getDefaultDates();
         this.setDates(dates.start, dates.end);
+        this.setPrecision();
         this.generateRows();
     },
     methods: {
+        setPrecision() {
+            this.ganttPrecision = this.adaptGanttPrecision(
+                this.getDuration(
+                    this.dateInputStart,
+                    this.dateInputEnd,
+                )
+            );
+        },
         setDates(start, end) {
             this.dateInputStart = moment(start).format(this.dateInputFormat);
             this.dateInputEnd = moment(end).format(this.dateInputFormat);
             this.chartStart = moment(start).format(this.format);
             this.chartEnd = moment(end).format(this.format);
+        },
+        getDuration(start, end) {
+            return moment(end).diff(moment(start), "days");
+        },
+        dateToArray(date) {
+            return [date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds()];
+        },
+        adaptGanttPrecision(duration) {
+            if (duration <= 2) {
+                return "hour";
+            } else if (duration < 31) {
+                return "day";
+            } else {
+                return "month";
+            }
         },
         getDefaultDates() {
             let startDate = new Date();
@@ -267,6 +298,7 @@ const app = createApp({
                 let tasks = await this.getProjectData('tasks', itemId);
                 this.items = tasks;
                 this.setDates(project.date_open, project.time_limit);
+                this.setPrecision();
                 this.rowList = [];
                 this.generateRows();
             } else if (this.itemsType == "task") {
@@ -349,6 +381,7 @@ const app = createApp({
                     break;
             }
             this.checkDates();
+            this.setPrecision();
         },
         checkDates() {
             let errorElement = document.getElementById("dateError");
