@@ -2,6 +2,7 @@
 
 ## 2.6.1
 
+* [core] fix space creation and unimpersonate action #650
 * [core] in visitor mode, add warning to user to login to access all features
 
 ## 2.6.0
