@@ -13,12 +13,12 @@
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</guid>
-      <description>Setup new spaces    At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
+      <description>Setup new spaces At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
 First step is to connect with the configured admin account.
-Create a space    In the admin menu, go to Spaces
+Create a space In the admin menu, go to Spaces
 Add a space
 Space is created, now it is to create menus to access it.
-Create menus    Menus are a way to group spaces in logical groups.</description>
+Create menus Menus are a way to group spaces in logical groups.</description>
     </item>
     
     <item>
@@ -29,7 +29,7 @@ Create menus    Menus are a way to group spaces in logical groups.</description>
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</guid>
       <description>cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.
 For help commands, execute:
-php cli/pfm-cli.php  Tool can be used to install/upgrade database, expire users, check database version etc.</description>
+php cli/pfm-cli.php Tool can be used to install/upgrade database, expire users, check database version etc.</description>
     </item>
     
   </channel>

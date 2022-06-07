@@ -14,7 +14,7 @@
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/basic_space_configuration/</guid>
       <description>For basic booking fonctions, you will have to activate and configure Clients module, Resources module and Booking module.
-Modules activation    To activate a new module, go to Configuration module.
+Modules activation To activate a new module, go to Configuration module.
 Then, click the Edit button of the corresponding module.
 You have to set the Users selector to the lower role you want to grant access to this module. (i.e. if user is set, then, users, managers and admins will be granted access).</description>
     </item>
@@ -25,12 +25,12 @@ You have to set the Users selector to the lower role you want to grant access to
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</guid>
-      <description>Setup new spaces    At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
+      <description>Setup new spaces At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.
 First step is to connect with the configured admin account.
-Create a space    In the admin menu, go to Spaces
+Create a space In the admin menu, go to Spaces
 Add a space
 Space is created, now it is to create menus to access it.
-Create menus    Menus are a way to group spaces in logical groups.</description>
+Create menus Menus are a way to group spaces in logical groups.</description>
     </item>
     
     <item>
@@ -40,9 +40,9 @@ Create menus    Menus are a way to group spaces in logical groups.</description>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</guid>
       <description>Since Platform-Manager V2 (2021-08-10 release), users with an existing account can request to join a space.
-Join a space as a user      you already have an account
-  you don&amp;rsquo;t have an account yet
-  Request access    First, find the space you want to request access to. From Platform-Manager main page, you can select its parent structure if or search for the space name.</description>
+Join a space as a user you already have an account
+you don&amp;rsquo;t have an account yet
+Request access First, find the space you want to request access to. From Platform-Manager main page, you can select its parent structure if or search for the space name. Then you should see, amongst one or several tiles, the one you are looking for.</description>
     </item>
     
     <item>
@@ -51,7 +51,7 @@ Join a space as a user      you already have an account
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/interdependant_resources/</guid>
-      <description>Use case     you have one equipment for which users need a specific authorization with this equipment, users can perform more than one activity eventually, these activities have different prices  Problem    Using one category (on which users authorizations can be set) representing the equipment and several resources, each of them representing one activity linked to this equipment, do not avoid a user to make a booking for one of these activities whereas some other user already did book another activity for this equipment.</description>
+      <description>Use case you have one equipment for which users need a specific authorization with this equipment, users can perform more than one activity eventually, these activities have different prices Problem Using one category (on which users authorizations can be set) representing the equipment and several resources, each of them representing one activity linked to this equipment, do not avoid a user to make a booking for one of these activities whereas some other user already did book another activity for this equipment.</description>
     </item>
     
     <item>
@@ -60,8 +60,8 @@ Join a space as a user      you already have an account
       <pubDate>Wed, 23 Jun 2021 15:52:39 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/requirements/</guid>
-      <description>Base requirements     Database: mysql &amp;gt; 5.6, tested on 8 PHP:  version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support   Apache server with:  PHP enabled rewrite, headers, proxy_http modules use of .htaccess    Apache should also have specific pfm configuration:
-&amp;lt;Location /update&amp;gt; Order deny,allow Deny from all Allow from 127.0.0.1 &amp;lt;/Location&amp;gt; &amp;lt;Directory &amp;quot;^${docroot}/data&amp;quot;&amp;gt; &amp;lt;FilesMatch &amp;quot;.</description>
+      <description>Base requirements Database: mysql &amp;gt; 5.6, tested on 8 PHP: version &amp;gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support Apache server with: PHP enabled rewrite, headers, proxy_http modules use of .htaccess Apache should also have specific pfm configuration:
+&amp;lt;Location /update&amp;gt; Order deny,allow Deny from all Allow from 127.0.0.1 &amp;lt;/Location&amp;gt; &amp;lt;Directory &amp;quot;^${docroot}/data&amp;quot;&amp;gt; &amp;lt;FilesMatch &amp;quot;.+\.*$&amp;quot;&amp;gt; SetHandler ! &amp;lt;/FilesMatch&amp;gt; &amp;lt;/Directory&amp;gt; Rabbitmq server for additional services (pfm-events, etc.</description>
     </item>
     
     <item>
@@ -70,7 +70,7 @@ Join a space as a user      you already have an account
       <pubDate>Wed, 23 Jun 2021 18:13:29 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/source/</guid>
-      <description>Install from source code    About    Code is hosted in git repository from https://github.com/bgo-bioimagerie/platformmanager.
+      <description>Install from source code About Code is hosted in git repository from https://github.com/bgo-bioimagerie/platformmanager.
 Stable code is in master branch.
 Releases can also be download from https://github.com/bgo-bioimagerie/platformmanager/releases.
 Code contains some .htaccess to limit access to specific directories. If not using Apache as frontend, you need to restrict access yourself based on .htaccess files definition.
@@ -86,7 +86,7 @@ See docker for available env variables to override defaults.</description>
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</guid>
       <description>cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.
 For help commands, execute:
-php cli/pfm-cli.php  Tool can be used to install/upgrade database, expire users, check database version etc.</description>
+php cli/pfm-cli.php Tool can be used to install/upgrade database, expire users, check database version etc.</description>
     </item>
     
     <item>
@@ -95,8 +95,8 @@ php cli/pfm-cli.php  Tool can be used to install/upgrade database, expire users,
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/users/</guid>
-      <description>Users creation    Users cannot register for an account, space managers must create the user for their space if user does not already have an account (they will receive a temporary password by email). If user already have an account, he can request to join the space via the web interface (Join button).
-Create a user as a space admin    If you want to directly link a user to a specific space or if you are space admin, not superadmin, you can create user from within a space by going into Users module in your space homepage.</description>
+      <description>Users creation Users cannot register for an account, space managers must create the user for their space if user does not already have an account (they will receive a temporary password by email). If user already have an account, he can request to join the space via the web interface (Join button).
+Create a user as a space admin If you want to directly link a user to a specific space or if you are space admin, not superadmin, you can create user from within a space by going into Users module in your space homepage.</description>
     </item>
     
     <item>
@@ -105,11 +105,11 @@ Create a user as a space admin    If you want to directly link a user to a speci
       <pubDate>Wed, 23 Jun 2021 15:51:32 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/docker/</guid>
-      <description>Using docker    setup    Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
+      <description>Using docker setup Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
 Update docker-compose.yml file environment sections with your setup.
 Some variables are defined in a .env file for sensitive and custom data.
 Example:
-PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx ....  See example docker/env.example for your .env file.
+PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx .... See example docker/env.example for your .env file.
 Exemple docker-compose.yml use local docker volumes to save database etc.</description>
     </item>
     
@@ -119,11 +119,12 @@ Exemple docker-compose.yml use local docker volumes to save database etc.</descr
       <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/upgrade/</guid>
-      <description>Installation/upgrade    For first installation, and for any later upgrade, at code root location:
-php cli/pfm-cli.php install  This will setup database i.e create tables, migrate/update schemas etc..
+      <description>Installation/upgrade For first installation, and for any later upgrade, at code root location:
+php cli/pfm-cli.php install This will setup database i.e create tables, migrate/update schemas etc..
 To know current version:
-php cli/pfm-cli.php version --db  Developpers    To add an upgrade (not an install from scratch) script:
-php cli/pfm-cli.php upgrade --desc &amp;quot;fix this for that&amp;quot;  this will create a unique script in db/upgrade with a timestamp prefix.</description>
+php cli/pfm-cli.php version --db Developpers To add an upgrade (not an install from scratch) script:
+php cli/pfm-cli.php upgrade --desc &amp;quot;fix this for that&amp;quot; this will create a unique script in db/upgrade with a timestamp prefix.
+You can then edit script to add whatever is needed for upgrade.</description>
     </item>
     
     <item>
@@ -132,10 +133,10 @@ php cli/pfm-cli.php upgrade --desc &amp;quot;fix this for that&amp;quot;  this w
       <pubDate>Wed, 23 Jun 2021 16:05:10 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/installation/configuration/</guid>
-      <description>General configuration    Configuration file, located in Config/conf.ini defines base configuration and the list of modules globally activated.
+      <description>General configuration Configuration file, located in Config/conf.ini defines base configuration and the list of modules globally activated.
 Example file is available with conf.ini.sample.
 Mandatory sections are:
- Installation: base setup with public url access and optional url prefix Modules: list of modules DB: mysql connection information Admin: super administrator information (created at install if not exists), admin secrets (password, apikey) should not be exposed in config file and should rather be defined via env variables (see below).</description>
+Installation: base setup with public url access and optional url prefix Modules: list of modules DB: mysql connection information Admin: super administrator information (created at install if not exists), admin secrets (password, apikey) should not be exposed in config file and should rather be defined via env variables (see below).</description>
     </item>
     
     <item>
@@ -156,8 +157,8 @@ Mandatory sections are:
       <description>Booking module allows users book resources.
 Unlike other modules, Booking module has the particularity to be divided into two modules: Booking and Booking settings. You will need to activate both in order set your resources reservation environment.
 Module descritpion
-Item definition    A reservation is defined by its:
- Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day?</description>
+Item definition A reservation is defined by its:
+Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day? Beginning (date + time) End (date + time) (optional) Periodicity Related items definition Color code Additional info Supplementaries info For information on reservation.</description>
     </item>
     
     <item>
@@ -177,8 +178,9 @@ Item definition    A reservation is defined by its:
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/clients/</guid>
       <description>Clients module allows you to create invoicable entities.
 Within this module, you can:
- manage clients manage pricings link users to a client  Item definition    A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&amp;rsquo;t be invoiced directly.
-A client is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
+manage clients manage pricings link users to a client Item definition A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&amp;rsquo;t be invoiced directly.
+A client is defined by its (&amp;quot;*&amp;quot; for mandatory):
+Identifier* Contact name Phone Email* Pricing* Invoice send preference Related items definition Pricing a pricing is used to define a specific group of prices for resources and services tarification.</description>
     </item>
     
     <item>
@@ -208,10 +210,11 @@ Example, with a document named resource1/usage.pdf, usage.pdf will be displayed 
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/helpdesk/</guid>
-      <description>Helpdesk for spaces    A lightweight helpdesk system to manage tickets from users to a space.
+      <description>Helpdesk for spaces A lightweight helpdesk system to manage tickets from users to a space.
 If pfm is configured with an imap account, let&amp;rsquo;s say support@pfm.org, then space members can send emails to support+spaceshortname@pfm.org to create a ticket.
 Managers can see and reply to all tickets, and ease the follow-ups of users issues, with the full conversation.
-Space email address is show in helpdesk configuration panel when activated.</description>
+Space email address is show in helpdesk configuration panel when activated.
+Space members and managers can see tickets and manage them:</description>
     </item>
     
     <item>
@@ -240,8 +243,9 @@ Space email address is show in helpdesk configuration panel when activated.</des
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</guid>
       <description>Quote module allows you to create quotes.
 Within this module, you can:
- Create quotes Edit quotes  Item definition    A quote is defined by its (&amp;quot;*&amp;quot; for mandatory):
- Recipient or User* Recipient Email Client Address Client* A list of items  Related items definition    Recipient or User    The recipient or user is the person whose name will appear in the quote header.</description>
+Create quotes Edit quotes Item definition A quote is defined by its (&amp;quot;*&amp;quot; for mandatory):
+Recipient or User* Recipient Email Client Address Client* A list of items Related items definition Recipient or User The recipient or user is the person whose name will appear in the quote header.
+Recipient is set in case of a new user quote creation.</description>
     </item>
     
     <item>
@@ -252,8 +256,8 @@ Within this module, you can:
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/resources/</guid>
       <description>Resources module allows you to create resources that users can book.
 Within this module, you can:
- manage resources manage areas manage categories manage responsibles and visas manage resources states and events  Item definition    A resource is a bookable item. It is defined by its (&amp;quot;*&amp;quot; for mandatory):
- name* category* area* brand type display order description full description image  Related items definition    Category    A category contain multiple resources.</description>
+manage resources manage areas manage categories manage responsibles and visas manage resources states and events Item definition A resource is a bookable item. It is defined by its (&amp;quot;*&amp;quot; for mandatory):
+name* category* area* brand type display order description full description image Related items definition Category A category contain multiple resources. For example, if you have 3 scanners (scanner1, scanner2, scanner3), they can be grouped under the category Scanners.</description>
     </item>
     
     <item>
@@ -271,7 +275,7 @@ Within this module, you can:
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/statistics/</guid>
-      <description>Statistics dashboard    In space page, there is a link to the statistics dashboard, for managers only.
+      <description>Statistics dashboard In space page, there is a link to the statistics dashboard, for managers only.
 Managers can log in dashboard with their identifier and their API Key (in user informations panel /usersmyaccount).
 The statistics dashboard is based on Grafana and several dashboards are set by default. Additional dashboards can be created by managers. It is advised not to modify provided dashboards as they may be overwritten on future updates.</description>
     </item>
@@ -284,7 +288,7 @@ The statistics dashboard is based on Grafana and several dashboards are set by d
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/</guid>
       <description>Users module allows space admins to manage users.
 Within this module, you can:
- add users authorize users to access your space affect roles to users within your space manage users booking access manage users client accounts  Item definition    A user is linked to an account. Within a space, it can be attributed different roles , like admin, manager, user or visitor.
+add users authorize users to access your space affect roles to users within your space manage users booking access manage users client accounts Item definition A user is linked to an account. Within a space, it can be attributed different roles , like admin, manager, user or visitor.
 A user is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     

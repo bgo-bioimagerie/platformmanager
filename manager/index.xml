@@ -14,7 +14,7 @@
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/basic_space_configuration/</guid>
       <description>For basic booking fonctions, you will have to activate and configure Clients module, Resources module and Booking module.
-Modules activation    To activate a new module, go to Configuration module.
+Modules activation To activate a new module, go to Configuration module.
 Then, click the Edit button of the corresponding module.
 You have to set the Users selector to the lower role you want to grant access to this module. (i.e. if user is set, then, users, managers and admins will be granted access).</description>
     </item>
@@ -25,8 +25,8 @@ You have to set the Users selector to the lower role you want to grant access to
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/manager/users/</guid>
-      <description>Users creation    Users cannot register for an account, space managers must create the user for their space if user does not already have an account (they will receive a temporary password by email). If user already have an account, he can request to join the space via the web interface (Join button).
-Create a user as a space admin    If you want to directly link a user to a specific space or if you are space admin, not superadmin, you can create user from within a space by going into Users module in your space homepage.</description>
+      <description>Users creation Users cannot register for an account, space managers must create the user for their space if user does not already have an account (they will receive a temporary password by email). If user already have an account, he can request to join the space via the web interface (Join button).
+Create a user as a space admin If you want to directly link a user to a specific space or if you are space admin, not superadmin, you can create user from within a space by going into Users module in your space homepage.</description>
     </item>
     
   </channel>
