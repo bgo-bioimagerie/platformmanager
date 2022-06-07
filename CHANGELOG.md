@@ -9,7 +9,7 @@
 
 ## 2.6.1
 
-* [core] fix space creation and unimpersonate action
+* [core] fix space creation and unimpersonate action #650
 * [core] in visitor mode, add warning to user to login to access all features
 * [core] disable by default tls for smtp, allow to activate via config smtp_tls
 
