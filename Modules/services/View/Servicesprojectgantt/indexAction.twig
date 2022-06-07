@@ -140,7 +140,7 @@
                 :row-height="40"
                 bar-start="beginDate"
                 bar-end="endDate"
-                :date-format="format"
+                :date-format="format"                
             >
 
                 <g-gantt-row v-for="row in rowList"
@@ -160,14 +160,14 @@
                     <span
                         v-if="itemsType=='project'"
                         style="width:100%; text-align:center; cursor:pointer;"
-                        @click="openItemContent(bar.ganttBarConfig.itemId)">
+                        @click="openItemContent(bar.ganttBarConfig.id)">
                         {{"{{bar.label}}"}}
                     </span>
                     
                     <span
                         v-if="itemsType=='task'"
                         style="width:100%; text-align:center; cursor:pointer;"
-                        @click="openItemContent(bar.ganttBarConfig.itemId)">
+                        @click="openItemContent(bar.ganttBarConfig.id)">
                         {{"{{bar.label}}"}}
                     </span>
                     
@@ -268,25 +268,24 @@ const app = createApp({
             let start = item.date_open || item.start_date;
             let end = item.time_limit || item.end_date;
 
-            start = moment(start).format(this.format);
-            end = moment(end).format(this.format);
             // make visible tasks that duration is less than or equal to 1 day
-            /* if (end == start) {
-                end = moment(end).add(1, "days").format(this.format)
-            } */
-
+            end = end == start ? moment(end).add(1, "days").format(this.format) : moment(end).format(this.format);
+            start = moment(start).format(this.format);
+            
+            // TODO: set template infos in here
             let itemData = {
                 label: name,
                 beginDate: start,
                 endDate: end,
                 ganttBarConfig: {
-                    itemId: item.id,
+                    id: item.id,
                     background: "#e09b69",
-                    borderRadius: "20px",
+                    borderRadius: 20,
+                    opacity:0.5,
                     color: "black",
                 }
             }
-
+            console.log('itemData: ', itemData);
             row.barList.push(itemData);
             return row;
         },
