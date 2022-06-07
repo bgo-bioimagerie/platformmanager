@@ -301,7 +301,7 @@ class Router {
         $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
 
         $space = null;
-        if ($id_space !== null) {
+        if ($id_space !== null && $id_space != 0) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
             if(!$space) {
