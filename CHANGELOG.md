@@ -4,6 +4,7 @@
 
 ### Features / enhancements
 
+* [core] fix space creation and unimpersonate action
 * [antibodies] use bootstrap modals and fix some menu urls
 * [booking] add caldav support
 
