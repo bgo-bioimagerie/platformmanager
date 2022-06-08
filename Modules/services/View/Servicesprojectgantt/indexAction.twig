@@ -5,13 +5,7 @@
 <div class="pm-table">
     
     <div class="col-12">
-        
-        {% if allPeriod == 1 %}
-            <h3> GanttPeriod {# ServicesTranslator::GanttPeriod($lang) #} <h3/>
-        {% else %}
-             <h3> GanttOpened {# ServicesTranslator::GanttOpened($lang) #} <h3/>
-        {% endif %}
-        
+        <h3> {{ ganttStatus }} <h3/>
     </div>
     
     <div class="col-12">
@@ -48,8 +42,8 @@
             width="100%"
             height="28vh">
             <div id="options" class="row m-3">
-                <div class="col-2">
-                    <label for="start_date" class="top-label">Period start</label>
+                <div class="col-3">
+                    <label for="start_date" class="top-label">{{ "{{ textContent.beginningPeriod }}" }}</label>
                     <input
                         id="start_date"
                         type="date"
@@ -58,8 +52,8 @@
                         name="start_date"
                         @change="updateChartDates">
                 </div>
-                <div class="col-2">
-                    <label for="end_date" class="top-label">Period end</label>
+                <div class="col-3">
+                    <label for="end_date" class="top-label">{{ "{{ textContent.endPeriod }}" }}</label>
                     <input
                         id="end_date"
                         type="date"
@@ -69,13 +63,17 @@
                         @change="updateChartDates">                 
                 </div>
                 <div class="col-2 mt-3" id="dateError" style="display:none">
-                    <span style="color:red;"> Period start must be lower </br> than period end</span>
+                    <span style="color:red;">
+                        {{ "{{ textContent.beginningPeriod }}" }}
+                        {{ "{{ textContent.periodError }}" }}
+                        {{ "{{ textContent.endPeriod }}" }}
+                    </span>
                 </div>
             </div>
 
             <div class="row ms-3 mb-3">
                 <div class="col-3">
-                    <label for="theme" class="top-label">Theme</label>
+                    <label for="theme" class="top-label">{{ "{{ textContent.theme }}" }}</label>
                     <select v-model="selectedTheme" name="theme" @change="updateColors">
                         <option v-for="theme in themes">{{"{{theme}}"}}</option>
                     </select>
@@ -204,6 +202,7 @@ const app = createApp({
             showContextmenu: false,
             rowList: [],
             themes: Object.keys(colorThemes),
+            textContent: {{ textContent | raw }}
         }
     },
     created() {
@@ -285,7 +284,6 @@ const app = createApp({
                     color: "black",
                 }
             }
-            console.log('itemData: ', itemData);
             row.barList.push(itemData);
             return row;
         },
@@ -369,25 +367,32 @@ const app = createApp({
         updateChartDates(event) {
             switch (event.target.name) {
                 case "start_date":
+                    if (!this.checkDates(event.target.value, this.dateInputEnd)) {
+                        break;
+                    }
                     this.dateInputStart = event.target.value;
                     this.chartStart = moment(event.target.value).format(this.format);
                     break;
                 case "end_date":
+                    if (!this.checkDates(this.dateInputStart, event.target.value)) {
+                        break;
+                    }
                     this.dateInputEnd = event.target.value;
                     this.chartEnd = moment(event.target.value).format(this.format);
                     break;
                 default:
                     break;
             }
-            this.checkDates();
             this.setPrecision();
         },
-        checkDates() {
+        checkDates(begin, end) {
             let errorElement = document.getElementById("dateError");
-            if (this.dateInputStart > this.dateInputEnd) {
+            if (begin > end) {
                 errorElement.style.display = "";
+                return false;
             } else {
                 errorElement.style.display = "none";
+                return true;
             }
         },
     }

@@ -1,7 +1,4 @@
 <?php
-
-use Monolog\Handler\LogEntriesHandler;
-
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -543,8 +540,6 @@ class ServicesprojectsController extends ServicesController {
         $lang = $this->getLanguage();
 
         $id_task = $this->request->params()["task"] ?? 0;
-        Configuration::getLogger()->debug('[TEST]', ["id_task" => $id_task]);
-
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
 

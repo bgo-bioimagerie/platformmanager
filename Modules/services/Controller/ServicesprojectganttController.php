@@ -35,7 +35,11 @@ class ServicesprojectganttController extends ServicesController {
         $modelProject = new SeProject();
         $modelVisa = new SeVisa();
 
+        $ganttOpened = ServicesTranslator::GanttOpened($lang);
+        $ganttPeriod = ServicesTranslator::GanttPeriod($lang);
+
         if($allPeriod == 1){
+            $ganttStatus = $ganttPeriod;
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
             $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
@@ -65,6 +69,7 @@ class ServicesprojectganttController extends ServicesController {
                 $projects = $modelProject->allPeriodProjectsByInCharge($id_space, $incharge, $periodStart, $periodEnd);
             }
         } else {
+            $ganttStatus = $ganttOpened;
             if ($incharge == "") {
                 $projects = $modelProject->allOpenedProjects($id_space);
             } else {
@@ -73,13 +78,26 @@ class ServicesprojectganttController extends ServicesController {
         }
         $personInCharge = $modelVisa->getAll($id_space);
         
+
+        $textContent = [
+            "beginningPeriod" => ServicesTranslator::Beginning_period($lang),
+            "endPeriod" => ServicesTranslator::End_period($lang),
+            "affectedTo" => ServicesTranslator::Affected_to($lang),
+            "relatedServices" => ServicesTranslator::Related_services($lang),
+            "details" => ServicesTranslator::Details($lang),
+            "theme" => ServicesTranslator::Theme($lang),
+            "periodError" => ServicesTranslator::Period_error($lang)
+        ];
+        
         $data = array(
             'lang' => $lang,
             'id_space' => $id_space,
             'projects' => json_encode($projects),
             'personInCharge' => $personInCharge,
             'activeGantt' => $incharge,
-            'allPeriod' => $allPeriod
+            "ganttStatus" => $ganttStatus,
+            'allPeriod' => $allPeriod,
+            "textContent" => json_encode($textContent),
         );
         // render
         $this->render($data,"indexAction");

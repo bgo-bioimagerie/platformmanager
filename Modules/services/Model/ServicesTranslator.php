@@ -1105,4 +1105,43 @@ class ServicesTranslator {
         }
     }
 
+    public static function Related_services($lang) {
+        if ($lang == "fr") {
+            return "Services liés";
+        } else {
+            return "Related services";
+        }
+    }
+
+    public static function Details($lang) {
+        if ($lang == "fr") {
+            return "Détails";
+        } else {
+            return "Details";
+        }
+    }
+
+    public static function Affected_to($lang) {
+        if ($lang == "fr") {
+            return "Affécté à";
+        } else {
+            return "Affected to";
+        }
+    }
+
+    public static function Theme($lang) {
+        if ($lang == "fr") {
+            return "Thème";
+        } else {
+            return "Theme";
+        }
+    }
+
+    public static function Period_error($lang) {
+        if ($lang == "fr") {
+            return " doit être antérieur à ";
+        } else {
+            return " must be lower than ";
+        }
+    }
 }
