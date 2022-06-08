@@ -100,7 +100,7 @@
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.name}}"}}
-                                <button class="bi bi-pencil-square round modal-element" @click="showTaskContent($event, element)"></button>
+                                <button class="bi bi-pencil-square round modal-element" @click="showTaskContent(element)"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
                             </div>
                         </draggable>
@@ -124,6 +124,7 @@ Vue.createApp({
             id_space: {{ id_space }},
             id_project: {{ id_project }},
             tasks: {{ tasks | raw }},
+            id_task: {{ id_task }},
             categories: {{ categories | raw }},
             projectServices: {{ projectServices | raw }},
             projectUsers: {{ projectUsers | raw }},
@@ -136,7 +137,7 @@ Vue.createApp({
     components:{
         draggable: vueDraggableNext.VueDraggableNext
     },
-    created () {
+    created() {
         this.categories.forEach(category => {
             category.name = category.name.replace(/\s/g, '').toLowerCase();
         });
@@ -145,8 +146,12 @@ Vue.createApp({
             this.categories[task.state].tasks.push(task)
         });
     },
-    mounted () {
+    mounted() {
         this.updateCategoriesColors();
+        if (this.id_task != "0") {
+            this.selectedTask = this.tasks.find(task => task.id == this.id_task);
+            this.showTaskContent(this.selectedTask);
+        }
     },
     updated() {
         this.updateCategoriesColors();
@@ -213,7 +218,7 @@ Vue.createApp({
             let categoryGroup = document.getElementById(category.id);
             categoryGroup.style.backgroundColor = rgbaColor;
         },
-        showTaskContent(event, task) {
+        showTaskContent(task) {
             this.selectedTask = task;
             this.showModal = true;
             document.addEventListener('click', this.closeTaskPopup);

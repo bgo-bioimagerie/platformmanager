@@ -542,6 +542,9 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $id_task = $this->request->params()["task"] ?? 0;
+        Configuration::getLogger()->debug('[TEST]', ["id_task" => $id_task]);
+
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
 
@@ -596,6 +599,7 @@ class ServicesprojectsController extends ServicesController {
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,
             "tasks" => json_encode($tasks),
+            "id_task" => $id_task,
             "categories" => json_encode($categories),
             "projectServices" => json_encode($services),
             "projectUsers" => json_encode($projectUsers),
