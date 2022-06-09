@@ -3,6 +3,7 @@
 ## 2.6.2
 
 * [booking] do not show in welcome page delete reservations #655
+* [booking] allow users to edit not started resa if bookingdelayusercanedit = -1 (booking restrictions) #654
 
 ## 2.6.1
 

@@ -141,6 +141,9 @@ class BookingdefaultController extends BookingabstractController {
             if ($limitHours >= 0 && ($start_date - 3600*$limitHours > time())) {
                 return true;
             }
+            if ($limitHours == -1 && $start_date < time()) {
+                return true;
+            }
             $modelConfig = new CoreConfig();
             $canEdit = intval($modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space));
             if($canEdit == 1){
