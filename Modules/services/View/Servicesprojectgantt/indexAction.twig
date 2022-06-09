@@ -127,6 +127,20 @@
                 </div>
             </div>
         </div>
+
+        <div id="options" class="row">
+            <div
+                class="col-1 bi bi-arrow-left"
+                id="moveLeft"
+                @mouseDown="scrollGantt('left')">
+            </div>
+            <div
+                class="col-1 bi bi-arrow-right"
+                id="moveRight"
+                @mouseDown="scrollGantt('right')">
+            </div>
+        </div>
+
         <div id="ganttChart">
             <g-gantt-chart
                 :chart-start="chartStart"
@@ -182,6 +196,7 @@
 
 <script>
 let ref = pfmGant.vueRef();
+let mouseDown = -1;
 const createApp = pfmGant.vueCreateApp();
 const app = createApp({
     data() {
@@ -202,7 +217,7 @@ const app = createApp({
             showContextmenu: false,
             rowList: [],
             themes: Object.keys(colorThemes),
-            textContent: {{ textContent | raw }}
+            textContent: {{ textContent | raw }},
         }
     },
     created() {
@@ -210,8 +225,26 @@ const app = createApp({
         this.setDates(dates.start, dates.end);
         this.setPrecision();
         this.generateRows();
+        document.addEventListener("mouseup", this.stopScroll);
     },
     methods: {
+        scrollGantt(direction) {
+            let value = direction == "left" ? -1 : 1;
+            let interval = 100;
+            if (mouseDown == -1) {
+                mouseDown = setInterval(() => {
+                    let begin = moment(this.dateInputStart).add(value, "days");
+                    let end = moment(this.dateInputEnd).add(value, "days");
+                    this.setDates(begin, end);
+                }, interval);
+            }
+        },
+        stopScroll() {
+            if (mouseDown != -1) {
+                clearInterval(mouseDown);
+                mouseDown = -1;
+            }
+        },
         setPrecision() {
             this.ganttPrecision = this.adaptGanttPrecision(
                 this.getDuration(
