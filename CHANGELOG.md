@@ -4,6 +4,7 @@
 
 * [booking] do not show in welcome page delete reservations #655
 * [booking] allow users to edit not started resa if bookingdelayusercanedit = -1 (booking restrictions) #654
+* [booking] fix phone display in summary view #653
 
 ## 2.6.1
 
