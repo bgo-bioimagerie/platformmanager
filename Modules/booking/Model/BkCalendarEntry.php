@@ -869,7 +869,7 @@ class BkCalendarEntry extends Model {
         $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
-        $sql .= ' WHERE start_time >= :today AND recipient_id=:id_user';
+        $sql .= ' WHERE bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0';
         if($id_space && intval($id_space) > 0) {
             $q['id_space'] = $id_space;
             $sql .= ' AND bk_calendar_entry.id_space = :id_space';
@@ -891,7 +891,7 @@ class BkCalendarEntry extends Model {
         $sql = 'SELECT bk_calendar_entry.*, resources.name as resource FROM bk_calendar_entry';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
-        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user';
+        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0';
         $sql .= ' ORDER BY bk_calendar_entry.start_time DESC LIMIT '.$max;
         $q = array('today' => $now, 'id_user' => $id_user, 'id_space' => $id_space);
         $res = $this->runRequest($sql, $q);
