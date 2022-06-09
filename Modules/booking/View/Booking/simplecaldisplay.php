@@ -127,7 +127,7 @@ th {
 							$last_end_time = $hcalEntry['end_time'];
 						}
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
-							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra && $context['role'] >= CoreSpace::$USER) {
 								$text .= '<br/>'.$extra;
