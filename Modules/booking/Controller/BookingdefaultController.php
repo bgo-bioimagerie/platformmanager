@@ -308,6 +308,10 @@ class BookingdefaultController extends BookingabstractController {
         foreach ($supInfos as $sup) {
             $q = $this->request->getParameterNoException("sup" . $sup["id"]);
             $supplementaries .= $sup["id"] . "=" . $q . ";";
+            if($sup['mandatory'] && !$q){
+                Configuration::getLogger()->debug('Missing supp ', ['supp' => $sup]);
+                throw new PfmParamException('Field '.$sup['name'].' mandatory');
+            }
         }
 
         $modelQuantities = new BkCalQuantities();

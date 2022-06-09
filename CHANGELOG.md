@@ -6,6 +6,7 @@
 * [booking] allow users to edit not started resa if bookingdelayusercanedit = -1 (booking restrictions) #654
 * [booking] fix phone display in summary view #653
 * [booking][core] in welcome page, fix bookings hours (gmt)
+* [booking] on mandatory booking supplementaries, check also on server side
 
 ## 2.6.1
 
