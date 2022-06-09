@@ -1,5 +1,9 @@
 # Changes
 
+## 2.6.2
+
+* [booking] do not show in welcome page delete reservations #655
+
 ## 2.6.1
 
 * [core] fix space creation and unimpersonate action #650
