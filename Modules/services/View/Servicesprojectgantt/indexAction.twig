@@ -41,7 +41,7 @@
             class="card d-none d-md-flex mb-2"
             width="100%"
             height="28vh">
-            <div id="options" class="row m-3">
+            <div id="options" class="row ms-3 mt-3">
                 <div class="col-3">
                     <label for="start_date" class="top-label">{{ "{{ textContent.beginningPeriod }}" }}</label>
                     <input
@@ -67,6 +67,36 @@
                         {{ "{{ textContent.beginningPeriod }}" }}
                         {{ "{{ textContent.periodError }}" }}
                         {{ "{{ textContent.endPeriod }}" }}
+                    </span>
+                </div>
+            </div>
+
+            <div id="scrollBtns" class="row mt-3 mb-3 ms-3">
+                <div class="col-12">
+                    <span
+                        class="bi bi-arrow-left-square"
+                        id="moveLeft"
+                        @mouseDown="scrollGantt(-2)">
+                    </span>
+                    <span
+                        class="bi bi-arrow-left ms-2"
+                        id="moveLeft"
+                        @mouseDown="scrollGantt(-1)">
+                    </span>
+                    <span
+                        class="bi bi-clock ms-2"
+                        id="goToToday"
+                        @click="setDefaultDates()">
+                    </span>
+                    <span
+                        class="bi bi-arrow-right ms-2"
+                        id="moveRight"
+                        @mouseDown="scrollGantt(1)">
+                    </span>
+                    <span
+                        class="bi bi-arrow-right-square ms-2"
+                        id="moveRight"
+                        @mouseDown="scrollGantt(2)">
                     </span>
                 </div>
             </div>
@@ -125,19 +155,6 @@
                         </button>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div id="options" class="row">
-            <div
-                class="col-1 bi bi-arrow-left"
-                id="moveLeft"
-                @mouseDown="scrollGantt('left')">
-            </div>
-            <div
-                class="col-1 bi bi-arrow-right"
-                id="moveRight"
-                @mouseDown="scrollGantt('right')">
             </div>
         </div>
 
@@ -221,16 +238,15 @@ const app = createApp({
         }
     },
     created() {
-        let dates = this.getDefaultDates();
-        this.setDates(dates.start, dates.end);
+        this.setDefaultDates();
+        // this.setDates(dates.start, dates.end);
         this.setPrecision();
         this.generateRows();
         document.addEventListener("mouseup", this.stopScroll);
     },
     methods: {
-        scrollGantt(direction) {
-            let value = direction == "left" ? -1 : 1;
-            let interval = 100;
+        scrollGantt(value) {
+            let interval = 50;
             if (mouseDown == -1) {
                 mouseDown = setInterval(() => {
                     let begin = moment(this.dateInputStart).add(value, "days");
@@ -274,14 +290,11 @@ const app = createApp({
                 return "month";
             }
         },
-        getDefaultDates() {
+        setDefaultDates() {
             let startDate = new Date();
             let endDate = new Date();
             endDate = endDate.setMonth(endDate.getMonth() + 1);
-            return {
-                start: startDate,
-                end: endDate
-            };
+            this.setDates(startDate, endDate);
         },
         generateRows() {
             this.items.forEach((item, index) => {
