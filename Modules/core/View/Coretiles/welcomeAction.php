@@ -209,7 +209,7 @@ var app = new Vue({
                             "resource": elem.resource,
                             "id_resource": elem.resource_id,
                             "space": elem.space,
-                            "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                            "date": `${bdate.toLocaleDateString()} ${bdate.getUTCHours()}:${bdate.getMinutes()}`
                         });
                     });
 
