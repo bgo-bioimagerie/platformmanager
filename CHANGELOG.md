@@ -6,6 +6,7 @@
 
 * [antibodies] use bootstrap modals and fix some menu urls
 * [booking] add caldav support
+* [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 
 ## 2.6.2
 

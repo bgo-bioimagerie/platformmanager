@@ -135,8 +135,8 @@ th {
 							$hcalEntry['text'] = $text;
 							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
 						?>
-						<div class="text-center tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+						<div class="tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<a style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 						</div>
 					<?php } ?>
