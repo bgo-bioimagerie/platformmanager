@@ -127,19 +127,25 @@
 
                     <div class="modal-body">
                         <div>
-                            <label for="taskUser" style="font-weight:bold;">Affected to</label>
+                            <label for="taskUser" style="font-weight:bold;">{{" {{ textContent.affectedTo }}" }}</label>
                             <div name="taskUser">
                                 {{"{{selectedTask.userName}}"}}
                             </div>
                         </div>
                         <div>
-                            <label for="taskServices" style="font-weight:bold;">Related services</label>
-                            <div name="taskServices" v-for="service in selectedTask.services">
-                                {{"{{service.name}}"}}
-                            </div>
+                            <label for="taskServices" style="font-weight:bold;">{{" {{ textContent.relatedServices }}" }}</label>
+                            {% if "{{selectedTask.services.length}}"|number_format > 0 %}
+                                <div name="taskServices" v-for="service in selectedTask.services">
+                                    {{"{{service.name}}"}}
+                                </div>
+                            {% else %}
+                                <div>
+                                    No related services
+                                </div>
+                            {% endif %}
                         </div>
                         <div>            
-                            <label for="taskContent" style="font-weight:bold;">Details</label>
+                            <label for="taskContent" style="font-weight:bold;">{{" {{ textContent.details }}" }}</label>
                             <div name="taskContent">
                                 {{"{{selectedTask.content}}"}}
                             </div>
