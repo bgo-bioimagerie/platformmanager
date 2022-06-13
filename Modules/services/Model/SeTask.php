@@ -18,7 +18,7 @@ class SeTask extends Model {
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(11) NOT NULL,
             `id_project` int(11) NOT NULL,
-            'id_user' int(11),
+            `id_user` int(11),
             `state` int(11) NOT NULL,
             `name` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
