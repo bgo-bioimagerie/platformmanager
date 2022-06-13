@@ -90,10 +90,10 @@
             <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
                 <div class="category col-md-3" v-for="(category, cindex) in categories" style="display:inline-flex">
                     <div :id=category.id class="p-2 alert" style="cursor:grab;">
-                        <div class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
+                        <div v-if="category.name != 'done'" class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
                         <h3>
                             {{"{{category.name}}"}}
-                            <button class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
+                            <button v-if="category.name != 'done'" class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
                         </h3>
                         <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" @change="editCategoryColor($event, category)"/>
                         
