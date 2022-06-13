@@ -185,10 +185,7 @@ class ServicesconfigController extends CoresecureController {
         $form = new Form($this->request, "kanbanForm");
         $form->addSeparator(ServicesTranslator::Kanban($lang));
         $form->addSelect("servicesusekanban", ServicesTranslator::UseKanban($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusekanban);
-
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
         return $form;
     }
 
