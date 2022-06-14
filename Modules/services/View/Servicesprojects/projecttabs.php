@@ -7,6 +7,11 @@
             <button class="btn btn-outline-dark <?php if($headerInfo["curentTab"] == "closing"){echo "active";} ?>" type="button" onclick="location.href = '/servicesprojectclosing/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::Closing($lang) ?></button> 
             <button class="btn btn-outline-dark <?php if($headerInfo["curentTab"] == "samplereturn"){echo "active";} ?>" type="button" onclick="location.href = '/servicesprojectsample/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::SamplesStock($lang) ?></button>
             <button class="btn btn-outline-dark <?php if($headerInfo["curentTab"] == "kanban"){echo "active";} ?>" type="button" onclick="location.href = '/servicesprojects/kanban/<?php echo $id_space."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::KanbanBoard($lang) ?></button> 
+            <button class="btn btn-outline-dark
+                <?php if($headerInfo["curentTab"] == "gantt"){echo "active";} ?>"
+                type="button"
+                onclick="location.href = '/servicesprojectgantt/<?php echo $id_space."/0/".$headerInfo["personInCharge"]."/".$headerInfo["projectId"] ?>'"><?php echo ServicesTranslator::Gantt($lang) ?>
+            </button> 
             <?php $_SESSION["id_project"] = $headerInfo["projectId"]; ?>
         </div>
     </div>

@@ -1144,4 +1144,12 @@ class ServicesTranslator {
             return " must be lower than ";
         }
     }
+
+    public static function ViewProjectGantt($lang) {
+        if ($lang == "fr") {
+            return "Aller au Gantt du projet";
+        } else {
+            return "View project Gantt";
+        }
+    }
 }

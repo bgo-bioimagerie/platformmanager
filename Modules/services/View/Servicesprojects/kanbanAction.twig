@@ -13,14 +13,14 @@
     </div>
 
     <div id="board" class="container mt-5">
-        <div class="row">
+        {# <div class="row">
             <button
                 type="button"
-                class="btn btn-secondary"
+                class="btn btn-primary col-2"
                 @click="gotoGantt">
-                View project Gantt
+                {{"{{textContent.viewProjectGantt}}"}}
             </button>
-        </div>
+        </div> #}
         
         <div class="row">
             <div class="col form-inline">
@@ -292,9 +292,7 @@ Vue.createApp({
                 let newState = categoryIndex;
                 event.added.element.state = newState;
                 event.added.element.contentVisible = false;
-
                 let draggableElement = document.getElementById(this.categories[categoryIndex].id);
-                this.updateHidables(draggableElement, event.added.element);
                 this.updateTask(event.added.element);
             }
         },
@@ -325,24 +323,6 @@ Vue.createApp({
                 this.updateCategoriesColors();
                 await this.updateCategories();
             }
-        },
-        updateHidables(parentElement, task) {
-            let arrowClasses = task.contentVisible
-                ? ['bi-arrow-down', 'bi-arrow-right']
-                : ['bi-arrow-right', 'bi-arrow-down'];
-            if (event.target && event.target.nodeName == "BUTTON") {
-                event.target.classList.add(arrowClasses[0]);
-                event.target.classList.remove(arrowClasses[1]);
-            }
-            let hidables = parentElement.getElementsByClassName("hidable");
-            [...hidables].forEach(hidable => {
-                if (task.contentVisible) {
-                    hidable.style.display = "";
-                    hidable.focus();
-                } else {
-                    hidable.style.display = "none";
-                }
-            });
         },
         updateTaskContent(event, task) {
             task.content = event.target.value;
@@ -480,7 +460,10 @@ Vue.createApp({
                 });
                 let targetUrl = `/servicesprojects/deletetaskcategory/`
                 let apiRoute = targetUrl + this.id_space + "/" + category.id;
-                fetch(apiRoute, cfg, true)
+                fetch(apiRoute, cfg, true).then( () => {
+                    this.updateCategoriesColors();
+                    this.updateCategories();
+                });
             }
         },
         getDate() {

@@ -39,6 +39,7 @@ class ServicesprojectsController extends ServicesController {
             "closing" => ServicesTranslator::Closing($lang),
             "sample" => ServicesTranslator::StockSamples($lang),
             "kanban" => ServicesTranslator::KanbanBoard($lang),
+            "gantt" => "Gantt",
         ];
     }
 
@@ -331,6 +332,7 @@ class ServicesprojectsController extends ServicesController {
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "closing";
+        $headerInfo["personInCharge"] = $project["in_charge"];
 
         return $this->render(array(
             "id_space" => $id_space,
@@ -380,6 +382,7 @@ class ServicesprojectsController extends ServicesController {
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "samplereturn";
+        $headerInfo["personInCharge"] = $project["in_charge"];
 
         $this->render(array(
             "id_space" => $id_space,
@@ -461,7 +464,7 @@ class ServicesprojectsController extends ServicesController {
         $lang = $this->getLanguage();
 
         $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id_space, $id);
+        $project = $modelProject->getEntry($id_space, $id);
 
         $form = $this->generateProjectForm($id_space, $id, $lang);
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
@@ -477,6 +480,7 @@ class ServicesprojectsController extends ServicesController {
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "sheet";
+        $headerInfo["personInCharge"] = $project["in_charge"];
 
         $this->render(array(
             "id_space" => $id_space,
@@ -484,7 +488,8 @@ class ServicesprojectsController extends ServicesController {
             "tabsNames" => $this->tabsNames,
             "formHtml" => $form->getHtml($lang),
             "headerInfo" => $headerInfo,
-            "projectName" => $projectName)
+            "projectName" => $project['name']
+            )
         );
     }
 
@@ -493,7 +498,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelProject = new SeProject();
-        $projectName = $modelProject->getName($id_space ,$id);
+        $project = $modelProject->getEntry($id_space, $id);
 
         $table = new TableView();
         $table->addLineEditButton("editentry", "id", true);
@@ -520,12 +525,13 @@ class ServicesprojectsController extends ServicesController {
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "followup";
+        $headerInfo["personInCharge"] = $project["in_charge"];
 
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
-            "projectName" => $projectName,
+            "projectName" => $project['name'],
             "tableHtml" => $tableHtml,
             "headerInfo" => $headerInfo,
             "formedit" => $formEdit,
@@ -580,11 +586,13 @@ class ServicesprojectsController extends ServicesController {
             "newCategory" => ServicesTranslator::NewCategory($lang),
             "renameCategory" => ServicesTranslator::RenameCategory($lang),
             "deleteTask" => ServicesTranslator::DeleteTask($lang),
-            "deleteCategory" => ServicesTranslator::DeleteCategory($lang),
+            "deleteCategory" => ServicesTranslator::DeleteCategory($lang)            
         ];
 
         $headerInfo["projectId"] = $id_project;
         $headerInfo["curentTab"] = "kanban";
+        $headerInfo["personInCharge"] = $project["in_charge"];
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
