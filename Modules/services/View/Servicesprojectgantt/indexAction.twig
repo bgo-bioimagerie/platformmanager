@@ -134,15 +134,13 @@
                         </div>
                         <div>
                             <label for="taskServices" style="font-weight:bold;">{{" {{ textContent.relatedServices }}" }}</label>
-                            {% if "{{selectedTask.services.length}}"|number_format > 0 %}
-                                <div name="taskServices" v-for="service in selectedTask.services">
+                            
+                                <div name="taskServices" v-if="selectedTask.services.length > 0" v-for="service in selectedTask.services">
                                     {{"{{service.name}}"}}
                                 </div>
-                            {% else %}
-                                <div>
+                                <div v-else>
                                     No related services
                                 </div>
-                            {% endif %}
                         </div>
                         <div>            
                             <label for="taskContent" style="font-weight:bold;">{{" {{ textContent.details }}" }}</label>

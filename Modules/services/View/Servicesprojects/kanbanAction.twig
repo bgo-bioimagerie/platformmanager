@@ -73,6 +73,24 @@
                                     {{"{{service.name}}"}}
                                 </option>
                             </select>
+
+                            <button
+                                id="clearServices"
+                                name="clearServices"
+                                type="button"
+                                class="btn-close modal-element"
+                                @click="clearTaskServicesSelection(selectedTask)"
+                                aria-label="Clear selection"
+                                value="Clear selection"
+                                >
+                            </button>
+                            <label
+                                for="clearServices"
+                                class="modal-element"
+                                style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                Clear selection
+                            </label>
+
                         </div>
 
                         <div class="modal-footer">    
@@ -157,6 +175,10 @@ Vue.createApp({
         this.updateCategoriesColors();
     },
     methods: {
+        clearTaskServicesSelection(task) {
+            task.services = [];
+            this.updateTask(task);
+        },
         getMultipleSelectValues(select) {
             let result = [];
             const options = select && select.options;
