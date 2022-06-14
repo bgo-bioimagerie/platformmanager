@@ -24,6 +24,7 @@ class SeTask extends Model {
             `content` varchar(250) NOT NULL DEFAULT '',
             `start_date` DATE,
 		    `end_date` DATE,
+            `done` BIT DEFAULT 0,
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);

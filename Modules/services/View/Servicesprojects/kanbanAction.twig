@@ -262,14 +262,18 @@ Vue.createApp({
                     break;
             }
         },
-        changeCategoryPosition(event) {
+        async changeCategoryPosition(event) {
             if (event.moved) {
                 event.moved.element.position = event.moved.newIndex;
-                this.categories.forEach((category, index) => {
+                 this.categories.forEach((category, index) => {
                     category.position = index;
+                    category.tasks.forEach(task => {
+                        task.state = index;
+                        this.updateTask(task);
+                    });
                 });
                 this.updateCategoriesColors();
-                this.updateCategories();
+                await this.updateCategories();
             }
         },
         updateHidables(parentElement, task) {
