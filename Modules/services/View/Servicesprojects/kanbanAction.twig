@@ -14,6 +14,15 @@
 
     <div id="board" class="container mt-5">
         <div class="row">
+            <button
+                type="button"
+                class="btn btn-secondary"
+                @click="gotoGantt">
+                View project Gantt
+            </button>
+        </div>
+        
+        <div class="row">
             <div class="col form-inline">
                 <label for="newTask">{{"{{textContent.newTask}}"}}</label>
                 <input id="newTask" name="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
@@ -32,8 +41,18 @@
             <div id="taskContent" class="modal-element" v-if="showModal">
                 <div class="modal-dialog modal-mask" role="document">
                     <div class="modal-content">
+                        
                         <div class="modal-header">
-                            <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                            <div v-if="selectedTask.done == true" class="modal-element">
+                                <input
+                                    type="button"
+                                    class="btn btn-success"
+                                    aria-label="This task is done"
+                                    value="Done"
+                                    disabled>
+                                </input>
+                            </div>
+                            <h5 class="modal-title ms-2">{{"{{selectedTask.name}}"}}</h5>
                             <button type="button"
                                 class="btn-close modal-element"
                                 data-dismiss="modal"
@@ -148,6 +167,7 @@ Vue.createApp({
             projectUsers: {{ projectUsers | raw }},
             textContent: {{ textContent | raw }},
             mainUser: {{ mainUser }},
+            personInCharge: {{ personInCharge }},
             showModal: false,
             selectedTask: null
         }
@@ -175,6 +195,14 @@ Vue.createApp({
         this.updateCategoriesColors();
     },
     methods: {
+        gotoGantt() {
+            if (this.id_project) {
+                let ganttUrl = "servicesprojectgantt/" + this.id_space + "/" + 1 + "/" + this.personInCharge + "/" + this.id_project;
+                window.location = ganttUrl;
+            } else {
+                alert("there's no matching project");
+            }
+        },
         clearTaskServicesSelection(task) {
             task.services = [];
             this.updateTask(task);
@@ -333,7 +361,8 @@ Vue.createApp({
                     start_date: null,
                     end_date: null,
                     services: [],
-                    id_user: this.mainUser
+                    id_user: this.mainUser,
+                    done: false
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);
@@ -341,7 +370,17 @@ Vue.createApp({
                 this.newTask = "";
             }
         },
+        getDoneCategoryPosition() {
+            let doneCategory = null;
+            this.categories.forEach(category => {
+                if (category.name == "done") {
+                    doneCategory = category;
+                }
+            });
+            return doneCategory.position;
+        },
         async updateTask(task) {
+            task.done = task.state == this.getDoneCategoryPosition() ? true : false;
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');

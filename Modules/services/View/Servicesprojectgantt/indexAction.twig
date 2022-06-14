@@ -43,7 +43,7 @@
             height="28vh">
             <div id="options" class="row ms-3 mt-3">
                 <div class="col-3">
-                    <label for="start_date" class="top-label">{{ "{{ textContent.beginningPeriod }}" }}</label>
+                    <label for="start_date" class="top-label">{{"{{ textContent.beginningPeriod }}"}}</label>
                     <input
                         id="start_date"
                         type="date"
@@ -53,14 +53,14 @@
                         @change="updateChartDates">
                 </div>
                 <div class="col-3">
-                    <label for="end_date" class="top-label">{{ "{{ textContent.endPeriod }}" }}</label>
+                    <label for="end_date" class="top-label">{{"{{ textContent.endPeriod }}"}}</label>
                     <input
                         id="end_date"
                         type="date"
                         :value="dateInputEnd"
                         class="form-control"
                         name="end_date"
-                        @change="updateChartDates">                 
+                        @change="updateChartDates">
                 </div>
                 <div class="col-2 mt-3" id="dateError" style="display:none">
                     <span style="color:red;">
@@ -103,7 +103,7 @@
 
             <div class="row ms-3 mb-3">
                 <div class="col-3">
-                    <label for="theme" class="top-label">{{ "{{ textContent.theme }}" }}</label>
+                    <label for="theme" class="top-label">{{"{{ textContent.theme }}"}}</label>
                     <select v-model="selectedTheme" name="theme" @change="updateColors">
                         <option v-for="theme in themes">{{"{{theme}}"}}</option>
                     </select>
@@ -116,7 +116,16 @@
                 <div class="modal-content">
 
                     <div class="modal-header">
-                        <h5 class="modal-title">{{"{{selectedTask.name}}"}}</h5>
+                        <div v-if="selectedTask.done == true" class="modal-element">
+                            <input
+                                type="button"
+                                class="btn btn-success"
+                                aria-label="This task is done"
+                                value="Done"
+                                disabled>
+                            </input>
+                        </div>
+                        <h5 class="modal-title ms-2">{{"{{selectedTask.name}}"}}</h5>
                         <button type="button"
                             class="btn-close"
                             data-dismiss="modal"
@@ -127,20 +136,19 @@
 
                     <div class="modal-body">
                         <div>
-                            <label for="taskUser" style="font-weight:bold;">{{" {{ textContent.affectedTo }}" }}</label>
+                            <label for="taskUser" style="font-weight:bold;">{{"{{ textContent.affectedTo }}"}}</label>
                             <div name="taskUser">
                                 {{"{{selectedTask.userName}}"}}
                             </div>
                         </div>
                         <div>
-                            <label for="taskServices" style="font-weight:bold;">{{" {{ textContent.relatedServices }}" }}</label>
-                            
-                                <div name="taskServices" v-if="selectedTask.services.length > 0" v-for="service in selectedTask.services">
-                                    {{"{{service.name}}"}}
-                                </div>
-                                <div v-else>
-                                    No related services
-                                </div>
+                            <label for="taskServices" style="font-weight:bold;">{{"{{ textContent.relatedServices }}"}}</label>
+                            <div name="taskServices" v-if="selectedTask.services.length > 0" v-for="service in selectedTask.services">
+                                {{"{{service.name}}"}}
+                            </div>
+                            <div v-else>
+                                No related services
+                            </div>
                         </div>
                         <div>            
                             <label for="taskContent" style="font-weight:bold;">{{" {{ textContent.details }}" }}</label>
@@ -239,14 +247,18 @@ const app = createApp({
             rowList: [],
             themes: Object.keys(colorThemes),
             textContent: {{ textContent | raw }},
+            showProject: {{ showProject | raw}}
         }
     },
     created() {
         this.setDefaultDates();
-        // this.setDates(dates.start, dates.end);
         this.setPrecision();
         this.generateRows();
         document.addEventListener("mouseup", this.stopScroll);
+        console.log('this.showProject: ', this.showProject);
+        if (this.showProject) {
+            this.openItemContent(this.showProject);
+        }
     },
     methods: {
         scrollGantt(value) {
@@ -385,7 +397,7 @@ const app = createApp({
                 let kanbanUrl = "servicesprojects/kanban/" + this.id_space + "/" + this.projectId + "?task=" + taskId;
                 window.location = kanbanUrl;
             } else {
-                alert("there's no mathcing project");
+                alert("there's no matching project");
             }
             
         },

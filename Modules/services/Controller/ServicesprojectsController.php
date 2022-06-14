@@ -598,7 +598,8 @@ class ServicesprojectsController extends ServicesController {
             "categories" => json_encode($categories),
             "projectServices" => json_encode($services),
             "projectUsers" => json_encode($projectUsers),
-            "mainUser" => $projectMainUser
+            "mainUser" => $projectMainUser,
+            "personInCharge" => $project['in_charge']
         ));
     }
 
@@ -627,7 +628,8 @@ class ServicesprojectsController extends ServicesController {
             $taskData['start_date'],
             $taskData['end_date'],
             $taskData['services'],
-            $taskData['id_user']
+            $taskData['id_user'],
+            $taskData['done']
         );
         $this->render(['data' => ['id' => $id]]);
     }

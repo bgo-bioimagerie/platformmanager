@@ -76,13 +76,13 @@ class SeTask extends Model {
         return $req->fetchAll();
     }
     
-    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user) {        
+    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user, $done) {    
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=?, done=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $done, $id, $id_space));
         } else {
-            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_user, id_space) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_space));
+            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_user, done, id_space) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $done, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         }
         if (!empty($services)) {

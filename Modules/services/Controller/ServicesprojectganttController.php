@@ -26,7 +26,7 @@ class ServicesprojectganttController extends ServicesController {
 
      // TODO: gérer les autorisations par projet ?
 
-    public function indexAction($id_space, $allPeriod = 0, $incharge = "") {
+    public function indexAction($id_space, $allPeriod = 0, $incharge = "", $id_project = null) {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -77,7 +77,6 @@ class ServicesprojectganttController extends ServicesController {
             }
         }
         $personInCharge = $modelVisa->getAll($id_space);
-        
 
         $textContent = [
             "beginningPeriod" => ServicesTranslator::Beginning_period($lang),
@@ -98,6 +97,7 @@ class ServicesprojectganttController extends ServicesController {
             "ganttStatus" => $ganttStatus,
             'allPeriod' => $allPeriod,
             "textContent" => json_encode($textContent),
+            "showProject" => json_encode($id_project)
         );
         // render
         $this->render($data,"indexAction");
