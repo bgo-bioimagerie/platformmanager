@@ -579,9 +579,9 @@ class BookingInvoice extends InvoiceModel {
             }
         }
 
-        $resaDayNightWe["nb_hours_day"] = round($nb_hours_day / 3600, 1);
-        $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
-        $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
+        $resaDayNightWe["nb_hours_day"] = round($nb_hours_day / 3600, 2);
+        $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 2);
+        $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 2);
 
         // manage cases where a booking is between day and night hours => get a ratio
         $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
