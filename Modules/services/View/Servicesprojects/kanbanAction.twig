@@ -53,7 +53,13 @@
                         </div>
                         <div class="modal-body">
                             <label for="details" class="modal-element">{{"{{textContent.details}}"}}</label>
-                            <textarea id="taskDetails" class="contentArea modal-element" name="details" @change="updateTaskContent($event, selectedTask)">{{"{{selectedTask.content}}"}}</textarea>   
+                            <textarea
+                                id="taskDetails"
+                                class="contentArea modal-element"
+                                name="details"
+                                @change="updateTaskContent($event, selectedTask)">
+                                    {{"{{selectedTask.content}}"}}
+                            </textarea>   
                         
                             <label for="taskUser" class="modal-element">{{"{{textContent.assignee}}"}}</label>
                             <select
@@ -68,9 +74,19 @@
                                     {{"{{user.name}}"}}
                                 </option>
                             </select>
+                            <label for="taskVisibility" class="modal-element">{{"{{textContent.visibility}}"}}</label>
+                            <select
+                                id="taskVisibility"
+                                class="form-control modal-element"
+                                name="taskVisibility"
+                                v-model="selectedTask.private"
+                                @change="updateTaskVisibility($event, selectedTask)">
+                                <option value="false" class="modal-element" default>Public</option>
+                                <option value="true" class="modal-element">{{"{{textContent.private}}"}}</option>
+                            </select>
                                                     
                             <label for="services" class="modal-element">Services</label>
-                            <select
+                           <select
                                 id="taskServices"
                                 :list="projectServices"
                                 class="form-control modal-element"
@@ -78,7 +94,7 @@
                                 v-model="selectedTask.services"
                                 multiple
                                 @change="updateTaskServices($event, selectedTask)">
-                                <option v-if="projectServices.length == 0" value="" class="modal-element" disabled selected hidden>{{"{{textContent.noServiceAssigned}}"}}</option>
+                                <option v-if="projectServices.length == 0" value="" class="modal-element" disabled selected>{{"{{textContent.noServiceAssigned}}"}}</option>
                                 <option v-else v-for="service in projectServices" :value=service.id class="modal-element">
                                     {{"{{service.name}}"}}
                                 </option>
@@ -91,14 +107,13 @@
                                 class="btn-close modal-element"
                                 @click="clearTaskServicesSelection(selectedTask)"
                                 aria-label="Clear selection"
-                                value="Clear selection"
-                                >
+                                value="Clear selection">
                             </button>
                             <label
                                 for="clearServices"
                                 class="modal-element"
                                 style="display:inline-block; horizontal-align:right; vertical-align:bottom">
-                                {{ "{{textContent.clearSelection}}" }}
+                                {{"{{textContent.clearSelection}}"}}
                             </label>
 
                         </div>
@@ -171,7 +186,6 @@ Vue.createApp({
             category.name = category.name.replace(/\s/g, '').toLowerCase();
         });
         this.tasks.forEach(task => {
-            task.contentVisible = false;
             this.categories[task.state].tasks.push(task)
         });
     },
@@ -239,7 +253,6 @@ Vue.createApp({
             }
             this.updateCategories();
         },
-
         editCategoryColor(event, category) {
             category.color = event.target.value;
             this.updateCategoriesColors();
@@ -280,12 +293,14 @@ Vue.createApp({
         },
         changeTaskState(event, categoryIndex) {
             if (event.added) {
-                let newState = categoryIndex;
-                event.added.element.state = newState;
-                event.added.element.contentVisible = false;
+                event.added.element.state = categoryIndex;
                 let draggableElement = document.getElementById(this.categories[categoryIndex].id);
                 this.updateTask(event.added.element);
             }
+        },
+        updateTaskVisibility(event, task) {
+            task.private = event.target.value;
+            this.updateTask(task);
         },
         updateTaskDate(event, task) {
             switch (event.target.name) {
@@ -328,12 +343,12 @@ Vue.createApp({
                     state: 0,
                     name: this.newTask,
                     content: "",
-                    contentVisible: false,
                     start_date: null,
                     end_date: null,
                     services: [],
                     id_user: this.mainUser,
-                    done: false
+                    done: false,
+                    private: "false"
                 };
                 await this.updateTask(this.newTask);
                 this.tasks.push(this.newTask);
@@ -342,13 +357,9 @@ Vue.createApp({
             }
         },
         getDoneCategoryPosition() {
-            let doneCategory = null;
-            this.categories.forEach(category => {
-                if (category.name == "done") {
-                    doneCategory = category;
-                }
-            });
-            return doneCategory.position;
+            let result = null;
+            result = this.categories.findIndex(category => category.name === "done");
+            return result;
         },
         async updateTask(task) {
             task.done = task.state == this.getDoneCategoryPosition() ? true : false;

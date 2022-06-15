@@ -1171,17 +1171,17 @@ class ServicesTranslator {
 
     public static function NoUserAssigned($lang) {
         if ($lang == "fr") {
-            return "Aucun utilisateur affecté";
+            return "Aucun utilisateur affecté à ce projet";
         } else {
-            return "No user assigned";
+            return "No user assigned to this project";
         }
     }
 
     public static function NoServiceAssigned($lang) {
         if ($lang == "fr") {
-            return "Aucun service affecté";
+            return "Aucun service affecté à ce projet";
         } else {
-            return "No service assigned";
+            return "No service assigned to this project";
         }
     }
 
@@ -1200,4 +1200,21 @@ class ServicesTranslator {
             return "End date";
         }
     }
+
+    public static function Private($lang) {
+        if ($lang == "fr") {
+            return "Privé";
+        } else {
+            return "Private";
+        }
+    }
+
+    public static function Visibility($lang) {
+        if ($lang == "fr") {
+            return "Visibilité";
+        } else {
+            return "Visibility";
+        }
+    }
+
 }

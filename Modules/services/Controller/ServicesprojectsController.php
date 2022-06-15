@@ -561,6 +561,8 @@ class ServicesprojectsController extends ServicesController {
         }
         for($i=0; $i<count($tasks); $i++) {
             $tasks[$i]['services'] = $taskModel->getTaskServicesIds($id_space, $tasks[$i]['id']);
+            // cast private boolean attribute to string
+            $tasks[$i]['private'] = $tasks[$i]['private'] ? "true" : "false";
         }
         
         
@@ -594,6 +596,8 @@ class ServicesprojectsController extends ServicesController {
             "clearSelection" => ServicesTranslator::ClearSelection($lang),
             "startDate" => ServicesTranslator::StartDate($lang),
             "endDate" => ServicesTranslator::EndDate($lang),
+            "visibility" => ServicesTranslator::Visibility($lang),
+            "private" => ServicesTranslator::Private($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -645,7 +649,9 @@ class ServicesprojectsController extends ServicesController {
             $taskData['end_date'],
             $taskData['services'],
             $taskData['id_user'],
-            $taskData['done']
+            $taskData['done'],
+            // cast string to boolean
+            ($taskData['private'] === 'true')
         );
         $this->render(['data' => ['id' => $id]]);
     }
