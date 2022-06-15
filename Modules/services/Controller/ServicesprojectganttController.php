@@ -78,6 +78,8 @@ class ServicesprojectganttController extends ServicesController {
         }
         $personInCharge = $modelVisa->getAll($id_space);
 
+        $headerInfo["allProjects"] = ServicesTranslator::All_projects($lang);
+
         $textContent = [
             "beginningPeriod" => ServicesTranslator::Beginning_period($lang),
             "endPeriod" => ServicesTranslator::End_period($lang),
@@ -88,6 +90,7 @@ class ServicesprojectganttController extends ServicesController {
             "periodError" => ServicesTranslator::PeriodError($lang),
             "project" => ServicesTranslator::Project($lang),
             "viewInKanban" => ServicesTranslator::ViewInKanban($lang),
+            "allProjects" => ServicesTranslator::All_projects($lang),
         ];
         
         $data = array(
@@ -99,7 +102,8 @@ class ServicesprojectganttController extends ServicesController {
             "ganttStatus" => $ganttStatus,
             'allPeriod' => $allPeriod,
             "textContent" => json_encode($textContent),
-            "showProject" => json_encode($id_project)
+            "showProject" => json_encode($id_project),
+            "headerInfo" => $headerInfo,
         );
         // render
         $this->render($data,"indexAction");

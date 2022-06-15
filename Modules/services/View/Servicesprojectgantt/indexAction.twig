@@ -16,8 +16,8 @@
                 <button
                     class="btn btn-outline-dark {{ active }}"
                     onclick="location.href = 'servicesprojectgantt/{{id_space}}'">
-                        All projects {# ServicesTranslator::All_projects($lang) #}
-                    </button>
+                        {{ headerInfo["allProjects"] }}
+                </button>
                 
                 {% for pic in personInCharge %}
                     {% set active = activeGantt == pic["id"] ? "active" : "" %}
