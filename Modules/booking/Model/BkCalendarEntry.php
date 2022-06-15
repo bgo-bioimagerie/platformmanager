@@ -158,7 +158,7 @@ class BkCalendarEntry extends Model {
                 foreach($res as $r){
                     $time += $r["end_time"] - $r["start_time"];
                 }
-                $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 1) );
+                $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 2) );
             }
             
             $data["count"][] = array( "responsible" => $respinfo["name"], "count" => $resourceCount ); 
