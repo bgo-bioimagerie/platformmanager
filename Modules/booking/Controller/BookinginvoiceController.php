@@ -567,7 +567,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $time_night += $resaDayNightWe['nb_hours_night'];
                     $time_we += $resaDayNightWe['nb_hours_we'];
                 }
-                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
+                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 2), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
             }
         }
         return $data;
