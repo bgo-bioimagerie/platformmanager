@@ -8,6 +8,10 @@
 * [booking] add caldav support
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 
+## 2.6.3
+
+* [booking][invoice] fix invoice details rounded values #659
+
 ## 2.6.2
 
 * [booking] do not show in welcome page delete reservations #655
