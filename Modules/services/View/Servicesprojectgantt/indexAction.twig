@@ -25,7 +25,7 @@
                         class="btn btn-outline-dark {{ active }}"
                         onclick="location.href = 'servicesprojectgantt/{{id_space}}/{{allPeriod}}/{{pic['id']}}'">
                             {{ pic["user_name"] }}
-                    </button>                    
+                    </button>
                 {% endfor %}    
 
             </div>
@@ -163,11 +163,15 @@
                             type="button"
                             class="btn btn-secondary"
                             @click="gotoKanban(selectedTask.id)">
-                            View in kanban board
+                            {{" {{ textContent.viewInKanban }}" }}
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div v-if="selectedProject" id="projectTitle" class="col-12">
+            <h4> {{ "{{textContent.project}} {{selectedProject.name}}" }} <h4/>
         </div>
 
         <div id="ganttChart">
@@ -247,7 +251,8 @@ const app = createApp({
             rowList: [],
             themes: Object.keys(colorThemes),
             textContent: {{ textContent | raw }},
-            showProject: {{ showProject | raw}}
+            showProject: {{ showProject | raw}},
+            selectedProject: null
         }
     },
     created() {
@@ -351,10 +356,10 @@ const app = createApp({
             if (this.itemsType == "project") {
                 this.itemsType = "task";
                 this.projectId = itemId;
-                let project = this.items.find(item => item.id == itemId);
+                this.selectedProject = this.items.find(project => project.id == itemId);
                 let tasks = await this.getProjectData('tasks', itemId);
                 this.items = tasks;
-                this.setDates(project.date_open, project.time_limit);
+                this.setDates(this.selectedProject.date_open, this.selectedProject.time_limit);
                 this.setPrecision();
                 this.rowList = [];
                 this.generateRows();

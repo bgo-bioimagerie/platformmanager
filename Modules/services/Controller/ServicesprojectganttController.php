@@ -81,11 +81,13 @@ class ServicesprojectganttController extends ServicesController {
         $textContent = [
             "beginningPeriod" => ServicesTranslator::Beginning_period($lang),
             "endPeriod" => ServicesTranslator::End_period($lang),
-            "affectedTo" => ServicesTranslator::Affected_to($lang),
+            "affectedTo" => ServicesTranslator::AffectedTo($lang),
             "relatedServices" => ServicesTranslator::Related_services($lang),
             "details" => ServicesTranslator::Details($lang),
             "theme" => ServicesTranslator::Theme($lang),
-            "periodError" => ServicesTranslator::Period_error($lang)
+            "periodError" => ServicesTranslator::PeriodError($lang),
+            "project" => ServicesTranslator::Project($lang),
+            "viewInKanban" => ServicesTranslator::ViewInKanban($lang),
         ];
         
         $data = array(

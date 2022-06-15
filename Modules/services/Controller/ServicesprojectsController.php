@@ -586,7 +586,14 @@ class ServicesprojectsController extends ServicesController {
             "newCategory" => ServicesTranslator::NewCategory($lang),
             "renameCategory" => ServicesTranslator::RenameCategory($lang),
             "deleteTask" => ServicesTranslator::DeleteTask($lang),
-            "deleteCategory" => ServicesTranslator::DeleteCategory($lang)            
+            "deleteCategory" => ServicesTranslator::DeleteCategory($lang),
+            "assignee" => ServicesTranslator::Assignee($lang),
+            "noUserAssigned" => ServicesTranslator::NoUserAssigned($lang),
+            "noServiceAssigned" => ServicesTranslator::NoServiceAssigned($lang),
+            "details" => ServicesTranslator::Details($lang),
+            "clearSelection" => ServicesTranslator::ClearSelection($lang),
+            "startDate" => ServicesTranslator::StartDate($lang),
+            "endDate" => ServicesTranslator::EndDate($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -598,6 +605,7 @@ class ServicesprojectsController extends ServicesController {
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "textContent" => json_encode($textContent),
+            "projectString" => ServicesTranslator::Project($lang),
             "projectName" => $projectName,
             "headerInfo" => $headerInfo,
             "id_project" => $id_project,

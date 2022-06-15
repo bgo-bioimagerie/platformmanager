@@ -461,7 +461,7 @@ class ServicesTranslator {
 
     public static function Project($lang = "") {
         if ($lang == "fr") {
-            return "Project";
+            return "Projet";
         }
         return "Project";
     }
@@ -1121,7 +1121,7 @@ class ServicesTranslator {
         }
     }
 
-    public static function Affected_to($lang) {
+    public static function AffectedTo($lang) {
         if ($lang == "fr") {
             return "Affécté à";
         } else {
@@ -1137,7 +1137,7 @@ class ServicesTranslator {
         }
     }
 
-    public static function Period_error($lang) {
+    public static function PeriodError($lang) {
         if ($lang == "fr") {
             return " doit être antérieur à ";
         } else {
@@ -1145,11 +1145,59 @@ class ServicesTranslator {
         }
     }
 
-    public static function ViewProjectGantt($lang) {
+    public static function ViewInKanban($lang) {
         if ($lang == "fr") {
-            return "Aller au Gantt du projet";
+            return "Voir dans le tableau Kanban";
         } else {
-            return "View project Gantt";
+            return "View in Kanban board";
+        }
+    }
+
+    public static function Assignee($lang) {
+        if ($lang == "fr") {
+            return "Responsable";
+        } else {
+            return "Assignee";
+        }
+    }
+
+    public static function ClearSelection($lang) {
+        if ($lang == "fr") {
+            return "Effacer la sélection";
+        } else {
+            return "Clear selection";
+        }
+    }
+
+    public static function NoUserAssigned($lang) {
+        if ($lang == "fr") {
+            return "Aucun utilisateur affecté";
+        } else {
+            return "No user assigned";
+        }
+    }
+
+    public static function NoServiceAssigned($lang) {
+        if ($lang == "fr") {
+            return "Aucun service affecté";
+        } else {
+            return "No service assigned";
+        }
+    }
+
+    public static function StartDate($lang) {
+        if ($lang == "fr") {
+            return "Date de début";
+        } else {
+            return "Start date";
+        }
+    }
+
+    public static function EndDate($lang) {
+        if ($lang == "fr") {
+            return "Date de fin";
+        } else {
+            return "End date";
         }
     }
 }
