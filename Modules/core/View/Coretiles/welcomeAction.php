@@ -200,19 +200,17 @@ Vue.createApp({
                 then((response) => response.json()).
                 then(data => {
                     let bookings = []
-                    if (data.bookings) {
-                        data.bookings.forEach((elem) => {
-                            let bdate = new Date(elem.start_time*1000);
-                            bookings.push({
-                                "id": elem.id,
-                                "id_space": elem.id_space,
-                                "resource": elem.resource,
-                                "id_resource": elem.resource_id,
-                                "space": elem.space,
-                                "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
-                            });
+                    data.bookings.forEach((elem) => {
+                        let bdate = new Date(elem.start_time*1000);
+                        bookings.push({
+                            "id": elem.id,
+                            "id_space": elem.id_space,
+                            "resource": elem.resource,
+                            "id_resource": elem.resource_id,
+                            "space": elem.space,
+                            "date": `${bdate.toLocaleDateString()} ${bdate.getUTCHours()}:${(bdate.getMinutes()<10?'0':'') + bdate.getMinutes()}`
                         });
-                    }
+                    });
                     this.bookings = bookings
                 })
         } catch(error) {
