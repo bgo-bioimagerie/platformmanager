@@ -25,12 +25,13 @@ abstract class InvoiceAbstractController extends InvoicesController {
     public abstract function deleteAction($id_space, $id_invoice);
     
 
-    public function generatePDF($id_space, $number, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en') {
+    public function generatePDF($id_space, $invoice_id, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en') {
         $address = nl2br($address);
         $date = CoreTranslator::dateFromEn($date, $lang);
         
         $modelInvoice = new InInvoice();
-        $invoiceInfo = $modelInvoice->getByNumber($id_space, $number);
+        $invoiceInfo = $modelInvoice->get($id_space, $invoice_id);
+        $number = $invoiceInfo['number'];
         $invoiceInfo['module'] = InvoicesTranslator::Module($invoiceInfo['module'], $lang);
 
         $translator = new InvoicesTranslator();
