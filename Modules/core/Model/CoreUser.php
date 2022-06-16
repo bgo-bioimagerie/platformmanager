@@ -494,18 +494,21 @@ class CoreUser extends Model {
         $sql = "SELECT * FROM core_users WHERE login=?";
         $res = $this->runRequest($sql, [$login]);
         if($res->rowCount() != 1) {
+            Configuration::getLogger()->debug('[core][connect] user not found', ['login' => $login]);
             return "invalid_login";
         }
         $user = $res->fetch();
         $hash = $user['hash'];
         $pwdDb = $user['pwd'];
         if(!$this->comparePasswords($pwd, $pwdDb, $hash)) {
+            Configuration::getLogger()->debug('[core][connect] invalid password', ['user' => $user]);
             return "invalid_password";
         }
 
         if ($user["is_active"] == 1 && $user["validated"] == 1) {
             return "allowed";
         } else {
+            Configuration::getLogger()->debug('[core][connect] inactive user', ['user' => $user]);
             return "inactive";
         }
     }
@@ -519,9 +522,7 @@ class CoreUser extends Model {
     public function getUserByLogin($login) {
         $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
             from core_users where login=?";
-        $user = $this->runRequest($sql, array(
-            $login
-        ));
+        $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
@@ -531,9 +532,7 @@ class CoreUser extends Model {
 
     public function getUserIDByLogin($login) {
         $sql = "select id from core_users where login=?";
-        $user = $this->runRequest($sql, array(
-            $login
-        ));
+        $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() > 0) {
             $tmp = $user->fetch();
             return $tmp[0]; // get the first line of the result

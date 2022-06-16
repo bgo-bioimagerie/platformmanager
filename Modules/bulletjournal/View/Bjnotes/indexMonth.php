@@ -12,9 +12,9 @@
                 <span style="color: #666;" class="bi-plus"></span>
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" role="menu">
-                <li><a class="dropdown-item" id="addnote_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Notes($lang) ?> </a></li>
-                <li><a class="dropdown-item" id="addtask_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Task($lang) ?></a></li>
-                <li><a class="dropdown-item" id="addevent_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Event($lang) ?></a></li>
+                <li onclick="addnote('<?php echo $year ?>_<?php echo $month ?>')"><a class="dropdown-item" id="addnote_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Notes($lang) ?> </a></li>
+                <li onclick="addtask('<?php echo $year ?>_<?php echo $month ?>')">><a class="dropdown-item" id="addtask_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Task($lang) ?></a></li>
+                <li onclick="addevent('<?php echo $year ?>_<?php echo $month ?>')">><a class="dropdown-item" id="addevent_<?php echo $year ?>_<?php echo $month ?>"><?php echo BulletjournalTranslator::Event($lang) ?></a></li>
             </ul>
         </div>
     </div>

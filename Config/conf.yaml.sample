@@ -22,9 +22,11 @@ plans:
     features:
       - Grafana statistics interactive dashboards
       - Document visibility scopes
+      - Caldav calendar integration
     flags:
       - grafana
       - documents
+      - caldav
   - name: silver
     color: silver
     id: 2

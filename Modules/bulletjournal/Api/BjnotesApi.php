@@ -45,7 +45,7 @@ class BjnotesApi extends CoresecureController {
         $type = 1;
         $content = $this->request->getParameter("formnotecontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formnotedate"), $lang);
-        $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
+        $id = $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
         if($date == "") {
             throw new PfmParamException("invalid date");
         }
