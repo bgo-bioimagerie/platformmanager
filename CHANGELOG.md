@@ -1,6 +1,6 @@
 # Changes
 
-## 2.6.3 [unreleased]
+## 2.6.3
 
 * [booking][invoice] fix invoice details rounded values #659
 
@@ -76,12 +76,9 @@ Quote templates are configured the same way than invoice templates.
 * [space] fix pending accounts bug
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
 * [core][booking] layout fixes on booking edition (periodic)
-<<<<<<< HEAD
 * [booking] compute duration with 2 digits per minute
 * [booking] weekarea calendar, use summary view by default
 * [booking] if multiple prices are in db, pick first
-=======
->>>>>>> develop
 
 ## 2.5.0
 
@@ -186,12 +183,8 @@ Quote templates are configured the same way than invoice templates.
 
 ## 2.3.1
 
-<<<<<<< HEAD
 * [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
   If already applied with 2.3.0, need to remove it from pfm_upgrades table and re-apply install
-=======
-* [core] fix upgrade for redis invoice numbers
->>>>>>> develop
 
 ## 2.3.0
 
