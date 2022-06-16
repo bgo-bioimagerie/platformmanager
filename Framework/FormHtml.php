@@ -471,7 +471,7 @@ class FormHtml {
     static public function textarea($useJavascript, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $divid = "";
         if ($useJavascript) {
-            $divid = "id='editor'";
+            $divid = "id='$name'";
         }
         $mandatory = '';
         if($required) {
@@ -484,6 +484,15 @@ class FormHtml {
         $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\"".$mandatory.">" . $value . "</textarea>";
         $html .= "</div>";
         $html .= "</div>";
+        if($useJavascript) {
+            $html .=  '<script>
+    ClassicEditor
+    .create( document.querySelector( \'#'.$name.'\' ) )
+    .catch( error => {
+        console.error( error );
+    } );
+</script>';
+        }
         return $html;
     }
 
@@ -680,7 +689,7 @@ class FormHtml {
      * @return type
      */
     static public function textAreaScript() {
-        return file_get_contents("Framework/textarea_script.php");
+        return '<script src="/externals/ckeditor5/build/ckeditor.js"></script>';
     }
 
     static public function ajaxScript($formId, $validationURL) {
