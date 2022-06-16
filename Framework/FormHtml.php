@@ -471,7 +471,7 @@ class FormHtml {
     static public function textarea($useJavascript, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $divid = "";
         if ($useJavascript) {
-            $divid = "id='$name'";
+            $divid = "id='rtxt_$name'";
         }
         $mandatory = '';
         if($required) {
@@ -487,7 +487,7 @@ class FormHtml {
         if($useJavascript) {
             $html .=  '<script>
     ClassicEditor
-    .create( document.querySelector( \'#'.$name.'\' ) )
+    .create( document.querySelector( \'#rtxt_'.$name.'\' ) )
     .catch( error => {
         console.error( error );
     } );
