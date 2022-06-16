@@ -7,6 +7,7 @@
 * [antibodies] use bootstrap modals and fix some menu urls
 * [booking] add caldav support
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
+* [invoices] get invoice by id (no longer by number) for generating pdf
 
 ## 2.6.3
 
