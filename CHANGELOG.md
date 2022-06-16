@@ -85,6 +85,10 @@ Quote templates are configured the same way than invoice templates.
 * [space] fix pending accounts bug
 * [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
 * [core][booking] layout fixes on booking edition (periodic)
+* [booking] compute duration with 2 digits per minute
+* [booking] weekarea calendar, use summary view by default
+* [booking] if multiple prices are in db, pick first
+
 
 ## 2.5.0
 
@@ -189,7 +193,8 @@ Quote templates are configured the same way than invoice templates.
 
 ## 2.3.1
 
-* [core] fix upgrade for redis invoice numbers
+* [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
+  If already applied with 2.3.0, need to remove it from pfm_upgrades table and re-apply install
 
 ## 2.3.0
 
