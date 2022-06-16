@@ -171,7 +171,16 @@
         </div>
 
         <div v-if="selectedProject" id="projectTitle" class="col-12">
-            <h4> {{ "{{textContent.project}} {{selectedProject.name}}" }} <h4/>
+            <h4>
+                <span>
+                    <button
+                        class="btn bi bi-arrow-return-left ms-2"
+                        id="returnToProjects"
+                        @click="goBackToProjects">
+                    </button>
+                </span>
+                {{ "{{textContent.project}} {{selectedProject.name}}" }}
+            <h4/>
         </div>
 
         <div id="ganttChart">
@@ -265,6 +274,9 @@ const app = createApp({
         }
     },
     methods: {
+        goBackToProjects() {
+            window.location = window.location;
+        },
         scrollGantt(value) {
             let interval = 50;
             if (mouseDown == -1) {
