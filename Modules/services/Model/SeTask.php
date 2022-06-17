@@ -27,6 +27,7 @@ class SeTask extends Model {
 		    `end_date` DATE,
             `done` BIT DEFAULT 0,
             `private` BIT DEFAULT 0,
+            `media`, varchar(250) NOT NULL DEFAULT '',
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -40,6 +41,10 @@ class SeTask extends Model {
         );";
 
         $this->runRequest($sql2);
+
+        if (!file_exists('data/services/projecttasks/')) {
+            mkdir('data/services/projecttasks/', 0755, true);
+        }
     }
 
     public function getForSpace($id_space) {
@@ -106,6 +111,11 @@ class SeTask extends Model {
         }
 
         return $id;
+    }
+
+    public function setFile($id_space, $id_task, $url) {
+        $sql = "UPDATE se_task SET file=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($url, $id_task, $id_space));
     }
     
     public function isTask($id_space, $id) {

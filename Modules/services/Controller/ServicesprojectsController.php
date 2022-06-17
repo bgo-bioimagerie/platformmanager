@@ -19,6 +19,7 @@ require_once 'Modules/services/Model/StockShelf.php';
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Controller/ServicesController.php';
+require_once 'Framework/FileUpload.php';
 
 
 /**
@@ -598,6 +599,7 @@ class ServicesprojectsController extends ServicesController {
             "endDate" => ServicesTranslator::EndDate($lang),
             "visibility" => ServicesTranslator::Visibility($lang),
             "private" => ServicesTranslator::Private($lang),
+            "addFile" => ServicesTranslator::AddFile($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -656,6 +658,25 @@ class ServicesprojectsController extends ServicesController {
             ($taskData['private'] === 'true')
         );
         $this->render(['data' => ['id' => $id]]);
+    }
+
+    public function uploadTaskFileAction($id_space, $id_task) {
+        $taskModel = new SeTask();
+        $target_dir = "data/services/projecttasks/";
+        try {
+            if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
+                $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
+                FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
+    
+                $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
+            }
+        } catch (Exception $e) {
+            // $this->render(['data' => ['elements' => ['status' => 'error', 'message' => $e->getMessage()]]]);
+
+        }
+        // TODO: check why this is not working
+        
+        // $this->render(['data' => ['elements' => ['status' => 'success']]]);
     }
 
     public function getTasksAction($id_space, $id_project) {

@@ -116,6 +116,24 @@
                                 {{"{{textContent.clearSelection}}"}}
                             </label>
 
+                            <div class="row mt-2">
+                                <label
+                                    for="taskFile"
+                                    class="modal-element"
+                                    style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                    {{"{{textContent.addFile}}"}}
+                                </label>
+                                <input
+                                    type="file"
+                                    id="taskFile"
+                                    name="taskFile"
+                                    class="modal-element"
+                                    @change="updateTaskFile($event, selectedTask)">
+                                </input>
+                            </div>
+
+                            
+
                         </div>
 
                         <div class="modal-footer">    
@@ -203,6 +221,21 @@ Vue.createApp({
         this.updateCategoriesColors();
     },
     methods: {
+        async updateTaskFile($event, selectedTask) {
+            let data = new FormData();
+            data.append("file", $event.target.files[0]);
+            const cfg = {
+                method: 'POST',
+                body: data
+            };
+            let targetUrl = `/servicesprojects/uploadtaskfile/`;
+            let apiRoute = targetUrl + this.id_space + "/" + selectedTask.id;
+            await fetch(apiRoute, cfg, true)/* .
+                then((response) => response.json()).
+                then(data => {
+                    console.log("data: ", data);
+                }); */
+        },
         gotoGantt() {
             if (this.id_project) {
                 let ganttUrl = "servicesprojectgantt/" + this.id_space + "/" + 1 + "/" + this.personInCharge + "/" + this.id_project;

@@ -1217,4 +1217,12 @@ class ServicesTranslator {
         }
     }
 
+    public static function addFile($lang) {
+        if ($lang == "fr") {
+            return "Attacher un fichier";
+        } else {
+            return "Attach file";
+        }
+    }
+
 }
