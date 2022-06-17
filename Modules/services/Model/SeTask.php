@@ -19,6 +19,7 @@ class SeTask extends Model {
             `id_space` int(11) NOT NULL,
             `id_project` int(11) NOT NULL,
             `id_user` int(11),
+            `id_owner` int(11),
             `state` int(11) NOT NULL,
             `name` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
@@ -89,13 +90,13 @@ class SeTask extends Model {
         return $tmp['private'] == 1;
     }
     
-    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user, $done, $private) {
+    public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user, $id_owner, $done, $private) {
         if ($this->isTask($id_space, $id)) {
-            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=?, done=?, private=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $done, $private, $id, $id_space));
+            $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=?, id_owner=?, done=?, private=? WHERE id=? AND id_space=? AND deleted=0";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_owner, $done, $private, $id, $id_space));
         } else {
-            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_user, done, private, id_space) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $done, $private, $id_space));
+            $sql = "INSERT INTO se_task (id_project, state, name, content, start_date, end_date, id_user,id_owner, done, private, id_space) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_owner, $done, $private, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         }
         if (!empty($services)) {

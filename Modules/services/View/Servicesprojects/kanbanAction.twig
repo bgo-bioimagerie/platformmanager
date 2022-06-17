@@ -86,7 +86,7 @@
                             </select>
                                                     
                             <label for="services" class="modal-element">Services</label>
-                           <select
+                            <select
                                 id="taskServices"
                                 :list="projectServices"
                                 class="form-control modal-element"
@@ -165,6 +165,7 @@ Vue.createApp({
             newCategory: "",
             newCategoryColor: "#000000",
             id_space: {{ id_space }},
+            sessionUserId: {{ sessionUserId }},
             id_project: {{ id_project }},
             tasks: {{ tasks | raw }},
             id_task: {{ id_task }},
@@ -186,7 +187,9 @@ Vue.createApp({
             category.name = category.name.replace(/\s/g, '').toLowerCase();
         });
         this.tasks.forEach(task => {
-            this.categories[task.state].tasks.push(task)
+            if (task.private == "false" || task.id_owner == this.sessionUserId) {
+                this.categories[task.state].tasks.push(task);
+            }
         });
     },
     mounted() {
@@ -300,6 +303,7 @@ Vue.createApp({
         },
         updateTaskVisibility(event, task) {
             task.private = event.target.value;
+            task.id_owner = task.private ? this.sessionUserId : null;
             this.updateTask(task);
         },
         updateTaskDate(event, task) {
@@ -341,6 +345,7 @@ Vue.createApp({
                     id_space: this.id_space,
                     id_project: this.id_project,
                     state: 0,
+                    id_owner: null,
                     name: this.newTask,
                     content: "",
                     start_date: null,

@@ -606,6 +606,7 @@ class ServicesprojectsController extends ServicesController {
 
         return $this->render(array(
             "id_space" => $id_space,
+            "sessionUserId" => $_SESSION["id_user"],
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "textContent" => json_encode($textContent),
@@ -649,6 +650,7 @@ class ServicesprojectsController extends ServicesController {
             $taskData['end_date'],
             $taskData['services'],
             $taskData['id_user'],
+            $taskData['id_owner'],
             $taskData['done'],
             // cast string to boolean
             ($taskData['private'] === 'true')
