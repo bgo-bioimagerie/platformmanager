@@ -600,6 +600,7 @@ class ServicesprojectsController extends ServicesController {
             "visibility" => ServicesTranslator::Visibility($lang),
             "private" => ServicesTranslator::Private($lang),
             "addFile" => ServicesTranslator::AddFile($lang),
+            "download" => ServicesTranslator::downloadAttachedFile($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -662,21 +663,18 @@ class ServicesprojectsController extends ServicesController {
 
     public function uploadTaskFileAction($id_space, $id_task) {
         $taskModel = new SeTask();
-        $target_dir = "data/services/projecttasks/";
-        try {
-            if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
-                $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
-                FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
-    
-                $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
-            }
-        } catch (Exception $e) {
-            // $this->render(['data' => ['elements' => ['status' => 'error', 'message' => $e->getMessage()]]]);
-
+        $target_dir = "data/services/projecttasks/";        
+        if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
+            $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
+            FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
+            $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
         }
-        // TODO: check why this is not working
-        
-        // $this->render(['data' => ['elements' => ['status' => 'success']]]);
+    }
+
+    public function getTaskFileAction($id_space, $id_task) {
+        $taskModel = new SeTask();
+        $file = $taskModel->getFile($id_space, $id_task);
+        $this->render(['data' => $file]);
     }
 
     public function getTasksAction($id_space, $id_project) {

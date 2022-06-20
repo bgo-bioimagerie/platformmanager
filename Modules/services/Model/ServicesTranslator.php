@@ -1225,4 +1225,12 @@ class ServicesTranslator {
         }
     }
 
+    public static function downloadAttachedFile($lang) {
+        if ($lang == "fr") {
+            return "Télécharger le fichier joint";
+        } else {
+            return "Download attached file";
+        }
+    }
+
 }

@@ -117,6 +117,12 @@ class SeTask extends Model {
         $sql = "UPDATE se_task SET file=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($url, $id_task, $id_space));
     }
+
+    public function getFile($id_space, $id_task) {
+        $sql = "SELECT file FROM se_task WHERE id=? AND id_space=?";
+        $req = $this->runRequest($sql, array($id_task, $id_space));
+        return $req->fetch();
+    }
     
     public function isTask($id_space, $id) {
         $sql = "SELECT * FROM se_task WHERE id=? AND id_space=? AND deleted=0";

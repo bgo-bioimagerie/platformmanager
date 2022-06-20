@@ -15,6 +15,7 @@ class ServicesRouting extends Routing {
         $router->map('GET|POST', '/servicesprojects/settaskcategory/[i:id_space]/[i:id_project]', 'services/servicesprojects/settaskcategory', 'services_project_settaskcategory');
         $router->map('GET|POST', '/servicesprojects/deletetaskcategory/[i:id_space]/[i:id_category]', 'services/servicesprojects/deletetaskcategory', 'services_project_deletetaskcategory');
         $router->map('GET|POST', '/servicesprojects/uploadtaskfile/[i:id_space]/[i:id_task]', 'services/servicesprojects/uploadtaskfile', 'services_project_uploadtaskfile');
+        $router->map('GET|POST', '/servicesprojects/gettaskfile/[i:id_space]/[i:id_task]', 'services/servicesprojects/gettaskfile', 'services_project_gettaskfile');
     }
 
     public function listRoutes() {
