@@ -59,7 +59,12 @@ class ServicesInstall extends Model {
         
         $modelCabinet = new StockCabinet();
         $modelCabinet->createTable();
-        
+
+        $modelTask = new SeTask();
+        $modelTask->createTable();
+
+        $modelTaskCategory = new SeTaskCategory();
+	    $modelTaskCategory->createTable();
 
         if (!file_exists('data/services/')) {
             mkdir('data/services/', 0755, true);
