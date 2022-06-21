@@ -134,6 +134,7 @@ class SeTask extends Model {
     }
 
     public function delete($id_space, $id_task) {
+        $this->deleteAllTaskServices($id_space, $id_task);
         $sql = "UPDATE se_task SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id_task, $id_space));
     }
@@ -183,12 +184,8 @@ class SeTask extends Model {
     }
 
     public function deleteAllTaskServices($id_space, $id_task) {
-        $task_services = $this->getTaskServices($id_space, $id_task);
-        if (!empty($task_services)) {
-            foreach($task_services as $task_service) {
-                $this->deleteTaskService($id_space, $id_task, $task_service['id']);
-            }
-        }
+        $sql = "UPDATE se_task_service SET deleted=1,deleted_at=NOW() WHERE id_service IN(SELECT id_service WHERE id_task=? AND id_space=?)";
+        $this->runRequest($sql, array($id_task, $id_space));
     }
 
 }
