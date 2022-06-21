@@ -25,9 +25,9 @@ class SeTask extends Model {
             `content` varchar(250) NOT NULL DEFAULT '',
             `start_date` DATE,
 		    `end_date` DATE,
-            `done` BIT DEFAULT 0,
-            `private` BIT DEFAULT 0,
-            `media`, varchar(250) NOT NULL DEFAULT '',
+            `done` int(1) NOT NULL DEFAULT 0,
+            `private` int(1) NOT NULL DEFAULT 0,
+            `file` varchar(250) NOT NULL DEFAULT '',
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
