@@ -1,7 +1,12 @@
 <div class="row">
     <div class="col-12">
 
-    <?php echo $message ?>    
+    <?php
+        foreach($messages as $message)  {
+            echo $message;
+        }
+        
+    ?>
         
     </div>
 </div>

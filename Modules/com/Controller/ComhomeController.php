@@ -17,7 +17,8 @@ class ComhomeController extends ComController {
     public function indexAction($id_space) {
 
         $modelParam = new CoreConfig();
-        $message = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
 
         $tweets = array();
         if ($modelParam->getParamSpace("use_twitter", $id_space)) {
@@ -29,7 +30,8 @@ class ComhomeController extends ComController {
 
 
         $this->render(array("id_space" => $id_space,
-            "message" => $message,
+            "message_public" => $message_public,
+            "message_private" => $message_private,
             "news" => $news,
             "tweets" => $tweets
         ));

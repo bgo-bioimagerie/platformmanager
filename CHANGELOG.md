@@ -12,6 +12,7 @@
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 * [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
+* [com] allow private and public messages on welcome space message
 
 ## 2.6.3
 

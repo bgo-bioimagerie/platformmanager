@@ -19,18 +19,20 @@ class ComtileController extends ComController {
             throw new PfmAuthException('admins only');
         }
         $modelParam = new CoreConfig();
-        $message = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "comtileeditform");
         $form->setTitle(ComTranslator::Tilemessage($lang));
-        $form->addTextArea("message", "" , false, $message, true);
+        $form->addTextArea("message_public", ComTranslator::PublicTilemessage($lang) , false, $message_public, true);
+        $form->addTextArea("message_private", ComTranslator::PrivateTilemessage($lang) , false, $message_private, true);
         $form->setColumnsWidth(0, 12);
         $form->setValidationButton(CoreTranslator::Ok($lang), "comtileedit/".$id_space);
-
         
-        if($form->check()){
-            $modelParam->setParam("tilemessage", $this->request->getParameter("message", false), $id_space);
+        if($form->check()) {
+            $modelParam->setParam("tilemessage", $this->request->getParameter("message_public", false), $id_space);
+            $modelParam->setParam("private_tilemessage", $this->request->getParameter("message_private", false), $id_space);
             $this->redirect('comtileedit/'.$id_space);
         }
         
@@ -40,9 +42,18 @@ class ComtileController extends ComController {
     public function indexAction($id_space){
         
         $modelParam = new CoreConfig();
-        $message = $modelParam->getParamSpace("tilemessage", $id_space);
+        $spaceModel = new CoreSpace();
+        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
+
+        $messages = array("message_public" => $message_public);
+
+        if($role >= CoreSpace::$USER) {
+            $messages["message_private"] = $message_private;
+        }
         
-        return $this->generateComView(array("message" => $message));
+        return $this->generateComView(array("messages" => $messages));
     }
 
     private function generateComView($data) {
