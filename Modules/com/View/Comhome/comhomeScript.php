@@ -25,11 +25,11 @@ $(document).ready(function(){
     newsView.getNewsData();
 })
 
-
-let newsView = new Vue({
-    el: '#news',
-    data: {
-        newsList: new Array(),
+Vue.createApp({
+    data() {
+        return {
+            newsList: new Array()
+        }
     },
     methods: {
         getNewsData() {
@@ -43,13 +43,15 @@ let newsView = new Vue({
             fetch(`getnews/<?php echo $id_space ?>`, cfg).
                 then((response) => response.json()).
                 then(data => {
-                    data.news.forEach((elem) => {
-                        this.newsList.push({
-                            "title": elem.title,
-                            "content": elem.content,
-                            "media": elem.media
+                    if (data.news) {
+                        data.news.forEach((elem) => {
+                            this.newsList.push({
+                                "title": elem.title,
+                                "content": elem.content,
+                                "media": elem.media
+                            });
                         });
-                    });
+                    }
                 }).
                 then(this.displayPopup());
         },
@@ -61,6 +63,5 @@ let newsView = new Vue({
     beforeMount() {
         
     }
-})
-
+}).mount('#news')
 </script>

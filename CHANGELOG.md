@@ -6,8 +6,12 @@
 
 * [antibodies] use bootstrap modals and fix some menu urls
 * [booking] add caldav support
+* [services] feature kanban for project management
+* [services] new gantt interface for project management
+* [core] upgrade vue2 -> vue3
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 * [core] use ckeditor5 and allow to use multiple textareas with editor
+* [invoices] get invoice by id (no longer by number) for generating pdf
 
 ## 2.6.3
 
@@ -28,7 +32,6 @@
 * [core] disable by default tls for smtp, allow to activate via config smtp_tls
 
 ## 2.6.0
-
 ### Warning
 
 Now, quote module manage its own template for pdf generation. Existing template is copied from invoices if exists at install time. If no template is available, a default example will be used.
