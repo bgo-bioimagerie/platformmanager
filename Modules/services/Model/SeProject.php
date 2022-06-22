@@ -37,11 +37,11 @@ class SeProject extends Model {
             `id_origin` int(11) NOT NULL DEFAULT 0,
             `closed_by` int(11) NOT NULL DEFAULT 0,
             `in_charge` int(11) NOT NULL DEFAULT 0,
-            `samplereturn` text NOT NULL DEFAULT '',
+            `samplereturn` text,
             `samplereturndate` DATE,
             `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
             `samplestocked` int(1) NOT NULL DEFAULT 0,
-            `samplescomment` text NOT NULL DEFAULT '',
+            `samplescomment` text,
             PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
