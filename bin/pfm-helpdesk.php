@@ -16,10 +16,6 @@ function isReply($mail, $headersDetailed) {
         $isReply = array_key_exists("X-PFM", $headersDetailed);
     }
     if(!$isReply) {
-        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) &&
-            $headersDetailed["Auto-Submitted"] != "no";
-    }
-    if(!$isReply) {
         try {
             $isReply = $mail->in_reply_to ? true : false;
             Configuration::getLogger()->debug('[helpdesk] is in-reply-to?', ["references" => $mail->in_reply_to]);
@@ -36,12 +32,7 @@ function isReply($mail, $headersDetailed) {
             // not in header, that's fine
         }
     }
-    if(!$isReply) {
-        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? $headersDetailed["X-GND-Status"] == "BOUNCE" : false;
-        if($isReply) {
-            Configuration::getLogger()->debug('[helpdesk] bounce');
-        }
-    }
+
     Configuration::getLogger()->debug('[helpdesk] is reply?', [
         'headers' => $headersDetailed,
         'subject' => $mail->subject,
@@ -50,6 +41,26 @@ function isReply($mail, $headersDetailed) {
     return $isReply;
 }
 
+function isAutoReply($mail, $headersDetailed) {
+    $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? str_starts_with($headersDetailed["X-GND-Status"][0], "BOUNCE") : false;
+    if($isReply) {
+        Configuration::getLogger()->debug('[helpdesk] bounce');
+    }
+
+    if(!$isReply) {
+        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) ? str_starts_with($headersDetailed["Auto-Submitted"][0], "auto-replied") : false;
+        if($isReply) {
+            Configuration::getLogger()->debug('[helpdesk] auto-reply');
+        }
+    }
+
+    Configuration::getLogger()->debug('[helpdesk] is auto reply?', [
+        'headers' => $headersDetailed,
+        'subject' => $mail->subject,
+        'reply' => $isReply
+    ]);
+    return $isReply;
+}
 
 function ignore($from) {
     if ($from->mailbox == "MAILER-DAEMON") {
@@ -77,7 +88,12 @@ function parse_rfc822_all_headers(string $header_string): array {
 function _get_body_attach($mbox, $mid) {
     $struct = imap_fetchstructure($mbox, $mid);
 
-    $parts = $struct->parts;
+    $parts = false;
+    try {
+        $parts = $struct->parts;
+    }  catch(Throwable $err) {
+        Configuration::getLogger()->debug('no parts', ['err' => $err, 'struct' => $struct]);
+    }
     $i = 0;
     if (!$parts) { /* Simple message, only 1 piece */
         $attachment = array(); /* No attachments */
@@ -182,14 +198,20 @@ Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/
 
 while(true) {
     try {
-    $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
+        $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
     } catch(Throwable $err) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException($err);
+        }
         exit(1);
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
         Configuration::getLogger()->error('Connexion failed, check parameters!');
+        if(Configuration::get('sentry_dsn', '')) {
+            \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
+        }
         exit(1);
     } else {
         $info = imap_check($mbox);
@@ -201,6 +223,7 @@ while(true) {
         }
     }
 
+    $isClosed = false;
     if (FALSE === $mails) {
         Configuration::getLogger()->error('Error', ['err' => $err]);
     } else {
@@ -210,6 +233,10 @@ while(true) {
             $sp = new CoreSpace();
             $spaces = $sp->getSpaces('id');
             if(!$spaces) {
+                Configuration::getLogger()->debug('No space defined, waiting....');
+                if($mbox) {
+                    imap_close($mbox);
+                }
                 sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
                 continue;
             }
@@ -230,8 +257,8 @@ while(true) {
                 $from=$header->from;
                 $to = $header->to;
 
-                if(isReply($mail, $headersDetailed) || ignore($from[0])) {
-                    Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
+                if(isAutoReply($mail, $headersDetailed) || ignore($from[0])) {
+                    Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip message', ['from' => $from[0]]);
                     continue;
                 }
 
@@ -265,6 +292,12 @@ while(true) {
                     continue;
                 }
 
+                $helpdesk_active = $sp->getSpaceMenusRole($id_space, 'helpdesk');
+                if($helpdesk_active == CoreSpace::$INACTIF) {
+                    Configuration::getLogger()->info("helpdesk module inactive, skipping", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
+                    continue;
+                }
+
                 Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
                 $um = new CoreUser();
                 $userEmail = $from[0]->mailbox."@".$from[0]->host;
@@ -292,24 +325,26 @@ while(true) {
                     $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
                     Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
                 }
-                if($newTicket['is_new']) {
-                    if(isReply($mail, $headersDetailed) || ignore($from[0])) {
-                        Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
-                        continue;
+
+                $fromMyself = ($toSpace == $userEmail);
+                if(!$fromMyself) {
+                    if($newTicket['is_new']) {
+                        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+                        $from = Configuration::get('helpdesk_email');
+                        $fromInfo = explode('@', $from);
+                        $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                        $fromName = $fromInfo[0]. '+' . $spaceName;
+                        $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
+                        $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
+                        $e = new Email();
+                        $headers = ["Auto-Submitted" => "auto-replied"];
+                        $e->sendEmail($from, $fromName, $userEmail, $subject, $content, $headers);
                     }
-                    Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
-                    $from = Configuration::get('helpdesk_email');
-                    $fromInfo = explode('@', $from);
-                    $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
-                    $fromName = $fromInfo[0]. '+' . $spaceName;
-                    $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
-                    $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
-                    $e = new Email();
-                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+                    $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
                 }
-                $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
             }
             imap_close($mbox, CL_EXPUNGE);
+            $isClosed = true;
 
             $hm = new Helpdesk();
             $hm->remind();
@@ -318,6 +353,14 @@ while(true) {
             Configuration::getLogger()->error('[helpdesk] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
 
+    }
+    if(!$isClosed) {
+        Configuration::getLogger()->debug('Closing connexion');
+        try {
+            imap_close($mbox);
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('Close error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+        }
     }
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 

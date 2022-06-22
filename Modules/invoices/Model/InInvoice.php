@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/core/Model/CoreVirtual.php';
 
 /**
- * Class defining the Area model
+ * Class defining the invoice model
  *
  * @author Sylvain Prigent
  */
@@ -97,6 +97,11 @@ class InInvoice extends Model {
         $this->runRequest($sql, array($total, $id_invoice, $id_space));
     }
 
+    public function setNumber($id_space, $id_invoice, $number) {
+        $sql = "UPDATE in_invoice SET number=? WHERE id=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($number, $id_invoice, $id_space));
+    }
+
     public function setDatePaid($id_space, $id, $date) {
         //echo "set date = " . $date . "<br/>";
         //echo "where id = " . $id . "<br/>";
@@ -179,7 +184,6 @@ class InInvoice extends Model {
         return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
-    // @bug, should get unique ids, no increment (parallel requests will result in conflicts)
     public function getNextNumber(int $id_space) {
 
         $cv = new CoreVirtual();
@@ -197,44 +201,6 @@ class InInvoice extends Model {
             $num = $newNumber;
         }
         return $curYear . "-" . $num;
-
-        /*
-        if ($previousNumber == "") {
-            $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
-            $req = $this->runRequest($sql);
-
-            $lastNumber = "";
-            if ($req->rowCount() > 0) {
-                $bill = $req->fetch();
-                $lastNumber = $bill["number"];
-            }
-        } else {
-            $lastNumber = $previousNumber;
-        }
-        if ($lastNumber != "") {
-            //echo "lastNumber = " . $lastNumber . "<br/>";
-            $lastNumber = explode("-", $lastNumber);
-            $lastNumberY = $lastNumber[0];
-            $lastNumberN = $lastNumber[1];
-
-            if ($lastNumberY == date("Y", time())) {
-                $lastNumberN = (int) $lastNumberN + 1;
-            } else {
-                return date("Y", time()) . "-0001";
-            }
-            $num = "";
-            if ($lastNumberN < 10) {
-                $num = "000" . $lastNumberN;
-            } else if ($lastNumberN >= 10 && $lastNumberN < 100) {
-                $num = "00" . $lastNumberN;
-            } else if ($lastNumberN >= 100 && $lastNumberN < 1000) {
-                $num = "0" . $lastNumberN;
-            }
-            return $lastNumberY . "-" . $num;
-        } else {
-            return date("Y", time()) . "-0001";
-        }
-        */
     }
 
     public function allPeriodYears($id_space, $periodBegin, $periodEnd){
@@ -306,23 +272,6 @@ class InInvoice extends Model {
                 }
             }
 
-            // $firstDateInfo = explode("-", $firstDate);
-            // $firstYear = $firstDateInfo[0];
-            /*
-            $i = 0;
-            while ($firstYear == "0000") {
-                $i++;
-                $firstDate = $data[$i]["date_generated"];
-                $firstDateInfo = explode("-", $firstDate);
-                $firstYear = $firstDateInfo[0];
-            }
-
-
-            $lastDate = $data[count($data) - 1]["date_generated"];
-            $lastDateInfo = explode("-", $lastDate);
-            $lastYear = $lastDateInfo[0];
-            */
-
             $years = array();
             for ($i = $firstYear; $i <= $lastYear; $i++) {
                 $years[] = $i;
@@ -358,7 +307,6 @@ class InInvoice extends Model {
 
     public function delete($id_space, $id) {
         $sql = "UPDATE in_invoice SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM in_invoice WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

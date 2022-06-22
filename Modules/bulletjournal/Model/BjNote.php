@@ -70,12 +70,15 @@ class BjNote extends Model {
             if($notes[$i]["type"] == 2){
                 $sql = "SELECT * FROM bj_tasks WHERE id_note=?";
                 $taskInfo = $this->runRequest($sql, array($notes[$i]["id"]))->fetch();
-                $notes[$i]["priority"] = $taskInfo["priority"];
+                $notes[$i]["priority"] = 0;
+                if($taskInfo) {
+                    $notes[$i]["priority"] = $taskInfo["priority"];
+                }
                 
                 $sqlh = "SELECT * FROM bj_tasks_history WHERE id_note=? ORDER BY date DESC;";
                 $hist = $this->runRequest($sqlh, array($notes[$i]["id"]))->fetch();
                 $notes[$i]["status"] = 1;
-                if (count($hist) > 0){
+                if ($hist && !empty($hist)){
                     $notes[$i]["status"] = $hist["status"];
                 }
                 if(!isset($notes[$i]["migrated"])){
@@ -148,11 +151,11 @@ class BjNote extends Model {
     }
     
     /**
-     * Delete a unit
+     * Delete a node
      * @param number $id ID
      */
     public function delete($id_space, $id) {
-        $sql = "DELETE FROM bj_notes WHERE id = ? AND id_space=?";
+        $sql = "DELETE FROM bj_notes WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

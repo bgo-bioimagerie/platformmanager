@@ -11,7 +11,7 @@
 require_once 'Modules/booking/Model/BookingTranslator.php';
 ?>
 
-<div class="col-lg-12">
+<div class="col-12">
 <br/>
 <br/>
 	<div class="page-header">
@@ -31,12 +31,12 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 		$cmpt++;
 	if ($cmpt == 1){
 		?>
-		<div class="col-lg-12">
+		<div class="">
 		<?php 
 	}	
 	?>
 	
-	<div class="col-xs-2">
+	<div class="">
 		<p class="text-center" id="colorparagraph" style="background-color: <?php echo $color?>; color: <?php echo $txtcolor?>"><?php echo $name?></p>
 	</div>
 	<?php 

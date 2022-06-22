@@ -8,6 +8,7 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/clients/Model/ClientsInstall.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
@@ -39,32 +40,29 @@ class ClientsconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelSpace = new CoreSpace();
-
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        //$formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'clients', $lang);
         if ($formMenusactivation->check()) {
-
-            $modelSpace->setSpaceMenu($id_space, "clients", "clients", "glyphicon-credit-card", 
-                    $this->request->getParameter("clientsmenustatus"),
-                    $this->request->getParameter("displayMenu"),
-                    1,
-                    $this->request->getParameter("colorMenu"),
-                    $this->request->getParameter("colorTxtMenu")
-                    );
-            
+            $this->menusactivation($id_space, 'clients', 'credit-card');
             $modelAccess = new CoreSpaceAccessOptions();
-            $modelAccess->set($id_space, "clientsuseraccounts", "clients", "clientsuseraccounts");
-                
+            $toolname = "clientsuseraccounts";
+            if ( $this->request->getParameter("clientsMenustatus") > 0 ) {
+                $modelAccess->exists($id_space, $toolname)
+                    ? $modelAccess->reactivate($id_space, $toolname)
+                    : $modelAccess->set($id_space, $toolname, "clients", $toolname);
+            } else {
+                $modelAccess->delete($id_space, $toolname);
+            }
+
             $this->redirect("clientsconfig/".$id_space);
             return;
         }
         
         // menu name
-        $menuNameForm = $this->menuName($lang, $id_space);
+        $menuNameForm = $this->menuNameForm($id_space, 'clients', $lang);
         if ($menuNameForm->check()) {
-            $modelConfig = new CoreConfig();
-            $modelConfig->setParam("clientsMenuName", $this->request->getParameter("clientsMenuName"), $id_space);
+            $this->setMenuName($id_space, 'clients');
             $this->redirect("clientsconfig/" . $id_space);
             return;
         }
@@ -75,45 +73,6 @@ class ClientsconfigController extends CoresecureController {
             );
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
-    }
-
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "clients");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "clients");
-        $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "clients");
-        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "clients");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("clientsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
-        $form->addColor("colorTxtMenu", CoreTranslator::text_color($lang), false, $colorTxtMenu);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "clientsconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-    
-    protected function menuName($lang, $id_space) {
-        $modelConfig = new CoreConfig();
-        $menuName = $modelConfig->getParamSpace("clientsMenuName", $id_space);
-
-        $form = new Form($this->request, "clientsMenuNameForm");
-        $form->addSeparator(ClientsTranslator::MenuName($lang));
-
-        $form->addText("clientsMenuName", CoreTranslator::Name($lang), false, $menuName);
-
-        $form->setValidationButton(CoreTranslator::Save($lang), "clientsconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
     }
 
 }

@@ -1,17 +1,16 @@
 <!doctype html>
 <?php include 'Modules/layout.php' ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+
 
 <?php startblock('stylesheet') ?>
-<script src="https://unpkg.com/marked@0.3.6"></script>
-<script src="https://unpkg.com/lodash@4.16.0"></script>
+<script src="externals/node_modules/marked/marked.min.js"></script>
+<script src="externals/node_modules/lodash/lodash.min.js"></script>
 <style>
-body {
-    font-size: 1.1em;
-}
-h3.panel-title {
-    font-size: 1.1em;
-}
+
 
 .btn {
     font-size: 1em;
@@ -38,34 +37,11 @@ blockquote {
 
 <div id="helpdeskapp" style="background-color: #fff; height:100%">
     <div class="row">
-        <!-- Message -->
-        <div class="col-sm-10 col-sm-offset-1 text-center">
-             <?php
-        if (isset($_SESSION["message"]) && $_SESSION["message"]) {
-            if (substr($_SESSION["message"], 0, 3) === "Err") {
-                ?>
-                <div class="alert alert-danger">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            } else {
-                ?>
-                <div class="alert alert-success">
-                    <?php echo $_SESSION["message"] ?>
-                </div>
-                <?php
-            }
-            unset($_SESSION["message"]);
-        }
-        ?>
-        </div>
-    </div>
-    <div class="row">
         <!-- Form -->
-        <div v-if="message" class="col-sm-12 text-center">
+        <div v-if="message" class="col-12 text-center">
             <div class="alert alert-warning">{{message}}</div>
         </div>
-        <div class="col-sm-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
+        <div class="col-2 text-center" style="background-color: <?php echo $menuInfo["color"] ?> ; color: <?php echo $menuInfo["txtcolor"] ?>">
             <div @click="newTicket()">Create</div>
             <div @click="setMy()">{{ my ? "Show all tickets": "Show my tickets"}}</div>
             <div v-bind:class="filter==0 ? 'selection':''"  @click="setFilter(0)">New {{unread["s0"]}}</div>
@@ -81,7 +57,7 @@ blockquote {
             }
             ?>
         </div>
-        <div v-if="settings" class="col-sm-10">
+        <div v-if="settings" class="col-10">
             <div class="form">
                 <div class="form-check">
                     <input class="form-check-input" v-model="preferences.notifyNew" type="checkbox" value="" id="notifyNew">
@@ -104,16 +80,16 @@ blockquote {
                     <button @click="setSettings" class="btn btn-primary">Save</button>
             </div>
         </div>
-        <div v-if="!settings && ticket !== null" class="col-sm-10 col-sm-offset-1 text-center">
+        <div v-if="!settings && ticket !== null" class="col-10 text-center">
             <div class="row">
-                <div class="col-sm-8">
+                <div class="col-8">
                     <div v-for="message in ticket.messages" :key="message.id">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                            <h3 class="panel-title">{{message.from}} - {{message.created_at}}</h3>
+                        <div class="card">
+                            <div class="card-header">
+                            <div class="card-title">{{message.from}} - {{message.created_at}}</div>
                             </div>
-                            <div class="panel-body" v-html="message.md"></div>
-                            <div class="panel-footer" v-if="message.type=='0'">
+                            <div class="card-body text-start" v-html="message.md"></div>
+                            <div class="card-footer" v-if="message.type=='0'">
                                 <div>
                                     <div v-for="attach in message.attachements" :key="attach.id">
                                     <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
@@ -124,48 +100,50 @@ blockquote {
                         </div>
                     </div>
                     <div ref="addToMessage">
-                        <div class="panel panel-default">
-                            <div class="panel-heading">
-                                <h3 v-if="addType==1" class="panel-title">Add note</h3>
-                                <h3 v-if="addType==0 && ticket.ticket.id > 0" class="panel-title">Email reply</h3>
-                                <h3 v-if="addType==0 && ticket.ticket.id == 0" class="panel-title">New ticket</h3>
+                        <div class="card">
+                            <div class="card-header">
+                                <div v-if="addType==1" class="card-title">Add note</div>
+                                <div v-if="addType==0 && ticket.ticket.id > 0" class="card-title">Email reply</div>
+                                <div v-if="addType==0 && ticket.ticket.id == 0" class="cart-title">New ticket</div>
                                 </div>
-                            <div class="panel-body" v-html="message.body"></div>
+                            <div class="card-body" v-html="message.body"></div>
                                 <form v-if="!textPreview">
                                     <div v-if="ticket.ticket.id==0" class="form-group">
-                                        <label>Subject</label>
-                                        <input v-model="ticket.ticket.subject"/>
+                                        <label class="form-label">Subject</label>
+                                        <input class="form-control" v-model="ticket.ticket.subject"/>
                                     </div>
                                     <div v-if="addType==0" class="form-group">
-                                        <label>Destination</label>
+                                        <label class="form-label">Destination</label>
                                         <input placeholder="comma separated emails" class="form-control" v-model:value="ticket.ticket.created_by"/>
                                     </div>
                                     <div class="form-group">
                                     <textarea v-model="mdText" class="form-control" rows="5">
                                     </textarea>
-                                    <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">Attachments</h3>
+                                    <label class="form-label">Attachments</label>
+                                    <input type="file" id="mailFiles" multiple v-if="addType==0" class="form-control">
                                     </div>
                                 </form>
-                                <div v-if="textPreview" class="panel-body" v-html="text"></div>
+                                <div v-if="textPreview" class="card-body" v-html="text"></div>
                             </div>
-                            <div class="panel-footer">
+                            <div class="card-footer">
                                 <button type="button" class="btn btn-primary" @click="preview">Message/Preview</button>
                                 <button type="button" class="btn btn-primary" v-if="addType==1" @click="save">Add</button>
                                 <button type="button" class="btn btn-primary" v-if="addType==0 && !textPreview" @click="save">Send</button>
+                                <button type="button" class="btn btn-primary" v-if="addType==0 && !textPreview" @click="cancelReply">Cancel</button>
                             </div>
                         </div>
                     </div>
-                <div class="col-sm-4">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                        <h3 class="panel-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</h3>
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                        <div class="cart-title">#{{ticket.ticket.id}}: {{ticket.ticket.subject}}</div>
                         </div>
-                        <div class="panel-body">
+                        <div class="card-body">
                             <form class="form-horizontal">
                             <div class="form-group">
-                            <label for="tstatus" class="col-sm-2">Status</label>
+                            <label for="tstatus" class="">Status</label>
                             <div >
-                                <select id="tstatus" class="form-control" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
+                                <select id="tstatus" class="form-select" v-on:change="updateStatus($event)" v-model:value="ticket.ticket.status">
                                     <option value="0">New</option>
                                     <option value="1">Open</option>
                                     <option value="2">Reminder</option>
@@ -178,7 +156,7 @@ blockquote {
                                 </div>
                             </div>
                             <div class="form-group" v-if="ticket.ticket.assigned">
-                                <label for="tassign" class="col-sm-2">Assignee</label>
+                                <label for="tassign" class="">Assignee</label>
                                 <div>
                                     <input id="tassign" class="form-control" readonly v-bind:value="ticket.ticket.assigned_name"/>
                                 </div>
@@ -191,7 +169,7 @@ blockquote {
                 </div>
             </div>
         </div>
-        <div v-if="!settings && ticket === null" class="col-sm-10 text-center">
+        <div v-if="!settings && ticket === null" class="col-10 text-center">
             <div>
                 <button v-if="offset > 0" class="btn btn-primary" @click="prevPage()">prev</button>
                 <button class="btn btn-primary" @click="nextPage()">next</button>
@@ -212,7 +190,7 @@ blockquote {
                 <tbody>
                 <tr><td><input type="checkbox" v-bind:checked="selectAll" @click="selectTicket(null)"/></td><td></td><td><button @click="spamSelected()" class="btn btn-warning">Spam selected</button></td></tr>
                 <tr v-for="ticket in tickets" :key="ticket.id" v-bind:class="ticket.unread=='1' ? 'alert alert-warning':''">
-                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket?.selected" type="checkbox"/></td>
+                <td><input @click="selectTicket(ticket.id)" v-bind:checked="ticket && ticket.selected" type="checkbox"/></td>
                 <td  @click="fetchTicket(ticket.id)"><button type="button" class="btn btn-primary">{{ticket.id}}</button></td>
                 <td>{{ticket.created_at}}</td>
                 <td>{{ticket.subject}}</td>
@@ -232,8 +210,7 @@ blockquote {
 </div>
 <script>
 
-var app = new Vue({
-    el: '#helpdeskapp',
+Vue.createApp({
     data () {
         return {
             selectAll: false,
@@ -264,7 +241,6 @@ var app = new Vue({
     methods: {
         spam(id) {
             return new Promise((resolve, reject) => {
-                console.debug('spam', id)
                 let headers = new Headers()
                 headers.append('Content-Type','application/json')
                 headers.append('Accept', 'application/json')
@@ -283,8 +259,7 @@ var app = new Vue({
         },
         spamSelected() {
             this.tickets.forEach(async (ticket) => {
-                if (ticket?.selected) {
-                    console.debug('should spam ', ticket.id)
+                if (ticket && ticket.selected) {
                     try {
                         await this.spam(ticket.id)
                     } catch(err) {
@@ -297,12 +272,10 @@ var app = new Vue({
             if (id === null) {
                 let tickets = [...this.tickets]
                 if (this.select) {
-                    console.debug('unselect all')
                     tickets.forEach((ticket) => {
                         ticket.selected = false;
                     })
                 } else {
-                    console.debug('select all')
                     tickets.forEach((ticket) => {
                         ticket.selected = true;
                     })
@@ -314,7 +287,6 @@ var app = new Vue({
             let tickets = [...this.tickets]
             tickets.forEach((ticket) => {
                 if(ticket.id === id) {
-                    console.debug('select/unselect ', id)
                     ticket.selected = !ticket.selected;
                 }
             })
@@ -384,7 +356,6 @@ var app = new Vue({
                     this.ticket = null;
                     this.fetchTickets();
                 }
-                console.debug('ticket updated')
             })
         },
         setMy() {
@@ -424,8 +395,12 @@ var app = new Vue({
             this.ticket = null;
             this.fetchTickets();
         },
+        cancelReply() {
+                this.addType = 1;
+                this.mdText = '';
+                this.text = '';
+        },
         save() {
-            console.debug('save ticket', this.ticket.ticket);
             let headers = new Headers()
             headers.append('Content-Type','application/json')
             headers.append('Accept', 'application/json')
@@ -544,7 +519,6 @@ var app = new Vue({
                     data.messages[i].md = marked(data.messages[i].body, { sanitize: true }) || "";
                 }
                 this.ticket = data;
-                console.debug('get ticket', data);
             })    
         },
         fetchTickets () {
@@ -569,7 +543,6 @@ var app = new Vue({
             then((response) => response.json()).
             then(data => {
                 this.tickets = data.tickets;
-                console.debug('get tickets', data);
             })
             this.fetchUnread();
         },
@@ -599,12 +572,10 @@ var app = new Vue({
                     unreads["s"+unread.status] = `(${unread.total})`
                 });
                 this.unread = unreads;
-                console.debug('unread tickets', unreads);
             })            
         }
     }
-})
+}).mount('#helpdeskapp');
 </script>
-<?php
-endblock();
+<?php endblock(); ?>
 

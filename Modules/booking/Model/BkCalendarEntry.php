@@ -5,13 +5,25 @@ require_once 'Framework/Events.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/core/Model/CoreSpace.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
+require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
- * Class defining the GRR area model
+ * Class defining the booking entries
  *
  * @author Sylvain Prigent
  */
 class BkCalendarEntry extends Model {
+
+    public static $REASON_BOOKING = 0;
+    public static $REASON_HOLIDAY = 1;
+    public static $REASON_MAINTENANCE = 2;
+
+    public function __construct() {
+        $this->tableName = "bk_calendar_entry";
+    }
 
     /**
      * Create the calendar entry table
@@ -39,6 +51,7 @@ class BkCalendarEntry extends Model {
         `period_id` int(11) NOT NULL DEFAULT 0,
         `all_day_long` int(1) NOT NULL DEFAULT 0,
         `deleted` int(1) NOT NULL DEFAULT 0,
+        `reason` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
@@ -130,7 +143,6 @@ class BkCalendarEntry extends Model {
         foreach($resps as $resp){
             
             $sqlr = "SELECT name from cl_clients WHERE id=? AND deleted=0 AND id_space=?";
-            //$sqlr = "SELECT name, firstname FROM core_users WHERE id=?";
 
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
             if(!$respinfo) {
@@ -146,7 +158,7 @@ class BkCalendarEntry extends Model {
                 foreach($res as $r){
                     $time += $r["end_time"] - $r["start_time"];
                 }
-                $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 1) );
+                $resourceCount[] = array( "resource" => $resource["name"], "time" => round($time/3600, 2) );
             }
             
             $data["count"][] = array( "responsible" => $respinfo["name"], "count" => $resourceCount ); 
@@ -162,7 +174,6 @@ class BkCalendarEntry extends Model {
         $modelUserClient = new ClClientUser();
         
         foreach ($data as $d) {
-            //$resps = $modelUserClient->getUserAccounts($id_space, $d["recipient_id"]);
             $resps = $modelUserClient->getUserClientAccounts($d["recipient_id"], $id_space);
 
             if (!empty($resps)) {
@@ -248,6 +259,7 @@ class BkCalendarEntry extends Model {
             "package_id" => 0,
             "responsible_id" => $resps_id,
             "invoice_id" => 0,
+            "reason" => self::$REASON_BOOKING,
             "all_day_long" => 0);
     }
 
@@ -261,15 +273,15 @@ class BkCalendarEntry extends Model {
         $this->runRequest($sql, array($deleted, $id, $id_space));
     }
 
-    public function setEntry($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id) {
+    public function setEntry($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantities, $supplementaries, $package_id, $responsible_id, $reason=0) {
         $old = null;
         if (!$id) {
             $sql = "INSERT INTO bk_calendar_entry (start_time, end_time, resource_id, booked_by_id, recipient_id, 
                     last_update, color_type_id, short_description, full_description, quantities, 
-                    supplementaries, package_id, responsible_id, id_space) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?, ?)";
+                    supplementaries, package_id, responsible_id, id_space, reason) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
-                $supplementaries, $package_id, $responsible_id, $id_space));
+                $supplementaries, $package_id, $responsible_id, $id_space, $reason));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "SELECT * FROM bk_calendar_entry WHERE id=? AND id_space=?";
@@ -277,10 +289,10 @@ class BkCalendarEntry extends Model {
             $old = ['start_time' => $oldRes['start_time'], 'resource_id' => $oldRes['resource_id'], 'recipient_id' => $oldRes['recipient_id'], 'booked_by_id' => $oldRes['booked_by_id'], 'responsible_id' => $oldRes['responsible_id']];
             $sql = "UPDATE bk_calendar_entry SET start_time=?, end_time=?, resource_id=?, booked_by_id=?, recipient_id=?, 
                     last_update=?, color_type_id=?, short_description=?, full_description=?, quantities=?, 
-                    supplementaries=?, package_id=?, responsible_id=? WHERE id=? AND deleted=0 AND id_space=?";
+                    supplementaries=?, package_id=?, responsible_id=?, reason=? WHERE id=? AND deleted=0 AND id_space=?";
             $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
                 $last_update, $color_type_id, $short_description, $full_description, $quantities,
-                $supplementaries, $package_id, $responsible_id, $id, $id_space));
+                $supplementaries, $package_id, $responsible_id, $reason, $id, $id_space));
         }
         Events::send(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => $old, "bk_calendar_entry" => ["id" => intval($id), "id_space" => $id_space]]);
 
@@ -290,25 +302,26 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      * @return string
      */
-    public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
+    public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0, $reason=0) {
 
         $sql = "insert into bk_calendar_entry(start_time, end_time, resource_id, booked_by_id, recipient_id, 
-							last_update, color_type_id, short_description, full_description, quantities, package_id, id_space)"
-                . " values(?,?,?,?,?,?,?,?,?,?,?,?)";
+							last_update, color_type_id, short_description, full_description, quantities, package_id, id_space,supplementaries, reason)"
+                . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
-            $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id_space));
+            $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id_space, '', $reason));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -353,17 +366,19 @@ class BkCalendarEntry extends Model {
 
     /**
      * Add a calendar entry if not exists  
-     * @param unknown $id
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
-     * @param unknown $booked_by_id
-     * @param unknown $recipient_id
-     * @param unknown $last_update
-     * @param unknown $color_type_id
-     * @param unknown $short_description
-     * @param unknown $full_description
+     * @param int $id_space
+     * @param int $id
+     * @param int $start_time
+     * @param int $end_time
+     * @param int $resource_id
+     * @param int $booked_by_id
+     * @param int $recipient_id
+     * @param int $last_update
+     * @param int $color_type_id
+     * @param string $short_description
+     * @param string $full_description
      * @param number $quantity
+     * @param int package
      */
     public function setEntryOld($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
 
@@ -447,37 +462,86 @@ class BkCalendarEntry extends Model {
      * @param $dateEnd End of the periode in linux time
      * 
      */
-    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id) {
+    public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
-        $sql = 'SELECT * FROM bk_calendar_entry WHERE
-				(start_time <=:end AND end_time >= :start)
-                AND resource_id = :res
-                AND deleted=0
-                AND id_space=:id_space
-				ORDER BY start_time';
+        $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+                LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+                INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                WHERE
+				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                AND bk_calendar_entry.resource_id = :res
+                AND bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=:id_space';
+        if($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .=	 ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
 
-        $modelUser = new CoreUser();
-        $modelColor = new BkColorCode();
         for ($i = 0; $i < count($data); $i++) {
             $rid = $data[$i]["recipient_id"];
             if ($rid > 0) {
-                $userInfo = $modelUser->userAllInfo($rid);
-                $data[$i]["recipient_fullname"] = $userInfo["name"] . " " . $userInfo["firstname"];
-                $data[$i]["phone"] = "";
-                if (isset($userInfo["phone"])) {
-                    $data[$i]["phone"] = $userInfo["phone"];
-                }
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space ,$data[$i]["color_type_id"]);
+                $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
             } else {
                 $data[$i]["recipient_fullname"] = "";
                 $data[$i]["phone"] = "";
-                $data[$i]["color_bg"] = $modelColor->getColorCodeValue($id_space, $data[$i]["color_type_id"]);
-                $data[$i]["color_text"] = $modelColor->getColorCodeText($id_space, $data[$i]["color_type_id"]);
+            }
+            if(!$data[$i]["color_bg"]) {
+                $data[$i]["color_bg"] = "#aaaaaa";
+            }
+            if(!$data[$i]["color_text"]) {
+                $data[$i]["color_text"] = "#000000";
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get all the entries for a given period and a given list of resource
+     * @param $dateBegin Beginning of the periode in linux time
+     * @param $dateEnd End of the periode in linux time
+     * 
+     */
+    public function getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, array $resource_ids, $id_user='') {
+        if(empty($resource_ids)) {
+            return [];
+        }
+        $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
+
+        $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+            LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
+            INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+            WHERE
+				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')
+                AND bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=:id_space';
+        if ($id_user) {
+            $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
+            $q['id_user'] = $id_user;
+        }
+		$sql .= ' ORDER BY bk_calendar_entry.start_time';
+
+        $req = $this->runRequest($sql, $q);
+        $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
+        for ($i = 0; $i < count($data); $i++) {
+            $rid = $data[$i]["recipient_id"];
+            if ($rid > 0) {
+                $data[$i]["recipient_fullname"] = $data[$i]["lastname"] . " " . $data[$i]["firstname"];
+            } else {
+                $data[$i]["recipient_fullname"] = "";
+                $data[$i]["phone"] = "";
+            }
+            if(!$data[$i]["color_bg"]) {
+                $data[$i]["color_bg"] = "#aaaaaa";
+            }
+            if(!$data[$i]["color_text"]) {
+                $data[$i]["color_text"] = "#000000";
             }
         }
 
@@ -486,27 +550,24 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get entries for a given period and a given area
-     * @param unknown $dateBegin
-     * @param unknown $dateEnd
-     * @param unknown $areaId
+     * @param int $dateBegin
+     * @param int $dateEnd
+     * @param int $areaId
      * @return multitype:
      */
-    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId) {
+    public function getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $areaId, $id_user='') {
 
         $modelResource = new ResourceInfo();
         $resources = $modelResource->resourceIDNameForArea($id_space, $areaId);
 
-        $data = array();
-        foreach ($resources as $resource) {
-            $id = $resource["id"];
-            $dataInter = $this->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $id);
-            $data = array_merge($data, $dataInter);
+        $rids = [];
+        foreach($resources as $r) {
+            $rids[] = $r['id'];
         }
-
-        return $data;
+       return $this->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $rids, $id_user);
     }
 
-    public function isConflictP($id_space, $start_time, $end_time, $resource_id, $id_period) {
+    public function isConflictPeriod($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
 			(
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR
@@ -516,18 +577,14 @@ class BkCalendarEntry extends Model {
             ) 
             AND deleted=0
             AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($id_period > 0 && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $period_id = $tmp['period_id'];
-                if ($period_id == $id_period) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($period_id != $id_period);
             }
             return true;
         } else {
@@ -561,13 +618,13 @@ class BkCalendarEntry extends Model {
 
     /**
      * Check if a new entry is in conflic with an existing entries
-     * @param unknown $start_time
-     * @param unknown $end_time
-     * @param unknown $resource_id
+     * @param int $start_time
+     * @param int $end_time
+     * @param array $resources_id
      * @param string $reservation_id
      * @return boolean
      */
-    public function isConflict($id_space, $start_time, $end_time, $resource_id, $reservation_id = "") {
+    public function isConflict($id_space, $start_time, $end_time, array $resources_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
 			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
@@ -576,18 +633,14 @@ class BkCalendarEntry extends Model {
                            ) 
                            AND deleted=0
                            AND id_space = :id_space
-			AND resource_id = :res;";
-        $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id, 'id_space' => $id_space);
+			AND resource_id in (:res);";
+        $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
             if ($reservation_id != "" && $req->rowCount() == 1) {
                 $tmp = $req->fetch();
                 $id = $tmp[0];
-                if ($id == $reservation_id) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return ($id != $reservation_id);
             }
             return true;
         } else {
@@ -717,12 +770,24 @@ class BkCalendarEntry extends Model {
             $req = $this->runRequest($sql, array($rec['recipient_id']));
             $resp_id_req = $req->fetch();
             $resp_id_req = $resp_id_req[0];
-            //echo "resp_id_req = " . $resp_id_req . "<br />";
             if ($resp_id_req == $unit_id) {
                 return true;
             }
         }
         return false;
+    }
+
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    public function countForSpace($id_space) {
+        $sql = "SELECT count(*) as total FROM bk_calendar_entry WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
     }
 
     /**
@@ -733,6 +798,29 @@ class BkCalendarEntry extends Model {
     public function getUserBooking($id_space, $user_id) {
         $sql = "select * from bk_calendar_entry where recipient_id=? AND deleted=0 AND id_space=? order by end_time DESC;";
         $req = $this->runRequest($sql, array($user_id, $id_space));
+        return $req->fetchAll();
+    }
+
+        /**
+     * Get all the entries of a given user within period
+     * @param unknown $user_id
+     * @return multitype:
+     */
+    public function getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS) {
+        $q = array('id_space' => $id_space, 'id_user' => $id_user);
+        $sql = "SELECT bk_calendar_entry.*, resources.name as resource_name FROM bk_calendar_entry ";
+        $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+        $sql .= " WHERE bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0 AND bk_calendar_entry.id_space=:id_space";
+        if($fromTS) {
+            $q['start'] = $fromTS;
+            $q['end'] = $toTS;
+            $sql .= " AND ((bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time > :start AND bk_calendar_entry.end_time <= :end) OR
+            (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start AND bk_calendar_entry.end_time <= :end) OR
+            (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
+            (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end)) ";
+        }
+        $sql .= " order by bk_calendar_entry.end_time ASC;";
+        $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
 
@@ -750,10 +838,11 @@ class BkCalendarEntry extends Model {
 
     /**
      * Get the emails address of the users who booked a resource and still have a role in space
-     * @param unknown $resource_id
+     * @param int $resource_id
+     * @param int $ts  select reservations after timestamp
      * @return multitype:
      */
-    public function getEmailsBookerResource($id_space, $resource_id) {
+    public function getEmailsBookerResource($id_space, $resource_id, $ts=0) {
 
         $sql = "SELECT DISTINCT user.email AS email 
                 FROM core_users AS user
@@ -763,15 +852,17 @@ class BkCalendarEntry extends Model {
                 AND core_j_spaces_user.id_space=?
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
-                AND user.is_active = 1 
-                ;";
-        $req = $this->runRequest($sql, array($resource_id, $id_space, $id_space));
+                AND user.is_active = 1
+                AND core_j_spaces_user.status>?
+                AND bk_calendar_entry.start_time > ?;";
+        $params = [$resource_id, $id_space, $id_space, CoreSpace::$VISITOR, $ts];
+        $req = $this->runRequest($sql, $params);
         return $req->fetchAll();
     }
 
     /**
      * Get the emails address of the users who booked resorces of a given area
-     * @param unknown $area_id
+     * @param int $area_id
      * @return multitype:
      */
     public function getEmailsBookerArea($id_space, $area_id) {
@@ -785,8 +876,9 @@ class BkCalendarEntry extends Model {
                 AND user.is_active = 1  
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=?
+                AND core_j_spaces_user.status>?
                 ;";
-        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space));
+        $req = $this->runRequest($sql, array($area_id, $id_space, $id_space, CoreSpace::$VISITOR));
         return $req->fetchAll();
     }
 
@@ -794,13 +886,13 @@ class BkCalendarEntry extends Model {
     /**
      * Get user future bookings
      */
-    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): array{
+    public function getUserFutureBookings($id_space, $id_user, $id_resource=null): ?array{
         $now = time();
         $q = array('today' => $now, 'id_user' => $id_user);
         $sql = 'SELECT bk_calendar_entry.*, spaces.name as space, resources.name as resource FROM bk_calendar_entry';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
-        $sql .= ' WHERE start_time >= :today AND recipient_id=:id_user';
+        $sql .= ' WHERE bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0';
         if($id_space && intval($id_space) > 0) {
             $q['id_space'] = $id_space;
             $sql .= ' AND bk_calendar_entry.id_space = :id_space';
@@ -827,11 +919,192 @@ class BkCalendarEntry extends Model {
         $sql = 'SELECT bk_calendar_entry.*, resources.name as resource FROM bk_calendar_entry';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = bk_calendar_entry.id_space';
         $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
-        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user';
+        $sql .= ' WHERE bk_calendar_entry.id_space=:id_space AND bk_calendar_entry.start_time >= :today AND bk_calendar_entry.recipient_id=:id_user AND bk_calendar_entry.deleted=0';
         $sql .= ' ORDER BY bk_calendar_entry.start_time DESC LIMIT '.$max;
         $q = array('today' => $from, 'id_user' => $id_user, 'id_space' => $id_space);
         $res = $this->runRequest($sql, $q);
         return $res->fetchAll();
+    }
+
+    public function blockedEntries($id_space) {
+        $sql = "SELECT * FROM bk_calendar_entry WHERE reason>0 AND id_space=? AND deleted=0 ORDER BY start_time DESC";
+        $req = $this->runRequest($sql, array($id_space));
+        return $req->fetchAll();
+    }
+
+    public function computeDuration($id_space, $booking) {
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $id_resource = $booking['resource_id'];
+        $id_client = $booking['responsible_id'];
+        $start_time = $booking['start_time'];
+        $end_time = $booking['end_time'];
+        $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $day_begin = $bkScheduling['day_begin'];
+        $day_end = $bkScheduling['day_end'];
+
+        $modelClient = new ClCLient();
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_client);
+        $pricingModel = new BkNightWE();
+        $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
+        if(!$pricingInfo) {
+            throw new PfmException('no pricing found for client '.$id_client);
+        }
+
+        $night_begin = $pricingInfo['night_start'];
+        $night_end = $pricingInfo['night_end'];
+        $we_array = explode(",", $pricingInfo['choice_we']);
+        $night_rate = $pricingInfo['tarif_night'] == 1 ? true : false;
+        $we_rate = $pricingInfo['tarif_we'] == 1 ? true : false;
+        
+        $searchDate_start = $start_time;
+        $searchDate_end = $end_time;
+
+        // $booking_time_scale = 2;
+        // $resa_block_size = 3600;
+        $booking_time_scale = 1;
+        $resa_block_size = 60;
+        switch ($booking_time_scale) {
+            case '1':
+                $gap = $resa_block_size;
+                break;
+            case '2':
+                $gap = 3600;
+                break;
+            case '3':
+                $gap = 3600 * 24;
+                break;
+            default:
+                $gap = 3600;
+                break;
+        }
+
+        $gaps = [];
+        $gapDuration = 0;
+        $timeStep = $searchDate_start;
+        $kind = null;
+
+        while ($timeStep < $searchDate_end) {
+            $is_open = true; // is open ? (is_monday etc...)
+            $d = strtolower(date('l', $timeStep));
+            if(!array_key_exists('is_'.$d, $bkScheduling) || !$bkScheduling['is_'.$d]) {
+                $is_open = false;
+            }
+            if(date('G', $timeStep) >= $day_end || date('G', $timeStep) < $day_begin || !$is_open) { // after day end continue till open
+                if($kind && $kind!="closed") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'closed';
+            } else if($we_rate && $we_array[date('N', $timeStep)-1] == 1) {
+                // weekend
+                if($kind && $kind != "we") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'we';
+            } else if($night_rate && (date('G', $timeStep) < $night_end || date('G', $timeStep) >= $night_begin)) {
+                if($kind && $kind != "night") {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                } 
+                    $gapDuration += $gap;
+                
+                $kind = 'night';
+            } else {
+                if($kind && $kind != 'day') {
+                    $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+                    $gapDuration = 0;
+                    $searchDate_start = $timeStep;
+                }
+                    $gapDuration += $gap;
+                
+                $kind = 'day';
+            }
+
+            $timeStep += $gap;
+        }
+        if($gapDuration > 0) {
+            $gaps[] = ['kind' => $kind, 'start' => $searchDate_start, 'end' => $timeStep, 'duration' => $gapDuration];
+        }
+
+        $total_duration = 0;
+        $nb_day = 0;
+        $nb_night = 0;
+        $nb_we = 0;
+        $nb_closed = 0;
+        foreach ($gaps as $gap) {
+            if($gap['kind'] == 'closed') {
+                $nb_closed += $gap['duration'];
+                continue;
+            }
+            $total_duration += $gap['duration'];
+            switch ($gap['kind']) {
+                case 'day':
+                    $nb_day += $gap['duration'];
+                    break;
+                case 'night':
+                    $nb_night += $gap['duration'];
+                    break;
+                case 'we':
+                    $nb_we += $gap['duration'];
+                    break;
+                default:
+                    Configuration::getLogger()->error('[compute] unknown kind', ['kind' => $gap['kind']]);
+            }
+        }
+
+        $nb_hours_closed = round($nb_closed / 3600, 2);
+        $nb_hours_day = round($nb_day / 3600, 2);
+        $nb_hours_night = round($nb_night / 3600, 2);
+        $nb_hours_we = round($nb_we / 3600, 2);
+        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
+        $ratio_bookings_day = 0;
+        $ratio_bookings_night = 0;
+        $ratio_bookings_we = 0;
+        if($totalHours > 0) {
+            $ratio_bookings_day = round($nb_hours_day / $totalHours, 2);
+            $ratio_bookings_night = round($nb_hours_night / $totalHours, 2);
+            $ratio_bookings_we = round($nb_hours_we / $totalHours, 2);
+        }
+
+        $result = [
+            'total' => $total_duration,
+            'steps' => $gaps,
+            'hours' => [
+                'nb_hours_closed' => $nb_hours_closed,
+                'nb_hours_day' => $nb_hours_day,
+                'nb_hours_night' => $nb_hours_night,
+                'nb_hours_we' => $nb_hours_we,
+                'ratio_bookings_day' => $ratio_bookings_day,
+                'ratio_bookings_night' => $ratio_bookings_night,
+                'ratio_bookings_we' => $ratio_bookings_we
+            ]
+        ];
+        Configuration::getLogger()->debug('[booking] compute_duration', $result);
+        return $result;
+    }
+
+    function lastUser($id_space, $id){
+        $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete, max(start_time) as last_start FROM bk_calendar_entry WHERE id_space=? AND recipient_id=?';
+        $res = $this->runRequest($sql, [$id_space, $id]);
+        return $res->rowCount() > 0 ? $res->fetch() : ['last_update' => 0, 'last_delete' => 0, 'last_start' => 0];
+    }
+
+    function lastUserPeriod($id_space, $id, $from, $to){
+        if(intval($from) == 0) {
+            return $this->lastUser($id_space, $id);
+        }
+        $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete, max(start_time) as last_start FROM bk_calendar_entry WHERE id_space=? AND recipient_id=? AND start_time>=? AND start_time<=?';
+        $res = $this->runRequest($sql, [$id_space, $id, $from, $to]);
+        return $res->rowCount() > 0 ? $res->fetch() : ['last_update' => 0, 'last_delete' => 0, 'last_start' => 0];
     }
 
 }

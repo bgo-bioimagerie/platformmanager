@@ -50,14 +50,12 @@ class Session {
      * 
      * @param string $name Name of the attribut
      * @return string Value of the attribut
-     * @throws Exception If the attribut cannot be found in session
      */
     public function getAttribut($name) {
         if ($this->isAttribut($name)) {
             return $_SESSION[$name];
         } else {
             return "";
-            //throw new Exception("Cannot find the Attribut '$name' in the session");
         }
     }
 

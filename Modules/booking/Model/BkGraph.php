@@ -10,69 +10,6 @@ require_once 'Modules/booking/Model/BkNightWE.php';
  */
 class BkGraph extends Model {
 
-    /**
-     * @deprecated since ec_user depreciation
-     */
-    public function getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode) {
-        if($dateBegin == "") {
-            throw new PfmParamException("invalid start date");
-        }
-        if($dateEnd == "") {
-            throw new PfmParamException("invalid end date");
-        }
-        $dateBeginArray = explode("-", $dateBegin);
-        $day_start = $dateBeginArray[2];
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-
-        $dateEndArray = explode("-", $dateEnd);
-        $day_end = $dateEndArray[2];
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
-
-        $timeBegin = mktime(0, 0, 0, $month_start, $day_start, $year_start);
-        $timeEnd = mktime(0, 0, 0, $month_end, $day_end, $year_end);
-
-        $data = array();
-
-        $in_color = "";
-        $pass = 0;
-        foreach ($excludeColorCode as $col) {
-            $in_color .= $col . ",";
-            $pass++;
-        }
-        if ($pass > 0) {
-            $in_color = substr($in_color, 0, -1);
-        }
-
-        $sql = 'SELECT * FROM re_info WHERE id_space=? AND deleted=0';
-        $resources = $this->runRequest($sql, array($id_space))->fetchAll();
-
-        foreach ($resources as $resource) {
-            $d['resource'] = $resource["name"];
-            foreach ($resps as $resp) {
-                $sql = "SELECT * FROM bk_calendar_entry WHERE resource_id=? AND "
-                        . "recipient_id IN (SELECT id_user FROM ec_j_user_responsible WHERE id_resp=?) "  // @bug ec_j_user_responsible does not exists
-                        . " AND start_time >=" . $timeBegin . " AND end_time <=" . $timeEnd . " "
-                        . " AND id_space=?"
-                        . " AND deleted=0 ";
-                if ($in_color != "") {
-                    $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
-                }
-                $resa = $this->runRequest($sql, array($resource['id'], $resp['id'], $id_space));
-
-                $resatable = $resa->fetchAll();
-                $timeSec = 0;
-                foreach ($resatable as $r) {
-                    $timeSec += $r['end_time'] - $r['start_time'];
-                }
-                $d['resp_' . $resp['id']] = array($resa->rowCount(), round($timeSec / 3600));
-            }
-            $data[] = $d;
-        }
-        return $data;
-    }
-
     public function getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode) {
         if($dateBegin == "") {
             throw new PfmParamException("invalid start date");
@@ -610,8 +547,8 @@ class BkGraph extends Model {
 
     /**
      * Generate a pie chart number of reservation per resource
-     * @param unknown $year
-     * @param unknown $numTotal
+     * @param int $year
+     * @param float $numTotal
      * @return string
      */
     public function getCamembertContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
@@ -700,8 +637,8 @@ class BkGraph extends Model {
 
     /**
      * Generate a pie chart time of reservation per resource
-     * @param unknown $year
-     * @param unknown $numTotal
+     * @param int $year
+     * @param float $numTotal
      * @return string
      */
     public function getCamembertTimeContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {

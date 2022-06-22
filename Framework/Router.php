@@ -94,7 +94,7 @@ class Router {
         }
 
         $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
-        //Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
+        // Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
         if(!$match) {
             Configuration::getLogger()->debug('No route match, check old way');
@@ -177,7 +177,11 @@ class Router {
             $this->runAction($controller, $urlInfo, $action, $args);
             $reqEnd = microtime(true);
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            if ($e instanceOf PfmException && !$e->sendReports) {
+                Configuration::getLogger()->debug('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            } else {
+                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            }
             $reqEnd = microtime(true);
             $this->manageError($e);
         }
@@ -189,7 +193,7 @@ class Router {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['route' => $reqRoute]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -204,7 +208,7 @@ class Router {
             $registry = \Prometheus\CollectorRegistry::getDefault();
             $counter = $registry->getOrRegisterCounter('pfm', 'request_nb', 'quantity', ['url', 'code']);
             $counter->incBy(1, [$reqRoute, http_response_code()]);
-            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [10, 20, 50, 100, 1000]);
+            $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
         } catch(Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
@@ -240,37 +244,13 @@ class Router {
      * @throws Exception
      */
     private function install($request) {
-        throw new PfmDbException("Install not supported anymore");
-        /*
-        $path = "";
-        if ($request->isParameterNotEmpty('path')) {
-            $path = $request->getParameter('path');
-        }
-
-        if ($path == "install") {
-
-            $dsn = Configuration::get('dsn', '');
-            if ($dsn != '') {
-                throw new PfmDbException("The database is already installed");
-            }
-
-            $controller = $this->createControllerImp("core", "coreinstall", 0, $request);
-            $controller->runAction("core", "index");
-            return true;
-        } else if ($path == "caches") {
-            $install_modelCache = new FCache();
-            $install_modelCache->load();
-            echo "Caches are up to date";
-            return true;
-        }
-        return false;
-        */
+        throw new PfmDbException("Install not supported anymore", 403);
     }
 
     /**
      * 
      * @param Request $request
-     * @return type
+     * @return array
      */
     private function getUrlData(Request $request) {
 
@@ -280,7 +260,6 @@ class Router {
             $path = $request->getParameter('path');
         } else {
             $path = "coretiles";
-            // throw new Exception("The URL is not valid: unable to find the path");
         }
 
         $pathData = explode("/", $path);
@@ -319,11 +298,15 @@ class Router {
      */
     private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
 
-        $id_space = isset($args['id_space']) ? $args['id_space'] : null;
+        $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
+
         $space = null;
         if ($id_space) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
+            if(!$space) {
+                throw new PfmUserException('space not found', 404);
+            }
         }
 
 
@@ -339,7 +322,7 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require ($fileController);
+            require_once ($fileController);
             $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
@@ -359,11 +342,11 @@ class Router {
                     }
                 }
                 else{
-                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName");
+                    throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName", 500);
                 }
             }
             else{
-                throw new PfmRoutingException("Unable to find the controller file '$fileController' ");
+                throw new PfmRoutingException("Unable to find the controller file '$fileController' ", 500);
             }
         }
     }
@@ -421,18 +404,26 @@ class Router {
 
         $view = new View('error');
         $view->setFile('Modules/error.php');
-        $view->generate(array(
-            'context' => [
-                    "mainMenu" =>null,
-                    "sideMenu" => null,
-                    "spaceMenu" => null,
-                    "rootWeb" => Configuration::get("rootWeb", "/"),
-                    "currentSpace" => null,  // current space if any
-                    "role" => -1   // user role in space if any
-            ],
-            'type' => $type,
-            'message' => $exception->getMessage()
-        ));
+        try {
+            $view->generate(array(
+                'context' => [
+                        "mainMenu" =>null,
+                        "sideMenu" => null,
+                        "spaceMenu" => null,
+                        "rootWeb" => Configuration::get("rootWeb", "/"),
+                        "lang" => 'en',
+                        "currentSpace" => null,  // current space if any
+                        "role" => -1 ,  // user role in space if any,
+                        "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "dev" => false
+                ],
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+        } catch(Throwable $e) {
+            echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
+            echo '<br>'.$exception->getMessage();
+        }
     }
 
 }

@@ -48,20 +48,20 @@
     a.mybutton:hover { background: #337ab7; color: #ffffff; border: 1px solid #337ab7;}
 
 </style>
-<div class="col-md-12" style="background-color:#ffffff;">
-    <div class="col-md-12">
-        <div class="col-md-6">
+<div class="col-12" style="background-color:#ffffff;">
+    <div class="col-12">
+        <div class="col-6">
             <h1> <?php echo $pageTitle ?></h1>
         </div>
-        <div class="col-md-6 text-right" style="margin-top:12px;">
-            <img src="<?php echo $pageLogo ?>" height="50px" />
+        <div class="col-6 text-right" style="margin-top:12px;">
+            <img alt="logo" src="<?php echo $pageLogo ?>" height="50px" />
         </div>
     </div>
     <div class="page-header">
         <br/>
     </div>
     <br/>
-    <div class="col-md-12" style="text-align:center; background-color:#ffffff;">
+    <div class="col-12" style="text-align:center; background-color:#ffffff;">
         <?php
         foreach ($categories as $cat) {
             $buttonStyle = "mybutton";

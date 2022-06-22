@@ -26,7 +26,7 @@ class QuoteInstall extends Model {
         $quoteitem->createTable();
         
         if (!file_exists('data/quote/')) {
-            mkdir('data/quote/', 0777, true);
+            mkdir('data/quote/', 0755, true);
         }
     }
 }

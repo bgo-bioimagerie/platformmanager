@@ -39,14 +39,14 @@ class Utils {
             if($now) {
                 return $defaultTs;
             }
-            throw new PfmParamException("invalide date ".$date, 403);
+            throw new PfmParamException("invalide date ".$date);
         }
         $date_en = self::dateToEn($date, $lang);
         if($date_en === false) {
             if($now) {
                 return $defaultTs;
             }
-            throw new PfmParamException("invalide date ".$date, 403);
+            throw new PfmParamException("invalide date ".$date);
         } 
         return strtotime(sprintf("%s %d:%d:%d", $date_en, $hour, $min, $sec));
     }

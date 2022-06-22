@@ -7,7 +7,6 @@ class AntibodiesRouting extends Routing{
     public function listRoutes(){
         
         // config
-        $this->addRoute("antibodiesconfigadmin", "antibodiesconfigadmin", "antibodiesconfigadmin", "index");
         $this->addRoute("antibodiesconfig", "antibodiesconfig", "antibodiesconfig", "index", array("id_space"), array(""));
 
         // add here the module routes

@@ -42,9 +42,7 @@ class CoreLdap {
         // On traite le cas NON SSO
         // -> LDAP sans SSO
         // -> Imap
-        $passwd_md5 = md5($_password);
         if (@function_exists("ldap_connect")) {
-            // $login_search = ereg_replace("[^-@._[:space:][:alnum:]]", "", $_login);
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             if ($login_search != $_login){
                 return "6";
@@ -99,12 +97,10 @@ class CoreLdap {
             //$modelCoreconfig = new CoreConfig();
             // Attributs testés pour egalite avec le login
             $atts = explode("|", CoreLdapConfiguration::get('ldap_search_attr', "uid"));
-            // $atts = array('uid', 'login', 'userid', 'cn', 'sn', 'samaccountname', 'userprincipalname');
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
             // Tenter une recherche pour essayer de retrouver le DN
             reset($atts);
             foreach ($atts as $att) {
-            //while (list (, $att ) = each($atts)) {
                 $dn = $this->grr_ldap_search_user($ds, $ldap_base, $att, $login_search, $ldap_filter);
                 if (($dn == "error_1") || ( $dn == "error_2") || ( $dn == "error_3")){
                     return $dn;

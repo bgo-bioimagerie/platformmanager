@@ -7,6 +7,14 @@ class BookingRouting extends Routing{
     public function routes($router) {
         $router->map('GET', '/user/booking/future/[i:id_space]/[i:id_resource]', 'booking/booking/future', 'booking_list_future');
         $router->map('GET', '/booking/[i:id_space]/journal', 'booking/booking/journal', 'booking_journal');
+
+        $router->map('OPTIONS', '/caldav/[i:id_space]/', 'booking/bookingcaldav/discovery', 'booking_caldav_discovery_space');
+        $router->map('OPTIONS', '/caldav/[i:id_space]/0/', 'booking/bookingcaldav/discovery', 'booking_caldav_discovery_space_default');
+
+        $router->map('PROPFIND', '/caldav/[i:id_space]/[i:id_cal]/', 'booking/bookingcaldav/propfind', 'booking_caldav_propfind');
+        $router->map('PROPFIND', '/caldav/[i:id_space]/[i:id_cal]', 'booking/bookingcaldav/propfind', 'booking_caldav_propfind_notrailing'); // btsync sometimes force removal of trailing slash
+        $router->map('REPORT', '/caldav/[i:id_space]/1/', 'booking/bookingcaldav/report', 'booking_caldav_report');
+        $router->map('REPORT', '/caldav/[i:id_space]/0/', 'booking/bookingcaldav/report', 'booking_caldav_report_default');
     }
 
     
@@ -14,9 +22,9 @@ class BookingRouting extends Routing{
         
         // config
         $this->addRoute("bookingconfig", "bookingconfig", "bookingconfig", "index", array("id_space"), array(""));
-        $this->addRoute("bookingconfigadmin", "bookingconfigadmin", "bookingconfigadmin", "index");
+        $this->addRoute("bookingsettingsconfig", "bookingsettingsconfig", "bookingconfig", "index", array("id_space"), array(""));
         
-        // user srttings
+        // user settings
         $this->addRoute("bookingusersettings", "bookingusersettings", "bookingusersettings", "index");
         
         // add here the module routes
@@ -59,9 +67,7 @@ class BookingRouting extends Routing{
         
         $this->addRoute("bookingeditreservationperiodicdelete", "bookingeditreservationperiodicdelete", "bookingdefault", "deleteperiod", array("id_space", "id_period"), array("", ""));
         
-        
-        
-        $this->addRoute("bookingauthorisations", "bookingauthorisations", "bookingauthorisations", "index", array("id_space", "id"), array("", ""));
+        $this->addRoute("bookingauthorisations", "bookingauthorisations", "bookingauthorisations", "index", array("id_space", "id_user"), array("", ""));
         $this->addRoute("bookingauthorisationshist", "bookingauthorisationshist", "bookingauthorisations", "history", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsadd", "bookingauthorisationsadd", "bookingauthorisations", "add", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsedit", "bookingauthorisationsedit", "bookingauthorisations", "edit", array("id_space", "id"), array("", ""));
@@ -92,12 +98,6 @@ class BookingRouting extends Routing{
     
         // update user resp in booking
         $this->addRoute("updateresaresps", "updateresaresps", "bookinginvoice", "updateresaresponsibles", array(), array());
-        
-        // pm transfert
-        // $this->addRoute("bookinggetreservations", "bookinggetreservations", "Bookingreservations", "getreservations", array("id_resource", "userlogin"), array("", ""), true);
-        
-        
-        
-        
+           
     }
 }

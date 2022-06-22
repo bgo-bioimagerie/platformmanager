@@ -50,7 +50,7 @@ class ServicespurchaseController extends ServicesController {
         );
 
         $table = new TableView();
-        $table->setTitle(ServicesTranslator::services($lang), 3);
+        $table->setTitle(ServicesTranslator::Purchase($lang), 3);
         $table->addLineEditButton("servicespurchaseedit/" . $id_space);
         $table->addDeleteButton("servicespurchasedelete/" . $id_space, "id", "date");
         
@@ -75,14 +75,14 @@ class ServicespurchaseController extends ServicesController {
         $services = $modelServices->getForList($id_space);
 
         $form = new Form($this->request, "editserviceform");
-        $form->addSeparator(ServicesTranslator::Edit_service($lang));
+        $form->addSeparator(ServicesTranslator::New_Purchase($lang));
 
         $form->addText("comment", CoreTranslator::Description($lang), false, $value["comment"]);
         $form->addDate("date", CoreTranslator::Date($lang), false, $value["date"]);
 
         $formAdd = new FormAdd($this->request, "editserviceformadd");
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
-        $formAdd->addNumber("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
+        $formAdd->addFloat("quantities", ServicesTranslator::Quantity($lang), $items["quantities"]);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, ServicesTranslator::services($lang));
@@ -101,18 +101,22 @@ class ServicespurchaseController extends ServicesController {
                    $qOld = 0; 
                 }
                 else{
-                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id);
+                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id)['quantity'];
                 }
-                $qDelta = $servicesQuantities[$i] - $qOld[0];
+                $qDelta = $servicesQuantities[$i] - $qOld;
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "add");
                 $modelItem->set($id_space, $id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
             }
 
-            $this->redirect("servicespurchase/" . $id_space);
-            return;
+            return $this->redirect("servicespurchase/" . $id_space, [], ['purchase' => ['id' => $id_purchase]]);
         }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "formHtml" => $form->getHtml($lang),
+            "data" => ['purchase' => $value, 'items' => $items]
+        ));
     }
 
     public function deleteAction($id_space, $id) {

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class SePrice extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_prices";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_prices` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -22,9 +26,12 @@ class SePrice extends Model {
         
     }
     
-    public function getPrice($id_space, $id_service, $id_belongings){
+    /**
+     * Belonging = pricing
+     */
+    public function getPrice($id_space, $id_service, $id_pricing) {
         $sql = "SELECT price FROM se_prices WHERE id_service=? AND id_belonging=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_service, $id_belongings, $id_space));
+        $req = $this->runRequest($sql, array($id_service, $id_pricing, $id_space));
         if ($req->rowCount() == 1){
             $tmp = $req->fetch();
             return $tmp[0];

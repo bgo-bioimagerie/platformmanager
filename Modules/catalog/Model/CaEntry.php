@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class CaEntry extends Model {
 
+    public function __construct() {
+        $this->tableName = "ca_entries";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_entries` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -36,7 +40,7 @@ class CaEntry extends Model {
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {
-        $sql = "INSERT INTO ca_entries(id_space, id_category, title, short_desc, full_desc) VALUES(?,?,?,?,?)";
+        $sql = "INSERT INTO ca_entries(id_space, id_category, title, short_desc, full_desc, image_url) VALUES(?,?,?,?,?, '')";
         $this->runRequest($sql, array($id_space, $id_category, $title, $short_desc, $full_desc));
         return $this->getDatabase()->lastInsertId();
     }

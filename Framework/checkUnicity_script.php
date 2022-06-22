@@ -18,7 +18,7 @@ isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
 pwdConfirmInput = "";
 // check elements when submitting form
-form?.setAttribute("onsubmit", "return validateUserForm(event)");
+if(form) { form.setAttribute("onsubmit", "return validateUserForm(event)"); }
 
 
 // prepare unique elements checking
@@ -117,7 +117,6 @@ function validateUserForm(origin) {
                     // Data is not valid
                     unicity = false;
                     if (!data.isUnique) {
-                        // TODO: find a way to get values from CoreTranslator !!!
                         msg = "this " + type + " already exists";
                         displayError(errors, elemHTML, msg);
                     }

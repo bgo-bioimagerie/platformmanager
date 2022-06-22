@@ -10,7 +10,7 @@ BkCalendarEntry -> ResourceInfo[label="resource_id"];
 BkCalendarEntry -> booked_by_id;
 BkCalendarEntry -> ClClientUser[label="recipient_id"];
 BkCalendarEntry -> color_type_id;
-BkCalendarEntry -> package_id;
+BkCalendarEntry -> BkPackage[label="id"];
 BkCalendarEntry -> responsible_id;
 BkCalendarEntry -> InInvoice [label="invoice_id"];
 BkCalendarEntry -> BkCalendarPeriod[label="period_id"];
@@ -24,18 +24,19 @@ BkCalSupInfo -> ResourceInfo [label="id_resource"];
 BkNightWE -> ClClient [label="id_belonging"];  // to be checked
 
 BkOwnerPrice -> ResourceInfo [label="id_resource"];
-BkOwnerPrice -> VirtualPackage [label="id_package"];
+BkOwnerPrice -> BkPackage [label="id_package"]; // from VirtualPackage
 BkOwnerPrice -> Unknown [label="id_unit"];
 
 BkPackages -> VirtualPackage [label="id_package"];  // what is package, seems internal counter, no "link"
 BkPackages -> ResourceInfo [label="id_resource"];
 
+// @deprecated
 bk_j_packages_prices -> VirtualPackage [label="id_package"];
 bk_j_packages_prices -> BkPrice [label="id_pricing"];
 bk_j_packages_prices -> BkPackage [label="id_package"];
 
 BkPrice -> ResourceInfo [label="id_resource"];
-BkPrice -> VirtualPackage [label="id_package"];
+BkPrice -> BkPackage [label="id_package"]; // from VirtualPackage
 BkPrice -> ClPricing[label="id_belonging"];
 
 BkRestrictions -> ResourceInfo [label="id_resource"];
@@ -95,7 +96,7 @@ InInvoice -> id_project; // no ref found
 InInvoice -> id_edited_by;
 InInvoice -> ClClient [label="id_responsible"]; // ? client
 
-InInvoiceItem -> InInvoice [label="id_invoice"];
+InInvoiceItem -> InInvoice [label="id_invoice"]; // contains some BkPackage["id"]
 
 InVisa -> CoreUser [label="id_user"];
 
@@ -126,7 +127,7 @@ ReVisa -> ReCategory [label="id_resource_category"];
 
 SeOrder -> InInvoice [label="id_invoice"];
 SeOrder -> id_unit; // ????
-SeOrder -> CoreUser [label="id_responsible"];
+SeOrder -> ClClient [label="id_resp"];
 SeOrder -> SeProject [label="id_project"];
 SeOrder -> CoreUser [label="id_edited_by"];
 

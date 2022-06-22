@@ -22,8 +22,12 @@ plans:
     features:
       - Grafana statistics interactive dashboards
       - User satisfaction/rating
+      - Document visibility scopes
+      - Caldav calendar integration
     flags:
       - grafana
+      - documents
+      - caldav
       - satisfaction
   - name: silver
     color: silver

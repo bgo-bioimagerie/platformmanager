@@ -43,10 +43,11 @@ class ReEventType extends Model {
     public function set($id, $name, $id_space) {
         if ($this->exists($id_space, $id)) {
             $sql = "UPDATE re_event_type SET name=? WHERE id=? AND id_space=? AND deleted=0";
-            $id = $this->runRequest($sql, array($name, $id, $id_space));
+            $this->runRequest($sql, array($name, $id, $id_space));
         } else {
             $sql = "INSERT INTO re_event_type (name, id_space) VALUES (?,?)";
             $this->runRequest($sql, array($name, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }

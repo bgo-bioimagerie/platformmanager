@@ -40,8 +40,7 @@ class HelpdeskController extends CoresecureController {
         $sm = new CoreSpace();
         $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
         if(!$role || $role < CoreSpace::$MANAGER) {
-            $this->render(['data' => ['notifs' => 0]]);
-            return;
+            return $this->render(['data' => ['notifs' => 0]]);
         }
 
         $hm = new Helpdesk();
@@ -56,7 +55,7 @@ class HelpdeskController extends CoresecureController {
                 $total += intval($u['total']);
             }
         }
-        $this->render(['data' => ['notifs' => $total]]);
+        return $this->render(['data' => ['notifs' => $total]]);
     }
 
     public function setSettingsAction($id_space) {
@@ -146,7 +145,7 @@ class HelpdeskController extends CoresecureController {
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if(!$ticket && $id_ticket > 0) {
-            throw new PfmException('ticket not found', 404);
+            throw new PfmParamException('ticket not found', 404);
         }
         if($id_ticket > 0 && $ticket['id_space'] != $id_space) {
             throw new PfmAuthException('not authorized', 403);
@@ -188,6 +187,10 @@ class HelpdeskController extends CoresecureController {
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;
                 $filePath = $c->path($file);
+                $fileBase = dirname($filePath);
+                if(!file_exists($fileBase)) {
+                    mkdir($fileBase, 0750, true);
+                }
                 if(!move_uploaded_file($_FILES[$fid]["tmp_name"], $filePath)) {
                     Configuration::getLogger()->error('[helpdesk] file upload error', ['file' => $_FILES[$fid], 'to' => $filePath]);
                     throw new PfmFileException("Error, there was an error uploading your file", 500);
@@ -244,7 +247,7 @@ class HelpdeskController extends CoresecureController {
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if(!$ticket) {
-            throw new PfmAuthException('ticket not found', 404);
+            throw new PfmParamException('ticket not found', 404);
         }
         $ticket['status'] = intval($ticket['status']);
         if($ticket['id_space'] != $id_space) {

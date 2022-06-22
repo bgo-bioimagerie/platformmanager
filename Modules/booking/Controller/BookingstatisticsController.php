@@ -35,7 +35,9 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
  */
 class BookingstatisticsController extends StatisticsController {
 
-    
+    /**
+     * @bug sends back stats as print_r, not a report
+     */
     public function statquantitiesAction($id_space){
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -47,21 +49,28 @@ class BookingstatisticsController extends StatisticsController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$id_space);
         
         if ($form->check()){
-        
-            $modelBooking = new BkCalendarEntry();
-            $stats = $modelBooking->getStatsQuantities(
-                    $id_space,
-                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
-                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
-                    );
-
-            $stats = !empty($stats) ?: "No data found for this period";
-            // TODO: link that to a report generation
-            print_r($stats);
-            return;
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $dateBegin = $form->getParameter("datebegin");
+            $dateEnd = $form->getParameter("dateend");
+            $name = 'stats_'.BkStats::STATS_QUANTITIES.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_QUANTITIES,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd, 
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+            
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
         
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
@@ -82,33 +91,28 @@ class BookingstatisticsController extends StatisticsController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$id_space);
         
         if ($form->check()){
-        
-            $modelBooking = new BkCalendarEntry();
-            $stats = $modelBooking->getStatTimeResps(
-                    $id_space,
-                    CoreTranslator::dateToEn($form->getParameter("datebegin"), $lang),
-                    CoreTranslator::dateToEn($form->getParameter("dateend"), $lang)
-                    );
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $dateBegin = $form->getParameter("datebegin");
+            $dateEnd = $form->getParameter("dateend");
+            $name = 'stats_'.BkStats::STATS_BK_TIME.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_BK_TIME,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd, 
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
             
-            $csv = ",";
-            foreach ( $stats["resources"] as $resoure ){
-                $csv .= $resoure["name"] . ",";
-            }
-            $csv .= "\n";
-            foreach ( $stats["count"] as $data ){
-                $csv .= $data["responsible"] . ",";
-                foreach( $data["count"] as $count ){
-                    $csv .= $count["time"] . ",";
-                }
-                $csv .= "\n";
-            }
-            
-            header('Content-Disposition: attachment; filename="filename.csv";');
-            echo $csv;
-            return;
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
         
-        $this->render(array(
+        return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
@@ -129,8 +133,8 @@ class BookingstatisticsController extends StatisticsController {
             $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
-            $m = $dateArray[1] ?? '1';
-            $d = $dateArray[2] ?? '1';
+            $m = $dateArray[1] ?? '01';
+            $d = $dateArray[2] ?? '01';
             $date_begin = CoreTranslator::dateFromEn($y . "-" . $m . "-" . $d, $lang);
         }
         $date_end = $this->request->getParameterNoException("date_end");
@@ -163,7 +167,7 @@ class BookingstatisticsController extends StatisticsController {
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
         $form->setValidationButton(CoreTranslator::Ok($lang), 'bookingreservationstats/' . $id_space);
-        $form->setButtonsWidth(2, 8);
+
 
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
@@ -171,16 +175,24 @@ class BookingstatisticsController extends StatisticsController {
             $excludeColorCode = $this->request->getParameter("exclude_color");
             $generateclientstats = $this->request->getParameter("generateclientstats");
 
-            //require_once 'externals/PHPExcel/Classes/PHPExcel.php';
-            $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, null);
-            // write excel file
-            $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
-
-            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
-            header('Cache-Control: max-age=0');
-            $objWriter->save('php://output');
-            return;
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $name = 'stats_'.BkStats::STATS_BK.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_BK,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd,
+                "excludeColorCode" => $excludeColorCode,
+                "generateclientstats" => $generateclientstats, 
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array(
@@ -206,19 +218,9 @@ class BookingstatisticsController extends StatisticsController {
         $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
         $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
 
-        $modelResource = new ResourceInfo();
-        $resources = $modelResource->getForSpace($id_space);
-        $resourcesNumber = count($resources);
-
-        $modelResourceC = new ReCategory();
-        $resourcesCategory = $modelResourceC->getBySpace($id_space);
-        $resourcesCategoryNumber = count($resourcesCategory);
         // render data
         $camembertCount = $modelGraph->getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end);
         $camembertTimeCount = $modelGraph->getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end);
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=booking_stats.csv");
 
         $content = "";
         // annual number
@@ -251,8 +253,14 @@ class BookingstatisticsController extends StatisticsController {
         foreach ($camembertTimeCount as $g) {
             $content .= $g[0] . " ; " . $g[1] . "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return ['data' => ['stats' => $content]];
+        }
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=booking_stats.csv");
         echo $content;
-        return;
+        
     }
 
     public function statbookingusersAction($id_space) {
@@ -299,11 +307,24 @@ class BookingstatisticsController extends StatisticsController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "statistics/" . $id_space);
 
         if ($form->check()) {
-            // run the database query
-            $model = new BkStatsUser();
-            $users = $model->bookingUsers($id_space, CoreTranslator::dateToEn($form->getParameter("startdate"), $lang), CoreTranslator::dateToEn($form->getParameter("enddate"), $lang));
-
-            $this->exportstatbookingusersCSV($users);
+            $period_begin = $form->getParameter("startdate");
+            $period_end = $form->getParameter("enddate");
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $name = 'stats_'.BkStats::STATS_BK_USERS.'_'.str_replace('/', '-', $period_begin).'_'.str_replace('/', '-', $period_end).'.csv';
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => BkStats::STATS_BK_USERS,
+                "dateBegin" => $period_begin,
+                "dateEnd" => $period_end,
+                "user" => ["id" => $_SESSION['id_user']],
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -316,26 +337,8 @@ class BookingstatisticsController extends StatisticsController {
         }
     }
 
-    /**
-     * Internal method to export booking users into csv
-     * @param array $table
-     * @param string $lang
-     */
-    private function exportstatbookingusersCSV($users) {
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=bookingusers.csv");
-
-        $content = "name ; email \r\n";
-
-        foreach ($users as $user) {
-            $content.= $user["name"] . ";";
-            $content.= $user["email"] . "\r\n";
-        }
-        echo $content;
-    }
-
     public function grrAction($id_space) {
+        // table not file, do not async
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -365,12 +368,10 @@ class BookingstatisticsController extends StatisticsController {
 
             // convert start date to unix date
             $tabDate = explode("-", $searchDate_start);
-            $date_debut = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_s = mktime(0, 0, 0, $tabDate[1], $tabDate[2], $tabDate[0]);
 
             // convert end date to unix date
             $tabDate = explode("-", $searchDate_end);
-            $date_fin = $tabDate[2] . '/' . $tabDate[1] . '/' . $tabDate[0];
             $searchDate_e = mktime(0, 0, 0, $tabDate[1], $tabDate[2] + 1, $tabDate[0]);
 
             if ($searchDate_e <= $searchDate_s) {
@@ -391,16 +392,12 @@ class BookingstatisticsController extends StatisticsController {
             $contition_et_ou = $this->request->getParameterNoException('condition_et_ou');
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
-            //print_r($champ);
-            //print_r($type_recherche);
-            //print_r($text);
-
             $reportModel = new BkReport();
             $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
 
-            //print_r($table);
-
             $outputType = $this->request->getParameterNoException('output');
+
+
 
             if ($outputType == 1) { // only details
                 $this->render(array(
@@ -448,12 +445,10 @@ class BookingstatisticsController extends StatisticsController {
                 ));
                 return;
             } else if ($outputType == 4) { // details csv
-                $this->exportDetailsCSV($table, $lang);
-                return;
+                return $this->exportDetailsCSV($table, $lang);
             } else if ($outputType == 5) { // summary csv
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                $this->exportSummaryCSV($summaryTable, $lang);
-                return;
+                return $this->exportSummaryCSV($summaryTable);
             }
         }
 
@@ -469,9 +464,6 @@ class BookingstatisticsController extends StatisticsController {
      * @param string $lang
      */
     private function exportDetailsCSV($table, $lang) {
-
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
 
         $content = "";
         $content.= ResourcesTranslator::Area($lang) . " ; "
@@ -497,17 +489,21 @@ class BookingstatisticsController extends StatisticsController {
             $content.= $t["login"] . " ";
             $content.= "\r\n";
         }
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 
     /**
      * Internal method for GRR stats
      * @param array $table
-     * @param string $lang
      */
-    private function exportSummaryCSV($summaryTable, $lang) {
-        header("Content-Type: application/csv-tab-delimited-table");
-        header("Content-disposition: filename=rapport.csv");
+    private function exportSummaryCSV($summaryTable) {
 
         $countTable = $summaryTable['countTable'];
         $timeTable = $summaryTable['timeTable'];
@@ -559,384 +555,15 @@ class BookingstatisticsController extends StatisticsController {
         }
         $content .= "(" . $totalCG . ")" . $totalHG / 3600;
         $content .= " \r\n ";
+
+        if(getenv('PFM_MODE') == 'test') {
+            return $content;
+        }
+
+        header("Content-Type: application/csv-tab-delimited-table");
+        header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
 
-    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-        if($dateBegin == "") {
-            throw new PfmParamException("invalid start date");
-        }
-        if($dateEnd == "") {
-            throw new PfmParamException("invalid end date");
-        }
-        $dateBeginArray = explode("-", $dateBegin);
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-        $dateEndArray = explode("-", $dateEnd);
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
-
-        // get data
-        $modelGraph = new BkGraph();
-        $data = $modelGraph->getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $excludeColorCode);
-
-        $objWorkSheet = $spreadsheet->createSheet();
-        $lang = $this->getLanguage();
-        $objWorkSheet->setTitle(BookingTranslator::Reservation_counting($lang));
-        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
-
-        $curentLine = 1;
-        $objWorkSheet->SetCellValue('A' . $curentLine, BookingTranslator::Month($lang));
-        $objWorkSheet->SetCellValue('B' . $curentLine, BookingTranslator::Reservation_number($lang));
-        $objWorkSheet->SetCellValue('C' . $curentLine, BookingTranslator::Reservation_time($lang));
-
-        $style = $this->getStylesheet();
-        $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-
-        $dates = $data['dates'];
-        $counting = $data['count'];
-        $time = $data['time'];
-
-        for ($i = 0; $i < count($data['dates']); $i++) {
-            $curentLine++;
-            $objWorkSheet->SetCellValue('A' . $curentLine, $dates[$i]);
-            $objWorkSheet->SetCellValue('B' . $curentLine, $counting[$i]);
-            $objWorkSheet->SetCellValue('C' . $curentLine, $time[$i]);
-
-            $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        }
-        return $spreadsheet;
-    }
-
-    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-        if($dateBegin == "") {
-            throw new PfmParamException("invalid start date");
-        }
-        if($dateEnd == "") {
-            throw new PfmParamException("invalid end date");
-        }
-        $dateBeginArray = explode("-", $dateBegin);
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-        $dateEndArray = explode("-", $dateEnd);
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
-
-        // get data
-        $modelGraph = new BkGraph();
-        $data = $modelGraph->getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode);
-
-        $colorModel = new BkColorCode();
-        $colorCodes = $colorModel->getColorCodes($id_space);
-
-        $objWorkSheet = $spreadsheet->createSheet();
-        $lang = $this->getLanguage();
-        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_resource($lang));
-        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
-
-        $curentLine = 1;
-        $objWorkSheet->SetCellValue('A' . $curentLine, BookingTranslator::Resource($lang));
-        $objWorkSheet->SetCellValue('B' . $curentLine, BookingTranslator::Reservation_number($lang));
-        $objWorkSheet->SetCellValue('C' . $curentLine, BookingTranslator::Reservation_time($lang));
-
-        $style = $this->getStylesheet();
-        $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $spreadsheet->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
-        $spreadsheet->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
-        $spreadsheet->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
-        $num = 3;
-        foreach ($colorCodes as $c) {
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $objWorkSheet->SetCellValue($letter . $curentLine, $c["name"]);
-            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
-        }
-        $num++;
-        $letter = $this->get_col_letter($num);
-        $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_number($lang));
-        $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
-        $num++;
-        $letter = $this->get_col_letter($num);
-        $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_time($lang));
-        $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
-
-
-        $resourcesids = $data['resourcesids'];
-        $resources = $data['resource'];
-        $counting = $data['count'];
-        $time = $data['time'];
-
-        for ($i = 0; $i < count($resources); $i++) {
-            $curentLine++;
-            $objWorkSheet->SetCellValue('A' . $curentLine, $resources[$i]);
-            $objWorkSheet->SetCellValue('B' . $curentLine, $counting[$i]);
-            $objWorkSheet->SetCellValue('C' . $curentLine, $time[$i]);
-            $num = 3;
-            foreach ($colorCodes as $c) {
-                $num++;
-                $timeColor = $modelGraph->getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
-
-                $letter = $this->get_col_letter($num);
-                $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
-                $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            }
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $objWorkSheet->SetCellValue($letter . $curentLine, $data['countCancelled'][$i]);
-            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $num++;
-            $letter = $this->get_col_letter($num);
-            $objWorkSheet->SetCellValue($letter . $curentLine, $data['timeCancelled'][$i]);
-            $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-
-            $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            $objWorkSheet->getStyle('C' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-        }
-        return $spreadsheet;
-    }
-
-    public function statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-        // get data
-        $modelGraph = new BkGraph();
-        $modelClient = new ClClient();
-        $clients = $modelClient->getAll($id_space);
-        $data = $modelGraph->getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode);
-
-        $objWorkSheet = $spreadsheet->createSheet();
-        $lang = $this->getLanguage();
-        $objWorkSheet->setTitle(BookingTranslator::Reservation_per_client($lang));
-        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
-
-        $curentLine = -1;
-        for ($catstat = 0; $catstat <= 1; $catstat++) { // number reservation = 0, time reservation = 1
-            $curentLine+=2;
-            if ($catstat == 0) {
-                $title = BookingTranslator::NumberResaPerClientFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
-                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
-            } else {
-                $title = BookingTranslator::TimeResaPerClientFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
-                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
-            }
-            $objWorkSheet->SetCellValue('A' . $curentLine, $title);
-
-            $curentLine++;
-            $curentCol = 1;
-            $style = $this->getStylesheet();
-            foreach ($clients as $client) {
-                $curentCol++;
-                $colLetter = $this->get_col_letter($curentCol);
-                $objWorkSheet->SetCellValue($colLetter . $curentLine, $client['name']);
-                $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            }
-
-            for ($i = 0; $i < count($data); $i++) {
-                $curentLine++;
-
-                $resource = $data[$i]['resource'];
-                $objWorkSheet->SetCellValue('A' . $curentLine, $resource);
-                $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-
-                $curentCol = 1;
-                foreach ($clients as $client) {
-                    $curentCol++;
-                    $colLetter = $this->get_col_letter($curentCol);
-                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["client_" . $client['id']][$catstat]);
-                    $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-                }
-            }
-        }
-        return $spreadsheet;
-    }
-
-    /**
-     * @deprecated since ec_user depreciation
-     */
-    public function statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet) {
-
-        $dateBeginArray = explode("-", $dateBegin);
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-        $dateEndArray = explode("-", $dateEnd);
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
-
-        // get data
-        $modelGraph = new BkGraph();
-        $modelClients = new ClClient();
-        
-        $clients = $modelClients->getAll($id_space);
-        $data = $modelGraph->getStatReservationPerResponsible($dateBegin, $dateEnd, $id_space, $resps, $excludeColorCode);
-
-        $objWorkSheet = $spreadsheet->createSheet();
-
-        $lang = $this->getLanguage();
-        $title = BookingTranslator::Reservation_per_responsible($lang);
-
-        // Maximum 31 characters allowed in sheet title
-        if (strlen($title) > 31) {
-            $title = substr($title, 0, 30);
-        }
-            
-        $objWorkSheet->setTitle($title);
-        $objWorkSheet->getRowDimension('1')->setRowHeight(40);
-
-        $curentLine = -1;
-        for ($catstat = 0; $catstat <= 1; $catstat++) { // number reservation = 0, time reservation = 1
-            $curentLine+=2;
-            if ($catstat == 0) {
-                $title = BookingTranslator::NumberResaPerClientFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
-                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
-            } else {
-                $title = BookingTranslator::TimeResaPerClientFrom($lang) . CoreTranslator::dateFromEn($dateBegin, $lang)
-                        . BookingTranslator::To($lang) . CoreTranslator::dateFromEn($dateEnd, $lang);
-            }
-            $objWorkSheet->SetCellValue('A' . $curentLine, $title);
-
-
-            $curentLine++;
-            $curentCol = 1;
-            $style = $this->getStylesheet();
-            foreach ($clients as $client) {
-                $curentCol++;
-                $colLetter = $this->get_col_letter($curentCol);
-                $objWorkSheet->SetCellValue($colLetter . $curentLine, $client['name']);
-                $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-            }
-
-            for ($i = 0; $i < count($data); $i++) {
-                $curentLine++;
-
-                $resource = $data[$i]['resource'];
-                $objWorkSheet->SetCellValue('A' . $curentLine, $resource);
-                $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
-
-                $curentCol = 1;
-                foreach ($clients as $client) {
-                    $curentCol++;
-                    $colLetter = $this->get_col_letter($curentCol);
-                    $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["client_" . $client['id']][$catstat]);
-                    $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-                }
-            }
-        }
-        return $spreadsheet;
-    }
-
-    protected function getStylesheet() {
-
-        $styleBorderedCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-            ),
-        );
-
-        $styleBorderedCenteredCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ),
-        );
-
-        return array('styleBorderedCell' => $styleBorderedCell,
-            'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
-    }
-
-    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet) {
-
-        if (!$spreadsheet) {
-            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-
-            // Set properties
-            $spreadsheet->getProperties()->setCreator("Platform-Manager");
-            $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
-            $spreadsheet->getProperties()->setTitle("Booking balance sheet");
-            $spreadsheet->getProperties()->setSubject("Booking balance sheet");
-            $spreadsheet->getProperties()->setDescription("");
-        }
-
-        $spreadsheet = $this->statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-        $spreadsheet = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-        if ($generateclientstats == 1) {
-            $spreadsheet = $this->statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-            // call to deprecated function statsReservationsPerResponsible()
-            // $spreadsheet = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-        }
-        return $spreadsheet;
-    }
-
-    function get_col_letter($num) {
-        $comp = 0;
-        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-
-        //if the number is greater than 26, calculate to get the next letters
-        if ($num > 26) {
-            //divide the number by 26 and get rid of the decimal
-            $comp = floor($num / 26);
-
-            //add the letter to the end of the result and return it
-            if ($comp != 0) {
-                // don't subtract 1 if the comparative variable is greater than 0
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26)];
-            } else {
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26) - 1];
-            }
-        } else {
-            //return the letter
-            return $letters[($num - 1)];
-        }
-    }
 
 }

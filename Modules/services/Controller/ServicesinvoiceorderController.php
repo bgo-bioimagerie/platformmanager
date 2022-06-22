@@ -3,14 +3,18 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
+require_once 'Framework/Events.php';
 
 require_once 'Modules/invoices/Controller/InvoiceAbstractController.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreVirtual.php';
+require_once 'Modules/services/Model/ServicesInvoice.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeOrder.php';
 require_once 'Modules/services/Model/SeService.php';
 require_once 'Modules/services/Model/SePrice.php';
+require_once 'Modules/services/Model/SeServiceType.php';
 
 require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/invoices/Model/InInvoiceItem.php';
@@ -18,7 +22,6 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
-//require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 /**
  *
@@ -26,6 +29,14 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * Controller for the home page
  */
 class ServicesinvoiceorderController extends InvoiceAbstractController {
+
+    /**
+     * Constructor
+     */
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
+        $_SESSION["openedNav"] = "invoices";
+    }
 
     /**
      * (non-PHPdoc)
@@ -40,12 +51,10 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         if ($formUnit->check()) {
             $dateBegin = $this->request->getParameterNoException("date_begin");
             $dateEnd = $this->request->getParameterNoException("date_end");
-            $unitId = $this->request->getParameterNoException("id_unit");
-            $respId = $this->request->getParameterNoException("id_resp");
-            if ($unitId != 0 && $respId != 0) {
-                $this->generateRespBill($dateBegin, $dateEnd, $unitId, $respId, $id_space);
-                $this->redirect("invoices/" . $id_space);
-                return;
+            $clientId = $this->request->getParameterNoException("id_client");
+            if ($clientId != '') {
+                $this->generateClientBill($dateBegin, $dateEnd, $clientId, $id_space);
+                return $this->redirect("invoices/" . $id_space);
             }
         }
 
@@ -53,7 +62,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     public function editAction($id_space, $id_invoice, $pdf = 0) {
-
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
@@ -69,6 +77,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $details = $this->unparseDetails($id_space, $id_items);
         $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
+        $formAddName = $form->getFormAddId();
 
         if ($form->check() && $pdf == 0) {
             $total_ht = 0;
@@ -88,6 +97,10 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
             $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
+
+            $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
+            $_SESSION['flashClass'] = 'success';
+            
             Events::send([
                 "action" => Events::ACTION_INVOICE_EDIT,
                 "space" => ["id" => intval($id_space)],
@@ -98,7 +111,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         }
 
         $formHtml = $form->getHtml($lang);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "details" => $details, "htmlForm" => $formHtml,
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "formAddName" => $formAddName, "details" => $details, "htmlForm" => $formHtml,
             "invoice" => $invoice), "editformAction");
     }
 
@@ -121,9 +134,9 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
     protected function createByUnitForm($id_space, $lang) {
         $form = new Form($this->request, "invoicebyunitform");
-        $form->setTitle(ServicesTranslator::Invoice_by_unit($lang), 3);
+        $form->setTitle(ServicesTranslator::Invoice_by_client($lang));
 
-        $unitId = $this->request->getParameterNoException("id_unit");
+        $clientId = $this->request->getParameterNoException("id_client");
         $dateBegin = $this->request->getParameterNoException("date_begin");
         $dateEnd = $this->request->getParameterNoException("date_end");
 
@@ -139,101 +152,26 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
-        $form->addSelect("id_client", ClientsTranslator::Institution($lang), $clientsNames, $clientsIds, $unitId, false);
-        $form->setButtonsWidth(2, 9);
+        $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clientsNames, $clientsIds, $clientId, false);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
-
-         
-        // return "";
     }
 
-    /**
-    * @deprecated
-    **/
-    private function generateRespBill($dateBegin, $dateEnd, $id_client, $id_resp, $id_space) {
-
-        $modelOrder = new SeOrder();
-        $modelInvoice = new InInvoice();
-        $modelInvoiceItem = new InInvoiceItem();
-        $modelClient = new ClClient();
-        // select all the opened order
-        $orders = $modelOrder->openedForRespPeriod($dateBegin, $dateEnd, $id_resp, $id_space);
-
-        if (count($orders) == 0) {
-            throw new PfmException("there are no orders open for this responsible");
-        }
-
-        $lang = $this->getLanguage();
-
-        // get the bill number
-        $number = $modelInvoice->getNextNumber($id_space);
-        $module = "services";
-        $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_client, $id_resp);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
-        $modelInvoice->setTitle($id_space, $id_invoice, "Prestations: période du " . CoreTranslator::dateFromEn($dateBegin, $lang) . " au " . CoreTranslator::dateFromEn($dateEnd, $lang));
-
-        // add the counts to the Invoice
-        $services = $modelOrder->openedItemsForResp($id_space, $id_resp);
-        $belonging = $modelClient->get($id_space, $id_client);
-        $content = $this->parseServicesToContent($id_space, $services, $belonging);
-        $details = $this->parseOrdersToDetails($id_space, $orders, $id_space);
-
-        $total_ht = $this->calculateTotal($id_space, $services, $belonging);
-
-        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+    private function generateClientBill($beginPeriod, $endPeriod, $id_client, $id_space) {
+        $cv = new CoreVirtual();
+        $rid = $cv->newRequest($id_space, "invoices", "orders[$id_client]:$beginPeriod => $endPeriod");
         Events::send([
-            "action" => Events::ACTION_INVOICE_EDIT,
+            "action" => Events::ACTION_INVOICE_REQUEST,
             "space" => ["id" => intval($id_space)],
-            "invoice" => ["id" => intval($id_invoice)]
+            "user" => ["id" => $_SESSION['id_user']],
+            "type" => ServicesInvoice::$INVOICES_SERVICES_ORDERS_CLIENT,
+            "period_begin" => $beginPeriod,
+            "period_end" => $endPeriod,
+            "id_client" => $id_client,
+            "request" => ["id" => $rid]
         ]);
-
-        // close orders
-        foreach ($orders as $order) {
-            $modelOrder->setEntryCloded($id_space, $order["id"]);
-            $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
-        }
-    }
-
-    protected function parseOrdersToDetails($orders, $id_space) {
-        $details = "";
-        foreach ($orders as $order) {
-            $details .= $order["no_identification"] . "=servicesorderedit/" . $id_space . "/" . $order["id"] . ";";
-        }
-        return $details;
-    }
-
-    protected function parseServicesToContent($id_space, $services, $id_belonging) {
-        $content = "";
-        $addedServices = array();
-        $modelPrice = new SePrice();
-        for ($i = 0; $i < count($services); $i++) {
-            $quantity = 0;
-            if (!in_array($services[$i]["id_service"], $addedServices)) {
-                for ($j = $i; $j < count($services); $j++) {
-                    if ($services[$j]["id_service"] == $services[$i]["id_service"]) {
-                        $quantity += floatval($services[$j]["quantity"]);
-                    }
-                }
-                $price = $modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging);
-                $addedServices[] = $services[$i]["id_service"];
-                $content .= $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";";
-            }
-        }
-        return $content;
-    }
-
-    protected function calculateTotal($id_space, $services, $id_belongings) {
-        $total_HT = 0;
-        $modelPrice = new SePrice();
-        foreach ($services as $service) {
-            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belongings);
-            $total_HT += floatval($service["quantity"]) *  floatval($price);
-        }
-        return $total_HT;
     }
 
     protected function unparseContent($id_space ,$id_item) {
@@ -259,9 +197,11 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $itemServices = array();
         $itemQuantities = array();
         $itemPrices = array();
+        $itemQuantityTypes = array();
         $modelInvoiceItem = new InInvoiceItem();
+        $modelServices = new SeService();
+        $modelSeTypes = new SeServiceType();
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
-
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         foreach ($contentArray as $content) {
@@ -270,8 +210,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
                 $itemIds[] = $id_item;
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
+                $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 $itemPrices[] = $data[2];
-                $total += $data[1] * $data[2];
+                if (is_numeric($data[1]) && is_numeric($data[2])) {
+                    $total += $data[1] * $data[2];
+                } else {
+                    $_SESSION['flash'] = InvoicesTranslator::NonNumericValue($lang);
+                    $_SESSION['flashClass'] = 'danger';
+                }
             }
         }
         $modelServices = new SeService();
@@ -279,12 +225,13 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
-        $formAdd->addNumber("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
-        $formAdd->addNumber("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
+        $formAdd->addFloat("quantity", ServicesTranslator::Quantity($lang), $itemQuantities);
+        $formAdd->addLabel("type", $itemQuantityTypes);
+        $formAdd->addFloat("unit_price", ServicesTranslator::UnitPrice($lang), $itemPrices);
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
@@ -360,7 +307,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
+        $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 
 }

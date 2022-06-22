@@ -47,7 +47,6 @@ class BookingdisplayController extends BookingsettingsController {
         $data = $modelCSS->getAreaCss($id_space, $id);
 
         $modelArea = new ReArea();
-        // $name = $modelArea->getName($id);
         $area = $modelArea->get($id_space, $id);
         $name = $area['name'];
 
@@ -62,7 +61,6 @@ class BookingdisplayController extends BookingsettingsController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingdisplayedit/".$id_space. "/" . $id);
         $form->setColumnsWidth(3, 9);
-        $form->setButtonsWidth(3, 9);
         if ($form->check()) {
             $modelCSS->setAreaCss($id_space, $id, $this->request->getParameter("header_background"), $this->request->getParameter("header_color"), $this->request->getParameter("header_font_size"), $this->request->getParameter("resa_font_size"), $this->request->getParameter("header_height"), $this->request->getParameter("line_height"));
             $this->redirect("bookingdisplayedit/".$id_space. "/" . $id);

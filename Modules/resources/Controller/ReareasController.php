@@ -80,23 +80,42 @@ class ReareasController extends ResourcesBaseController {
         $form->addText("name", CoreTranslator::Name($lang), true, $area["name"]);
         $form->addSelect("is_restricted", ResourcesTranslator::IsRestricted("lang"), 
                 array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $area["restricted"]);
+
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "reareasedit/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
         
-        $form->setValidationButton(CoreTranslator::Ok($lang), "reareasedit/".$id_space."/".$id);
+        $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "reareas/".$id_space);
 
         if ($form->check()) {
             // run the database query
-            $this->model->set($form->getParameter("id"), $form->getParameter("name"), 
-                    $form->getParameter("is_restricted"), $id_space);
-            $this->redirect("reareas/".$id_space);
+            $id_area = $this->model->set(
+                $form->getParameter("id"),
+                $form->getParameter("name"), 
+                $form->getParameter("is_restricted"),
+                $id_space);
+
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("area", $lang);
+            $_SESSION["flashClass"] = "success";
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {                
+                return $this->redirect("reareas/".$id_space, [], ['rearea' => ['id' => $id_area]]);
+            }
+
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
-            $this->render(array(
+            return $this->render(array(
                 'id_space' => $id_space,
                 'lang' => $lang,
-                'formHtml' => $formHtml
+                'formHtml' => $formHtml,
+                'data' => ['rearea' => $area]
             ));
         }
     }
@@ -109,14 +128,16 @@ class ReareasController extends ResourcesBaseController {
         $resourceModel = new ResourceInfo();
         $linkedResources = $resourceModel->resourcesForArea($id_space, $id);
 
+        $error = null;
         if ($linkedResources == null || empty($linkedResources)) {
             // not linked to resources, deletion is authorized
             $this->model->delete($id_space, $id);
         } else {
             // linked to resources, notify the user
-            $_SESSION["message"] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
+            $_SESSION['flash'] = ResourcesTranslator::DeletionNotAuthorized(ResourcesTranslator::Area($lang), $lang);
+            $error = 'deletionnotauthorized';
         }
-        $this->redirect("reareas/".$id_space);
+        return $this->redirect("reareas/".$id_space, [], ['error' => $error]);
     }
 
 }

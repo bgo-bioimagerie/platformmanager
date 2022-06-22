@@ -56,7 +56,12 @@ class ServiceslistingController extends ServicesController {
         $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        return $this->render(array(
+            "id_space" => $id_space,
+            "lang" => $lang,
+            "tableHtml" => $tableHtml,
+            "data" => ['services' => $data]
+        ));
     }
 
     public function editAction($id_space, $id) {

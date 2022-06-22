@@ -6,6 +6,12 @@ class ResourcesRouting extends Routing{
     
     public function routes($router) {
         $router->map('GET', '/resources/eventfile/[i:id_space]/[i:id]', 'resources/resourcesinfo/downloadeventfile', 'resources_downloadeventfileAction');
+        $router->map(
+            'GET|POST',
+            '/revisas/getcategoryvisas/[i:id_space]/[i:id_category]',
+            'resources/revisas/getcategoryvisas',
+            'resources_getcategoryvisas'
+        );
     }
 
 
@@ -13,7 +19,6 @@ class ResourcesRouting extends Routing{
         
         // config
         $this->addRoute("resourcesconfig", "resourcesconfig", "resourcesconfig", "index", array("id_space"), array(""));
-        $this->addRoute("resourcesconfigadmin", "resourcesconfigadmin", "resourcesconfigadmin", "index");
         $this->addRoute("resourceshelp", "resourceshelp", "resourceshelp", "index", array("id_space"), array(""));
         
         
@@ -54,7 +59,5 @@ class ResourcesRouting extends Routing{
         $this->addRoute("resourceseditvisa", "resourceseditvisa", "revisas", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("resourcesdeletevisa", "resourcesdeletevisa", "revisas", "delete", array("id_space", "id"), array("", ""));
         $this->addRoute("resourcesexportvisa", "resourcesexportvisa", "revisas", "export", array("id_space"), array(""));
-        
-        
     }
 }

@@ -30,7 +30,6 @@ class CorespaceController extends CoresecureController {
      */
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
-
         $this->spaceModel = new CoreSpace ();
     }
 
@@ -82,6 +81,7 @@ class CorespaceController extends CoresecureController {
         $lang = $this->getLanguage();
         $role = 0;
         $showAdmMenu = false;
+        $isMemberOfSpace = false;
 
         if ($_SESSION['user_status'] > CoreStatus::$USER) {
             $showAdmMenu = true;
@@ -90,6 +90,8 @@ class CorespaceController extends CoresecureController {
             $role = $this->spaceModel->getUserSpaceRole($space["id"], $_SESSION['id_user']);
             if ($role == -1) {
                 $role = CoreSpace::$VISITOR;
+            } else {
+                $isMemberOfSpace = true;
             }
             if ($role > CoreSpace::$MANAGER) {
                 $showAdmMenu = true;
@@ -129,6 +131,7 @@ class CorespaceController extends CoresecureController {
         }
         return $this->render(array(
             "role" => $role,
+            "isMemberOfSpace" => $isMemberOfSpace,
             "lang" => $lang,
             "id_space" => $id_space,
             "space" => $space,
@@ -263,7 +266,6 @@ class CorespaceController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
-        // $this->spaceModel->deleteUser($id_space, $id_user);
         $this->redirect("spaceconfiguser/" . $id_space);
     }
 
@@ -289,7 +291,7 @@ class CorespaceController extends CoresecureController {
         $formUser = new Form($this->request, "adduser");
         $formUser->setTitle(CoreTranslator::Access($lang));
         $formUser->setColumnsWidth(3, 6);
-        $formUser->setButtonsWidth(2, 8);
+
         $formUser->addHidden("id_space", $id_space);
         $formUser->addSelect("id_user", CoreTranslator::User($lang), $usersNames, $usersId);
         $formUser->addSelect("id_role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"]);
@@ -367,13 +369,13 @@ class CorespaceController extends CoresecureController {
             $colorConfig = 'style="background-color:' . $spaceColor . '; color: #fff;"';
             $colorConfigUser = 'style="background-color:' . $spaceColor . '; color: #fff;"';
             $adminMenu .= '<li>';
-            $adminMenu .= '<a  ' . $colorConfig . ' href="spaceconfig/' . $space["id"] . '">' . CoreTranslator::Configuration($lang) . '<span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a  ' . $colorConfig . ' href="spaceconfig/' . $space["id"] . '">' . CoreTranslator::Configuration($lang) . '<span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
             $adminMenu .= '<li >';
-            $adminMenu .= '<a ' . $colorConfigUser . ' href="spaceconfiguser/' . $space["id"] . '">' . CoreTranslator::Access($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a ' . $colorConfigUser . ' href="spaceconfiguser/' . $space["id"] . '">' . CoreTranslator::Access($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
             $adminMenu .= '<li >';
-            $adminMenu .= '<a ' . $colorConfigUser . ' href="spacedashboard/' . $space["id"] . '">' . CoreTranslator::Dashboard($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity glyphicon glyphicon-cog"></span></a>';
+            $adminMenu .= '<a ' . $colorConfigUser . ' href="spacedashboard/' . $space["id"] . '">' . CoreTranslator::Dashboard($lang) . ' <span style="font-size:16px;" class="pull-right hidden-xs showopacity bi-gear-fill"></span></a>';
             $adminMenu .= "</li>";
         }
         $html = str_replace("{{adminitems}}", $adminMenu, $html);

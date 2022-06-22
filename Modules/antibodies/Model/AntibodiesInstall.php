@@ -13,6 +13,7 @@ require_once 'Modules/antibodies/Model/Status.php';
 
 require_once 'Modules/antibodies/Model/Dem.php';
 require_once 'Modules/antibodies/Model/Aciinc.php';
+require_once 'Modules/antibodies/Model/AcOwner.php';
 require_once 'Modules/antibodies/Model/Linker.php';
 require_once 'Modules/antibodies/Model/Inc.php';
 require_once 'Modules/antibodies/Model/Acii.php';
@@ -55,7 +56,10 @@ class AntibodiesInstall extends Model {
 		$tissusModel->createTable();
 		
 		$protoModel = new AcProtocol();
-		$protoModel->createTable(); 
+		$protoModel->createTable();
+
+		$modelAcOwner = new AcOwner();
+		$modelAcOwner->createTable();
 		
 		$organeModel = new Organe();
 		$organeModel->createTable();
@@ -101,11 +105,13 @@ class AntibodiesInstall extends Model {
                 
         $modelStaining = new AcStaining();
 		$modelStaining->createTable();
-		 
-                //mkdir("/data/antibodies");
+
+		$dir= "data/antibodies";
+		if(!file_exists($dir)) {
+            mkdir($dir, 0755, true);
+        }
                 
-		$message = 'success';
-		return $message;
+		return 'success';
 	}
 }
 

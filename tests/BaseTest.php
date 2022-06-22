@@ -17,7 +17,7 @@ abstract class BaseTest extends TestCase {
         'users' => ['admin1', 'manager1', 'user1', 'admin2', 'manager2', 'user2'],
         'spaces' => [
             'space1' => [
-                "admins" => ["admin1"], "managers" => ["manager1"], "users" => ["user1"]
+                "admins" => ["admin1"], "managers" => ["manager1"], "users" => ["user1", "user11"]
             ],
             'space2' => [
                 "admins" => ["admin2"], "managers" => ["manager2"], "users" => ["user2"]
@@ -30,6 +30,16 @@ abstract class BaseTest extends TestCase {
         $_SERVER['REQUEST_URI'] = '';
     }
 
+    public function request(array $params){
+        $req = new Request($params, true);
+        $req->getSession()->setAttribut("id_user", $_SESSION['id_user']);
+        $req->getSession()->setAttribut("login", $_SESSION['login']);
+        $req->getSession()->setAttribut("email", 'fake@pfm.org');
+        $req->getSession()->setAttribut("company", Configuration::get("name"));
+        $req->getSession()->setAttribut("user_status", $_SESSION['user_status']);
+        return $req;
+    }
+
     public function Context():mixed {
         return self::$context;
     }
@@ -38,6 +48,12 @@ abstract class BaseTest extends TestCase {
         $u = $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
         $_SESSION['user_status'] = CoreStatus::$ADMIN;
         return $u;
+    }
+
+    protected function asAnon(): void {
+        $_SESSION['user_status'] = CoreStatus::$USER;
+        $_SESSION['id_user'] = -1;
+        $_SESSION['login'] = 'anonymous';
     }
 
     protected function asUser(string $name, int $id_space=0): mixed {

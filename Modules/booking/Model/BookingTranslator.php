@@ -1,5 +1,7 @@
 <?php
 
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
+
 /**
  * Class to translate the syggrif views
  *
@@ -26,7 +28,7 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Mise à disposition";
         }
-        return "Location";
+        return "Bookings";
     }
 
     public static function bookingConfigAbstract($lang) {
@@ -164,13 +166,6 @@ class BookingTranslator {
         return "Quantities";
     }
 
-    public static function Quantities_saved($lang) {
-        if ($lang == "fr") {
-            return "Les quantités ont été sauvegardées";
-        }
-        return "Quantities have been saved";
-    }
-
     public static function SupplementariesInfo($lang) {
         if ($lang == "fr") {
             return "Informations sup";
@@ -196,7 +191,14 @@ class BookingTranslator {
         if ($lang == "fr") {
             return "Bloquer ressources";
         }
-        return "Block resouces";
+        return "Block resources";
+    }
+
+    public static function Blocked_Resouces($lang) {
+        if ($lang == "fr") {
+            return "Ressources bloquées";
+        }
+        return "Blocked resources";
     }
 
     public static function Edit_color_code($lang) {
@@ -274,6 +276,13 @@ class BookingTranslator {
             return "L'utilisateur spécifie";
         }
         return "The user specifies";
+    }
+
+    public static function Force_packages($lang) {
+        if($lang == "fr") {
+            return "Doit utiliser les packages";
+        }
+        return "Must use packages";
     }
 
     public static function the_booking_duration($lang) {
@@ -385,8 +394,6 @@ class BookingTranslator {
 
             return BookingTranslator::translateDayFromEn($dayStream, $lang) . " " . $dayNumStream . " " . BookingTranslator::translateMonthFromEn($monthStream, $lang) . " " . $yearStream;
 
-            // setlocale(LC_TIME, "fr_FR");
-            // return utf8_encode(strftime('%A %d %B %Y', $time));
         }
         // english
 
@@ -732,6 +739,28 @@ class BookingTranslator {
         return "Packages have been saved";
     }
 
+    public static function Sups_saved($supType, $lang) {
+        $supName = BookingTranslator::$supType($lang);
+        if ($lang == "fr") {
+            return "Les " . $supName . " ont été sauvegardé(e)s";
+        }
+        return $supName . " have been saved";
+    }
+
+    public static function Sup_resource_exists($supName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return $supName . " est déjà affecté à la ressource " . $resourceName;
+        }
+        return $supName . " is already affected to resource " . $resourceName;
+    }
+
+    public static function Package_resource_exists($packageName, $resourceName, $lang) {
+        if ($lang == "fr") {
+            return "Le forfait " . $packageName . " contient déjà la ressource " . $resourceName;
+        }
+        return "Resource " . $resourceName . " already in package " . $packageName;
+    }
+
     public static function Is_mandatory($lang) {
         if ($lang == "fr") {
             return "Champ obligatoire";
@@ -744,13 +773,6 @@ class BookingTranslator {
             return "Utiliser comme unité de facturation";
         }
         return "Use as invoicing unit";
-    }
-
-    public static function Supplementaries_saved($lang) {
-        if ($lang == "fr") {
-            return "Les suppléments ont été sauvegardés";
-        }
-        return "Supplementaries have been saved";
     }
 
     static public function Use_Package($lang) {
@@ -886,6 +908,13 @@ class BookingTranslator {
         return "Authorisations for";
     }
 
+    static public function Add_authorisation_for($lang) {
+        if ($lang == "fr") {
+            return "Ajouter une habilitation pour ";
+        }
+        return "Add an authorisation for";
+    }
+
     public static function Active_Authorizations($lang = "") {
         if ($lang == "fr") {
             return "Habilitation actives";
@@ -1007,9 +1036,9 @@ class BookingTranslator {
 
     public static function Invoice_Responsible($lang = "") {
         if ($lang == "fr") {
-            return "Facturer un responsable";
+            return "Facturer un client";
         }
-        return "Invoice a person in charge";
+        return "Invoice a client";
     }
 
     public static function Details($lang = "") {
@@ -1657,6 +1686,13 @@ class BookingTranslator {
         return "You need to create at least one color code to be able to edit schedulings";
     }
 
+    public static function MissingPackages($lang) {
+        if($lang == "fr") {
+            return "Vous devez créer au moins un ".self::Package($lang);
+        }
+        return "You need to create at least one ".self::Package($lang);
+    }
+
     public static function noBookingArea($lang) {
         if ($lang == "fr") {
             return "Erreur : Aucun domaine et / ou aucune ressource n'a été créé";
@@ -1666,9 +1702,9 @@ class BookingTranslator {
 
     public static function VisaNeeded($lang) {
         if ($lang == "fr") {
-            return "Vous devez d'abord spécifier un visa dans le module Ressources > Visas";
+            return "Pour ajouter une autorisation de réservation, vous devez d'abord spécifier un visa dans le module Ressources > Visas";
         }
-        return "You need first to specify a visa in Resources module>Visas";
+        return "In order to add a booking authorization, you need to specify a visa in Resources module>Visas";
     }
 
     public static function maxInvoicingUnits($lang) {
@@ -1684,5 +1720,121 @@ class BookingTranslator {
             return "Vous devez d'abord créer au moins un code couleur dans le module  Calendrier config > Codes couleur";
         }
         return "You need first to create at leat one color code in Bokking settings module > Color codes";
+    }
+
+    public static function ShowAll($lang = "") {
+        if($lang == "fr") {
+            return "Toutes";
+        }
+        return "Show all";
+    }
+
+    public static function ShowMine($lang = "") {
+        if($lang == "fr") {
+            return "Mes réservations";
+        }
+        return "My bookings";
+    }
+
+    public static function Create_item($item, $lang = "") {
+        $result = ($lang === "fr") ? "Créer " : "Create " ;
+            switch ($item) {
+                case "colorcode":
+                    $result .= ($lang === "fr") ? "un code couleur" : "a color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "Editer un profil horaire pour un domaine" : "Edit a schedule profile for one area";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "Gérer les autorisations de réservation pour :" : "Manage booking authorisations for:";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "Gérer les accès aux ressources" : "Manage resources access";
+                        break;
+                case "booking":
+                    $result .= ($lang === "fr") ? "une première réservation" : "a first reservation";
+                    break;
+                default:
+                    break;
+            }
+        return $result;
+    }
+
+    public static function Item_created($item, $lang = "") {
+        $result = "";
+            switch ($item) {
+                case "colorcode":
+                    $result = ($lang === "fr") ? "code couleur" : "color code";
+                    break;
+                case "schedule":
+                    $result = ($lang === "fr") ? "profil horaire" : "schedule profile";
+                    break;
+                case "authorisations":
+                    $result = ($lang === "fr") ? "autorisation de réservation" : "booking authorisation";
+                    break;
+                    case "access":
+                        $result = ($lang === "fr") ? "accès aux ressources" : "resources access";
+                        break;
+                case "booking":
+                    $result = ($lang === "fr") ? "réservation" : "reservation";
+                    break;
+                default:
+                    break;
+            }
+            $result .= ($lang === "fr") ? " sauvegardé(e)" : " saved";
+        return $result;
+    }
+    
+    public static function Closed($lang = "") {
+        if($lang == "fr") {
+            return "Fermé";
+        }
+        return "Closed";
+    }
+
+    public static function SimpleView($lang="") {
+        if($lang == "fr") {
+            return "Résumé";
+        }
+        return "Summary";
+    }
+
+    public static function DetailedView($lang="") {
+        if($lang == "fr") {
+            return "Détails";
+        }
+        return "Detailed";
+    }
+
+    public static function BlockReason(int $reason, $lang="") {
+        if($lang == "fr") {
+            switch ($reason) {
+                case BkCalendarEntry::$REASON_BOOKING:
+                    return 'Réservation';
+                case BkCalendarEntry::$REASON_HOLIDAY:
+                    return 'Vacances';
+                case BkCalendarEntry::$REASON_MAINTENANCE:
+                    return 'Maintenance';
+                default:
+                    return 'Réservation';
+            }
+        }
+        switch ($reason) {
+            case BkCalendarEntry::$REASON_BOOKING:
+                return 'Booking';
+            case BkCalendarEntry::$REASON_HOLIDAY:
+                return 'Holidays';
+            case BkCalendarEntry::$REASON_MAINTENANCE:
+                return 'Maintenance';
+            default:
+                return 'Booking';
+        }
+    }
+
+    public static function Reason($lang) {
+        if($lang == 'fr') {
+            return 'Cause';
+        }
+        return 'Reason';
     }
 }

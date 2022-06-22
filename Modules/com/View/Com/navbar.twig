@@ -10,7 +10,7 @@
     </div>
     <div class=" pm-inline-div" style="background-color:{{bgcolor}};">
         <a style="color:{{color}};" class="menu-button" href="comnews/{{id_space}}">{{News}}</a>
-        <a style="color:{{color}};" class="menu-button" href="comnewsedit/{{id_space}}/0">+</a>
+        {% if isAdmin %} <a style="color:{{color}};" class="menu-button" href="comnewsedit/{{id_space}}/0">+</a> {% endif %}
     </div>
 </div>
 

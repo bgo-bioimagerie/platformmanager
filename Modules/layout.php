@@ -1,17 +1,5 @@
 <?php require_once 'Framework/ti.php' ?>
-<?php
-require_once 'Modules/core/Model/CoreInstall.php';
-use DebugBar\StandardDebugBar;
-use DebugBar\DataCollector\PDO\PDOCollector;
 
-$isdev = (getenv('PFM_MODE') == 'dev');
-if($isdev) {
-    CoreInstall::getDatabase();
-    $debugbar = new StandardDebugBar();
-    $debugbarRenderer = $debugbar->getJavascriptRenderer();
-    $debugbar->addCollector(new DebugBar\DataCollector\PDO\PDOCollector(CoreInstall::getDatabase()));
-}
-?>
 <!DOCTYPE html>
 <html lang="<?php if(isset($lang)) {echo $lang;} else {echo "en";} ?>">
     <head>
@@ -20,7 +8,10 @@ if($isdev) {
         <?php
             if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
         ?>
-        <meta name="mode" description="{{$isdev}}">
+        <meta name="mode" description="<?php echo $context['dev'] ? 'dev' : 'prod' ?>">
+        <?php startblock('meta') ?>
+
+        <?php endblock() ?>
         <base href="<?php echo  $context['rootWeb'] ?>" >
         <title>
             <?php startblock('title') ?>
@@ -28,19 +19,21 @@ if($isdev) {
             <?php endblock() ?>
         </title>
         <?php
-        if($isdev) {
-            echo '<script src="externals/vuejs/vue.js"></script>'."\n";
-            echo $debugbarRenderer->renderHead();
+        if($context['dev']) {
+            echo '<script src="externals/vuejs/vue3.js"></script>';
+            echo $context['_debugbarRenderer']->renderHead();
         } else {
-            echo '<script src="externals/vuejs/vue.min.js"></script>'."\n";
+            echo '<script src="externals/vuejs/vue3.js"></script>';
         }
         ?>
-        <link rel="stylesheet" href="externals/bootstrap/css/bootstrap.min.css">
-        
-        <link href="externals/core/theme/navbar-fixed-top.css" rel="stylesheet">
-        <script src="externals/jquery-1.11.1.js"></script>
-        <script src="externals/bootstrap/js/bootstrap.min.js"></script>
+        <?php if(isset($context['theme']) && $context['theme'] == 'dark') { ?>
+            <link rel="stylesheet" href="externals/pfm/dark-mode/bootstrap-night.css">
+        <?php } else { ?>
+            <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <?php } ?>
+        <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
+        <script src="externals/node_modules/jquery/dist/jquery.min.js"></script>
         <?php startblock('stylesheet') ?>
         <?php endblock() ?>
 
@@ -49,17 +42,16 @@ if($isdev) {
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
-    <body style="background-color: #e7ecf0;">
+    <body>
 
         <?php startblock('navbar') ?>
             <?php
-                require_once 'Modules/core/Controller/CorenavbarController.php';
-                $navController = new CorenavbarController(new Request(array(), false));
-                echo $navController->navbar();
+            $nav = new Navbar($context['lang']);
+            echo $nav->get();
             ?>
         <?php endblock() ?>
 
-        <div id="mainmenu">
+        <div id="mainmenu" style="margin-top: 5px; margin-bottom: 2px;">
         <?php
         if ($context['mainMenu']) {
             echo $context['mainMenu'];
@@ -67,37 +59,47 @@ if($isdev) {
         ?>
         </div>
 
-        <div class="row">
-                <div id="app" >
-                    <?php if (isset($flash) && $flash) { ?>
+        <div class="container-fluid">
+                <div class="row" id="app" >
+                    <?php if(isset($context['maintenance']) && $context['maintenance']) { ?>
                         <div class="container">
+                            <div class="alert alert-warning alert-dismissible  show" role="alert">
+                                <?php echo $context['maintenance']; ?>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        </div>                        
+                    <?php } ?>
+                    <?php if (isset($flash) && $flash) { ?>
+                        <div class="col-12">
                             <div class="alert alert-<?php echo $flash['class']; ?> alert-dismissible  show" role="alert">
                                 <?php echo $flash['msg']; ?>
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
                         </div>
                     <?php }?>
-                    <div class="col-md-12 col-lg-12">
+                    
                         <?php startblock('spacemenu') ?>
                         <?php
                         if ($context['spaceMenu']) {
+                        ?>
+                        <div class="col-12">
+                        <?php
                             echo $context['spaceMenu'];
-                        } ?>
+                        ?>
+                        </div>
+                        <?php } ?>
                         <?php endblock() ?>
-                    </div>
                     <?php
                     if ($context['sideMenu']) {
                     ?>
-                    <div class="col-md-2 col-lg-2" id="sidemenu">
+                    <div class="col-12 col-md-2" id="sidemenu">
                     <?php
                         echo $context['sideMenu'];
                     ?>
                     </div>
-                    <div class="col-md-10 col-lg-10" id="content">
+                    <div class="col-12 col-md-10" id="content">
                     <?php } else { ?>
-                    <div class="col-md-12 col-lg-12" id="content">
+                    <div class="col-12" id="content">
                     <?php } ?>
                     <?php startblock('content') ?>
                     <?php endblock() ?>
@@ -110,18 +112,20 @@ if($isdev) {
         <footer>
         <div class="container">
             <div class="row">
-                <div class="col-sm-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-sm-4"><a href="core/about">About</a></div>
-                <div class="col-sm-4"><a href="core/privacy">Privacy</a></div>
+                <div class="col-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
+                <div class="col-4"><a href="core/about">About</a></div>
+                <div class="col-4"><a href="core/privacy">Privacy</a></div>
             </div>
         </div>
         </footer>
         <?php endblock() ?>
 
         <?php
-        if($isdev) {
-            echo $debugbarRenderer->render();
+        if($context['dev']) {
+           echo $context['_debugbarRenderer']->render();
         }
         ?>
+
+    <script src="externals/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

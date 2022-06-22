@@ -1,25 +1,20 @@
 
 
-    <link rel="stylesheet" type="text/css" href="externals/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
 
-    <script src="externals/dataTables/jquery-1.12.3.js"></script>
-    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
-    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
-    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
+    <script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            var tableHeight = window.innerHeight - 200;
-            var table = $('#tableID').DataTable({
-                scrollY: tableHeight,
-                scrollX: true,
-                scrollCollapse: true,
-                paging: false,
-                fixedColumns: {
-                    leftColumns: numFixedCol
-                }
+            //var tableHeight = window.innerHeight - 200;
+            let defaultCol = 0;
+            $('#tableID').DataTable({
+                columnDefs: [
+                    {targets: 'no-sort', orderable: false, searchable: false}
+                ],
+                lengthMenu: [[10,  50, 100, -1], [10, 50, 100, 'All']],
+                order: [[ defaultCol, "desc"]]
             });
         });
     </script>

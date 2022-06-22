@@ -78,7 +78,7 @@ class BookingInstall extends Model {
         $model15->createTable();
        
         if (!file_exists('data/booking/')) {
-            mkdir('data/booking/', 0777, true);
+            mkdir('data/booking/', 0755, true);
         }
     }
 }

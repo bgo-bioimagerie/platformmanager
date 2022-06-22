@@ -38,7 +38,7 @@ class CoreinstallController extends Controller {
         $form->addPassword("password", coreTranslator::password($lang), false);
         $form->addText("db_name", coreTranslator::db_name($lang), true, "");
         $form->setValidationButton(coreTranslator::Next($lang), "install");
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
 
@@ -82,7 +82,7 @@ class CoreinstallController extends Controller {
      */
     private function writedbConfig($sql_host, $login, $password, $db_name) {
         if (!$this->installModel->writedbConfig($sql_host, $login, $password, $db_name)) {
-            throw new PfmException("Cannot write db config file");
+            throw new PfmException("Cannot write db config file", 500);
         }
     }
 }

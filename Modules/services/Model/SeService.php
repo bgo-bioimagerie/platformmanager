@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class SeService extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_services";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_services` (
 		    `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -44,7 +48,7 @@ class SeService extends Model {
     public function getItemType($id_space, $id){
         $sql = "SELECT type_id FROM se_services WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
-        return $data[0];
+        return $data? $data[0]: null;
     }
     
     public function setQuantity($id_space, $id, $quantity){
@@ -172,7 +176,7 @@ class SeService extends Model {
             return $unit->fetch();  // get the first line of the result
         }
         else{
-            throw new PfmException("Cannot find the item using the given id = " . $id, 404);
+            throw new PfmParamException("Cannot find the item using the given id = " . $id, 404);
         }
     }
 
@@ -184,7 +188,6 @@ class SeService extends Model {
             return $tmp[0];  // get the first line of the result
         } else {
             return "unknown";
-            //	throw new Exception("Cannot find the item using the given id = " . $id);
         }
     }
 

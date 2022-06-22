@@ -28,28 +28,22 @@ abstract class CoresecureController extends CorecookiesecureController {
         // check if use a remember me
 
         if (!isset($_SESSION["id_user"])) {
-            //echo "check the cookie <br/>";
             if (isset($_COOKIE['auth'])) {
                 $auth = $_COOKIE['auth'];
-                //echo "cookie auth = " . $auth . "<br/>";
                 $authArray = explode('-', $auth);
-                //print_r($authArray);
                 $modelUser = new CoreUser();
                 if (!$modelUser->isUserId($authArray[0])) {
-                    //echo "user not found <br/>";
                     $this->redirect("coreconnection");
                     return 1;
                 }
 
                 $key = $modelUser->getRememberKey($authArray[0]);
-                //echo "database key = " . $key . "<br/>"; 
                 if ($key == $authArray[1]) {
-                    //echo "cookie good<br/>";
                     // update the cookie
-                    $key = sha1($this->generateRandomKey());
+                    $key = hash('sha512', $this->generateRandomKey());
                     $cookieSet = setcookie("auth", $authArray[0] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
-                        throw new PfmAuthException('cannot set the cookie in coresecure <br>', 403);
+                        throw new PfmAuthException('cannot set the cookie in coresecure', 403);
                     }
                     $modelUser->setRememberKey($authArray[0], $key);
 
@@ -58,19 +52,15 @@ abstract class CoresecureController extends CorecookiesecureController {
                     // redirect
                     return 2;
                 } else {
-
                     setcookie('auth', '', time() - 3600);
-                    //echo "cookie not good <br/>";
                     $this->redirectNoRemoveHeader("coreconnection");
                     return 0;
                 }
             } else {
-                //echo "cookie not found";
                 return 0;
             }
         }
         return 0;
-        //echo "check cookie <br/>";
     }
 
     /**
@@ -85,10 +75,9 @@ abstract class CoresecureController extends CorecookiesecureController {
 
         $cookieCheck = $this->checkRememberMeCookie();
         if ($cookieCheck == 2) {
-            parent::runAction($module, $action, $args);
-            return;
+            return parent::runAction($module, $action, $args);
         } else if ($cookieCheck == 1) {
-            return;
+            return null;
         }
 
         // Check by API Key
@@ -98,8 +87,7 @@ abstract class CoresecureController extends CorecookiesecureController {
             if($apiUser != null) {
                 Configuration::getLogger()->debug('[api][auth]', ['login' => $apiUser['login']]);
                 $this->initSession($apiUser['login']);
-                parent::runAction($module, $action, $args);
-                return;
+                return parent::runAction($module, $action, $args);
             }
         }
 
@@ -119,15 +107,14 @@ abstract class CoresecureController extends CorecookiesecureController {
             $modelUser = new CoreUser();
 
             if ($modelUser->isUser($login) && Configuration::get("name") == $company) {
-                parent::runAction($module, $action, $args);
+                return  parent::runAction($module, $action, $args);
             } else {
                 if($this->request->getSession()->getAttribut("id_user") == -1) {
                     Configuration::getLogger()->debug("[core] anonymous");
-                    parent::runAction($module, $action, $args);
-                    return;
+                    return parent::runAction($module, $action, $args);
                 }
-                Configuration::getLogger()->debug("[core] unknown user redirect to login");                
-                $this->redirect("coreconnection");
+                Configuration::getLogger()->debug("[core] unknown user, redirect to login");                
+                return $this->redirect("coreconnection");
             }
         } else {
             Configuration::getLogger()->debug('no session, anonymous user');
@@ -141,182 +128,67 @@ abstract class CoresecureController extends CorecookiesecureController {
             $this->request->getSession()->setAttribut("company", Configuration::get("name"));
             $this->request->getSession()->setAttribut("user_status", CoreStatus::$USER);
 
-            //$this->redirect("coreconnection");
-            parent::runAction($module, $action, $args);
+            return parent::runAction($module, $action, $args);
         }
     }
 
-    /**
-     * 
-     * @param type $minimumStatus
-     * @throws Exception
-     */
-    public function checkAuthorization($minimumStatus) {
-        $auth = $this->isUserAuthorized($minimumStatus);
-        if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
-        if ($auth == -1) {
-            $this->redirect("coreconnection");
-        }
+
+    protected function menusactivationForm($id_space, $module, $lang) {
+
+        $modelSpace = new CoreSpace();
+        $statusMenu = $modelSpace->getSpaceMenusRole($id_space, $module);
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, $module);
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, $module);
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, $module);
+
+        $form = new Form($this->request, $module."menusactivationForm");
+        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang). " ($module)");
+
+        $roles = $modelSpace->roles($lang);
+
+        $form->addSelect($module."Menustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusMenu);
+        $form->addNumber($module."DisplayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
+        $form->addColor($module."DisplayColor", CoreTranslator::color($lang), false, $displayColor);
+        $form->addColor($module."DisplayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+
+
+        return $form;
     }
 
-    /**
-     * 
-     * @param type $status
-     * @return boolean
-     */
-    public function isUserStatus($status) {
-        if (intval($_SESSION["user_status"]) >= intval($status)) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * @deprecated
-     * @param type $menuName
-     * @throws Exception
-     */
-    /*
-    public function checkAuthorizationMenu($menuName) {
-        $auth = $this->isUserMenuAuthorized($menuName);
-        if ($auth == 0) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
-        if ($auth == -1) {
-            $this->redirect("coreconnection");
-        }
-    }
-    */
-
-    /**
-     * 
-     * @param type $menuName
-     * @param type $id_space
-     * @param type $id_user
-     * @throws Exception
-     */
-    public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user) {
-        if($this->isUserAuthorized(5)) {
-            return true;
+    protected function menusactivation($id_space, $module, $icon, $basemodule=null) {
+        if($basemodule == null) {
+            $basemodule = $module;
         }
         $modelSpace = new CoreSpace();
-        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
-        if ($auth == 0) {
-            if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
-                throw new PfmAuthException("Error 403: Permission denied", 403);
-            }
-            throw new PfmAuthException("Error 401: need to log", 401);
-        } else {
-            return true;
-        }
+        $modelSpace->setSpaceMenu($id_space, $basemodule, $module, "bi-".$icon, 
+        $this->request->getParameter($module."Menustatus"),
+        $this->request->getParameter($module."DisplayMenu"),
+        1,
+        $this->request->getParameter($module."DisplayColor"),
+        $this->request->getParameter($module."DisplayColorTxt")
+        );
     }
 
-    /**
-     * 
-     * @param type $menuName
-     * @param type $id_space
-     * @param type $id_user
-     * @throws Exception
-     */
-    public function checkAuthorizationMenuSpaceNoException($menuName, $id_space, $id_user) {
-        if($this->isUserAuthorized(5)) {
-            return true;
-        }
-        $modelSpace = new CoreSpace();
-        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
-        if ($auth == 0) {
-            return false;
-        }
-        return true;
+    protected function menuNameForm($id_space, $module, $lang) {
+        $modelConfig = new CoreConfig();
+        $menuName = $modelConfig->getParamSpace($module."menuname", $id_space);
+
+        $form = new Form($this->request, $module."MenuNameForm");
+        $form->addSeparator(CoreTranslator::MenuName($lang)." ($module)");
+
+        $form->addText($module."MenuName", CoreTranslator::Name($lang), false, $menuName);
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
+
+
+        return $form;
     }
 
-    /**
-     * 
-     * @param type $minimumStatus
-     * @return int
-     */
-    public function isUserAuthorized($minimumStatus) {
-        if (isset($_SESSION["user_status"])) {
-            if (intval($_SESSION["user_status"]) >= intval($minimumStatus)) {
-                return 1;
-            }
-            return 0;
-        }
-        return -1;
-    }
-
-    /**
-     * @deprecated
-     * @param type $menuName
-     * @return type
-     */
-    /*
-    public function isUserMenuAuthorized($menuName) {
-        $controllerMenu = new CoreMenu();
-        $minimumStatus = $controllerMenu->getMenuStatusByName($menuName);
-        return $this->isUserAuthorized($minimumStatus);
-    }
-    */
-
-    /**
-     * 
-     * @param type $id_space
-     * @param type $id_user
-     * @return int
-     */
-    public function getUserSpaceStatus($id_space, $id_user) {
-        $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
-            return 4;
-        }
-        $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        return $spaceRole;
-    }
-
-    /**
-     * 
-     * @param type $id_space
-     * @param type $id_user
-     * @return boolean
-     * @throws Exception
-     */
-    public function checkSpaceAdmin($id_space, $id_user) {
-
-        $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
-            return true;
-        }
-        $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($spaceRole < 4) {
-            throw new PfmAuthException("Error 403: Permission denied", 403);
-        }
-    }
-
-        /**
-     * 
-     * @param type $id_space
-     * @param type $id_user
-     * @return boolean
-     */
-    public function isSpaceAdmin($id_space, $id_user) {
-
-        $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($id_user);
-        if ($userAppStatus > 1) {
-            return true;
-        }
-        $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
-        if ($spaceRole < 4) {
-            return false;
-        }
-        return true;
+    protected function setMenuName($id_space, $module) {
+        $modelConfig = new CoreConfig();
+        $modelConfig->setParam($module."menuname", $this->request->getParameter($module."MenuName"), $id_space);
     }
 
 }

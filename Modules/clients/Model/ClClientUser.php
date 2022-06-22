@@ -21,7 +21,16 @@ class ClClientUser extends Model {
         $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 AND id IN (SELECT id_client FROM cl_j_client_user WHERE id_user=?)";
         return $this->runRequest( $sql, array($id_space, $id_user))->fetchAll();
     }
-    
+
+    public function getClientUsersAccounts($id_client, $id_space){
+        $sql = "SELECT * FROM core_users WHERE deleted=0 AND id IN (SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=?)";
+        return $this->runRequest( $sql, array($id_client, $id_space))->fetchAll();
+    }
+
+    public function getForSpace($id_space) {
+        $sql = "SELECT * FROM cl_j_client_user WHERE id_space=? AND deleted=0;";
+        return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
 
     public function set($id_space, $id_client, $id_user){
         if (!$this->exists($id_space, $id_client, $id_user)){
@@ -43,7 +52,6 @@ class ClClientUser extends Model {
         $sql = "DELETE FROM cl_j_client_user WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
-
     
     public function deleteClientUser($id_space, $id_client, $id_user) {
         $sql = "DELETE FROM cl_j_client_user WHERE id_client=? AND id_user=? AND id_space=?";

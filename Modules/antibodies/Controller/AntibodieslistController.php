@@ -83,6 +83,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function anticorpscsvAction($id_space) {
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // database query
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, "");
@@ -263,7 +264,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function editAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // informations form
         if ($id != 0) {
@@ -280,7 +281,8 @@ class AntibodieslistController extends AntibodiesController {
             $this->antibody->setApplicationStaining($id_space, $idNew, $form->getParameter("id_staining"), $form->getParameter("id_application")
             );
 
-            $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+            $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+            $_SESSION["flashClass"] = 'success';
 
             $this->redirect('anticorpsedit/' . $id_space . '/' . $idNew);
             return;
@@ -299,12 +301,12 @@ class AntibodieslistController extends AntibodiesController {
                 CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
             $catalogForm->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . '/' . $id);
             $catalogForm->setColumnsWidth(2, 10);
-            $catalogForm->setButtonsWidth(2, 0);
             
             if ($catalogForm->check()) {
                 $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
             
-                $_SESSION["message"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+                $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
+                $_SESSION["flashClass"] = 'success';
 
                 $this->redirect('anticorpsedit/' . $id_space . '/' . $id);
                 return;
@@ -343,7 +345,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function edittissusAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $id = $this->request->getParameter("id");
         $id_antibody = $this->request->getParameter("id_antibody");
         $ref_protocol = $this->request->getParameter("ref_protocol");
@@ -365,7 +367,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function editownerAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $id = $this->request->getParameter("owner_id");
         $id_antibody = $this->request->getParameter("owner_id_anticorps");
 
@@ -407,7 +409,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function deletetissusAction($id_space, $id_tissus){
-        
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $modelTissus = new Tissus();
         $tissus = $modelTissus->getTissusById($id_space ,$id_tissus);
         
@@ -450,6 +452,7 @@ class AntibodieslistController extends AntibodiesController {
     }
     
     public function deleteownerAction($id_space, $id_owner){
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $modelOwner = new AcOwner();
         $owner = $modelOwner->get($id_space ,$id_owner);
         $modelOwner->delete($id_space ,$id_owner);
@@ -493,7 +496,6 @@ class AntibodieslistController extends AntibodiesController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);
-        $form->setButtonsWidth(2, 9);
         return $form;
     }
 
@@ -536,7 +538,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function searchqueryAction($id_space) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $searchColumn = $this->request->getParameter("searchColumn");
@@ -608,7 +610,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function advsearchqueryAction($id_space, $source = "") {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
         if ($source == "index") {
 
@@ -661,7 +663,7 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     public function deleteAction($id_space, $id) {
-
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
         $form = new Form($this->request, "antibodiesdeleteform");
@@ -673,6 +675,7 @@ class AntibodieslistController extends AntibodiesController {
     }
     
     public function deleteconfirmedAction($id_space, $id){
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $anticorpsModel = new Anticorps();
         $anticorpsModel->delete($id_space ,$id);
 

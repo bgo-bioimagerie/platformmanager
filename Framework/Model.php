@@ -39,7 +39,7 @@ abstract class Model {
      */
     protected function alreadyExists($columnName, $value) {
         if(!isset($this->tableName) || empty($this->tableName)) {
-            throw new PfmDbException("Table name not defined", 1);
+            throw new PfmDbException("Table name not defined", 500);
             
         }
         $table = $this->tableName;
@@ -74,7 +74,7 @@ abstract class Model {
 
         } catch (Exception $e) {
             $msg = $e->getMessage();
-            Configuration::getLogger()->debug('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
             if(Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
@@ -97,6 +97,9 @@ abstract class Model {
                 }
             }
 
+        }
+        if ($result === false) {
+            Configuration::getLogger()->debug('[sql] error', ['sql' => $sql, 'params' => $params]);
         }
         return $result;
     }
@@ -371,35 +374,32 @@ abstract class Model {
         $this->runRequest($sql);
     }
 
-    public function admGetBy($tableName, $key, $value, $id_space=0) {
-        $sql = "SELECT * from $tableName WHERE $key=?";
+    public function admGetBy($key, $value, $id_space=0) {
+        $sql = "SELECT * from $this->tableName WHERE $key=?";
         $params = array($value);
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params[] = $id_space;
-
         }
         return $this->runRequest($sql,$params)->fetch();
     }
 
-    public function admGetAll($tableName, $id_space=0) {
-        $sql = "SELECT * from $tableName";
+    public function admGetAll($id_space=0) {
+        $sql = "SELECT * from $this->tableName";
         $params = array();
         if ($id_space) {
             $sql .= " WHERE id_space=?";
             $params = [$id_space];
-
         }
         return $this->runRequest($sql, $params)->fetchAll();
     }
 
-    public function admCount($tableName, $id_space= 0) {
-        $sql = "SELECT count(*) as total from $tableName where deleted=0";
+    public function admCount($id_space=0) {
+        $sql = "SELECT count(*) as total from $this->tableName where deleted=0";
         $params = array();
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params = [$id_space];
-
         }
         return $this->runRequest($sql, $params)->fetch();
     }
@@ -447,6 +447,100 @@ abstract class Model {
         } catch(Exception $e) {
             Configuration::getLogger()->warning("[db] could not create user view", ["error" => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Get an object instance from an array
+     */
+    public function loadFrom(array $data) {
+        foreach(get_object_vars($this) as $attrName => $attrValue) {
+            if(array_key_exists($attrName, $data)) {
+                $this->{$attrName} = $data[$attrName];
+            }
+        }
+    }
+
+    /**
+     * Load an object from db based on its id, returns false if not found
+     * 
+     * @param int $id_space optional control on id_space
+     */
+    public function from(int $id_space=0): int {
+        if(!$this->tableName) {
+            throw new PfmDbException('No table name defined');
+        }
+        $sql = "SELECT * FROM ".$this->tableName." WHERE id=?";
+        $params = array($this->id);
+        if($id_space) {
+            $sql .= " AND id_space=?";
+            $params[] = $id_space;
+        }
+        $res = $this->runRequest($sql, $params);
+        if($res->rowCount() == 0) {
+            return false;
+        }
+        $this->loadFrom($res->fetch());
+        return true;
+    }
+
+    /**
+     * Get a list of object from an array of array
+     */
+    public function loadArray(array $data) {
+        $list = [];
+        foreach ($data as $elt) {
+            $e = new (get_class($this))();
+            $e->load($elt);
+            $list[] = $e;
+        }
+        return $list;
+    }
+
+    /**
+     * Create/update object in db
+     * 
+     * @param int $id_space optional control on id_space
+     */
+    public function save(int $id_space=0) {
+        if(!$this->tableName) {
+            throw new PfmDbException('No table name defined');
+        }
+        $protectedColumns = ['tableName', 'columnsNames', 'columnsTypes', 'columnsDefaultValue', 'primaryKey'];
+        $columns = [];
+        $params = [];
+        $values = [];
+        foreach(get_object_vars($this) as $attrName => $attrValue) {
+            if($attrName == 'id') {
+                continue;
+            }
+            if(in_array($attrName, $protectedColumns)) {
+                continue;
+            }
+            $columns[] = $attrName;
+            $params[] = '?';
+            $values[] = $attrValue;
+        }
+
+        $id = $this->id;
+        if($this->id) {
+            $update = [];
+            for($i=0;$i<count($columns);$i++){
+                $update[] = $columns[$i]. " = ?";
+            }
+            $sql = "UPDATE ".$this->tableName." SET ".implode(',', $update)." WHERE id=?";
+            $values[] = $this->id;
+            if($id_space) {
+                $sql .= " AND id_space=?";
+                $values[] = $id_space;
+            }
+            $this->runRequest($sql, $values);
+        } else {
+            $sql = "INSERT INTO ".$this->tableName." (".implode(',', $columns).") VALUES (".implode(',', $params).")";
+            $this->runRequest($sql, $values);
+            $id = $this->getDatabase()->lastInsertId();
+            $this->id = $id;
+        }
+        return $id;
     }
 
 }

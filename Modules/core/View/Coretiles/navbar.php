@@ -1,20 +1,15 @@
-<nav class="navbar navbar-default navbar-fixed-top" style="margin-top: 50px; background-color: #ffffff; z-index: 12;">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#spacenavbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-        </div>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#spacenavbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      		<span class="navbar-toggler-icon"></span>
+    	</button>
 
-        <div class="text-center">
-            <ul class="nav navbar-nav">
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <?php
                 foreach( $mainSubMenus as $menu ){
                     ?>
-                    <li><a href="coretiles/2/<?php echo $menu["id"] ?>" ><?php echo $menu["name"] ?></a></li>
+                    <li class="nav-item"><a class="nav-link" href="coretiles/2/<?php echo $menu["id"] ?>" ><?php echo $menu["name"] ?></a></li>
                     <?php
                 }
                 ?>

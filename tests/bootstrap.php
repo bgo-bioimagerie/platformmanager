@@ -8,11 +8,13 @@ session_start();
 $logger = Configuration::getLogger();
 $logger->info("Installing database from ". Configuration::getConfigFile());
 
+$doInstall = getenv("INSTALL");
+
 // drop all content if exists
 $cdb = new CoreDB();
-$cdb->dropAll();
+$cdb->dropAll(drop: $doInstall !== "0");
 
-$doInstall = getenv("INSTALL");
+
 if($doInstall !== false && $doInstall === "0") {
     $m = new CoreUser();
     $m->installDefault();
@@ -70,6 +72,8 @@ try {
 
 // update db release and launch upgrade
 $cdb->upgrade();
+$cdb->scanUpgrades();
+$cdb->base();
 
 $logger->info("Upgrade done!", ["modules" => $modulesInstalled]);
 

@@ -169,7 +169,6 @@ class TableView {
      */
     public function isPrint() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        //echo "url = " . $actual_link . "<br/>";
         if (strstr($actual_link, 'print=1')) {
             $this->isprint = true;
             return true;
@@ -183,7 +182,6 @@ class TableView {
      */
     public function isExport() {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        // echo "url = " . $actual_link . "<br/>";
         if (strstr($actual_link, 'csv=1')) {
             $this->iscsv = true;
             return true;
@@ -209,8 +207,9 @@ class TableView {
      * Generate a basic table view
      * @param array $data table data ( 'key' => value)
      * @param array $headers table headers ( 'key' => 'headername' )
+     * @param bool $small display bootstrap small table
      */
-    public function view($data, $headers) {
+    public function view($data, $headers, $small=false) {
 
         $html = "";
         if ($this->isPrint()) {
@@ -218,30 +217,28 @@ class TableView {
             $html .= "<head>";
             $html .= "<meta charset=\"UTF-8\" />";
             $html .= "<base href=\"" . $rootWeb . "\">";
-            $html .= "<link rel=\"stylesheet\" href=\"/externals/bootstrap/css/bootstrap.min.css\">";
+            $html .= "<link rel=\"stylesheet\" href=\"/externals/node_modules/bootstrap/dist/css/bootstrap.min.css\">";
             $html .= "</head>";
+
         }
         else{
             $html .= $this->addHeader();
         }
 
         if ($this->printAction != "" && $this->exportAction != "" && !$this->isprint) {
-            $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-            // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
-            $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
+            $html .= "<div class=\"col-2 offset-10\">";
+            $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
+            $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
             $html .= "</div>";
         } else {
             if ($this->printAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-default\">Print</button>";
+                $html .= "<div class=\"col-2 offset-10\">";
+                $html .= "<button type='button' onclick=\"location.href='" . $this->printAction . "?print=1'\" class=\"btn btn-outline-dark\">Print</button>";
                 $html .= "</div>";
             }
             if ($this->exportAction != "" && !$this->isprint) {
-                $html .= "<div class=\"col-xs-2 col-xs-offset-10\">";
-                // echo "redirect to : " . $this->printAction."?print=1" . "<br/>";
-                $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-default\">Export</button>";
+                $html .= "<div class=\"col-2 offset-10\">";
+                $html .= "<button type='button' onclick=\"location.href='" . $this->exportAction . "?csv=1'\" class=\"btn btn-outline-dark\">Export</button>";
                 $html .= "</div>";
             }
         }
@@ -252,9 +249,11 @@ class TableView {
             $html .= "</div>";
         }
 
-       
-        $html .= "<table id=\"".$this->tableID."\" class=\"table table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
-        //$html .= "<table id=\"example\" class=\"table table-striped table-bordered nowrap\" cellspacing=\"0\" width=\"100%\">";
+        $is_small = '';
+       if($small) {
+            $is_small = ' table-sm ';
+       }
+        $html .= "<div class=\"table-responsive\"><table id=\"".$this->tableID."\" class=\"table $is_small table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
 
         $isButtons = $this->isButtons();
         // table header
@@ -262,15 +261,11 @@ class TableView {
         $html .= "<tr>";
 
         for ($b = 0 ; $b < $isButtons ; $b++){
-            $html .= "<th></th>";
-        }
-        //if ($isButtons){
-        //    $html .= "<th></th>";
-        //}
-        
+            $html .= "<th class=\"no-sort\"></th>";
+        }        
         
         if ($this->downloadButton != "") {
-            $html .= "<th></th>";
+            $html .= "<th aria-label=\"download\"></th>";
         }
         foreach ($headers as $key => $value) {
             $title = "";
@@ -287,20 +282,17 @@ class TableView {
 
         // table body			
         $html .= "<tbody>";
+
+        $addDelete = false;
         
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
-                
-                
-                //if ($isButtons){
-                //    $html .= "<td>";
-                // }
-                
+                $style = 'width: 1%; white-space: nowrap;';
                 if (count($this->linesButtonActions) > 0 && !$this->isprint) {
                     for ($lb = 0; $lb < count($this->linesButtonActions); $lb++) {
-                        $html .= '<td style="width: 1%; white-space: nowrap;">';
-                        $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-xs btn-default\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
+                        $html .= '<td style="'.$style.'">';
+                        $html .= "<button type='button' onclick=\"location.href='" . $this->linesButtonActions[$lb] . "/" . $dat[$this->linesButtonActionsIndex[$lb]] . "'\" class=\"btn btn-sm btn-outline-dark\">" . $this->linesButtonName[$lb] . "</button><span> </span>";
                         $html .= "</td>";
                     }
                 }
@@ -310,33 +302,32 @@ class TableView {
                     if ($this->editIndex != "") {
                         $idxVal = $dat[$this->editIndex];
                     }
-                    $html .= '<td style="width: 1%; white-space: nowrap;">';
+                    $html .= '<td style="'.$style.'">';
                     if($this->editJS){
-                        $html .= "<button id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-xs btn-primary\">Edit</button><span> </span>" ;
+                        $html .= "<button onclick=\"editentry('".$this->editURL . "_" . $idxVal."')\" id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-sm btn-primary\">Edit</button><span> </span>" ;
                     }
                     else{
-                         $html .= "<button type='button' onclick=\"location.href='" . $this->editURL . "/" . $idxVal . "'\" class=\"btn btn-xs btn-primary\">Edit</button><span> </span>";   
+                        $edit_url = $this->editURL . "/" . $idxVal;
+                        if($this->editIndex != "" && str_contains($this->editURL, '{{'.$this->editIndex.'}}')) {
+                            $edit_url = str_replace('{{'.$this->editIndex.'}}', $idxVal, $this->editURL);
+                        }
+                        $html .= "<button type='button' onclick=\"location.href='" . $edit_url . "'\" class=\"btn btn-sm btn-primary\">Edit</button><span> </span>";
                     }  
                     $html .= "</td>";
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
-                    $html .= '<td style="width: 1%; white-space: nowrap;">';
+                    $html .= '<td style="'.$style.'">';
                     $html .= $this->addDeleteButtonHtml($dat[$this->deleteIndex], $dat[$this->deleteNameIndex]);
                     $html .= "</td>";
+                    $addDelete = true;
                 }
-                
-                //if ($isButtons){
-                //    $html .= "</td>";
-                //}
-                
-                
 
                 if ($this->downloadButton != "") {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
                 }
                 foreach ($headers as $key => $value) {
 
-                    $ccolor = Constants::COLOR_WHITE;
+                    $ccolor = '';
                     if (isset($this->colorIndexes[$key])){  
                         $ccolor = $dat[$this->colorIndexes[$key]];
                     }
@@ -345,7 +336,7 @@ class TableView {
                             $ccolor = $dat[$this->colorIndexes["all"]];
 	    		        }
                     }
-                    $tcolor = Constants::COLOR_BLACK;
+                    $tcolor = '';
                     if(isset($this->colorIndexes["all_text"])) {
                         $tcolor = $dat[$this->colorIndexes["all_text"]];
                     }
@@ -367,21 +358,10 @@ class TableView {
                         else if ($value["type"] == "download"){
                             $html .= '<td>';
                             if ( $val != "" ){
-                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-default">%s</button></a>', $val, $value["text"]);
+                                $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-outline-dark">%s</button></a>', $val, $value["text"]);
                             }
                             $html .= '</td>';
                         }
-                        /*
-                        else if ($value["type"] == "download"){
-                            $html .= '<td>';
-                            if ( $val != "" ){
-                                $html .= "<form role=\"form\" id=\"tabledownload\" class=\"form-horizontal\" action=\"".$value["action"]."\" method=\"POST\">";
-                                $html .= "<input name=\"filetransferurl\" type=\"hidden\" value=\"".$val."\">";
-                                $html .= "<input type=\"submit\" class=\"btn btn-default\" value=\"" . $value["text"] . "\" />";
-                                $html .= "</form>";
-                            }
-                            $html .= '</td>';
-                        }*/
                     }
                     else{
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
@@ -394,7 +374,10 @@ class TableView {
             }
         }
         $html .= "</tbody>";
-        $html .= "</table>";
+        $html .= "</table></div>";
+        if($addDelete) {
+            $html .= $this->addDeleteScript();
+        }
 
         return $html;
     }
@@ -417,6 +400,14 @@ class TableView {
     private function addHeader(){
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
+        $col = 0;
+        if ($this->downloadButton != "") {
+            $col++;
+        }
+        if(count($this->linesButtonActions) > 0 && !$this->isprint) {
+            $col+=count($this->linesButtonActions);
+        }
+        $str1 = str_replace('let defaultCol = 0;','let defaultCol = '.$col.';', $str1);
         return str_replace("tableID", $this->tableID, $str1);
     }
     
@@ -431,74 +422,6 @@ class TableView {
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
         return str_replace("tableID", $this->tableID, $str1);
-         
-
-        $html .= "<head>";
-
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.bootstrap.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"/externals/dataTables/dataTables.fixedHeader.css\">";
-
-        $html .= "<script src=\"/externals/jquery-1.11.1.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/jquery.dataTables.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.fixedHeader.min.js\"></script>";
-        $html .= "<script src=\"/externals/dataTables/dataTables.bootstrap.js\"></script>";
-        
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css\">";
-        $html .= "<link rel=\"stylesheet\" href=\"https://cdn.datatables.net/fixedcolumns/3.2.2/css/fixedColumns.bootstrap.min.css\">";
-
-        $html .= "<style>";
-        //$html .= "body { font-size: 120%; padding: 1em; margin-top:30px; margin-left: -15px;}";
-        $html .= "div.FixedHeader_Cloned table { margin: 0 !important }";
-
-        $html .= "table{";
-
-        $html .= "	white-space: nowrap;";
-        $html .= "}";
-
-        $html .= "thead tr{";
-        $html .= "	height: 100px;";
-        $html .= "}";
-
-        $html .= "thead th{";
-        $html .= "	vertical-align:bottom; text-align:center;";
-        $html .= "}";
-
-        $html .= "</style>";
-
-        $html .= "<script>";
-        $html .= "$(document).ready( function() {";
-        $html .= "$('#" . $this->tableID . "').dataTable( {";
-        $html .= "\"aoColumns\": [";
-
-        for ($c = 0; $c < $headerscount; $c++) {
-            if ($c == $headerscount - 1) {
-                $html .= "{ \"bSearchable\": true }";
-            } else if ($c == 1) {
-                $html .= "null,";
-            } else {
-                $html .= "{ \"bSearchable\": true },";
-            }
-        }
-        $html .="],";
-        $html .= "\"lengthMenu\": [[100, 200, 300, -1], [100, 200, 300, \"All\"]]";
-        $html .= "}";
-        $html .= ");";
-        $html .="} );";
-        $html .="</script>";
-
-        $html .="<script>";
-        $html .="$(document).ready(function() {";
-        $html .="	var table = $('#" . $this->tableID . "').DataTable();";
-        $html .="	new $.fn.dataTable.FixedHeader( table, {";
-        $html .="		alwaysCloneTop: true";
-        $html .="	});";
-
-        $html .="} );";
-        $html .="</script>";
-
-        $html .= "</head>";
-
-        return $html;
     }
 
     /**
@@ -507,7 +430,10 @@ class TableView {
      * @return string
      */
     private function addDownloadButtonHtml($url) {
-        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-xs btn-default\"> <span class=\"glyphicon glyphicon-open\" aria-hidden=\"true\"></span> </button>" . "</td>";
+        if(!$url) {
+            return '<td></td>';
+        }
+        $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-sm btn-outilne-dark\"> <span class=\"bi-download\" aria-hidden=\"true\"></span> </button>" . "</td>";
 
         return $html;
     }
@@ -519,10 +445,7 @@ class TableView {
      * @return string
      */
     private function addDeleteButtonHtml($id, $name) {
-
-        $html = $this->addDeleteScript($id, $name);
-        $html = $html . "<input class=\"btn btn-xs btn-danger\" type=\"button\" onclick=\"ConfirmDelete" . $id . "()\" value=\"Delete\">";
-        return $html;
+        return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"Confirm".$this->tableID."Delete('$id', '$name')\" value=\"Delete\">";
     }
 
     /**
@@ -531,12 +454,12 @@ class TableView {
      * @param type $name
      * @return string
      */
-    private function addDeleteScript($id, $name) {
+    private function addDeleteScript() {
         $html = "<script type=\"text/javascript\">";
-        $html .= "function ConfirmDelete" . $id . "()";
+        $html .= "function Confirm".$this->tableID."Delete(id, name)";
         $html .= "{";
-        $html .= "	if (confirm(\"Delete " . $name . " ?\"))";
-        $html .= "		location.href='" . $this->deleteURL . "/" . $id . "';";
+        $html .= '	if (confirm(`Delete ${name} ?`))';
+        $html .= '		location.href=`'.$this->deleteURL . '/${id}`;';
         $html .= "	}";
         $html .= "</script>";
         return $html;

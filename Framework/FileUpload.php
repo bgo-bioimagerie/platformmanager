@@ -32,9 +32,8 @@ class FileUpload {
             throw new PfmFileException("File size too large: ".FILE_MAX_SIZE, 403);
         }
 
-
-
         if(!move_uploaded_file($_FILES[$uploadFile_id]["tmp_name"], $target_file)) {
+            Configuration::getLogger()->error('File upload failure', ['from' => $_FILES[$uploadFile_id]["tmp_name"], 'to' => $target_file]);
             throw new PfmFileException("Error, there was an error uploading your file", 500);
         }
         return "The file" . basename($_FILES[$uploadFile_id]["name"]) . " has been uploaded.";

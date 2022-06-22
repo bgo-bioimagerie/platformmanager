@@ -14,7 +14,10 @@ require_once 'Modules/com/Controller/ComController.php';
 class ComtileController extends ComController {
 
     public function editAction($id_space){
-        
+        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        if($this->role < CoreSpace::$ADMIN) {
+            throw new PfmAuthException('admins only');
+        }
         $modelParam = new CoreConfig();
         $message = $modelParam->getParamSpace("tilemessage", $id_space);
         
@@ -24,7 +27,7 @@ class ComtileController extends ComController {
         $form->addTextArea("message", "" , false, $message, true);
         $form->setColumnsWidth(0, 12);
         $form->setValidationButton(CoreTranslator::Ok($lang), "comtileedit/".$id_space);
-        $form->setButtonsWidth(1, 11);
+
         
         if($form->check()){
             $modelParam->setParam("tilemessage", $this->request->getParameter("message", false), $id_space);

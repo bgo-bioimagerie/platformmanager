@@ -37,67 +37,31 @@ class DocumentsconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelSpace = new CoreSpace();
-
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'documents', $lang);
         if ($formMenusactivation->check()) {
-
-            
-            $modelSpace->setSpaceMenu($id_space, "documents", "documents", "glyphicon-folder-open", 
-                    $this->request->getParameter("documentsmenustatus"),
-                    $this->request->getParameter("displayMenu"),
-                    0,
-                    $this->request->getParameter("colorMenu"),
-                    $this->request->getParameter("colorTxtMenu")
-                    );
-            
-            $this->redirect("documentsconfig/".$id_space);
-            return;
+            $this->menusactivation($id_space, 'documents', 'folder2-open');
+            return $this->redirect("documentsconfig/".$id_space);
         }
 
-        // view
-        $forms = array($formMenusactivation->getHtml($lang));
+        $modelCoreConfig = new CoreConfig();
+        $formEdit = new Form($this->request, "documentsEditForm");
+        if($formEdit->check()) {
+            $modelCoreConfig->setParam('documentsEdit', $this->request->getParameter('documentsEdit'), $id_space);
+            $documentsEdit = $this->request->getParameter('documentsEdit');
+        } else {
+            $documentsEdit = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
+        }
+
+        $formEdit->addSeparator(CoreTranslator::EditionAccess($lang));
+        $formEdit->addSelect("documentsEdit", "Edit", array(CoreTranslator::Manager($lang), CoreTranslator::Admin($lang)), array(CoreSpace::$MANAGER, CoreSpace::$ADMIN), $documentsEdit);
+        $formEdit->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
+
+
+
+        $forms = array($formMenusactivation->getHtml($lang), $formEdit->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "documents");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "documents");
-        $colorMenu = $modelSpace->getSpaceMenusColor($id_space, "documents");
-        $colorTxtMenu = $modelSpace->getSpaceMenusTxtColor($id_space, "documents");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("documentsmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor("colorMenu", CoreTranslator::color($lang), false, $colorMenu);
-        $form->addColor("colorTxtMenu", CoreTranslator::color($lang), false, $colorTxtMenu);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $menucolor = $modelCoreConfig->getParamSpace("documentsmenucolor", $id_space);
-        $menucolortxt = $modelCoreConfig->getParamSpace("documentsmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("documentsmenucolor", CoreTranslator::menu_color($lang), false, $menucolor);
-        $form->addColor("documentsmenucolortxt", CoreTranslator::text_color($lang), false, $menucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
 }

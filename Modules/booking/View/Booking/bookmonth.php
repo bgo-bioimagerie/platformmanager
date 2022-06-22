@@ -1,6 +1,9 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
-<!-- body -->     
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+    
 <?php startblock('content') ?>
 
 <?php 
@@ -11,50 +14,33 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 
 <link href="Modules/booking/Theme/styleagenda.css" rel="stylesheet" type="text/css" />
 
-
-<?php
-    if (empty($resourceInfo)) {
-?>
-<div class="row" style="background-color: #ffffff; padding-top: 12px;">
-    <div class="col-sm-10 col-sm-offset-1">
-    <?php
-            $message = "";
-                if (isset($_SESSION["message"]) && $_SESSION["message"]){
-                $message = $_SESSION["message"];
-            } ?>
-            <?php if ($message != ""): 
-            if (strpos($message, "Err") === false){?>
-                <div class="alert alert-success text-center">	
-            <?php 
-            }
-            else{
-            ?>
-                <div class="alert alert-danger text-center">
-            <?php 
-            }
-        ?>
-            <p><?php echo  $message ?></p>
-            </div>
-        <?php endif; unset($_SESSION["message"])?>
-
-    </div>
-    </div>
-<?php
-    }
-?>
-
 <div class="row" style="background-color: #ffffff;">
-    <div class="col-xs-12">
+    <div class="col-12">
     <?php
-    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo);
+
+    $from = ["month", $date, $bk_id_resource, $bk_id_area, $id_user, $detailedView ? 'detailed' : 'simple'];
+    if($bk_id_area == null) { $bk_id_area = '';}
+    if($bk_id_resource == null) { $bk_id_resource = '';}
+
+    $nav = [
+        'date' => $date,
+        'beforeDate' => $beforeDate,
+        'afterDate' => $afterDate,
+        'bk_id_area' => $bk_id_area,
+        'bk_id_resource' => $bk_id_resource,
+        'id_user' => $id_user
+    ];
+    echo drawNavigation('month', $id_space, $date, null, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
+
+    drawAgenda($id_space, $lang, $month, $year, $calEntries, $resourcesBase, $agendaStyle, $resourceInfo, $nav, $from, $context['role']);
     ?>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-xs-12" style="background-color: #ffffff;">
+    <div class="col-12" style="background-color: #ffffff;">
     <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
     </div>
 </div>
 
-<?php endblock();
+<?php endblock(); ?>

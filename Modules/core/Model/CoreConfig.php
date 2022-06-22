@@ -10,6 +10,13 @@ require_once 'Framework/Configuration.php';
  */
 class CoreConfig extends Model {
 
+    static int $ONEXPIRE_INACTIVATE = 0;
+    static int $ONEXPIRE_REMOVE = 1;
+
+    public function __construct() {
+        $this->tableName = "core_config";
+    }
+
     private static $params = null;
 
     /**
@@ -157,5 +164,23 @@ class CoreConfig extends Model {
         if (!$this->isKey($key, 0)) {
             $this->addParam($key, $value);
         }
+    }
+
+    public function getExpirationChoices($lang) {
+        $choices = array();
+        $choicesid = array();
+        $choicesid[] = 1;
+        $choices[] = CoreTranslator::never($lang);
+        $choicesid[] = 2;
+        $choices[] = CoreTranslator::contract_ends($lang);
+        $choicesid[] = 3;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(1, $lang);
+        $choicesid[] = 4;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(2, $lang);
+        $choicesid[] = 5;
+        $choices[] = CoreTranslator::does_not_login_for_n_year(3, $lang);
+        $choicesid[] = 6;
+        $choices[] = CoreTranslator::contract_ends_or_does_not_login_for_1_year($lang);
+        return ['ids' => $choicesid, 'labels' => $choices];
     }
 }

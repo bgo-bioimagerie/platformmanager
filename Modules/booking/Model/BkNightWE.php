@@ -24,6 +24,20 @@ class BkNightWE extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getDefault() {
+        return array(
+            "id" => "",
+            "id_belonging" => 0,
+            "tarif_unique" => 1,
+            "tarif_night" => 0,
+            "night_start" => 19,
+            "night_end" => 8,
+            "tarif_we" => 0,
+            "choice_we" => "0,0,0,0,0,1,1",
+            "id_space" => 0,
+        );
+    }
+
     public function isNight($id_space, $id) {
         $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_night=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, 1, $id_space));
@@ -55,9 +69,10 @@ class BkNightWE extends Model {
 
     /**
      * get pricing ID from ID
-     * @param unknown $id
+     * @param int $id
+     * @param int $id_space
      * @throws Exception
-     * @return mixed
+     * @return array
      */
     public function getPricing($id, $id_space) {
         $sql = "select * from bk_nightwe where id_belonging=? AND id_space=? AND deleted=0";
@@ -65,20 +80,19 @@ class BkNightWE extends Model {
         if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
         } else {
-            return array();
-            //throw new Exception("Cannot find the pricing using the given id:" . $id);
+            return $this->getDefault();
         }
     }
 
     /**
      * add a unique pricing
-     * @param unknown $id
-     * @return PDOStatement
+     * @param int $id
+     * @return int|bool
      */
     public function addUnique($id, $id_space) {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space) VALUES(?,?)";
-        $pdo = $this->runRequest($sql, array($id, $id_space));
-        return $pdo;
+        $this->runRequest($sql, array($id, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
     
     public function addBelongingIfNotExists($id_space, $belongings){
@@ -91,7 +105,7 @@ class BkNightWE extends Model {
 
     /**
      * add a pricing
-     * @param unknown $id
+     * @param int $id
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -108,7 +122,7 @@ class BkNightWE extends Model {
 
     /**
      * Update a pricing infos
-     * @param unknown $id_belonging
+     * @param int $id_belonging
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -125,7 +139,8 @@ class BkNightWE extends Model {
 
     /**
      * Check if a pricing exists
-     * @param unknown $name
+     * @param int id_belonging
+     * @param int id_space
      * @return boolean
      */
     private function isPricing($id_belonging, $id_space) {
@@ -136,7 +151,8 @@ class BkNightWE extends Model {
 
     /**
      * Add pricing if pricing name does not exists
-     * @param unknown $nom
+     * @param int $id_belonging
+     * @param int $id_space
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -156,7 +172,6 @@ class BkNightWE extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_nightwe SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM bk_nightwe WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

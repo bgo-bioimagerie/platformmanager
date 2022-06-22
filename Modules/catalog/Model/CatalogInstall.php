@@ -26,7 +26,7 @@ class CatalogInstall extends Model {
         $modulesModel2->createTable();
 
         if (!file_exists('data/catalog/')) {
-            mkdir('data/catalog/', 0777, true);
+            mkdir('data/catalog/', 0755, true);
         }
     }
 

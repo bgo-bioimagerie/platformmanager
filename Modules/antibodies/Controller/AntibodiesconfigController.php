@@ -28,6 +28,7 @@ class AntibodiesconfigController extends CoresecureController {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
+
     
     /**
      * (non-PHPdoc)
@@ -38,22 +39,11 @@ class AntibodiesconfigController extends CoresecureController {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $modelSpace = new CoreSpace();
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'antibodies', $lang);
         if ($formMenusactivation->check()) {
-
-            
-            $modelSpace->setSpaceMenu($id_space, "antibodies", "antibodies", "glyphicon-user", 
-                    $this->request->getParameter("antibodiesmenustatus"),
-                    $this->request->getParameter("displayMenu"),
-                    1,
-                    $this->request->getParameter("displayColor"),
-                    $this->request->getParameter("displayTxtColor")
-                    );
-            
-            $this->redirect("antibodiesconfig/".$id_space);
-            return;
+            $this->menusactivation($id_space, 'antibodies', 'person');
+            return $this->redirect("antibodiesconfig/".$id_space);
         }
 
         // view
@@ -62,29 +52,7 @@ class AntibodiesconfigController extends CoresecureController {
         return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "antibodies");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "antibodies");
-        $displayColor = $modelSpace->getSpaceMenusColor($id_space, "antibodies");
-        $displayTxtColor = $modelSpace->getSpaceMenusTxtColor($id_space, "antibodies");
-
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("antibodiesmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber('displayMenu', CoreTranslator::Display_order($lang), false, $displayMenu);
-        $form->addColor('displayColor', CoreTranslator::color($lang), false, $displayColor);
-        $form->addColor('displayTxtColor', CoreTranslator::text_color($lang), false, $displayTxtColor);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "antibodiesconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
+    
 
     
 }

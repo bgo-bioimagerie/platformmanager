@@ -11,6 +11,10 @@ require_once 'Framework/Model.php';
  * @author Sylvain Prigent
  */
 class CoreProjects extends Model {
+
+	public function __construct() {
+        $this->tableName = "core_projects";
+    }
         
 	/**
 	 * Create the Project table
@@ -156,7 +160,7 @@ class CoreProjects extends Model {
 		if ($project->rowCount() == 1) {
     		return $project->fetch();  // get the first line of the result
 		} else {
-    		throw new PfmParamException("Cannot find the project using the given id", 404); 
+    		throw new PfmException("Cannot find the project using the given id", 404); 
 		}
 	}
 	

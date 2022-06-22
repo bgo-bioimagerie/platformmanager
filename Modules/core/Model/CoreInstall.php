@@ -46,20 +46,28 @@ class CoreDB extends Model {
 
     /**
      * Drops all tables content
+     * 
+     * @param bool $drop delete tables and not just content
      */
-    public function dropAll() {
-        $sql = "show tables";
+    public function dropAll($drop=false) {
+        $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            Configuration::getLogger()->warning('Drop', ["table" => $table]);
-            $sql = "delete from ".$table;
-            $this->runRequest($sql);
+            if($drop) {
+                Configuration::getLogger()->warning('Drop table', ["table" => $table]);
+                $sql = "DROP TABLE ".$table;
+                $this->runRequest($sql);
+            } else {
+                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
+                $sql = "DELETE FROM ".$table;
+                $this->runRequest($sql);
+            }
         }
     }
 
     public function isFreshInstall() {
-        $sql = "show tables";
+        $sql = "SHOW tables";
         $nbTables = $this->runRequest($sql)->rowCount();
         $freshInstall = true;
         if($nbTables > 0) {
@@ -120,6 +128,19 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
         $this->addColumn("users_info", "organization", "varchar(255)", "");
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
+    }
+
+    public function repair499() {
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->info("Run repair script 499 (PR #499)");
     }
 
     public function upgrade_v0_v1() {
@@ -681,34 +702,16 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[db] set core_j_spaces_user.date_contract_end to NULL if 0000-00-00, done!');
 
-    }
-
-    public function upgrade_v4_v5() {
-        // Update invoices in redis
-        Configuration::getLogger()->debug('[db] Update invoice numbers in redis');
-        $sql = "SELECT * FROM in_invoice ORDER BY number DESC;";
-        $req = $this->runRequest($sql);
-        $lastNumber = "";
-        if ($req->rowCount() > 0) {
-            $bill = $req->fetch();
-            $lastNumber = $bill["number"];
-            Configuration::getLogger()->debug('[invoice]', ['number' => $lastNumber]);
-        }
-        if ($lastNumber != "") {
-            $lastNumber = explode("-", $lastNumber);
-            $lastNumberY = $lastNumber[0];
-            $lastNumberN = $lastNumber[1];
-            if ($lastNumberY == date("Y", time())) {
-                $s = new CoreSpace();
-                $spaces = $s->getSpaces('id');
-                $cv = new CoreVirtual();
-                foreach($spaces as $space) {
-                    Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => $lastNumberN]);
-                    $cv->set($space['id'], "invoices:$lastNumberY", $lastNumberN);
-                }
-            }
-        }
-        Configuration::getLogger()->debug('[db] Update invoice numbers in redis, done!');
+        Configuration::getLogger()->debug('[se_order] fix column types');
+        $sql = "alter table se_order modify column date_open date NULL";
+        $this->runRequest($sql);
+        $sql = "alter table se_order modify column date_close date NULL";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_close=null where date_close='0000-00-00'";
+        $this->runRequest($sql);
+        $sql = "update se_order set date_open=null where date_open='0000-00-00'";
+        $this->runRequest($sql);
+        Configuration::getLogger()->debug('[se_order] fix column types, done!');
     }
 
     /**
@@ -748,22 +751,111 @@ class CoreDB extends Model {
         $this->runRequest($sql);
     }
 
-    public function upgrade($from=-1) {
-        $sqlRelease = "SELECT * FROM `pfm_db`;";
-        $reqRelease = $this->runRequest($sqlRelease);
+    public function needUpgrade() : array {
+        $need = [];
+        $upgradeFiles = scandir('db/upgrade');
+        sort($upgradeFiles);
 
+        foreach ($upgradeFiles as $f) {
+            if(!str_ends_with($f, '.php')) {
+                continue;
+            }
+            $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+            $record = str_replace('.php', '', $f);
+            $res = $this->runRequest($sql, [$record]);
+
+            if(!$res) {
+                Configuration::getLogger()->error('request failed');
+                $need[] = $f;
+                continue;
+            }
+            if($res->rowCount() > 0) {
+                Configuration::getLogger()->debug('[db][upgrade] already applied', ['file' => $f]);
+                continue;
+            }
+            $need[] = $f;
+        }
+        return $need;
+    }
+
+    public function scanUpgrades() {
+        if(file_exists('db/upgrade')) {
+            $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `record` varchar(255) NOT NULL,
+                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (`id`)
+            );";
+            $this->runRequest($sql);
+
+            $upgradeFiles = scandir('db/upgrade');
+            sort($upgradeFiles);
+            foreach ($upgradeFiles as $f) {
+                if(!str_ends_with($f, '.php')) {
+                    continue;
+                }
+                $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+                $record = str_replace('.php', '', $f);
+                $res = $this->runRequest($sql, [$record]);
+                if(!$res) {
+                    Configuration::getLogger()->error('request failed');
+                    break;
+                }
+                if($res->rowCount() > 0) {
+                    Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
+                    continue;
+                }
+                Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
+                try {
+                    include "db/upgrade/$f";
+                    $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
+                    $this->runRequest($sql, [$record]);
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error("[db][upgrade] an error occured", ["error" => $e]);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets base columns
+     */
+    public function base() {
         Configuration::getLogger()->info("[db] set base columns if not present");
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach($tables as $t) {
             $table = $t[0];
+            $sql = "show index from `$table`";
+            $indexes = $this->runRequest($sql)->fetchAll();
             $this->addColumn($table, "deleted", "int(1)", 0);
             $this->addColumn($table, "deleted_at", "DATETIME", "", true);
             $this->addColumn($table, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
             $this->addColumn($table, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
             $this->addColumn($table, "id_space", "int(11)", 0);
+
+            $indexExists = false;
+            foreach($indexes as $index) {
+                if($index['Key_name'] == "idx_${table}_space") {
+                    $indexExists = true;
+                    Configuration::getLogger()->debug('[db] id_space index already exists');
+                    break;
+                }
+            }
+            if(!$indexExists) {
+                Configuration::getLogger()->debug('[db] create id_space index');
+                $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+                $this->runRequest($space_index);
+            }
         }
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
+    }
+
+    public function upgrade($from=-1) {
+        $sqlRelease = "SELECT * FROM `pfm_db`;";
+        $reqRelease = $this->runRequest($sqlRelease);
+
 
         $isNewRelease = false;
         $oldRelease = 0;
@@ -793,6 +885,7 @@ class CoreDB extends Model {
         }
         
 
+        // old migration stuff, now using db/upgrade files, keep for backward compatiblity
         if($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
             $updateFromRelease = $oldRelease;
@@ -833,7 +926,6 @@ class CoreDB extends Model {
         } else {
             Configuration::getLogger()->info("[db] no migration needed");
         }
-
     }
 }
 
@@ -948,7 +1040,7 @@ class CoreInstall extends Model {
         $modelMail->createTable();
 
         if (!file_exists('data/conventions/')) {
-            mkdir('data/conventions/', 0777, true);
+            mkdir('data/conventions/', 0755, true);
         }
 
     }

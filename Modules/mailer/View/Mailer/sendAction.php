@@ -1,9 +1,8 @@
 <?php include 'Modules/mailer/View/layout.php' ?>
 
-<!-- body -->     
+    
 <?php startblock('content') ?>
-<div >
-
+<div>
     <div class="page-header">
         <h1>
             <?php echo MailerTranslator::Send_email($lang) ?>
@@ -16,9 +15,8 @@
     </div>
 
     <div class="col-lg-2 col-lg-offset-10">
-        <button type="button" onclick="location.href = 'mailer/<?php echo $id_space ?>'" class="btn btn-default"><?php echo CoreTranslator::Ok($lang) ?></button>
+        <button type="button" onclick="location.href = 'mailer/<?php echo $id_space ?>'" class="btn btn-outline-dark"><?php echo CoreTranslator::Ok($lang) ?></button>
     </div>
 </div>
 
-<?php
-endblock();
+<?php endblock(); ?>

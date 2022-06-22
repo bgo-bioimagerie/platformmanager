@@ -6,6 +6,7 @@ class ClientsRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET|POST', '/clientusers/getclients/[i:id_space]/[i:id_user]', 'clients/clientsusers/getuserclients', 'clients_getuserclients');
+        $router->map('GET|POST', '/clientusers/getusers/[i:id_space]/[i:id_client]', 'clients/clientsusers/getclientusers', 'clients_getclientusers');
         $router->map('GET|POST', '/clientspricings/getpricing/[i:id_space]/[i:id_client]', 'clients/clientspricings/getclientpricing', 'clients_getclientpricing');
         $router->map('GET|POST', '/clientslist/getaddress/[i:id_space]/[i:id_client]', 'clients/clientslist/getaddress', 'clients_getaddress');
     }
@@ -32,7 +33,7 @@ class ClientsRouting extends Routing{
         
         // client account
         $this->addRoute("clientsuseraccounts", "clientsuseraccounts", "clientsuseraccounts", "index", array("id_space", "id_user"), array("", ""));
-        $this->addRoute("clientsuseraccountsdelete", "clientsuseraccountsdelete", "clientsuseraccounts", "delete", array("id_space", "id_user", "id"), array("", "", ""));
+        $this->addRoute("clientsuseraccountsdelete", "clientsuseraccountsdelete", "clientsuseraccounts", "delete", array("id_space", "id_user", "id_client"), array("", "", ""));
         
         
         

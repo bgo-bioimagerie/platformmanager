@@ -35,72 +35,19 @@ class BulletjournalconfigController extends CoresecureController {
 
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
-        $modelSpace = new CoreSpace();
-        // color menu form
-        $modelCoreConfig = new CoreConfig();
-        $formMenuColor = $this->menuColorForm($modelCoreConfig, $id_space, $lang);
-        if ($formMenuColor->check()) {
-            $modelCoreConfig->setParam("bulletjournalmenucolor", $this->request->getParameter("bulletjournalmenucolor"), $id_space);
-            $modelCoreConfig->setParam("bulletjournalmenucolortxt", $this->request->getParameter("bulletjournalmenucolortxt"), $id_space);
-            
-            $this->redirect("bulletjournalconfig/".$id_space);
-            return;
-        }
-
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($lang, $id_space);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'bulletjournal', $lang);
         if ($formMenusactivation->check()) {
-
-            
-            $modelSpace->setSpaceMenu($id_space, "bulletjournal", "bulletjournal", "glyphicon glyphicon-book", 
-                    $this->request->getParameter("bulletjournalmenustatus"),
-                    $this->request->getParameter("displayMenu")
-                    );
+            $this->menusactivation($id_space, 'bulletjournal', 'book');
             
             $this->redirect("bulletjournalconfig/".$id_space);
             return;
         }
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang), $formMenuColor->getHtml($lang));
+        $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function menusactivationForm($lang, $id_space) {
-
-        $modelSpace = new CoreSpace();
-        $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "bulletjournal");
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, "bulletjournal");
-        
-        
-        $form = new Form($this->request, "menusactivationForm");
-        $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang));
-
-        $roles = $modelSpace->roles($lang);
-
-        $form->addSelect("bulletjournalmenustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusUserMenu);
-        $form->addNumber("displayMenu", CoreTranslator::Display_order($lang), false, $displayMenu ?? 0);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "bulletjournalconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-
-        return $form;
-    }
-
-    public function menuColorForm($modelCoreConfig, $id_space, $lang){
-        $menucolor = $modelCoreConfig->getParamSpace("bulletjournalmenucolor", $id_space);
-        $menucolortxt = $modelCoreConfig->getParamSpace("bulletjournalmenucolortxt", $id_space);
-        
-        $form = new Form($this->request, "menuColorForm");
-        $form->addSeparator(CoreTranslator::color($lang));
-        $form->addColor("bulletjournalmenucolor", CoreTranslator::menu_color($lang), false, $menucolor);
-        $form->addColor("bulletjournalmenucolortxt", CoreTranslator::text_color($lang), false, $menucolortxt);
-        
-        $form->setValidationButton(CoreTranslator::Save($lang), "bulletjournalconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
-        
-        return $form;
-    }
 }

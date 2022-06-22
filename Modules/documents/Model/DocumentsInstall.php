@@ -21,7 +21,7 @@ class DocumentsInstall extends Model {
         $model->createTable();
         
         if (!file_exists('data/documents/')) {
-            mkdir('data/documents/', 0777, true);
+            mkdir('data/documents/', 0755, true);
         }
     }
 }

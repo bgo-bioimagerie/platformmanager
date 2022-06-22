@@ -6,6 +6,8 @@ class CoreRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET', '/corefiles/[i:id_space]/[i:id_file]', 'core/corefiles/download', 'files_download');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/user/expire', 'core/corespaceaccess/expire', 'userspace_expire');
+        $router->map('GET', '/corespaceaccess/[i:id_space]/user/expire/run', 'core/corespaceaccess/doexpire', 'userspace_expire_run');
         $router->map('GET', '/corespaceaccess/[i:id_space]/impersonate/[i:id_user]', 'core/corespaceaccess/impersonate', 'user_impersonate');
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
@@ -47,11 +49,6 @@ class CoreRouting extends Routing{
         $this->addRoute("coretilesdoc", "coretilesdoc", "coretiles", "doc");
         $this->addRoute("coretilesselfjoinspace", "coretilesselfjoinspace", "coretiles", "selfjoinspace", array("id_space"), array(""));
         
-        
-        // Update
-        // $this->addRoute("update", "update", "coreupdate", "update");
-        // $this->addRoute("coreupdate", "coreupdate", "coreupdate", "index");
-        
         // Users
         $this->addRoute("coreusers", "coreusers", "coreusers", "index");
         $this->addRoute("coreusersedit", "coreusersedit", "coreusers", "edit", array("id"), array(""));
@@ -74,13 +71,17 @@ class CoreRouting extends Routing{
         $this->addRoute("corespacependinguseredit", "corespacependinguseredit", "corespaceaccess", "pendinguseredit", array("id_space", "id"), array("", ""));
         $this->addRoute("corespaceaccessusers", "corespaceaccessusers", "corespaceaccess", "users", array("id_space", "letter"), array("", ""));
         $this->addRoute("corespaceaccessusersinactifs", "corespaceaccessusersinactifs", "corespaceaccess", "usersinactif", array("id_space", "letter"), array("", ""));
-        $this->addRoute("coreaccessuseredit", "coreaccessuseredit", "corespaceaccess", "useredit", array("id_space", "id"), array("", ""));
         $this->addRoute("corespaceaccessuseradd", "corespaceaccessuseradd", "corespaceaccess", "useradd", array("id_space"), array(""));
         $this->addRoute("spaceconfigdeleteuser", "spaceconfigdeleteuser", "corespace", "configdeleteuser", array("id_space", "id_user"), array("", ""));
-        // multi-tenant feature: route for rejecting user requesting to join space
         $this->addRoute("corespacependinguserdelete", "corespacependinguserdelete", "corespaceaccess", "pendinguserdelete", array("id_space", "id"), array("", ""));
         $this->addRoute("corespaceuserdelete", "corespaceuserdelete", "corespaceaccess", "userdelete", array("id_space", "id_user"), array("", ""));
-    
+        
+        // space user edit
+        $this->addRoute("corespaceuseredit", "corespaceuseredit", "corespaceuser", "edit", array("id_space", "id_user"), array("", ""));
+        $this->addRoute("corespaceuserdeleteclientsuser", "corespaceuserdeleteclientsuser", "corespaceuser", "deleteclientsuser", array("id_space", "id_user", "id_client"), array("", "", ""));
+        $this->addRoute("corespaceuserbkauthAdd", "corespaceuserbkauthadd", "corespaceuser", "bkauthadd", array("id_space", "id_user"), array("", ""));
+        $this->addRoute("corespaceuseredithist", "corespaceuseredithist", "corespaceuser", "edit", array("id_space", "id_user"), array("", ""));
+
         // history
         $this->addRoute("corespacehistory", "corespacehistory", "corespacehistory", "index", array("id_space"), array(""));
         

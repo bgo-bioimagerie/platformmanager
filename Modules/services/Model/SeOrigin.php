@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class SeOrigin extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_origin";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_origin` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -48,8 +52,8 @@ class SeOrigin extends Model {
      */
     public function set($id, $name, $display_order, $id_space) {
         if (!$id) {
-            $sql = "INSERT INTO se_origin (id, name, display_order, id_space) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($id, $name, $display_order, $id_space));
+            $sql = "INSERT INTO se_origin (name, display_order, id_space) VALUES (?,?,?)";
+            $this->runRequest($sql, array($name, $display_order, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE se_origin SET name=?, display_order=? WHERE id=? AND id_space=? AND deleted=0";

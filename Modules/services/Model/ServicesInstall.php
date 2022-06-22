@@ -13,6 +13,8 @@ require_once 'Modules/services/Model/SeVisa.php';
 
 require_once 'Modules/services/Model/StockCabinet.php';
 require_once 'Modules/services/Model/StockShelf.php';
+require_once 'Modules/services/Model/SeTask.php';
+require_once 'Modules/services/Model/SeTaskCategory.php';
 /**
  * Class defining methods to install and initialize the core database
  *
@@ -32,7 +34,6 @@ class ServicesInstall extends Model {
 
         $modelServiceType = new SeServiceType();
         $modelServiceType->createTable();
-        // $modelServiceType->createDefault();
 
         $modelSePurchase = new SePurchase();
         $modelSePurchase->createTable();
@@ -60,10 +61,15 @@ class ServicesInstall extends Model {
         
         $modelCabinet = new StockCabinet();
         $modelCabinet->createTable();
-        
+
+        $modelTask = new SeTask();
+        $modelTask->createTable();
+
+        $modelTaskCategory = new SeTaskCategory();
+	    $modelTaskCategory->createTable();
 
         if (!file_exists('data/services/')) {
-            mkdir('data/services/', 0777, true);
+            mkdir('data/services/', 0755, true);
         }
     }
 

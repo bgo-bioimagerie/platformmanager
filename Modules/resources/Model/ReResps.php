@@ -56,8 +56,9 @@ class ReResps extends Model {
             $sql = "UPDATE re_resps SET id_resource=?, id_user=?, id_status=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($id_resource, $id_user, $id_status, $id, $id_space));
         } else {
-            $this->addResp($id_space, $id_resource, $id_user, $id_status);
+            $id = $this->addResp($id_space, $id_resource, $id_user, $id_status);
         }
+        return $id;
     }
 
     public function getResRespID($id_space, $id_resource, $id_user) {
@@ -77,7 +78,7 @@ class ReResps extends Model {
         foreach ($data as $dat) {
             if (!in_array($dat["id_user"], $id_users)) {
                 $sql = "DELETE FROM re_resps WHERE id=? AND id_space=? AND deleted=0";
-                $this->runRequest($sql, array($dat["id"]));
+                $this->runRequest($sql, array($dat["id"], $id_space));
             }
         }
     }

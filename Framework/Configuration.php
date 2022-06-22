@@ -189,6 +189,10 @@ class Configuration {
         if(getenv('SMTP_PORT')) {
             self::$parameters['smtp_port']= intval(getenv('SMTP_PORT'));
         }
+        self::$parameters['smtp_tls']= false;
+        if(getenv('SMTP_TLS')) {
+            self::$parameters['smtp_tls']= boolval(getenv('SMTP_TLS'));
+        }
         if(getenv('DEBUG')) {
             self::$parameters['debug'] = boolval(getenv('DEBUG'));
         }
@@ -327,6 +331,15 @@ class Configuration {
         if(getenv('PFM_REDIS_PORT')) {
             self::$parameters['redis_port'] = intval(getenv('PFM_REDIS_PORT'));
         }
+
+        if(!isset(self::$parameters['timezone'])) {
+            self::$parameters['timezone'] = 'UTC';
+        }
+        if(getenv('PFM_TIMEZONE')) {
+            self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
+        }
+        // do not set because impacts existing bookings....
+        // date_default_timezone_set(self::$parameters['timezone']);
 
     }
 
