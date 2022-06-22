@@ -664,6 +664,10 @@ class Form {
         }
         $html .= $formHtml->id($this->id);
 
+        if ($this->isTextArea === true) {
+            $html .= $formHtml->textAreaScript();
+        }
+
         // fields
         for ($i = 0; $i < count($this->types ?? []); $i++) {
             $readonlyElem = false;
@@ -758,9 +762,6 @@ class Form {
             $html .= $formHtml->formFooter();
         }
 
-        if ($this->isTextArea === true) {
-            $html .= $formHtml->textAreaScript();
-        }
 
         if ($this->checkUnicity && in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();

@@ -10,6 +10,7 @@
 * [services] new gantt interface for project management
 * [core] upgrade vue2 -> vue3
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
+* [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
 
 ## 2.6.3
@@ -91,7 +92,6 @@ Quote templates are configured the same way than invoice templates.
 * [booking] compute duration with 2 digits per minute
 * [booking] weekarea calendar, use summary view by default
 * [booking] if multiple prices are in db, pick first
-
 
 ## 2.5.0
 
