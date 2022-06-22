@@ -40,7 +40,7 @@ class SeProject extends Model {
             `samplereturn` text NOT NULL DEFAULT '',
             `samplereturndate` DATE,
             `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
-            `samplesstocked` int(1) NOT NULL DEFAULT 0,
+            `samplestocked` int(1) NOT NULL DEFAULT 0,
             `samplescomment` text NOT NULL DEFAULT '',
             PRIMARY KEY (`id`)
 		);";
