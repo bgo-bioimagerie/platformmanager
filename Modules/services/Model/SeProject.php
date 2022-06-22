@@ -38,7 +38,7 @@ class SeProject extends Model {
             `closed_by` int(11) NOT NULL DEFAULT 0,
             `in_charge` int(11) NOT NULL DEFAULT 0,
             `samplereturn` text NOT NULL DEFAULT '',
-            `samplereturn_date` DATE NOT NULL DEFAULT '0000-00-00',
+            `samplereturndate` DATE,
             `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
             `samplesstocked` int(1) NOT NULL DEFAULT 0,
             `samplescomment` text NOT NULL DEFAULT '',
