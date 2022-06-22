@@ -1,5 +1,9 @@
 # Changes
 
+## 2.8.0
+
+* [core] add support for custom plans
+
 ## 2.7.0
 
 ### Features / enhancements
