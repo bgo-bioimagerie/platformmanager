@@ -127,7 +127,7 @@ th {
 							$last_end_time = $hcalEntry['end_time'];
 						}
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
-							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra && $context['role'] >= CoreSpace::$USER) {
 								$text .= '<br/>'.$extra;
@@ -135,8 +135,8 @@ th {
 							$hcalEntry['text'] = $text;
 							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
 						?>
-						<div class="text-center tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+						<div class="tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<a style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 						</div>
 					<?php } ?>

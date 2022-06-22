@@ -210,8 +210,7 @@ blockquote {
 </div>
 <script>
 
-var app = new Vue({
-    el: '#helpdeskapp',
+Vue.createApp({
     data () {
         return {
             selectAll: false,
@@ -576,7 +575,7 @@ var app = new Vue({
             })            
         }
     }
-})
+}).mount('#helpdeskapp');
 </script>
 <?php endblock(); ?>
 

@@ -118,7 +118,6 @@ class ServicesController extends CoresecureController {
         }
 
         $htmlListing = file_get_contents("Modules/services/View/Services/navbarlisting.php");
-
         $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);
         $htmlListing = str_replace("{{Listing}}", strtoupper(ServicesTranslator::Listing($lang)), $htmlListing);
         $htmlListing = str_replace("{{services}}", ServicesTranslator::services($lang), $htmlListing);
@@ -126,7 +125,6 @@ class ServicesController extends CoresecureController {
         $html .= $htmlListing;
 
         $html.= "</div>";
-  
 
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);
