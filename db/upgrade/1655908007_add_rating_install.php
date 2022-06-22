@@ -9,7 +9,7 @@ class CoreUpgradeDB1655908007 extends Model {
   public function run(){
     Configuration::getLogger()->info("[db][upgrade] Apply add rating install");
     $r = new RatingInstall();
-    $r->createTable();
+    $r->createDatabase();
     Configuration::getLogger()->info("[db][upgrade] Apply add rating install, done!");
   }
 }

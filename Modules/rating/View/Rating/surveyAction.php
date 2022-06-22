@@ -4,7 +4,7 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 ?>
 <?php startblock('stylesheet') ?>
-<script src="externals/pfm/star-rating/vue-star-rating/dist/VueStarRating.umd.js"></script>
+<script src="externals/pfm/star-rating/VueStarRating.umd.min.js"></script>
 <?php endblock(); ?>
 
 <?php startblock('content') ?>
@@ -20,7 +20,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
             <input type="hidden" name="resource" value="resource.id"/>
             <h4>{{resource.name}}</h4>
             <div class="form-group">
-                <rating style="min-height: 30px" v-model="resource.rate" :star-size="20" :read-only="false"></rating>
+                <rating v-model:rating="resource.rate" :star-size="20" :read-only="false"></rating>
             </div>
             <div class="form-group">
                 <label for="comment">Comment</label>
@@ -45,7 +45,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
             <input type="hidden" name="resource" value="resource.id"/>
             <h4>{{resource.name}}</h4>
             <div class="form-group">
-                <rating style="min-height: 30px" v-model="resource.rate" :star-size="20" :read-only="false"></rating>
+                <rating v-model:rating="resource.rate" :star-size="20" :read-only="false"></rating>
             </div>
             <div class="form-group">
                 <label for="comment">Comment</label>
@@ -66,8 +66,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 </form>
 </div>
 <script>
-var app = new Vue({
-    el: '#ratingEval',
+Vue.createApp({
     name: 'rating',
     data () {
         return {
@@ -126,6 +125,6 @@ var app = new Vue({
     components: {
         rating: VueStarRating.default,
     }
-})
+}).mount('#ratingEval')
 </script>
 <?php endblock(); ?>

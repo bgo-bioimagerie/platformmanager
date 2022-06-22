@@ -35,7 +35,7 @@ modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
-;modules[] = "helpdesk"
+modules[] = "helpdesk"
 modules[] = "rating"
 
 [Company]

@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
 <?php startblock('stylesheet') ?>
-<script src="externals/pfm/star-rating/vue-star-rating/dist/VueStarRating.umd.js"></script>
+<script src="externals/pfm/star-rating/VueStarRating.umd.min.js"></script>
 <?php endblock(); ?>
 
 <?php startblock('content') ?>
@@ -32,7 +32,7 @@
             <td>{{rate.module}}</td>
             <td>{{rate.resourcename}}[{{rate.resource}}]</td>
             <td>
-            <rating style="min-height: 30px" v-model="rate.rate" :star-size="20" :read-only="true"></rating>
+            <rating v-model:rating="rate.rate" :star-size="20" :read-only="true"></rating>
             </td>
             <td><button v-on:click="showComments(rate.module, rate.resource)" type="button" class="btn btn-primary">comments</button></td>
             </tr>
@@ -40,9 +40,7 @@
     </table>
 </div>
 <script>
-var app = new Vue({
-    el: '#ratingapp',
-    name: 'rating',
+Vue.createApp({
     data () {
         return {
             comments: false,
@@ -74,7 +72,7 @@ var app = new Vue({
     components: {
         rating: VueStarRating.default,
     }
-})
+}).mount('#ratingApp')
 </script>
 
 <?php endblock();

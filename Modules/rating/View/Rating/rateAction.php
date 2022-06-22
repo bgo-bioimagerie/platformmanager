@@ -1,7 +1,7 @@
 <?php include 'Modules/core/View/spacelayout.php' ?>
 
 <?php startblock('stylesheet') ?>
-<script src="externals/pfm/star-rating/vue-star-rating/dist/VueStarRating.umd.js"></script>
+<script src="externals/pfm/star-rating/VueStarRating.umd.min.js"></script>
 <?php endblock(); ?>
 
 <?php startblock('content') ?>
@@ -13,7 +13,7 @@
     <input type="hidden" name="module" value="<?php echo $data['rate']['module']; ?>"/>
     <input type="hidden" name="resource" value="<?php echo $data['rate']['resource']; ?>"/>
     <div class="form-group">
-        <rating style="min-height: 30px" v-model="rate" :star-size="20" :read-only="false"></rating>
+        <rating v-model:rating="rate" :star-size="20" :read-only="false"></rating>
     </div>
     <div class="form-group">
         <label for="comment">Comment</label>
@@ -32,9 +32,7 @@
 </form>
 </div>
 <script>
-var app = new Vue({
-    el: '#ratingEval',
-    name: 'rating',
+Vue.createApp({
     data () {
         return {
             evaluated: false,
@@ -73,6 +71,6 @@ var app = new Vue({
     components: {
         rating: VueStarRating.default,
     }
-})
+}).mount('#ratingEval')
 </script>
 <?php endblock(); ?>
