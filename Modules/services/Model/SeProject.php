@@ -46,6 +46,15 @@ class SeProject extends Model {
 		);";
         $this->runRequest($sql);
 
+        $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
+        $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
+        $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
+        $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
+        $this->addColumn('se_project', 'samplereturndate', 'date', '');
+        $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
+        $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
+        $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
+
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
 		    `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_project` int(11) NOT NULL,
