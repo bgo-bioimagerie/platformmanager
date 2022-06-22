@@ -14,6 +14,7 @@ require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/services/Model/StockCabinet.php';
 require_once 'Modules/services/Model/StockShelf.php';
 require_once 'Modules/services/Model/SeTask.php';
+require_once 'Modules/services/Model/SeTaskCategory.php';
 /**
  * Class defining methods to install and initialize the core database
  *

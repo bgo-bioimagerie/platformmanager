@@ -5,7 +5,7 @@ require_once 'Framework/Model.php';
 /**
  * Class defining projects tasks
  *
- * @author Sylvain Prigent
+ * @author Gaëtan Hervé
  */
 class SeTask extends Model {
 

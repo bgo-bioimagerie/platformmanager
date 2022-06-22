@@ -24,31 +24,27 @@ class SeProject extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_project` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-        `id_space` int(11) NOT NULL,
-		`name` varchar(150) NOT NULL DEFAULT '',
-		`id_resp` int(11) NOT NULL,					
-        `id_user` int(11) NOT NULL,
-		`date_open` DATE,
-		`date_close` DATE,
-		`new_team` int(4) NOT NULL DEFAULT 1,
-		`new_project` int(4) NOT NULL DEFAULT 1,
-		`time_limit` varchar(100) NOT NULL DEFAULT '', 
-        `id_origin` int(11) NOT NULL DEFAULT 0,
-        `closed_by` int(11) NOT NULL DEFAULT 0,
-        `in_charge` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL,
+            `name` varchar(150) NOT NULL DEFAULT '',
+            `id_resp` int(11) NOT NULL,
+            `id_user` int(11) NOT NULL,
+            `date_open` DATE,
+            `date_close` DATE,
+            `new_team` int(4) NOT NULL DEFAULT 1,
+            `new_project` int(4) NOT NULL DEFAULT 1,
+            `time_limit` varchar(100) NOT NULL DEFAULT '', 
+            `id_origin` int(11) NOT NULL DEFAULT 0,
+            `closed_by` int(11) NOT NULL DEFAULT 0,
+            `in_charge` int(11) NOT NULL DEFAULT 0,
+            `samplereturn` text NOT NULL DEFAULT '',
+            `samplereturn_date` DATE,
+            `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
+            `samplesstocked` int(1) NOT NULL DEFAULT 0,
+            `samplescomment` text NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
-        $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
-        $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
-        $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
-        $this->addColumn('se_project', 'samplereturndate', 'date', '');
-        $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
-        $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
-        $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
-
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
 		    `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -58,7 +54,7 @@ class SeProject extends Model {
             `quantity` varchar(255) NOT NULL,
             `comment` varchar(255) NOT NULL,
             `id_invoice` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql2);
