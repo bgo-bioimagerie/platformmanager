@@ -6,7 +6,6 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 $modelBookingSetting = new BkBookingSettings();
 $modelBookingSupplemetary = new BkCalSupInfo();
 
-
 $day_begin = $this->clean($scheduling['day_begin']);
 $day_end = $this->clean($scheduling['day_end']);
 $size_bloc_resa = $this->clean($scheduling['size_bloc_resa']);
@@ -34,20 +33,26 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 	$monthStream = date("M", $date_unix);
 	$dayNumStream = date("d", $date_unix);
 	$sufixStream = date("S", $date_unix);
-		
-	$calData[$dayStream] = [];
-	for($r = 0 ; $r < count($resourcesBase) ; $r++){
-		$cals = [];
-		foreach($calEntries[$r] as $c) {
-			if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
-				continue;
-			}
-			$cals[] = $c;
-		}
-		$calData[$dayStream][$resourcesBase[$r]['id']] = $cals;
+	
+	$isAvailableDay = false;
+	if($scheduling["is_".strtolower($dayStream)] == 1) {
+	//if ($available_days[$d] == 1){
+		$isAvailableDay = true;
 
-		$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
-		$calDays[$dayStream] = date('Y-m-d', $date_unix);
+		$calData[$dayStream] = [];
+		for($r = 0 ; $r < count($resourcesBase) ; $r++){
+			$cals = [];
+			foreach($calEntries[$r] as $c) {
+				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
+					continue;
+				}
+				$cals[] = $c;
+			}
+			$calData[$dayStream][$resourcesBase[$r]['id']] = $cals;
+
+			$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
+			$calDays[$dayStream] = date('Y-m-d', $date_unix);
+		}
 	}
 }
 
@@ -65,7 +70,7 @@ th {
 <table aria-label="bookings day view" class="table table-sm">
 <thead>
 	<tr>
-	<th scope="col"></th>
+	<th scope="col">Time</th>
 	<?php
 		$days = array_keys($calData);
 	?>
@@ -75,10 +80,14 @@ th {
 	</tr>
 </thead>
 <tbody>
+	<?php
+		if(empty($calData)) {
+			echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
+		}
+	?>
 <tr>
 
 	<?php
-	
 	foreach($calResources as $resId => $resource) {
 
 		?>
@@ -118,23 +127,25 @@ th {
 							$last_end_time = $hcalEntry['end_time'];
 						}
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
-							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $c['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
-							if($extra) {
+							if($extra && $context['role'] >= CoreSpace::$USER) {
 								$text .= '<br/>'.$extra;
 							}
 							$hcalEntry['text'] = $text;
 							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
 						?>
-						<div class="text-center tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+						<div class="tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
+						<a style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 						</div>
 					<?php } ?>
 					<?php
 						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
 					?>
-						<div><a  data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
+						<?php if($context['role'] >= CoreSpace::$USER) { ?>
+						<div><a data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
+						<?php } ?>
 					</td>
 				
 	<?php } ?>

@@ -1,6 +1,10 @@
 <!doctype html>
 <?php include 'Modules/layout.php' ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+
 
 <?php startblock('stylesheet') ?>
 <script src="externals/node_modules/marked/marked.min.js"></script>
@@ -206,8 +210,7 @@ blockquote {
 </div>
 <script>
 
-var app = new Vue({
-    el: '#helpdeskapp',
+Vue.createApp({
     data () {
         return {
             selectAll: false,
@@ -572,7 +575,7 @@ var app = new Vue({
             })            
         }
     }
-})
+}).mount('#helpdeskapp');
 </script>
 <?php endblock(); ?>
 

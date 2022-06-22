@@ -94,7 +94,7 @@ class Router {
         }
 
         $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
-        //Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
+        // Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
         if(!$match) {
             Configuration::getLogger()->debug('No route match, check old way');
@@ -193,7 +193,7 @@ class Router {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['route' => $reqRoute]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -298,11 +298,15 @@ class Router {
      */
     private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
 
-        $id_space = isset($args['id_space']) ? $args['id_space'] : null;
+        $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
+
         $space = null;
         if ($id_space) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
+            if(!$space) {
+                throw new PfmUserException('space not found', 404);
+            }
         }
 
 
@@ -400,21 +404,26 @@ class Router {
 
         $view = new View('error');
         $view->setFile('Modules/error.php');
-        $view->generate(array(
-            'context' => [
-                    "mainMenu" =>null,
-                    "sideMenu" => null,
-                    "spaceMenu" => null,
-                    "rootWeb" => Configuration::get("rootWeb", "/"),
-                    "lang" => 'en',
-                    "currentSpace" => null,  // current space if any
-                    "role" => -1,   // user role in space if any
-                    "dev" => false
-
-            ],
-            'type' => $type,
-            'message' => $exception->getMessage()
-        ));
+        try {
+            $view->generate(array(
+                'context' => [
+                        "mainMenu" =>null,
+                        "sideMenu" => null,
+                        "spaceMenu" => null,
+                        "rootWeb" => Configuration::get("rootWeb", "/"),
+                        "lang" => 'en',
+                        "currentSpace" => null,  // current space if any
+                        "role" => -1 ,  // user role in space if any,
+                        "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "dev" => false
+                ],
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+        } catch(Throwable $e) {
+            echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
+            echo '<br>'.$exception->getMessage();
+        }
     }
 
 }

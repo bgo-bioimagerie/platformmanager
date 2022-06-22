@@ -156,12 +156,14 @@ class ServicesordersController extends ServicesController {
         }
 
         $modelUser = new CoreUser();
+        $modelClient = new ClClient();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $clients = $modelClient->getForList($id_space);
 
         $form->addSeparator(CoreTranslator::Description($lang));
         $form->addText("no_identification", ServicesTranslator::No_identification($lang), false, $value["no_identification"]);
-        $form->addSelectMandatory("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-        $form->addSelectMandatory('id_client', ClientsTranslator::Client($lang), $clientSelect['choices'], $clientSelect['choicesid'], $clientSelect['value']);
+        $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $clientSelect['value']);
+        $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
         $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Close($lang)), array(1, 0), $value["id_status"]);
 
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
@@ -186,7 +188,7 @@ class ServicesordersController extends ServicesController {
         $form->setFormAdd($formAdd);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesorderedit/" . $id_space . "/" . $id);
-        $form->setButtonsWidth(2, 10);
+
 
         if ($form->check()) {
             $id_order = $this->validateEditQuery($id_space, $id, $this->request);
@@ -208,10 +210,11 @@ class ServicesordersController extends ServicesController {
         $lang = $this->getLanguage();
         $modelOrder = new SeOrder();
         $modelServices = new SeService();
+        $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
         $id_order = $modelOrder->setOrder(
             $id,
             $id_space,
-            $request->getParameter("id_user"),
+            $id_user,
             $request->getParameter("id_client"),
             $request->getParameter("no_identification"),
             $_SESSION["id_user"], 
@@ -238,7 +241,7 @@ class ServicesordersController extends ServicesController {
             }
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = $servicesQuantities[$i] - $qOld;
+                $qDelta = intval($servicesQuantities[$i]) - $qOld;
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }

@@ -7,6 +7,15 @@ class ServicesRouting extends Routing {
     public function routes($router) {
         $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
         $router->map('GET|POST', '/services/getServiceType/[i:id_space]/[i:id_service]', 'services/services/getServiceType', 'services_getservicetype');
+        $router->map('GET', '/servicesprojects/kanban/[i:id_space]/[i:id_project]', 'services/servicesprojects/kanban', 'services_project_kanban');
+        $router->map('POST', '/servicesprojects/settask/[i:id_space]/[i:id_project]', 'services/servicesprojects/settask', 'services_project_settask');
+        $router->map('POST', '/servicesprojects/gettasks/[i:id_space]/[i:id_project]', 'services/servicesprojects/gettasks', 'services_project_gettasks');
+        $router->map('POST', '/servicesprojects/gettaskservices/[i:id_space]/[i:id_task]', 'services/servicesprojects/gettaskservices', 'services_project_gettaskservices');
+        $router->map('POST', '/servicesprojects/deletetask/[i:id_space]/[i:id_task]', 'services/servicesprojects/deletetask', 'services_project_deletetask');
+        $router->map('POST', '/servicesprojects/settaskcategory/[i:id_space]/[i:id_project]', 'services/servicesprojects/settaskcategory', 'services_project_settaskcategory');
+        $router->map('POST', '/servicesprojects/deletetaskcategory/[i:id_space]/[i:id_category]', 'services/servicesprojects/deletetaskcategory', 'services_project_deletetaskcategory');
+        $router->map('POST', '/servicesprojects/uploadtaskfile/[i:id_space]/[i:id_task]', 'services/servicesprojects/uploadtaskfile', 'services_project_uploadtaskfile');
+        $router->map('POST', '/servicesprojects/gettaskfile/[i:id_space]/[i:id_task]', 'services/servicesprojects/gettaskfile', 'services_project_gettaskfile');
     }
 
     public function listRoutes() {
@@ -70,7 +79,7 @@ class ServicesRouting extends Routing {
         $this->addRoute("servicesprojecteditentryquery", "servicesprojecteditentryquery", "servicesprojects", "editentryquery", array("id_space"), array(""));
         $this->addRoute("servicesprojectdeleteentry", "servicesprojectdeleteentry", "servicesprojects", "deleteentry", array("id_space", "id_project", "id"), array("", "", ""));
 
-        $this->addRoute("servicesprojectgantt", "servicesprojectgantt", "servicesprojectgantt", "index", array("id_space", "allPeriod", "incharge"), array("", "", ""));
+        $this->addRoute("servicesprojectgantt", "servicesprojectgantt", "servicesprojectgantt", "index", array("id_space", "allPeriod", "incharge", "id_project"), array("", "", "", ""));
 
 
 

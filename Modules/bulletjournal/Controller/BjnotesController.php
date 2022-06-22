@@ -5,6 +5,9 @@ require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/bulletjournal/Model/BulletjournalTranslator.php';
 require_once 'Modules/bulletjournal/Model/BjNote.php';
+require_once 'Modules/bulletjournal/Model/BjEvent.php';
+require_once 'Modules/bulletjournal/Model/BjTask.php';
+
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
@@ -77,7 +80,7 @@ class BjnotesController extends CoresecureController {
         $form->addDate("formnotedate", CoreTranslator::Date($lang), true, "");
         $form->addTextArea("formnotecontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditnotequery/".$id_space);
         return $form->getHtml($lang);
     }
@@ -92,7 +95,7 @@ class BjnotesController extends CoresecureController {
         $form->addDate("formtaskdeadline", BulletjournalTranslator::Deadline($lang), false, "");
         $form->addTextArea("formtaskcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjedittask/".$id_space);
         return $form->getHtml($lang);
     }
@@ -108,8 +111,20 @@ class BjnotesController extends CoresecureController {
         //$form->addHour("formeventdateendhour", BulletjournalTranslator::HourEnd($lang), true);
         $form->addTextArea("formeventcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
-        $form->setButtonsWidth(2, 10);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditevent/".$id_space);
         return $form->getHtml($lang);
     }
+
+    public function deletenoteAction($id_space, $id) {
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $modelNote = new BjNote();
+        $modelNote->delete($id_space, $id);
+        $modelEvent = new BjEvent();
+        $modelEvent->delete($id_space, $id);
+        $modelTask = new BjTask();
+        $modelTask->delete($id_space, $id);
+        return null;
+    }
+
 }

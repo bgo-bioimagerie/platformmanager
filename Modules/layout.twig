@@ -5,22 +5,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="{{metadesc | default('')}}"/>
         <meta name="mode" description="{{context.dev ? 'dev' : 'prod'}}">
+        {% block meta %}
+
+        {% endblock %}
         <base href="{{context.rootWeb}}" >
         <title>
             {% block title %}{% endblock %}
         </title>
         {% if context.dev %}
-            <script src="externals/vuejs/vue.js"></script>
+            <script src="externals/vuejs/vue3.js"></script>
             {{context._debugbarRenderer.renderHead() | raw}}
         {% else %}
-            <script src="externals/vuejs/vue.min.js"></script>
+            <script src="externals/vuejs/vue3.min.js"></script>
         {% endif %}
 
-        <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        {% if context.theme and context.theme == 'dark' %}
+            <link rel="stylesheet" href="externals/pfm/dark-mode/bootstrap-night.css">
+        {% else %}
+            <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
+        {% endif %}
+
+
+
         <link rel="stylesheet" href="externals/node_modules/bootstrap-icons/font/bootstrap-icons.css">
 
-        <script src="externals/jquery-1.11.1.js"></script>
-        <script src="externals/bootstrap/js/bootstrap.min.js"></script>
+        <script src="externals/node_modules/jquery/dist/jquery.min.js"></script>
         {% block stylesheet %}
 
         {% endblock %}
@@ -30,7 +39,7 @@
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
-    <body style="background-color: #e7ecf0;">
+    <body>
         {% block navbar %}
             {{navbar | raw}}
         {% endblock %}
@@ -47,8 +56,7 @@
                 <div class="col-12">
                     <div class="alert alert-warning alert-dismissible  show" role="alert">
                         {{context.maintenance}}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
                         </button>
                     </div>
                 </div>

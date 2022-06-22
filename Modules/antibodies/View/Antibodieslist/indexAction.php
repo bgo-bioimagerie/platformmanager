@@ -188,15 +188,16 @@
 
     <br/>
     <div class="col-12">
-        <div class="row">
-            <div class="page-header" style="margin-top: -20px;">
+    <div class="row">
+            <div class="page-header">
                 <h1>
-                    Anticorps<br> <small></small>
+                    <?php echo AntibodiesTranslator::antibodies($lang); ?>
                 </h1>
             </div>
         </div>
         <div class="container">
-            <div class="row">
+
+        <div class="row">
                 <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
                     method="post">
 
@@ -340,7 +341,6 @@
 
                     </tr>
                 </thead>
-
                 <tbody>
 <?php foreach ($anticorpsArray as $anticorps) : ?> 
 
@@ -395,7 +395,7 @@
 
 
                             <!-- TISSUS -->
-                            <td headers="tissues image" class="text-left" style="width:10%;background-color: #eeffee;">
+                            <td headers="tissues image" class="text-left" style="background-color: #eeffee;">
 
                                 <?php
                                 foreach ($anticorps['tissus'] as $tissus) {
@@ -409,22 +409,8 @@
                                     }
                                     if ($printImage) {
                                         ?>
-                                        <a id="imgview_<?php echo $tissus["id"] ?>" >
-                                            <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
-                                            <br/>
-                                        </a>
-                                        <script>
-                                            $(document).ready(function () {
-                                                $('#imgview_<?php echo $tissus["id"] ?>').on('click', function () {
+                                            <img onclick="viewImage('<?php echo $tissus['id'] ?>','<?php echo $imageFile ?>')" id="imgview_<?php echo $tissus["id"] ?>" src="<?php echo $imageFile ?>" class="img-fluid" alt="photo" />
 
-                                                    var img = "<p><?php echo $tissus["image_url"] ?></p><img src='<?php echo $imageFile ?>' width='100%'  />";
-
-                                                    $('#imagedivcontent').html(img);
-                                                    $('#imagepopup_box').show();
-                                                    $('#hider').show();
-                                                });
-                                            });
-                                        </script>
             <?php
         }
     }
@@ -618,27 +604,41 @@
 <!--  *************  -->
 <!--  Popup windows  -->
 <!--  *************  -->
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-12"></div> 
-<div id="imagepopup_box" class="pm_popup_box_full" style="display: none;">
-    <div class="col-1 offset-11" style="text-align: right;"><a id="tissusbuttonclose" class="bi-x-circle-fill" style="cursor:pointer;"></a></div>
-    <div id="imagedivcontent">
 
-    </div>    
-</div> 
+<div id="imagepopup_box" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><?php echo AntibodiesTranslator::Tissus($lang) ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="imagedivcontent">
+            <img id="tissus_image" alt="tissue image" src="" class='img-fluid'/>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a id="tissus_link" href="" download rel="noreferrer,noopeneer"><button type="button" class="btn btn-secondary">Download</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script>
     $(document).ready(function () {
-
-        $("#hider").hide();
         $("#imagepopup_box").hide();
-
-        $("#tissusbuttonclose").click(function () {
-            $("#hider").hide();
-            $('#imagepopup_box').hide();
-        });
-
     });
+
+    function viewImage(id, imageFile, imageUrl) {
+        let img = document.getElementById('tissus_image')
+        img.src = imageFile
+        let link = document.getElementById('tissus_link')
+        link.href = imageFile
+        let myModal = new bootstrap.Modal(document.getElementById('imagepopup_box'))
+        myModal.show();
+    }
 </script>
 
 <?php endblock(); ?>

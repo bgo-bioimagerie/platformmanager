@@ -1,5 +1,8 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
     
 <?php startblock('content') ?>
 

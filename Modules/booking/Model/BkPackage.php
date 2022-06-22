@@ -114,7 +114,7 @@ class BkPackage extends Model {
         return $duration ? $duration[0] : null;
     }
 
-    public function setPackage($id_space, $id_package, $id_resource, $name, $duration) {
+    public function setSupplementary($id_space, $id_package, $id_resource, $name, $mandatory, $isInvoicingUnit, $duration) {
 
         $id = $this->getPackageID($id_space, $id_package, $id_resource);
         if ($id > 0) {
@@ -136,12 +136,11 @@ class BkPackage extends Model {
         }
     }
 
-    public function getByPackageID($id_space, $id_package, $id_resource) {
+    public function getBySupID($id_space, $id_package, $id_resource) {
         $sql = "SELECT * FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
         if ($req->rowCount() == 1) {
-            $tmp = $req->fetch();
-            return $tmp;
+            return $req->fetch();
         } else {
             return null;
         }
@@ -204,16 +203,16 @@ class BkPackage extends Model {
         $this->runRequest($sql, array($id_package, $id_pricing, $price, $id_space));
     }
 
-    public function removeUnlistedPackages($id_space, $packageID) {
-
+    public function removeUnlisted($id_space, $ids, $idIsPackage=false) {
+        $id_column = $idIsPackage ? "id_package" : "id";
         $sql = "SELECT id, id_package FROM bk_packages WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
         $databasePackages = $req->fetchAll();
 
         foreach ($databasePackages as $dbPackage) {
             $found = false;
-            foreach ($packageID as $pid) {
-                if ($dbPackage["id_package"] == $pid) {
+            foreach ($ids as $pid) {
+                if ($dbPackage[$id_column] == $pid) {
                     $found = true;
                     break;
                 }

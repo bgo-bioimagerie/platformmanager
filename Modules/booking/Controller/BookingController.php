@@ -153,7 +153,6 @@ class BookingController extends BookingabstractController {
         }
     }
 
-    // DEPRECATED? => replaced by bookingAction()? 
     public function book($id_space, $message) {
         $lastView = "";
         if (isset($_SESSION["user_settings"]["calendarDefaultView"])) {
@@ -393,6 +392,7 @@ class BookingController extends BookingabstractController {
         // get the resource info
         $modelRes = new ResourceInfo();
         $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
+        $curentAreaId = $menuData['curentAreaId'];
 
         $resIds = [];
         for ($r = 0; $r < count($resourcesBase); $r++) {
@@ -566,7 +566,6 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
-
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {
@@ -754,7 +753,6 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
-
          
         // get the area info
         $area = $modelArea->get($id_space, $curentAreaId);
@@ -875,9 +873,9 @@ class BookingController extends BookingabstractController {
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
-        $detailedView = true;
-        if ($detailedViewRequest == 'simple') {
-            $detailedView = false;
+        $detailedView = false;
+        if ($detailedViewRequest == 'detailed') {
+            $detailedView = true;
         }
 
         // view
@@ -951,7 +949,6 @@ class BookingController extends BookingabstractController {
 
         $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
-
 
         $foundR = false;
         foreach ($menuData["resources"] as $r) {

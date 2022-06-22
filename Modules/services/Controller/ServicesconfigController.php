@@ -90,13 +90,23 @@ class ServicesconfigController extends CoresecureController {
             return;
         }
 
+        // use tracking sheet
+        $formKanban = $this->kanbanForm($modelCoreConfig, $id_space, $lang);
+        if ($formKanban->check()) {
+            $modelCoreConfig->setParam("servicesusekanban", $this->request->getParameter("servicesusekanban"), $id_space);
+
+            $this->redirect("servicesconfig/" . $id_space);
+            return;
+        }
+
         // view
         $forms = array(
             $formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formWarning->getHtml($lang),
             $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang),
-            $formStock->getHtml($lang)
+            $formStock->getHtml($lang),
+            $formKanban->getHtml($lang)
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
@@ -112,7 +122,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addText("SeProjectDelayWarning", "", false, $SeProjectDelayWarning);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -127,7 +137,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addDate("projectperiodend", ServicesTranslator::projectperiodend($lang), true, $projectperiodend);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -147,7 +157,7 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesusecommand", ServicesTranslator::UseCommand($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusecommand);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -162,8 +172,20 @@ class ServicesconfigController extends CoresecureController {
         $form->addSelect("servicesusestock", ServicesTranslator::UseStock($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusestock);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
 
+
+        return $form;
+    }
+
+    public function kanbanForm($modelCoreConfig, $id_space, $lang) {
+        $servicesusekanban = $modelCoreConfig->getParamSpace("servicesusekanban", $id_space);
+        if($servicesusekanban === "") {
+            $servicesusekanban = 0;
+        }
+        $form = new Form($this->request, "kanbanForm");
+        $form->addSeparator(ServicesTranslator::Kanban($lang));
+        $form->addSelect("servicesusekanban", ServicesTranslator::UseKanban($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $servicesusekanban);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
         return $form;
     }
 

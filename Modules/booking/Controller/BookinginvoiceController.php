@@ -223,14 +223,13 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
         $formAdd->addFloat("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
         $formAdd->addFloat("unit_price", InvoicesTranslator::UnitPrice($lang), $itemPrices);
-        //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->addExternalButton(InvoicesTranslator::GeneratePdfDetails($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/2", "danger", true);
-        $form->setButtonsWidth(4, 8);
+
         $form->setFormAdd($formAdd);
 
         $discount = $modelInvoice->getDiscount($id_space ,$id_invoice);
@@ -283,7 +282,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $form->addDate("period_begin", InvoicesTranslator::Period_begin($lang), true, $this->request->getParameterNoException("period_begin"));
         $form->addDate("period_end", InvoicesTranslator::Period_end($lang), true, $this->request->getParameterNoException("period_end"));
 
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;
@@ -301,7 +300,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;
@@ -416,7 +415,6 @@ class BookinginvoiceController extends InvoiceAbstractController {
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
         $content = $this->unparseContent($id_space, $id_item, $lang);
-        //print_r($invoice);
         $total = 0;
         foreach ($content as $d) {
             if( $d[2] > 0 ){
@@ -458,7 +456,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         $useTTC = true;
 
-        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
+        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
     }
 
     protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
@@ -474,7 +472,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         
         $useTTC = true;
-        return $this->generatePDF($id_space, $invoice["number"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
+        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
     }
 
     protected function unparseContent($id_space, $id_item, $lang) {
@@ -568,10 +566,8 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     $time_day += $resaDayNightWe['nb_hours_day'];
                     $time_night += $resaDayNightWe['nb_hours_night'];
                     $time_we += $resaDayNightWe['nb_hours_we'];
-
-                    //$time += floatval($resas[$i]['end_time']) - floatval($resas[$i]['start_time']);
                 }
-                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 1), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
+                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFUllName($user['recipient_id']), 'time' => round($time / 3600, 2), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
             }
         }
         return $data;
@@ -585,6 +581,15 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoice = new InInvoice();
         $invoiceInfo = $modelInvoice->get($id_space, $id_invoice);
 
+        $modelBk = new BkCalendarEntry();
+        $entries = $modelBk->getInvoiceEntries($id_space, $id_invoice);
+        $modelResource = new ResourceInfo();
+        $resources = $modelResource->getBySpace($id_space);
+        $rmap = [];
+        foreach($resources as $r) {
+            $rmap[$r['id']] = $r['name'];
+        }
+
         $table = new TableView();
         $table->setTitle(BookinginvoiceTranslator::Details($lang) . ": " . $invoiceInfo["number"], 3);
 
@@ -597,7 +602,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         );
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml));
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml, 'entries' => $entries, 'resources' => $rmap));
     }
 
 }

@@ -291,7 +291,7 @@ class CorespaceController extends CoresecureController {
         $formUser = new Form($this->request, "adduser");
         $formUser->setTitle(CoreTranslator::Access($lang));
         $formUser->setColumnsWidth(3, 6);
-        $formUser->setButtonsWidth(2, 8);
+
         $formUser->addHidden("id_space", $id_space);
         $formUser->addSelect("id_user", CoreTranslator::User($lang), $usersNames, $usersId);
         $formUser->addSelect("id_role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"]);

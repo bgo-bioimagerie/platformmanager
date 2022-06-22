@@ -77,7 +77,7 @@ class EventHandler {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['action' => $action]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['action' => $action]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -211,7 +211,6 @@ class EventHandler {
 
     public function userApiKey($msg) {
         $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
-        // TODO do nothing if not a space manager/admin
         $gm = new Grafana();
         $u = new CoreUser();
         $id_user = $msg['user']['id'];
@@ -576,7 +575,7 @@ class EventHandler {
             Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
         }
         $b = new BkCalendarEntry();
-        $emails = $b->getEmailsWithEntiesForPeriod($id_space, $campaign['from_date'], $campaign['to_date']);
+        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date']);
         $p = new SeProject();
         $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
         foreach ($pemails as $email) {

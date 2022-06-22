@@ -1,0 +1,610 @@
+{% extends "Modules/layout.twig" %}
+
+
+{% block content %}
+<div class="pm-form">
+
+    <div class="col-12">
+        <h3> {{ projectString }} {{ projectName }} </h3>
+    </div>
+
+    <div class="col-12">
+        {% include 'Modules/services/View/Servicesprojects/projecttabs.twig' %}
+    </div>
+
+    <div id="board" class="container mt-5">
+        <div class="row">
+            <div class="col form-inline">
+                <label for="newTask">{{"{{textContent.newTask}}"}}</label>
+                <input id="newTask" name="newTask" type="text" v-model="newTask" aria-placeholder="Enter Task" @keyup.enter="addTask"/>
+                <button class="ml-2 btn btn-primary" @click="addTask" style="margin:5px;"><strong>+</strong></button>
+            </div>
+
+            <div class="col form-inline">
+                <label for="newCat">{{"{{textContent.newCategory}}"}}</label>
+                <input id="newCat" name="newCat" type="text" v-model="newCategory" aria-placeholder="Enter Category" @keyup.enter="addCategory"/>
+                <input id="newCatColor" type="color" v-model="newCategoryColor" aria-placeholder="Choose Color" style="vertical-align:middle; margin-bottom:5px"/>
+                <button class="ml-2 btn btn-primary" @click="addCategory" style="margin:5px;"><strong style="font-size=30px">+</strong></button>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div id="taskContent" class="modal-element" v-if="showModal">
+                <div class="modal-dialog modal-mask" role="document">
+                    <div class="modal-content">
+                        
+                        <div class="modal-header">
+                            <div v-if="selectedTask.done == true" class="modal-element">
+                                <input
+                                    type="button"
+                                    class="btn btn-success"
+                                    aria-label="This task is done"
+                                    value="Done"
+                                    disabled>
+                                </input>
+                            </div>
+                            <h5 class="modal-title ms-2">{{"{{selectedTask.name}}"}}</h5>
+                            <button type="button"
+                                class="btn-close modal-element"
+                                data-dismiss="modal"
+                                @click="showModal = false"
+                                aria-label="Close">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="details" class="modal-element">{{"{{textContent.details}}"}}</label>
+                            <textarea
+                                id="taskDetails"
+                                class="contentArea modal-element"
+                                name="details"
+                                @change="updateTaskContent($event, selectedTask)">
+                                    {{"{{selectedTask.content}}"}}
+                            </textarea>   
+                        
+                            <label for="taskUser" class="modal-element">{{"{{textContent.assignee}}"}}</label>
+                            <select
+                                id="taskUser"
+                                :list="projectUsers"
+                                class="form-control modal-element"
+                                name="taskUser"
+                                v-model="selectedTask.id_user"
+                                @change="updateTaskUser($event, selectedTask)">
+                                <option v-if="projectUsers.length == 0" value="" class="modal-element" disabled selected hidden>{{"{{textContent.noUserAssigned}}"}}</option>
+                                <option v-else v-for="user in projectUsers" :value=user.id class="modal-element">
+                                    {{"{{user.name}}"}}
+                                </option>
+                            </select>
+                            <label for="taskVisibility" class="modal-element">{{"{{textContent.visibility}}"}}</label>
+                            <select
+                                id="taskVisibility"
+                                class="form-control modal-element"
+                                name="taskVisibility"
+                                v-model="selectedTask.private"
+                                @change="updateTaskVisibility($event, selectedTask)">
+                                <option value="false" class="modal-element" default>Public</option>
+                                <option value="true" class="modal-element">{{"{{textContent.private}}"}}</option>
+                            </select>
+                                                    
+                            <label for="services" class="modal-element">Services</label>
+                            <select
+                                id="taskServices"
+                                :list="projectServices"
+                                class="form-control modal-element"
+                                name="services"
+                                v-model="selectedTask.services"
+                                multiple
+                                @change="updateTaskServices($event, selectedTask)">
+                                <option v-if="projectServices.length == 0" value="" class="modal-element" disabled selected>{{"{{textContent.noServiceAssigned}}"}}</option>
+                                <option v-else v-for="service in projectServices" :value=service.id class="modal-element">
+                                    {{"{{service.name}}"}}
+                                </option>
+                            </select>
+
+                            <button
+                                id="clearServices"
+                                name="clearServices"
+                                type="button"
+                                class="btn-close modal-element"
+                                @click="clearTaskServicesSelection(selectedTask)"
+                                aria-label="Clear selection"
+                                value="Clear selection">
+                            </button>
+                            <label
+                                for="clearServices"
+                                class="modal-element"
+                                style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                {{"{{textContent.clearSelection}}"}}
+                            </label>
+
+                            <div class="row mt-2">
+                                <label
+                                    for="uploadTaskFile"
+                                    class="modal-element btn btn-primary"
+                                    style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                    {{"{{textContent.addFile}}"}}
+                                </label>
+                                <input
+                                    type="file"
+                                    id="uploadTaskFile"
+                                    name="uploadTaskFile"
+                                    class="modal-element"
+                                    style="display: none"
+                                    @change="updateTaskFile($event, selectedTask)">
+                                </input>
+                            </div>
+
+                            <div v-if="selectedTask.file" class="row mt-2">
+                                <label
+                                    class="modal-element"
+                                    style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                    {{"{{textContent.download}}"}}
+                                </label>
+                                <a
+                                    :href="selectedTask.file"
+                                    :text="selectedTask.fileName"
+                                    id="downloadTaskFile"
+                                    class="modal-element">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">    
+                            <div class="row form-control modal-element">
+                                <label for="start_date" class="modal-element">{{"{{textContent.startDate}}"}}</label>
+                                <input id="taskStartDate" type="date" class="form-control modal-element" name="start_date" :value="selectedTask.start_date" @change="updateTaskDate($event, selectedTask)">
+                                <label for="end_date" class="modal-element">{{"{{textContent.endDate}}"}}</label>
+                                <input id="taskEndDate" type="date" class="form-control modal-element" name="end_date" :value="selectedTask.end_date" @change="updateTaskDate($event, selectedTask)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
+                <div class="category col-m-3 ms-2" v-for="(category, cindex) in categories" style="display:inline-flex">
+                    <div :id=category.id class="p-2 alert" style="cursor:grab;">
+                        <div v-if="category.name != 'done'" class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
+                        <h3>
+                            {{"{{category.name}}"}}
+                            <button v-if="category.name != 'done'" class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
+                        </h3>
+                        <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" @change="editCategoryColor($event, category)"/>
+                        
+                        <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
+                            <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
+                                {{"{{element.name}}"}}
+                                <button class="bi bi-pencil-square round modal-element" @click="showTaskContent(element)"></button>
+                                <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
+                            </div>
+                        </draggable>
+
+                    </div>
+                </div>
+            </draggable>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import * as VueDraggableNext from '/externals/vuedraggableNext.js';
+
+Vue.createApp({
+    data () {
+        return {
+            newTask: "",
+            newCategory: "",
+            newCategoryColor: "#000000",
+            id_space: {{ id_space }},
+            sessionUserId: {{ sessionUserId }},
+            id_project: {{ id_project }},
+            tasks: {{ tasks | raw }},
+            id_task: {{ id_task }},
+            categories: {{ categories | raw }},
+            projectServices: {{ projectServices | raw }},
+            projectUsers: {{ projectUsers | raw }},
+            textContent: {{ textContent | raw }},
+            mainUser: {{ mainUser }},
+            personInCharge: {{ personInCharge }},
+            showModal: false,
+            selectedTask: null
+        }
+    },
+    components:{
+        draggable: vueDraggableNext.VueDraggableNext
+    },
+    created() {
+        this.categories.forEach(category => {
+            category.name = category.name.replace(/\s/g, '').toLowerCase();
+        });
+        this.tasks.forEach(task => {
+            if (task.private == "false" || task.id_owner == this.sessionUserId) {
+                this.categories[task.state].tasks.push(task);
+            }
+        });
+    },
+    mounted() {
+        this.updateCategoriesColors();
+        if (this.id_task != "0") {
+            this.selectedTask = this.tasks.find(task => task.id == this.id_task);
+            this.showTaskContent(this.selectedTask);
+        }
+    },
+    updated() {
+        this.updateCategoriesColors();
+    },
+    methods: {
+
+        // tasks related methods
+
+        clearTaskServicesSelection(task) {
+            task.services = [];
+            this.updateTask(task);
+        },
+        updateTaskServices(event, task) {            
+            let selectedValues = this.getMultipleSelectValues(event.target);
+            selectedValues.forEach(value => {
+                task.services.push(value);
+            });
+            this.updateTask(task);
+        },
+        updateTaskUser(event, task) {
+            task.user = event.target.value;            
+            this.updateTask(task);
+        },
+        showTaskContent(task) {
+            this.selectedTask = task;
+            if (this.selectedTask.file) {
+                this.setFileName();
+            }
+            this.showModal = true;
+            document.addEventListener('click', this.closeTaskPopup);
+        },
+        setFileName() {
+            if (this.selectedTask.file) {
+                this.selectedTask.fileName = this.selectedTask.file.split("data/services/projecttasks/" + this.selectedTask.id + "_").pop();
+            }
+        },
+        closeTaskPopup(event) {
+            let isModalElement = false;
+            const classes = event.target.classList;
+            // does classList contain a class with "modal-" ?
+            classes.forEach(className => {
+                if (className.includes('-') && className.split('-')[0] == "modal") {
+                    isModalElement = true;
+                }
+            });
+            if(!isModalElement) {
+                this.showModal = false;
+                document.removeEventListener('click', this.closeTaskPopup);
+            }
+        },
+        changeTaskState(event, categoryIndex) {
+            if (event.added) {
+                event.added.element.state = categoryIndex;
+                let draggableElement = document.getElementById(this.categories[categoryIndex].id);
+                this.updateTask(event.added.element);
+            }
+        },
+        updateTaskVisibility(event, task) {
+            task.private = event.target.value;
+            task.id_owner = task.private ? this.sessionUserId : null;
+            this.updateTask(task);
+        },
+        updateTaskDate(event, task) {
+            switch (event.target.name) {
+                case "start_date":
+                    task.start_date = event.target.value;
+                    this.updateTask(task);
+                    break;
+                case "end_date":
+                    task.end_date = event.target.value;
+                    this.updateTask(task);
+                    break;
+                default:
+                    break;
+            }
+        },
+        updateTaskContent(event, task) {
+            task.content = event.target.value;
+            this.updateTask(task);
+        },
+        async addTask(task=null) {
+            if(this.newTask) {
+                this.newTask = {
+                    id: 0,
+                    id_space: this.id_space,
+                    id_project: this.id_project,
+                    state: 0,
+                    id_owner: null,
+                    name: this.newTask,
+                    content: "",
+                    start_date: null,
+                    end_date: null,
+                    services: [],
+                    id_user: this.mainUser,
+                    done: false,
+                    private: "false"
+                };
+                await this.updateTask(this.newTask);
+                this.tasks.push(this.newTask);
+                this.categories[0].tasks.push(this.newTask);
+                this.newTask = "";
+            }
+        },
+        async updateTask(task) {
+            task.done = task.state == this.getDoneCategoryPosition() ? true : false;
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            cfg.body = JSON.stringify({
+                task: task
+            });
+            let targetUrl = `/servicesprojects/settask/`;
+            let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    task.id = data.id;
+                });
+        },
+        async updateTaskFile($event, selectedTask) {
+            let file = $event.target.files[0];
+            console.log('file: ', file);
+            let data = new FormData();
+            data.append("file", $event.target.files[0]);
+            const cfg = {
+                method: 'POST',
+                body: data
+            };
+            let targetUrl = `/servicesprojects/uploadtaskfile/`;
+            let apiRoute = targetUrl + this.id_space + "/" + selectedTask.id;
+            await fetch(apiRoute, cfg, true).then(() => {
+                this.getTaskFile(selectedTask);
+            });
+        },
+        async getTaskFile(task) {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/gettaskfile/`;
+            let apiRoute = targetUrl + this.id_space + "/" + task.id;
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    this.selectedTask.file = data.file;
+                    this.setFileName(this.selectedTask);
+                });
+        },
+        deleteTask(task, displayAlert=true) {
+            if (!displayAlert || confirm(this.textContent.deleteTask + task.name)) {
+                let tasks = this.categories[task.state].tasks;
+                tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
+                const headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+                const cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: null
+                };
+                cfg.body = JSON.stringify({
+                    task: task
+                });
+                let targetUrl = `/servicesprojects/deletetask/`
+                let apiRoute = targetUrl + this.id_space + "/" + task.id;
+                fetch(apiRoute, cfg, true)
+            }
+        },
+
+        // Categories related methods
+
+        async changeCategoryPosition(event) {
+            if (event.moved) {
+                event.moved.element.position = event.moved.newIndex;
+                 this.categories.forEach((category, index) => {
+                    category.position = index;
+                    category.tasks.forEach(task => {
+                        task.state = index;
+                        this.updateTask(task);
+                    });
+                });
+                this.updateCategoriesColors();
+                await this.updateCategories();
+            }
+        },
+        editCategory(event, category) {
+            let categoryName = category.name
+            let newName = prompt(this.textContent.renameCategory, categoryName);
+            if (newName != null) {
+                category.name = newName;
+                category.name = category.name.replace(/\s/g, '').toLowerCase();
+                let colorInput = document.getElementById(category.id).getElementsByClassName("categoryColorInput")[0];
+                colorInput.click();
+            }
+            this.updateCategories();
+        },
+        editCategoryColor(event, category) {
+            category.color = event.target.value;
+            this.updateCategoriesColors();
+        },
+        updateCategoriesColors() {
+            this.categories.forEach(category => {
+                this.getRGBAColor(category);
+            });
+        },
+        getRGBAColor(category, opacity=0.5) {
+            let h = category.color.substring(1,7);
+            let r = parseInt(h.substring(0,2),16);
+            let g = parseInt(h.substring(2,4), 16);
+            let b = parseInt(h.substring(4,6),16);
+            let a  = opacity;
+            let rgbaColor = "rgba(" + r +"," + g + "," + b + "," + a + ")";
+            let categoryGroup = document.getElementById(category.id);
+            categoryGroup.style.backgroundColor = rgbaColor;
+        },
+        getDoneCategoryPosition() {
+            let result = null;
+            result = this.categories.findIndex(category => category.name === "done");
+            return result;
+        },
+        async addCategory(category=null) {
+            if(this.newCategory) {
+                this.newCategory = {
+                    id: 0,
+                    id_space: this.id_space,
+                    id_project: this.id_project,
+                    position: this.categories.length,
+                    name: this.newCategory,
+                    color: this.newCategoryColor,
+                    tasks: []
+                };
+                this.categories.push(this.newCategory);
+                await this.updateCategories();
+                this.newCategory = "";
+            }
+        },
+        async updateCategories() {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/settaskcategory/`;
+            let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
+            this.categories.forEach(async category => {
+                cfg.body = JSON.stringify({
+                    category: category
+                });
+                await fetch(apiRoute, cfg, true).
+                    then((response) => response.json()).
+                    then(data => {
+                        category.id = data.id;
+                });
+            });
+        },
+        deleteCategory(category) {
+            if (confirm(category.name + ": " + this.textContent.deleteCategory )) {
+                // remove tasks
+                category.tasks.forEach(task => {
+                    this.deleteTask(task, false);
+                });
+                // remove category
+                this.categories.splice(this.categories.indexOf(this.categories.find(element => element.id == category.id)), 1);
+                const headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+                const cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: null
+                };
+                cfg.body = JSON.stringify({
+                    category: category
+                });
+                let targetUrl = `/servicesprojects/deletetaskcategory/`
+                let apiRoute = targetUrl + this.id_space + "/" + category.id;
+                fetch(apiRoute, cfg, true).then( () => {
+                    this.updateCategoriesColors();
+                    this.updateCategories();
+                });
+            }
+        },
+
+        // Utils
+
+        getDate() {
+            let today = new Date();
+            let dd = String(today.getDate()).padStart(2, '0');
+            let mm = String(today.getMonth() + 1).padStart(2, '0');
+            let yyyy = today.getFullYear();
+            return yyyy + '-' + mm + '-' + dd;
+        },
+        gotoGantt() {
+            if (this.id_project) {
+                let ganttUrl = "servicesprojectgantt/" + this.id_space + "/" + 1 + "/" + this.personInCharge + "/" + this.id_project;
+                window.location = ganttUrl;
+            } else {
+                alert("there's no matching project");
+            }
+        },
+        getMultipleSelectValues(select) {
+            let result = [];
+            const options = select && select.options;
+            let opt;
+            for (var i=0, iLen=options.length; i<iLen; i++) {
+                opt = options[i];
+                if (opt.selected) {
+                    result.push(opt.value || opt.text);
+                }
+            }
+            return result;
+        },
+    }
+}).mount('#board');
+</script>
+
+<style>
+    .kanban-category {
+        width: 250px;
+        min-height: 300px;
+        min-width: 150px;
+    } 
+    .list-group-item {
+        align-content: right;
+    }
+    .contentArea {
+        min-width: 350px;
+    }
+    .deleteBtn {
+        display:inline;
+        position: relative;
+        float: right;
+        background-color: transparent;
+        color: red;
+        cursor:pointer;
+    }
+    .round {
+        background-color: transparent;        
+        border-color: transparent;
+        padding: 5px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 100%
+    }
+    .modal-dialog {
+        position: absolute;
+        z-index: 9;
+        left: 50%;
+        right: 50%;
+        min-width: 400px;
+    }
+
+    label {
+        display: block;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 12px 20px;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        background-color: #f8f8f8;
+    }
+</style>
+
+{% endblock %}

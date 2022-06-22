@@ -41,14 +41,8 @@ class BkStatsUser extends Model {
         $modelAuthorisation = new BkAuthorization();
         $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, "");
 
-        //$q = array('equipement'=>$equipement);
-        //$sql = 'SELECT DISTINCT nf, laboratoire, date_unix, visa FROM autorisation WHERE machine=:equipement ORDER by nf';
-        //$req = $cnx->prepare($sql);
-        //$req->execute($q);
-        //$res = $req->fetchAll();
         // Création de l'objet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        // $spreadsheet = new PHPExcel();
 
         // Définition de quelques propriétés
         $spreadsheet->getProperties()->setCreator($teamName);
@@ -80,17 +74,6 @@ class BkStatsUser extends Model {
                     'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN),
                 'bottom' => array(
                     'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE)));
-
-        $borderG = array(
-            'borders' => array(
-                'top' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'left' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'right' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'bottom' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM)));
 
         $borderLRB = array(
             'borders' => array(
@@ -135,8 +118,6 @@ class BkStatsUser extends Model {
         $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
         $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
-        //$sheet->getPageSetup()->setFitToWidth(1);
-        //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
         $sheet->getPageMargins()->SetBottom(0.5);
         $sheet->getPageMargins()->SetLeft(0.2);
@@ -144,7 +125,6 @@ class BkStatsUser extends Model {
         $sheet->getPageMargins()->SetHeader(0.2);
         $sheet->getPageMargins()->SetFooter(0.2);
         $sheet->getPageSetup()->setHorizontalCentered(true);
-        //$sheet->getPageSetup()->setVerticalCentered(false);
 
         $sheet->getColumnDimension('A')->setWidth(30);
         $sheet->getColumnDimension('B')->setWidth(30);
@@ -394,17 +374,6 @@ class BkStatsUser extends Model {
                 'bottom' => array(
                     'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_NONE)));
 
-        $borderG = array(
-            'borders' => array(
-                'top' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'left' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'right' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM),
-                'bottom' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_MEDIUM)));
-
         $borderLRB = array(
             'borders' => array(
                 'top' => array(
@@ -448,8 +417,6 @@ class BkStatsUser extends Model {
         $sheet->setBreak('E165', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
         $sheet->setBreak('A220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
         $sheet->setBreak('E220', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_COLUMN);
-        //$sheet->getPageSetup()->setFitToWidth(1);
-        //$sheet->getPageSetup()->setFitToHeight(10);
         $sheet->getPageMargins()->SetTop(0.9);
         $sheet->getPageMargins()->SetBottom(0.5);
         $sheet->getPageMargins()->SetLeft(0.2);
@@ -457,7 +424,6 @@ class BkStatsUser extends Model {
         $sheet->getPageMargins()->SetHeader(0.2);
         $sheet->getPageMargins()->SetFooter(0.2);
         $sheet->getPageSetup()->setHorizontalCentered(true);
-        //$sheet->getPageSetup()->setVerticalCentered(false);
 
         $sheet->getColumnDimension('A')->setWidth(32);
         $sheet->getColumnDimension('B')->setWidth(30);
@@ -469,7 +435,6 @@ class BkStatsUser extends Model {
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
 
-        //echo "icon = " . $reqIcon[0] . "<br/>";
         if($reqIcon && $reqIcon['image']) {
             // Header
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
@@ -634,10 +599,8 @@ class BkStatsUser extends Model {
             //$NouvelleLargeur = 150;
             $NouvelleHauteur = 80;
             //calcul du pourcentage de réduction par rapport à l’original
-            //$Reduction = ( ($NouvelleLargeur * 100)/$TailleImageChoisie[0] );
             $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
             //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
-            //$NouvelleHauteur = (($TailleImageChoisie[1] * $Reduction)/100 );
             $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
             //j’initialise la nouvelle image
             $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);

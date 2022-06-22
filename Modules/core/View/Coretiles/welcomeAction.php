@@ -48,7 +48,7 @@
                         <a :href="`corespace/${space.id}`">{{space.name}} [{{menus[space.id] || ""}}] <span v-if="space.status == 0" aria-hidden="true" aria-label="private" class="bi-lock-fill"></span></a>
                     </div>
                    <div class="card-body">
-                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%">
+                        <img class="card-img-top" v-if="space.image" :src="space.image" onerror="this.style.display='none'" alt="logo" style="width:100%; max-width:200px">
                         <p><small>{{space.description.substr(0, 50)}}</small></p>
                         <div>
                             <small v-if="space.support">
@@ -81,8 +81,8 @@
                         <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
                     </div>
                     <div class="card-body">
-                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%"><?php } ?>
-                        <?php if(strlen($item['description']) > 50) { echo substr($item["description"], 0, 50)."..."; } else { echo $item['description']; } ?>
+                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%; max-width:200px"><?php } ?>
+                        <?php if(strlen($item['description']) > 50) { echo '<p>'.substr($item["description"], 0, 50).'...</p>'; } else { echo '<p>'.$item['description'].'</p>'; } ?>
                         </div>
                     <div class="card-footer">
                         <small>
@@ -123,12 +123,13 @@
                 <div class="col-12 text-dark bg-light text-center m-3" id ="welcome" style="min-height: 400px">
                     <?php if($content) { echo $content; } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
-                        <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
-                        <?php if(Configuration::get('allow_registration', 0)) { ?>
-                            OR
-                            <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
-                        <?php } ?>
                     <?php } ?>
+                    <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
+                    <?php if(Configuration::get('allow_registration', 0)) { ?>
+                        OR
+                        <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
+                    <?php } ?>
+                    
                 </div>
             </div>
             <?php } ?>
@@ -169,8 +170,7 @@ let spaces = <?php echo json_encode($spaceMap); ?>;
 let resources = <?php echo json_encode($resources); ?>;
 let catalog = <?php echo json_encode($catalog); ?>;
 
-var app = new Vue({
-    el: '#welcome',
+Vue.createApp({
     data () {
         return {
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -208,10 +208,9 @@ var app = new Vue({
                             "resource": elem.resource,
                             "id_resource": elem.resource_id,
                             "space": elem.space,
-                            "date": `${bdate.toLocaleDateString()} ${bdate.toLocaleTimeString()}`
+                            "date": `${bdate.toLocaleDateString()} ${bdate.getUTCHours()}:${(bdate.getMinutes()<10?'0':'') + bdate.getMinutes()}`
                         });
                     });
-
                     this.bookings = bookings
                 })
         } catch(error) {
@@ -222,16 +221,17 @@ var app = new Vue({
                 then((response) => response.json()).
                 then(data => {
                     let projects = []
-                    data.projects.forEach((elem) => {
-                        projects.push({
-                            "id": elem.id,
-                            "id_space": elem.id_space,
-                            "name": elem.name,
-                            "space": elem.space,
-                            "date": elem.date_open
+                    if (data.projects) {
+                        data.projects.forEach((elem) => {
+                            projects.push({
+                                "id": elem.id,
+                                "id_space": elem.id_space,
+                                "name": elem.name,
+                                "space": elem.space,
+                                "date": elem.date_open
+                            });
                         });
-                    });
-
+                    }
                     this.projects = projects
                 })
         } catch(error) {
@@ -278,7 +278,7 @@ var app = new Vue({
     },
     methods: {
     }
-})
+}).mount('#welcome')
 
 
 </script>

@@ -122,6 +122,27 @@ class ServicesTranslator {
         return "Stock samples";
     }
 
+    public static function Kanban($lang) {
+        if ($lang == "fr") {
+            return "Kanban";
+        }
+        return "Kanban";
+    }
+
+    public static function KanbanBoard($lang) {
+        if ($lang == "fr") {
+            return "Tableau kanban";
+        }
+        return "Kanban board";
+    }
+
+    public static function UseKanban($lang) {
+        if ($lang == "fr") {
+            return "Utiliser les Kanbans";
+        }
+        return "Use Kanbans";
+    }
+
     public static function Purchase($lang) {
         if ($lang == "fr") {
             return "Achat";
@@ -440,7 +461,7 @@ class ServicesTranslator {
 
     public static function Project($lang = "") {
         if ($lang == "fr") {
-            return "Project";
+            return "Projet";
         }
         return "Project";
     }
@@ -874,9 +895,9 @@ class ServicesTranslator {
 
     public static function InCharge($lang) {
         if ($lang == "fr") {
-            return "Personne en charge du projet";
+            return "Personne en charge du projet (visa)";
         }
-        return "Manager in charge";
+        return "Manager in charge (visa)";
     }
 
     public static function PersonInChargeIsMandatory($lang) {
@@ -1042,6 +1063,174 @@ class ServicesTranslator {
             return $result;
         }
         return $seType;
+    }
+
+    public static function NewTask($lang) {
+        if ($lang == "fr") {
+            return "Nouvelle tâche";
+        } else {
+            return "New task";
+        }
+    }
+
+    public static function NewCategory($lang) {
+        if ($lang == "fr") {
+            return "Nouvelle catégorie";
+        } else {
+            return "New category";
+        }
+    }
+
+    public static function RenameCategory($lang) {
+        if ($lang == "fr") {
+            return "Renommer la catégorie";
+        } else {
+            return "Rename category";
+        }
+    }
+
+    public static function DeleteTask($lang) {
+        if ($lang == "fr") {
+            return "Vous êtes sur le point de supprimer la tâche ";
+        } else {
+            return "You are about to delete task ";
+        }
+    }
+
+    public static function DeleteCategory($lang) {
+        if ($lang == "fr") {
+            return "Vous êtes sur le point de supprimer cette catégorie. Cela supprimera également les tâches qui lui sont affectées";
+        } else {
+            return "You are about to delete this category. Related tasks will also be deleted";
+        }
+    }
+
+    public static function Related_services($lang) {
+        if ($lang == "fr") {
+            return "Services liés";
+        } else {
+            return "Related services";
+        }
+    }
+
+    public static function Details($lang) {
+        if ($lang == "fr") {
+            return "Détails";
+        } else {
+            return "Details";
+        }
+    }
+
+    public static function AffectedTo($lang) {
+        if ($lang == "fr") {
+            return "Affécté à";
+        } else {
+            return "Affected to";
+        }
+    }
+
+    public static function Theme($lang) {
+        if ($lang == "fr") {
+            return "Thème";
+        } else {
+            return "Theme";
+        }
+    }
+
+    public static function PeriodError($lang) {
+        if ($lang == "fr") {
+            return " doit être antérieur à ";
+        } else {
+            return " must be lower than ";
+        }
+    }
+
+    public static function ViewInKanban($lang) {
+        if ($lang == "fr") {
+            return "Voir dans le tableau Kanban";
+        } else {
+            return "View in Kanban board";
+        }
+    }
+
+    public static function Assignee($lang) {
+        if ($lang == "fr") {
+            return "Responsable";
+        } else {
+            return "Assignee";
+        }
+    }
+
+    public static function ClearSelection($lang) {
+        if ($lang == "fr") {
+            return "Effacer la sélection";
+        } else {
+            return "Clear selection";
+        }
+    }
+
+    public static function NoUserAssigned($lang) {
+        if ($lang == "fr") {
+            return "Aucun utilisateur affecté à ce projet";
+        } else {
+            return "No user assigned to this project";
+        }
+    }
+
+    public static function NoServiceAssigned($lang) {
+        if ($lang == "fr") {
+            return "Aucun service affecté à ce projet";
+        } else {
+            return "No service assigned to this project";
+        }
+    }
+
+    public static function StartDate($lang) {
+        if ($lang == "fr") {
+            return "Date de début";
+        } else {
+            return "Start date";
+        }
+    }
+
+    public static function EndDate($lang) {
+        if ($lang == "fr") {
+            return "Date de fin";
+        } else {
+            return "End date";
+        }
+    }
+
+    public static function Private($lang) {
+        if ($lang == "fr") {
+            return "Privé";
+        } else {
+            return "Private";
+        }
+    }
+
+    public static function Visibility($lang) {
+        if ($lang == "fr") {
+            return "Visibilité";
+        } else {
+            return "Visibility";
+        }
+    }
+
+    public static function addFile($lang) {
+        if ($lang == "fr") {
+            return "Attacher un fichier";
+        } else {
+            return "Attach file";
+        }
+    }
+
+    public static function downloadAttachedFile($lang) {
+        if ($lang == "fr") {
+            return "Télécharger le fichier joint";
+        } else {
+            return "Download attached file";
+        }
     }
 
 }

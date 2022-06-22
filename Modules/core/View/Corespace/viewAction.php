@@ -6,16 +6,12 @@
 <?php
     if ($showCom) {
 ?>
-<!--  *************  -->
-<!--  Popup window  -->
-<!--  *************  -->
 
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
 <?php
     }
 ?>
-
 
 <?php
 if ($space['color'] == "") {
@@ -34,6 +30,16 @@ if ($space['color'] == "") {
         $navController = new ComtileController(new Request(array(), false));
         echo $navController->indexAction($id_space);
         ?>
+
+<?php
+if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
+?>
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info"><?php echo CoreTranslator::NotConnectedMode($lang) ?></div>
+    </div>
+</div>
+<?php } ?>
 
         <div class="page-header">
             <h2>
@@ -150,10 +156,8 @@ foreach($spaceMenuItems as $item) {
 
 <script>
 
-
-var app = new Vue({
-    el: '#tiles',
-    data () {
+Vue.createApp({
+    data() {
         return {
             id_space: <?php echo $id_space ?>,
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -186,14 +190,11 @@ var app = new Vue({
             }).catch((error) => {
                 console.debug('failed to get notifications', modName, error);
             })
-
         });
-        
     },
     methods: {
     }
-})
-
+}).mount('#tiles')
 
 </script>
 

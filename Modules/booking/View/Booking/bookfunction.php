@@ -2,7 +2,7 @@
 
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 
-function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0){
+function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0){
 	
 	$q = '?';
 	if(!empty($from)) {
@@ -109,7 +109,9 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 				if($calEntry['end_time'] > $end) {
 					$calEntry['end_time'] = $end;
 				}
-				$calEntry['expand'] = true;
+				if($i>0){
+					$calEntry['expand'] = true;
+				}
 				$cal[] = $calEntry;
 				$calEntry['start_time'] += $size_bloc_resa;
 			}
@@ -120,11 +122,18 @@ function compute($id_space, $size_bloc_resa, $date_unix, $day_begin, $day_end, $
 			$pixelHeight = $blocSize*$agendaStyle["line_height"];
 			$shortDescription = $c['short_description'];
 			$text = '';
-			if($c['id']) {
-				$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
-				$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-				if($text === '') {
-					$text = '#'.$c['id'];
+			if($c['reason'] && $c['reason'] > 0) {
+				$text = BookingTranslator::BlockReason($c['reason'], $lang);
+				if($shortDescription){
+					$text .= '<br/>'.$shortDescription;
+				}
+			} else {
+				if($c['id'] && $role >= CoreSpace::$USER) {
+					$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
+					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
+					if($text === '') {
+						$text = '#'.$c['id'];
+					}
 				}
 			}
 			$linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'].$q;

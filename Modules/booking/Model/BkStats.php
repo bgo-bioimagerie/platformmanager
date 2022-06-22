@@ -73,11 +73,15 @@ class BkStats {
         $spreadsheet->getProperties()->setSubject("Authorizations statistics");
         $spreadsheet->getProperties()->setDescription("");
 
-        $stylesheet = $this->xlsStyleSheet();
+        $stylesheet = $this->getStylesheet();
+        // backward compat
+        $stylesheet['borderedCell'] = $stylesheet['styleBorderedCell'];
+
+        $cells = 'A1:H1';
 
         // print by instructors
         $spreadsheet->getActiveSheet()->setTitle("Autorisations par formateur");
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
+        $spreadsheet->getActiveSheet()->mergeCells($cells);
         $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par formateur du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
 
 
@@ -135,7 +139,7 @@ class BkStats {
         $objWorkSheet = $spreadsheet->createSheet(1);
         $objWorkSheet->setTitle("Authorisations par unité");
         $spreadsheet->setActiveSheetIndex(1);
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
+        $spreadsheet->getActiveSheet()->mergeCells($cells);
         $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par unité du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
 
         $curentLine = 2;
@@ -189,7 +193,7 @@ class BkStats {
         $spreadsheet->setActiveSheetIndex(2);
 
         $spreadsheet->getActiveSheet()->setTitle("Autorisations résumé");
-        $spreadsheet->getActiveSheet()->mergeCells('A1:H1');
+        $spreadsheet->getActiveSheet()->mergeCells($cells);
         $spreadsheet->getActiveSheet()->SetCellValue('A1', "Résumé des autorisations du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
 
         $spreadsheet->getActiveSheet()->SetCellValue('A3', "Nombre de formations");
@@ -216,66 +220,6 @@ class BkStats {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($file);
-    }
-
-    protected function xlsStyleSheet() {
-        $styleBorderedCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
-            ),
-        );
-
-        $styleBorderedCenteredCell = array(
-            'font' => array(
-                'name' => 'Times',
-                'size' => 10,
-                'bold' => false,
-                'color' => array(
-                    'rgb' => '000000'
-                ),
-            ),
-            'borders' => array(
-                'outline' => array(
-                    'style' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
-                    'color' => array(
-                        'rgb' => '000000'),
-                ),
-            ),
-            'fill' => array(
-                'type' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startcolor' => array(
-                    'rgb' => 'ffffff',
-                ),
-            ),
-            'alignment' => array(
-                'wrap' => false,
-                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ),
-        );
-
-        return array("borderedCell" => $styleBorderedCell, "borderedCenteredCell" => $styleBorderedCenteredCell);
     }
 
     function get_col_letter($num) {
@@ -351,8 +295,6 @@ class BkStats {
         $spreadsheet = $this->statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         if ($generateclientstats == 1) {
             $spreadsheet = $this->statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
-            // call to deprecated function statsReservationsPerResponsible()
-            // $spreadsheet = $this->statsReservationsPerResponsible($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet);
         }
         return $spreadsheet;
     }

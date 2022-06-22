@@ -231,12 +231,11 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
-     * @param type $lang
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function date($validated, $label, $name, $value, $lang, $required, $labelWidth = 2, $inputWidth = 9) {
+    static public function date($validated, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
 
         $star = "";
         if ($required != "") {
@@ -263,7 +262,7 @@ class FormHtml {
      * @param type $lang
      * @return string
      */
-    static public function inlineDate($name, $value, $vect = false, $lang = "en") {
+    static public function inlineDate($name, $value, $vect = false) {
 
         $vectv = "";
         if ($vect) {
@@ -284,15 +283,12 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
-     * @param type $lang
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function hour($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+    static public function hour($validated, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        //echo "hours values html = ";
-        //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row" . $validated . "\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class='col-12 col-md-" . $inputWidth . "'>";
@@ -307,13 +303,12 @@ class FormHtml {
         $html .= "</div>";
         $html .= "</div>";
         $html .= "</div>";
+        $html .= "</div>";
         return $html;
     }
 
-    static public function datetime($validated, $label, $name, $value, $lang, $labelWidth = 2, $inputWidth = 9) {
+    static public function datetime($validated, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
 
-        //echo "hours values html = ";
-        //print_r($value); echo "<br/>";
         $html = "<div id=\"form_blk_$name\" class=\"col-12\">";
         $html .= "<div class=\"mb-3 row" . $validated . "\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
@@ -468,21 +463,36 @@ class FormHtml {
      * @param type $label
      * @param type $name
      * @param type $value
+     * @param bool $required is mandatory?
      * @param type $labelWidth
      * @param type $inputWidth
      * @return string
      */
-    static public function textarea($useJavascript, $label, $name, $value, $labelWidth = 2, $inputWidth = 9) {
+    static public function textarea($useJavascript, $label, $name, $value, $required, $labelWidth = 2, $inputWidth = 9) {
         $divid = "";
         if ($useJavascript) {
-            $divid = "id='editor'";
+            $divid = "id='rtxt_$name'";
+        }
+        $mandatory = '';
+        if($required) {
+            $label = $label.'*';
+            $mandatory = ' required="required" ';
         }
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
         $html .= "<div class=\"col-12 col-md-" . $inputWidth . "\">";
-        $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\">" . $value . "</textarea>";
+        $html .= "<textarea " . $divid . " class=\"form-control\" id=\"" . $name . "\" name=\"" . $name . "\"".$mandatory.">" . $value . "</textarea>";
         $html .= "</div>";
         $html .= "</div>";
+        if($useJavascript) {
+            $html .=  '<script>
+    ClassicEditor
+    .create( document.querySelector( \'#rtxt_'.$name.'\' ) )
+    .catch( error => {
+        console.error( error );
+    } );
+</script>';
+        }
         return $html;
     }
 
@@ -679,7 +689,7 @@ class FormHtml {
      * @return type
      */
     static public function textAreaScript() {
-        return file_get_contents("Framework/textarea_script.php");
+        return '<script src="/externals/ckeditor5/build/ckeditor.js"></script>';
     }
 
     static public function ajaxScript($formId, $validationURL) {

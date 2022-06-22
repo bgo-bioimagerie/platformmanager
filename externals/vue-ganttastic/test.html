@@ -1,0 +1,213 @@
+<html>
+<head>
+</head>
+<body>
+<div>test</div>
+<div id="gantt">
+    <p>hello {{count}}</p>
+
+    <g-gantt-chart
+        :chart-start="chartStart"
+        :chart-end="chartEnd"
+        precision="month"
+        width="100%"
+        grid
+        :row-height="40"
+        bar-start="beginDate"
+        bar-end="endDate"
+        :date-format="format"
+    >
+
+        <g-gantt-row v-for="row in rows" :key="row.label"
+        :label="row.label"
+        :bars="row.bars"
+        highlight-on-hover
+        />
+
+    </g-gantt-chart>
+
+  <button @click="addBar()">
+    Add bar
+  </button>
+
+</div>
+
+
+
+<div>test</div>
+<!--<script src="https://unpkg.com/vue@3"></script>-->
+<script src="./dist/main.js"></script>
+
+
+
+
+<script>
+//console.log('gg', pfmGant.gant())
+pfmGant.hello()
+
+//const { createApp, ref } = Vue
+let ref = pfmGant.vueRef()
+const createApp = pfmGant.vueCreateApp()
+const app = createApp({
+    setup(props, context) {
+        const chartStart = ref("21.03.2021 12:00")
+        const chartEnd = ref("15.07.2021 12:00")
+        const format = ref("DD.MM.YYYY HH:mm")
+
+        const rows = ref([
+            {
+            label: 'row1',
+            bars: [
+                {
+                    beginDate: "24.04.2021 13:00",
+                    endDate: "25.05.2021 19:00",
+                    ganttBarConfig: {
+                    id: "8621987329",
+                    label: "I'm in a bundle 1",
+                    bundle: "bundle1"
+                    }
+                }
+                ]
+            },
+            {
+            label: 'row2',
+            bars: [
+            {
+                beginDate: "24.04.2021 13:00",
+                endDate: "25.05.2021 19:00",
+                ganttBarConfig: {
+                id: "1592311887",
+                label: "I'm in a bundle 2",
+                bundle: "bundle2",
+                style: {
+                    background: "magenta"
+                }
+                }
+            },
+            {
+                beginDate: "01.01.2021 00:00",
+                endDate: "01.03.2021 00:00",
+                ganttBarConfig: {
+                id: "7716981641",
+                label: "Lorem ipsum dolor",
+                style: {
+                    background: "#b74b52"
+                }
+                }
+            },
+            {
+                beginDate: "15.06.2021 00:00",
+                endDate: "10.07.2021 00:00",
+                ganttBarConfig: {
+                id: "9716981641",
+                label: "Oh hey",
+                style: {
+                    background: "#69e064",
+                    borderRadius: "15px",
+                    color: "blue",
+                    fontSize: "10px"
+                }
+                }
+            }
+        ]
+            }
+        ])
+
+
+        const bars1 = ref([
+        {
+            beginDate: "24.04.2021 13:00",
+            endDate: "25.05.2021 19:00",
+            ganttBarConfig: {
+            id: "8621987329",
+            label: "I'm in a bundle 1",
+            bundle: "bundle2"
+            }
+        }
+        ])
+        const bars2 = ref([
+        {
+            beginDate: "24.04.2021 13:00",
+            endDate: "25.05.2021 19:00",
+            ganttBarConfig: {
+            id: "1592311887",
+            label: "I'm in a bundle 2",
+            bundle: "bundle2",
+            style: {
+                background: "magenta"
+            }
+            }
+        },
+        {
+            beginDate: "01.01.2021 00:00",
+            endDate: "01.03.2021 00:00",
+            ganttBarConfig: {
+            id: "7716981641",
+            label: "Lorem ipsum dolor",
+            style: {
+                background: "#b74b52"
+            }
+            }
+        },
+        {
+            beginDate: "15.06.2021 00:00",
+            endDate: "10.07.2021 00:00",
+            ganttBarConfig: {
+            id: "9716981641",
+            label: "Oh hey",
+            style: {
+                background: "#69e064",
+                borderRadius: "15px",
+                color: "blue",
+                fontSize: "10px"
+            }
+            }
+        }
+        ])
+        const addBar = () => {
+            if (bars1.value.some(bar => bar.ganttBarConfig.id === "test1")) {
+                return
+            }
+            const bar = {
+                beginDate: "26.02.2021 00:00",
+                endDate: "26.03.2021 02:00",
+                ganttBarConfig: {
+                id: "test1",
+                hasHandles: true,
+                label: "Hello!",
+                style: {
+                    background: "#5484b7",
+                    borderRadius: "20px"
+                }
+                }
+            }
+            bars1.value.push(bar)
+        }
+        const count = ref(2)
+        return { count, bars1, bars2, chartStart, chartEnd, format, addBar, rows }
+    },
+    /*
+    data() {
+      return {
+        count: 0,
+        rows: []
+      }
+    }
+    */
+  })
+
+app.use(pfmGant.gant()).mount("#gantt")
+// pfmGant.use(app).mount("#gantt")
+
+
+//const app = pfmGant.vgant("#gantt")
+
+</script>
+
+
+
+
+
+</body>
+
+</html>

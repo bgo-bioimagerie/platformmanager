@@ -1,5 +1,98 @@
 # Changes
 
+## 2.7.0
+
+### Features / enhancements
+
+* [antibodies] use bootstrap modals and fix some menu urls
+* [booking] add caldav support
+* [services] feature kanban for project management
+* [services] new gantt interface for project management
+* [core] upgrade vue2 -> vue3
+* [booking] calendar display updates for supplementaries, left align on detailed view (minor)
+* [core] use ckeditor5 and allow to use multiple textareas with editor
+* [invoices] get invoice by id (no longer by number) for generating pdf
+
+## 2.6.3
+
+* [booking][invoice] fix invoice details rounded values #659
+
+## 2.6.2
+
+* [booking] do not show in welcome page delete reservations #655
+* [booking] allow users to edit not started resa if bookingdelayusercanedit = -1 (booking restrictions) #654
+* [booking] fix phone display in summary view #653
+* [booking][core] in welcome page, fix bookings hours (gmt)
+* [booking] on mandatory booking supplementaries, check also on server side
+
+## 2.6.1
+
+* [core] fix space creation and unimpersonate action #650
+* [core] in visitor mode, add warning to user to login to access all features
+* [core] disable by default tls for smtp, allow to activate via config smtp_tls
+
+## 2.6.0
+### Warning
+
+Now, quote module manage its own template for pdf generation. Existing template is copied from invoices if exists at install time. If no template is available, a default example will be used.
+
+A warning is deplayed to inform you if no template is defined.
+
+Quote templates are configured the same way than invoice templates.
+
+### Features / enhancements
+
+* [cli] add config option to display configuration
+* [core] add login button on welcome page
+* [booking] in booking invoice details, show related bookings
+* [booking_settings] add getDefault to BkNightWE class
+* [core] remove lasting references to ec classes
+* [core] add meta block to block robots indexing for some pages
+* [core] on user join request, request a comment from user to be added to email
+* [booking] add to scheduling option to force usage of packages to an area
+* [booking] hide nightwe entries if pricing does not exists anymore
+* [mail] add support for custom headers
+* [booking] weekarea calendar, use summary view by default
+* [core] catch email errors and log them
+* [quote] separate invoice and quote templates, each can define his own template for pdf generation #548
+
+### Bug fixes
+
+* [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
+* [booking][supplementaries] avoid having two sups with the same name for the same resource
+* [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
+* [booking][supplementaries] can't add a resource to a sup in which it is already included
+* [helpdesk] do not send ticket reply if mail coming from helpdesk
+* [core] remove lasting references to ec classes
+* [booking] fix closed days hidding in summary view
+* [invoice][booking] manage case where total hours = 0
+* [booking] for multi slot bookings, do not display next slot content
+* [core] fix corespaceuseraccess when clients or booking modules are in inactive status
+* [antibodies] fix tissus image column width #643
+* [resources] fix resps cleanup, missing param
+
+## 2.5.4
+
+* [core][antibodies] fix acowner table definition and fix delete javascript function #638
+
+## 2.5.3
+
+* [invoice][services] fix services invoices (invoice id not set) #637
+
+## 2.5.2
+
+* [services] user is no longer mandatory in project and order forms
+
+## 2.5.1
+
+* [space] fix pending accounts bug
+* [booking] on calendar entry display, allow no customer/no pricing (catch errors on computeDuration)
+* [core][booking] layout fixes on booking edition (periodic)
+* [booking] compute duration with 2 digits per minute
+* [booking] weekarea calendar, use summary view by default
+* [booking] if multiple prices are in db, pick first
+
 ## 2.5.0
 
 * [core] fix tile display error if no space
@@ -10,6 +103,7 @@
 * [booking] add to calendar a summary view option
 * [core][ldap] do not automatically add ldap users to spaces
 * [core] add option to tables to view all elements
+* [booking] list blocked resources and add a reason column on bkcalentry (booking, holiday, maintenance)
 * [booking] change booking compute (day/night/we/closed) and get details #565
 * [booking] fix package invoicing #606
 * [core] in core user edit, show user spaces and pending spaces #607
@@ -102,7 +196,8 @@
 
 ## 2.3.1
 
-* [core] fix upgrade for redis invoice numbers
+* [core] fix upgrade for redis invoice numbers (1641387865_update_invoice_numbers_redis.php)
+  If already applied with 2.3.0, need to remove it from pfm_upgrades table and re-apply install
 
 ## 2.3.0
 

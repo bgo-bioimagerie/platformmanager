@@ -152,7 +152,7 @@ class BookingInvoice extends InvoiceModel {
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
 
             // get list of quantities
-            $calQuantities = $bkCalQuantitiesModel->calQuantitiesByResource($id_space, $res["id"]);
+            $calQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"]);
             $calQuantities = ($calQuantities != null) ? $calQuantities : [];
 
             // tell if there's an invoicing unit for this resource amongst quantities and get its ID
@@ -212,7 +212,6 @@ class BookingInvoice extends InvoiceModel {
                     }
                     $slots = $modelCal->computeDuration($id_space, $reservation);
                     $resaDayNightWe = $slots['hours'];
-                    // $resaDayNightWe = $this->calculateTimeResDayNightWe($reservation, $timePrices[$res["id"]]);
                     Configuration::getLogger()->debug('[invoice][booking] night and week ends', ['resource' => $res['id'], 'count' => $resaDayNightWe]);
 
                     if ($isInvoicingUnit) {
@@ -536,61 +535,6 @@ class BookingInvoice extends InvoiceModel {
             $packagesPrices[$resource["id"]] = $pricesPackages;
         }
         return $packagesPrices;
-    }
-
-     protected function calculateTimeResDayNightWe($reservation, $timePrices) {
-
-        // initialize output
-        $nb_hours_day = 0;
-        $nb_hours_night = 0;
-        $nb_hours_we = 0;
-
-        // extract some variables
-        if(!$timePrices) {
-            Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
-            throw new PfmParamException("No time pricing defined!");
-        }
-        $we_array = $timePrices["we_array"];
-        $night_start = $timePrices['night_start'];
-        $night_end = $timePrices['night_end'];
-
-        $searchDate_start = $reservation["start_time"];
-        $searchDate_end = $reservation["end_time"];
-
-        // calulate pricing
-        if (intval($timePrices["tarif_unique"]) > 0) { // unique pricing
-            $nb_hours_day = ($searchDate_end - $searchDate_start);
-        } else {
-            $gap = 60;
-            $timeStep = $searchDate_start;
-            while ($timeStep <= $searchDate_end) {
-                // test if pricing is we
-                if ($timePrices['tarif_we']  && in_array(date("N", $timeStep), $we_array) && in_array(date("N", $timeStep + $gap), $we_array)) {  // we pricing
-                    $nb_hours_we += $gap;
-                } else {
-                    $H = date("H", $timeStep);
-
-                    if (!$timePrices['tarif_night'] || ($H >= $night_end && $H < $night_start)) { // price day
-                        $nb_hours_day += $gap;
-                    } else { // price night
-                        $nb_hours_night += $gap;
-                    }
-                }
-                $timeStep += $gap;
-            }
-        }
-
-        $resaDayNightWe["nb_hours_day"] = round($nb_hours_day / 3600, 1);
-        $resaDayNightWe["nb_hours_night"] = round($nb_hours_night / 3600, 1);
-        $resaDayNightWe["nb_hours_we"] = round($nb_hours_we / 3600, 1);
-
-        // manage cases where a booking is between day and night hours => get a ratio
-        $totalHours = $nb_hours_day + $nb_hours_night + $nb_hours_we;
-        $resaDayNightWe["ratio_bookings_day"] = round($nb_hours_day / $totalHours, 2);
-        $resaDayNightWe["ratio_bookings_night"] = round($nb_hours_night / $totalHours, 2);
-        $resaDayNightWe["ratio_bookings_we"] = round($nb_hours_we / $totalHours, 2);
-
-        return $resaDayNightWe;
     }
 
 }

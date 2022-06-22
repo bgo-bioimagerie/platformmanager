@@ -53,6 +53,7 @@ Following env variables can be used to override Config/conf.ini:
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
 * SMTP_FROM: support@genouest.org  # mail *from* address
+* SMTP_TLS: 0 # activate tls support for smtp, false by default
 * PFM_MODE: prod  # optional [dev|*prod*|test], dev mode adds a console in browser with sql info
 * PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)
 * PFM_ADMIN_EMAIL: admin@pfm.org  # superadmin email
@@ -124,3 +125,7 @@ And .env file should define (according to variables used):
   * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
   * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
   * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set
+
+### Install
+
+See [install](./upgrade)

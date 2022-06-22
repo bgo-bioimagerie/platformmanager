@@ -156,11 +156,11 @@ class BkBookingSettings extends Model {
      * @return string Summmary in HTML
      */
     public function getSummary($id_space, $user, $phone, $short_desc, $desc, $displayHorizontal = true, $role=0) {
-
         $lang = "En";
         if (isset($_SESSION["user_settings"]["language"])) {
             $lang = $_SESSION["user_settings"]["language"];
         }
+
         $entryList = $this->entries($id_space, "display_order");
         $summary = "";
         // user
