@@ -356,6 +356,7 @@ function cliInstall($from=-1) {
         $cdb->upgrade($from);
     } else {
         $logger->info("Db already at release ".$cdb->getVersion());
+        $cdb->base();
     }
 
     $logger->info("Check for upgrades");
