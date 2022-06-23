@@ -13,6 +13,10 @@
 * [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
 
+## 2.6.4
+
+* [core][cli] fix base columns settings (issue for old upgrades)
+
 ## 2.6.3
 
 * [booking][invoice] fix invoice details rounded values #659
