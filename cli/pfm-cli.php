@@ -314,6 +314,7 @@ function cliInstall($from=-1) {
 
         $modelCreateDatabase = new CoreInstall();
         $modelCreateDatabase->createDatabase();
+        $cdb->base();
         $logger->info("Database installed");
         
 
@@ -350,7 +351,6 @@ function cliInstall($from=-1) {
         } catch (Exception $e) {
                 $logger->error("Error", ["error" => $e->getMessage()]);
         }
-
         // update db release and launch upgrade
         $cdb->upgrade($from);
     } else {
@@ -359,7 +359,6 @@ function cliInstall($from=-1) {
 
     $logger->info("Check for upgrades");
     $cdb->scanUpgrades();
-    $cdb->base();
 
 
     

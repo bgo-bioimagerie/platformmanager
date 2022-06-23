@@ -1,5 +1,9 @@
 # Changes
 
+## 2.6.4
+
+* [core][cli] fix base columns settings (issue for old upgrades)
+
 ## 2.6.3
 
 * [booking][invoice] fix invoice details rounded values #659
