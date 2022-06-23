@@ -836,14 +836,9 @@ class SeProject extends Model {
     }
 
     public function setProjectUser($id_space, $id_user, $id_project) {
-        if ($this->isProjectUser($id_space, $id_user, $id_project)) {
-            $sql = "UPDATE se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
-                $this->runRequest($sql, array($id_space, $id_user, $id_project));
-        } else {
-            $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
-            $this->runRequest($sql, array($id_space, $id_user, $id_project));
-            return $this->getDatabase()->lastInsertId();
-        }
+        $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
+        $this->runRequest($sql, array($id_space, $id_user, $id_project));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function isProjectUser($id_space, $id_user, $id_project) {
