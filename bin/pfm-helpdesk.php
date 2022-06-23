@@ -186,11 +186,12 @@ $originDomain = $originInfo[1];
 
 
 if(!$inbox) {
+    Configuration::getLogger()->error('No imap configuration, exiting...');
     exit(0);
 }
 
 if(!$origin) {
-    Configuration::getLogger()->error('No helpdesk_email defined');
+    Configuration::getLogger()->error('No helpdesk_email defined, exiting...');
     exit(1);
 }
 

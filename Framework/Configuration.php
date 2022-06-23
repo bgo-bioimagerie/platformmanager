@@ -368,7 +368,11 @@ class Configuration {
      */
     public static function write(array $config) {
         $configd = var_export($config, true);
-        file_put_contents(self::getConfigFile(), "<?php return $configd ;");
+        try {
+            file_put_contents(self::getConfigFile(), "<?php return $configd ;");
+        } catch(Throwable $e) {
+            self::getLogger()->error('Failed to overwrite '.self::getConfigFile(), ['err' => $e]);
+        }
     }
 
 }
