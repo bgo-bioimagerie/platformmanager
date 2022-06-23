@@ -573,6 +573,7 @@ class EventHandler {
         $campaign = $cm->get($id_space, $campaign_id);
         if(!$campaign) {
             Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
+            return;
         }
         $b = new BkCalendarEntry();
         $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date']);
@@ -583,6 +584,7 @@ class EventHandler {
                 $emails[] = $email;
             }
         }
+        $cm->set($campaign['id_space'], $campaign['id'], $campaign['from_date'], $campaign['to_date'], $campaign['limit_date'], $campaign['message'], count($emails));
 
         $me = new Email();
         $from = Configuration::get('smtp_from');
@@ -609,7 +611,7 @@ class EventHandler {
         foreach ($emails as $email) {
             $user = $cu->getUserByEmail($email['email']);
             $lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
-            $message = $campaign['message'];
+            $message = RatingTranslator::NewCampaign($lang).'<br/>'.$campaign['message'];
             $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
             $message .= '<br/><a href="'.$link.'">'.$link.'</a>';
             if($limit_date_str) {
@@ -879,7 +881,7 @@ class Events {
             $amqpMsg = new AMQPMessage(json_encode($message));
             $channel->basic_publish($amqpMsg, 'pfm_events', '');
         } catch (Exception $e) {
-            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage()]);
+            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             return;
         }
     }

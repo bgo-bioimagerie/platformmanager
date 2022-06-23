@@ -21,6 +21,7 @@ class RatingCampaign extends Model {
             `to_date` int NOT NULL,
             `limit_date` int NOT NULL,
             `message` varchar(255) NOT NULL DEFAULT '',
+            `mails` int NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -38,11 +39,11 @@ class RatingCampaign extends Model {
         return $res->fetchAll();
     }
 
-    public function set(int $id_space, int $id, int $from_date, int $to_date, int $limit_date, string $message) {
+    public function set(int $id_space, int $id, int $from_date, int $to_date, int $limit_date, string $message, int $mails=0) {
         $exists = $this->get($id_space, $id);
         if($exists) {
-            $sql = 'UPDATE rating_campaign set from_date=?, to_date=?, limit_date=?, message=? WHERE id_space=? AND id=?';
-            $this->runRequest($sql, [$from_date, $to_date, $limit_date, $message, $id_space, $id]);
+            $sql = 'UPDATE rating_campaign set from_date=?, to_date=?, limit_date=?, message=?, mails=? WHERE id_space=? AND id=?';
+            $this->runRequest($sql, [$from_date, $to_date, $limit_date, $message, $mails, $id_space, $id]);
         } else {
             $sql = 'INSERT INTO rating_campaign (id_space, from_date, to_date, limit_date, message) VALUES (?, ?, ?, ?, ?)';
             $this->runRequest($sql, [$id_space, $from_date, $to_date, $limit_date, $message]);
@@ -58,6 +59,12 @@ class RatingCampaign extends Model {
             return $res->fetch();
         }
         return null;
+    }
+
+    public function anwers(int $id_space, int $id_campaign) {
+        $sql = 'SELECT DISTINCT id_user FROM rating WHERE id_space=? AND campaign=?';
+        $res = $this->runRequest($sql, [$id_space, $id_campaign]);
+        return $res->fetchAll();
     }
 }
 
@@ -182,6 +189,7 @@ class Rating extends Model {
         }
         return $id;
     }
+
 }
 
 ?>

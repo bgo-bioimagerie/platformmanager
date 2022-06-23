@@ -2,6 +2,9 @@
 <?php
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/core/Model/CoreTranslator.php';
+require_once 'Modules/rating/Model/RatingTranslator.php';
+
 ?>
 <?php startblock('stylesheet') ?>
 <script src="externals/pfm/star-rating/VueStarRating.umd.min.js"></script>
@@ -10,7 +13,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 <?php startblock('content') ?>
 
 <div id="ratingEval" class="container">
-
+<div class="mb-3"><h3><?php echo RatingTranslator::Campaign($lang).': '. CoreTranslator::dateFromEn(date('Y-m-d', $campaign['from_date']), $lang) . ' - ' . CoreTranslator::dateFromEn(date('Y-m-d', $campaign['to_date']), $lang) ?></h3></div>
 <form class="form">
     <div v-if="msg" class="label label-danger">{{msg}}</div>
     <?php if($data['resources']) { echo '<h4>'.BookingTranslator::booking($lang).'</h4>'; } ?>
@@ -67,11 +70,10 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 </div>
 <script>
 Vue.createApp({
-    name: 'rating',
     data () {
         return {
             id_space: <?php echo $context['currentSpace']['id']; ?>,
-            id_campaign: <?php echo $campaign; ?>,
+            id_campaign: <?php echo $campaign['id']; ?>,
             resources: <?php echo json_encode($data['resources']) ?>,
             projects: <?php echo json_encode($data['projects']) ?>,
             msg: ''

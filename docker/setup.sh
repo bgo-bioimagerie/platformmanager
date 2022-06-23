@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-if [ -e /var/www/platformmanager/Config/conf.ini ]; then
+if [ ! -e /var/www/platformmanager/Config/conf.ini ]; then
   cp /etc/platformmanager/conf.ini.sample /var/www/platformmanager/Config/conf.ini
   sed -i "s/MYSQL_URL/${MYSQL_HOST}/g" /var/www/platformmanager/Config/conf.ini
   sed -i "s/MYSQL_DBNAME/${MYSQL_DBNAME}/g" /var/www/platformmanager/Config/conf.ini

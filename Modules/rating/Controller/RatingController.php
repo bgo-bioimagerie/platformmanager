@@ -126,9 +126,12 @@ class RatingController extends CoresecureController {
             $form->addDate("to_date", RatingTranslator::To($lang), true, CoreTranslator::dateFromEn($to_date_str, $lang));
             $form->addTextArea("message", 'Message', true, $data["message"] ?? '');
         } else {
+            $answers = count($cm->anwers($id_space, $id_campaign));
             $form->addText("from_date", RatingTranslator::From($lang), true, $from_date_str, readonly:true);
             $form->addText("to_date", RatingTranslator::To($lang), true, $to_date_str, readonly:true);
             $form->addText("message", 'Message', false, $data["message"] ?? '', readonly:true);
+            $form->addText("mails", RatingTranslator::Mails($lang), false, $data["mails"], readonly: true);
+            $form->addText("answers", RatingTranslator::Answers($lang), false, $answers, readonly: true);
         }
         $form->addDate("limit_date", RatingTranslator::Deadline($lang), false, $limit_date_str);
 
@@ -174,49 +177,59 @@ class RatingController extends CoresecureController {
         }
 
         $r = new Rating();
-        $booking_ratings = $r->list($id_space, 'booking', campaign:$id_campaign);
-        for($i=0;$i<count($booking_ratings);$i++){
-            $booking_ratings[$i]['rate'] = intval($booking_ratings[$i]['rate']);
-            if(!$booking_ratings[$i]['login'] || $booking_ratings[$i]['anon']) {
-                $booking_ratings[$i]['login'] = '';
-            }
-        }
-
-        $projects_ratings = $r->list($id_space, 'projects', campaign:$id_campaign);
-        for($i=0;$i<count($projects_ratings);$i++){
-            $projects_ratings[$i]['rate'] = intval($projects_ratings[$i]['rate']);
-            if(!$projects_ratings[$i]['login'] || $projects_ratings[$i]['anon']) {
-                $projects_ratings[$i]['login'] = '';
-            }
-        }
-
-        $global_stats = $r->stat($id_space, $id_campaign);
-
+        $booking_ratings = [];
+        $projects_ratings = [];
         $global_bookings = [];
-        foreach($global_stats as $g) {
-            if($g['module'] == 'booking') {
-                $g['rate'] = round($g['rate']);
-                $global_bookings[] = $g;
-            }
-        }
-
         $global_projects = [];
-        foreach($global_stats as $g) {
-            if($g['module'] == 'projects') {
-                $g['rate'] = round($g['rate']);
-                $global_projects[] = $g;
+        $total = [];
+        
+
+        if($id_campaign) {
+            $booking_ratings = $r->list($id_space, 'booking', campaign:$id_campaign);
+            for($i=0;$i<count($booking_ratings);$i++){
+                $booking_ratings[$i]['rate'] = intval($booking_ratings[$i]['rate']);
+                if(!$booking_ratings[$i]['login'] || $booking_ratings[$i]['anon']) {
+                    $booking_ratings[$i]['login'] = '';
+                }
+            }
+    
+
+
+            $projects_ratings = $r->list($id_space, 'projects', campaign:$id_campaign);
+            for($i=0;$i<count($projects_ratings);$i++){
+                $projects_ratings[$i]['rate'] = intval($projects_ratings[$i]['rate']);
+                if(!$projects_ratings[$i]['login'] || $projects_ratings[$i]['anon']) {
+                    $projects_ratings[$i]['login'] = '';
+                }
+            }
+
+
+            $global_stats = $r->stat($id_space, $id_campaign);
+
+            
+            foreach($global_stats as $g) {
+                if($g['module'] == 'booking') {
+                    $g['rate'] = round($g['rate']);
+                    $global_bookings[] = $g;
+                }
+            }
+
+            foreach($global_stats as $g) {
+                if($g['module'] == 'projects') {
+                    $g['rate'] = round($g['rate']);
+                    $global_projects[] = $g;
+                }
+            }
+
+            $total_stats = $r->statGlobal($id_space, $id_campaign);
+            foreach ($total_stats as $stat) {
+                $stat['rate'] = round($stat['rate']);
+                $total[$stat['module']] = $stat;
             }
         }
 
-        $total_stats = $r->statGlobal($id_space, $id_campaign);
-        $total = [];
-        foreach ($total_stats as $stat) {
-            $stat['rate'] = round($stat['rate']);
-            $total[$stat['module']] = $stat;
-        }
 
-
-        return $this->render(['data' => ['total' => $total, 'global_projects' => $global_projects, 'global_bookings' => $global_bookings, 'campaign' => $data, 'bookings' => $booking_ratings, 'projects' => $projects_ratings], 'lang' => $lang, 'form' => $form->getHtml($lang)]);
+        return $this->render(['data' => ['answers' => $answers, 'total' => $total, 'global_projects' => $global_projects, 'global_bookings' => $global_bookings, 'campaign' => $data, 'bookings' => $booking_ratings, 'projects' => $projects_ratings], 'lang' => $lang, 'form' => $form->getHtml($lang)]);
     }
 
     /**
@@ -293,7 +306,7 @@ class RatingController extends CoresecureController {
                 $projects[$stat['resource']]['anon'] = $stat['anon'];
             }
         }
-        return $this->render(['lang' => $lang, 'campaign' => $id_campaign, 'data' => ['resources' => $resources, 'projects' => $projects]]);
+        return $this->render(['lang' => $lang, 'campaign' => $campaign, 'data' => ['resources' => $resources, 'projects' => $projects]]);
     }
 
 

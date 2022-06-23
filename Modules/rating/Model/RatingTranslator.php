@@ -98,7 +98,38 @@ class RatingTranslator {
         }
         return "Responses";
     }
+
+    public static function NewCampaign($lang) {
+        if ($lang == 'fr') {
+            return "Vous êtes sollicités pour répondre à une enquete de satisfaction. Merci de prendre le temps de répondre à cette enquête";
+        } else {
+            return "You are solicited for a satisfaction survey. Thank you for taking the time to answer to this survey.";
+        }
+    }
+
+    public static function WarningCampaign($lang) {
+        if ($lang == 'fr') {
+            return "Attention, la campagne démarrera immédiatement avec l'envoi de mails aux utilisateurs concernés";
+        } else {
+            return "Warning, campaign will start immediatly, sending email to concerned users";
+        }
+    }
     
+    public static function Mails($lang) {
+        if ($lang == 'fr') {
+            return "Mails envoyés";
+        } else {
+            return "Sent emails";
+        }
+    }
+
+    public static function Answers($lang) {
+        if ($lang == 'fr') {
+            return "Réponses";
+        } else {
+            return "Answers";
+        }
+    }
 }
 
 ?>
