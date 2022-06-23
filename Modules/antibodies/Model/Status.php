@@ -31,7 +31,6 @@ class Status extends Model {
 				);";
 
         $pdo = $this->runRequest($sql);
-        $this->addColumn("ac_status", "display_order", "INT(11)", 0);
         return $pdo;
     }
 

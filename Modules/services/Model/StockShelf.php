@@ -11,10 +11,25 @@ class StockShelf extends Model {
 
     public function __construct() {
         $this->tableName = "stock_shelf";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(255)", "");
         $this->setColumnsInfo("id_cabinet", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql= 'CREATE TABLE IF NOT EXISTS `stock_shelf` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(255) DEFAULT NULL,
+            `id_cabinet` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
     }
 
     public function getAll($id_space) {

@@ -23,6 +23,8 @@ class Document extends Model {
     public function __construct() {
 
         $this->tableName = "dc_documents";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("title", "varchar(250)", "");
@@ -32,6 +34,23 @@ class Document extends Model {
         $this->setColumnsInfo('visibility', 'int', 0);
         $this->setColumnsInfo('id_ref', 'int', ''); // according to visibility, user or client id
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `dc_documents` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `title` varchar(250) DEFAULT NULL,
+            `id_user` int NOT NULL DEFAULT 0,
+            `date_modified` date DEFAULT NULL,
+            `url` text,
+            `visibility` int NOT NULL DEFAULT 0,
+            `id_ref` int DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
     }
     
     public function mergeUsers($users){

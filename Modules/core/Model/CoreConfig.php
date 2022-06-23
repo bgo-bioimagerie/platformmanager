@@ -44,7 +44,6 @@ class CoreConfig extends Model {
             $this->runRequest($sql3);
         }
 
-        $this->addColumn('core_config', 'id_space', 'int(11)', 0);
     }
 
     /**

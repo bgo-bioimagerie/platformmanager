@@ -47,27 +47,6 @@ class Anticorps extends Model {
   				PRIMARY KEY (`id`)
 				)";
         $this->runRequest($sql);
-		
-        /*
-		$sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
-  				`id_anticorps` int(11) NOT NULL,
-  				`id_utilisateur` int(11) NOT NULL,	
-				`disponible` int(2) NOT NULL,		
-				`date_recept` DATE NOT NULL,
-				`no_dossier` varchar(12) NOT NULL,
-				`id_space` int(11) NOT NULL DEFAULT 0
-                )";
-        $this->runRequest($sql);
-        */
-
-        // add new column
-        $this->addColumn("ac_anticorps", "id_staining", "float(11)", 1);
-        $this->addColumn("ac_anticorps", "id_application", "float(11)", 1);
-        $this->addColumn("ac_anticorps", "export_catalog", "int(1)", 0);
-        $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
-        $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
-        $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
-
     }
 
     public function mergeUsers($users){

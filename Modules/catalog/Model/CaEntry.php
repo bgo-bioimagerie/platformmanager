@@ -35,8 +35,7 @@ class CaEntry extends Model {
             $sql = "ALTER TABLE `ca_entries` ADD `image_url` varchar(300) NOT NULL";
             $this->runRequest($sql);
         }
-        
-        $this->addColumn("ca_entries", "id_space", "int(11)", 0);
+
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {

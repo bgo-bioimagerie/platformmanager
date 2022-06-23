@@ -17,6 +17,8 @@ class ReEvent extends Model {
     public function __construct() {
         
         $this->tableName = "re_event";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("date", "date", "");
@@ -25,6 +27,23 @@ class ReEvent extends Model {
         $this->setColumnsInfo("id_state", "int(11)", 0);
         $this->setColumnsInfo("comment", "text", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `re_event` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_resource` int NOT NULL DEFAULT 0,
+            `date` date DEFAULT NULL,
+            `id_user` int NOT NULL DEFAULT 0,
+            `id_eventtype` int NOT NULL DEFAULT 0,
+            `id_state` int NOT NULL DEFAULT 0,
+            `comment` text,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
     }
 
     public function get($id_space, $id) {

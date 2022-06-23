@@ -28,9 +28,7 @@ class BkCalendarPeriod extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        $this->runRequest($sql);
-        
-        $this->addColumn('bk_calendar_period', 'enddate', 'date', "");
+        $this->runRequest($sql);        
     }
 
     public function setEndDate($id_space, $id, $date) {

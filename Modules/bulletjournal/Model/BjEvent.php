@@ -17,11 +17,27 @@ class BjEvent extends Model {
     public function __construct() {
 
         $this->tableName = "bj_events";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("start_time", "int(11)", 0);
         $this->setColumnsInfo("end_time", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bj_events` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_note` int NOT NULL DEFAULT 0,
+            `start_time` int NOT NULL DEFAULT 0,
+            `end_time` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`),
+          )';
+        $this->runRequest($sql);
     }
 
     public function get($id_space, $id) {

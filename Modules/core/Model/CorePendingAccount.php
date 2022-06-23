@@ -12,6 +12,8 @@ class CorePendingAccount extends Model {
 
     public function __construct() {
         $this->tableName = "core_pending_accounts";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->setColumnsInfo("id_space", "int(11)", 0);
@@ -19,6 +21,21 @@ class CorePendingAccount extends Model {
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("validated_by", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `core_pending_accounts` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_user` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            `validated` int NOT NULL DEFAULT 0,
+            `date` date DEFAULT NULL,
+            `validated_by` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
     }
 
     public function validate($id, $validated_by){

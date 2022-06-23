@@ -29,8 +29,6 @@ class BkPackage extends Model {
 		);";
         $this->runRequest($sql);
 
-        $this->addColumn("bk_packages", "id_package", "int(11)", 0);
-
         $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
 		`id_package` int(11) NOT NULL,
 		`id_pricing` int(11) NOT NULL,

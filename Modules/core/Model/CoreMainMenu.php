@@ -6,10 +6,26 @@ class CoreMainMenu extends Model {
 
     public function __construct() {
         $this->tableName = "core_main_menus";
+
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(100)", "");
         $this->setColumnsInfo("display_order", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE  IF NOT EXISTS `core_main_menus` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(100) DEFAULT NULL,
+            `display_order` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
     }
 
     public function getFirstIdx(){

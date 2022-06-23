@@ -18,6 +18,9 @@ class BkAuthorization extends Model {
     public function __construct() {
 
         $this->tableName = "bk_authorization";
+
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("user_id", "int(11)", 0);
         $this->setColumnsInfo("resource_id", "int(11)", 0);
@@ -25,9 +28,25 @@ class BkAuthorization extends Model {
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("date_desactivation", "date", "");
         $this->setColumnsInfo("is_active", "int(1)", 1);
-
         $this->primaryKey = "id";
+        */
 
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bk_authorization` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `user_id` int NOT NULL DEFAULT 0,
+            `resource_id` int NOT NULL DEFAULT 0,
+            `visa_id` int NOT NULL DEFAULT 0,
+            `date` date DEFAULT NULL,
+            `date_desactivation` date DEFAULT NULL,
+            `is_active` int NOT NULL DEFAULT 1,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+          $this->runRequest($sql);
     }
 
     public function mergeUsers($users){

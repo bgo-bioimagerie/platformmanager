@@ -19,6 +19,9 @@ class CoreSpaceUser extends Model {
     public function __construct() {
 
         $this->tableName = "core_j_spaces_user";
+
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_user", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", "");
@@ -27,7 +30,23 @@ class CoreSpaceUser extends Model {
         $this->setColumnsInfo("convention_url", "varchar(255)", "");
         $this->setColumnsInfo("date_contract_end", "date", "");
         $this->primaryKey = "id";
+        */
 
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_user` int DEFAULT NULL,
+            `id_space` int DEFAULT NULL,
+            `status` varchar(100) DEFAULT NULL,
+            `date_convention` date DEFAULT NULL,
+            `convention_url` varchar(255) DEFAULT NULL,
+            `date_contract_end` date DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
     }
 
     public function managersOrAdmin($id_space) {

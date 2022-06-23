@@ -17,11 +17,27 @@ class ReResps extends Model {
     public function __construct() {
 
         $this->tableName = "re_resps";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->setColumnsInfo("id_status", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `re_resps` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_resource` int NOT NULL DEFAULT 0,
+            `id_user` int NOT NULL DEFAULT 0,
+            `id_status` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
     }
 
     // [multi_-tenant] : filter by id_space ?

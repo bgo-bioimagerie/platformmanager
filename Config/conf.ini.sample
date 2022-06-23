@@ -12,7 +12,7 @@ admin_email =
 admin_apikey =
 
 [BD]
-dsn = 'mysql:host=MYSQL_URL;dbname=MYSQL_DBNAME;charset=utf8'
+;dsn = 'mysql:host=MYSQL_URL;dbname=MYSQL_DBNAME;charset=utf8'
 login = MYSQL_USER
 pwd = MYSQL_PASS
 debug_sql = false
@@ -35,7 +35,8 @@ modules[] = "documents"
 modules[] = "antibodies"
 modules[] = "quote"
 modules[] = "com"
-;modules[] = "helpdesk"
+modules[] = "helpdesk"
+modules[] = "bulletjournal"
 
 [Company]
 name = "Platform-Manager"

@@ -17,8 +17,21 @@ class BjCollectionNote extends Model {
     public function __construct() {
 
         $this->tableName = "bj_j_collections_notes";
+
+        /*
         $this->setColumnsInfo("id_collection", "int(11)", 0);
         $this->setColumnsInfo("id_note", "int(11)", 0);
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bj_j_collections_notes` (
+            `id_collection` int NOT NULL DEFAULT 0,
+            `id_note` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+          )';
+        $this->runRequest($sql);
     }
 
     public function getForCollection($id_space, $id) {

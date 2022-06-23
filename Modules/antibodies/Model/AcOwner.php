@@ -20,18 +20,17 @@ class AcOwner extends Model {
      */
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
-                    `id` int(11) NOT NULL AUTO_INCREMENT,
-                    `id_anticorps` int(11) NOT NULL,
-                    `id_utilisateur` int(11) NOT NULL,	
-                    `disponible` int(2) NOT NULL,		
-                    `date_recept` DATE NOT NULL,
-                    `no_dossier` varchar(12) NOT NULL,
-                    PRIMARY KEY (`id`)
-                    );";
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL DEFAULT 0,
+            `id_anticorps` int(11) NOT NULL,
+            `id_utilisateur` int(11) NOT NULL,	
+            `disponible` int(2) NOT NULL,		
+            `date_recept` DATE NOT NULL,
+            `no_dossier` varchar(12) NOT NULL,
+            PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
-
-        $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
     }
 
     public function get($id_space, $id) {

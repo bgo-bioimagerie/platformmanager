@@ -6,6 +6,8 @@ class ClAddress extends Model {
 
     public function __construct() {
         $this->tableName = "cl_addresses";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("institution", "varchar(255)", "");
         $this->setColumnsInfo("building_floor", "varchar(255)", "");
@@ -15,6 +17,24 @@ class ClAddress extends Model {
         $this->setColumnsInfo("city", "varchar(255)", "");
         $this->setColumnsInfo("country", "varchar(255)", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `cl_addresses` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `institution` varchar(255) DEFAULT NULL,
+            `building_floor` varchar(255) DEFAULT NULL,
+            `service` varchar(255) DEFAULT NULL,
+            `address` text,
+            `zip_code` varchar(20) DEFAULT NULL,
+            `city` varchar(255) DEFAULT NULL,
+            `country` varchar(255) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
     }
     
     public function get($id_space, $id){

@@ -12,6 +12,8 @@ class BkNightWE extends Model {
     public function __construct() {
 
         $this->tableName = "bk_nightwe";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_belonging", "int(11)", 0);
         $this->setColumnsInfo("tarif_unique", "int(11)", 1);
@@ -22,6 +24,24 @@ class BkNightWE extends Model {
         $this->setColumnsInfo("choice_we", "varchar(100)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bk_nightwe` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_belonging` int NOT NULL DEFAULT 0,
+            `tarif_unique` int NOT NULL DEFAULT 1,
+            `tarif_night` int NOT NULL DEFAULT 0,
+            `night_start` int NOT NULL DEFAULT 19,
+            `night_end` int NOT NULL DEFAULT 8,
+            `tarif_we` int NOT NULL DEFAULT 0,
+            `choice_we` varchar(100) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
     }
 
     public function getDefault() {

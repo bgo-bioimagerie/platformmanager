@@ -159,24 +159,6 @@ class CoreSpace extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
-        $this->addColumn('core_spaces', 'color', 'varchar(7)', "#000000");
-        $this->addColumn('core_spaces', 'description', 'text', '');
-        $this->addColumn('core_spaces', 'image', "varchar(255)", '');
-        $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
-        $this->addColumn('core_spaces', 'plan', "int", '0');
-        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
-        $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
-        $this->addColumn('core_spaces', 'termsofuse', "varchar(255)", '');
-        $this->addColumn('core_spaces', 'on_user_desactivate', "int", '0');
-
-        /* Created in CoreSpaceUser
-        $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
-		`id_user` int(11) NOT NULL DEFAULT 1,
-		`id_space` int(11) NOT NULL DEFAULT 1,
-                `status` int(1) NOT NULL DEFAULT 1
-		);";
-        $this->runRequest($sql2);
-        */
 
         // name = module
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
@@ -194,10 +176,6 @@ class CoreSpace extends Model {
 		);";
         $this->runRequest($sql3);
 
-        $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
-        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
-        $this->addColumn('core_space_menus', 'color', "varchar(7)", "#000000");
-        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
     }
 
     /**
