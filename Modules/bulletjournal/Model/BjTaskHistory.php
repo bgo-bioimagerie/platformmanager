@@ -44,9 +44,10 @@ class BjTaskHistory extends Model {
             `status` int NOT NULL DEFAULT 1,
             `date` int NOT NULL DEFAULT 0,
             `id_space` int NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

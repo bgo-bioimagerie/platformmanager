@@ -24,6 +24,7 @@ class SeTaskCategory extends Model {
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getForSpace($id_space) {

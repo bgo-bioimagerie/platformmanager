@@ -14,11 +14,12 @@ class CoreVirtual extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_virtual` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `name` varchar(150) NOT NULL,
-        PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(150) NOT NULL,
+            PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     /**

@@ -34,6 +34,7 @@ class BkColorCode extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
 
     }
 

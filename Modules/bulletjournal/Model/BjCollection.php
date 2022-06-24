@@ -32,9 +32,10 @@ class BjCollection extends Model {
             `id` int NOT NULL AUTO_INCREMENT,
             `id_space` int NOT NULL DEFAULT 0,
             `name` varchar(250) DEFAULT NULL,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

@@ -36,6 +36,7 @@ class BkAccess extends Model {
             `id_space` int NOT NULL DEFAULT 0
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function set($id_space, $id_resources, $id_access){

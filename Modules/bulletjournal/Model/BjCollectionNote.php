@@ -29,9 +29,10 @@ class BjCollectionNote extends Model {
         $sql = 'CREATE TABLE IF NOT EXISTS `bj_j_collections_notes` (
             `id_collection` int NOT NULL DEFAULT 0,
             `id_note` int NOT NULL DEFAULT 0,
-            `id_space` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getForCollection($id_space, $id) {

@@ -204,6 +204,7 @@ class Grafana {
         if(!$this->configured()) {
             return false;
         }
+
         $space = $spaceObject['shortname'];
         Configuration::getLogger()->debug("[grafana] create org", ["org" => $space]);
         $orgID = $this->getOrg($space);
@@ -257,6 +258,10 @@ class Grafana {
                 'http_errors' => false
             ]
         );
+
+        if(! isset($spaceObject['id'])) {
+            return true;
+        }
 
         $bsm = new BucketStatistics();
         $bucketObj = $bsm->get($space);
@@ -347,6 +352,7 @@ class Grafana {
         if ($status != 200) {
             Configuration::getLogger()->error('[grafana][error] failed to create datasource', ["org" => $space, "err" => $response->getBody()]);
         }
+
 
        return $this->dashboardsImport($spaceObject);
 

@@ -40,9 +40,10 @@ class BjNote extends Model {
             `content` text,
             `date` date DEFAULT NULL,
             `is_month_task` int NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

@@ -15,13 +15,14 @@ Class CoreOpenId extends Model {
      */
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_openid` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`provider` varchar(30) NOT NULL DEFAULT '',
-        `oid` varchar(30) NOT NULL DEFAULT '',
-        `user` int(11) NOT NULL,
-		PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `provider` varchar(30) NOT NULL DEFAULT '',
+            `oid` varchar(30) NOT NULL DEFAULT '',
+            `user` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function add($provider, $oid, $user) {

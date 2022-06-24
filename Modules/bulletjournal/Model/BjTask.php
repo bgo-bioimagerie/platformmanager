@@ -36,9 +36,10 @@ class BjTask extends Model {
             `priority` int NOT NULL DEFAULT 0,
             `deadline` date DEFAULT NULL,
             `id_space` int NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function openedForMigration($id_space, $year, $month){

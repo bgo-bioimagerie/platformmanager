@@ -55,6 +55,7 @@ class BkCalendarEntry extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
 
     }
     

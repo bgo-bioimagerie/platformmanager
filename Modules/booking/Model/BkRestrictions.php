@@ -29,6 +29,7 @@ class BkRestrictions extends Model {
           )';
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function init($id_space) {

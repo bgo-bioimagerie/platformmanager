@@ -31,6 +31,7 @@ class AcOwner extends Model {
         );";
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

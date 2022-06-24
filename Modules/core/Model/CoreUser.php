@@ -67,6 +67,7 @@ class CoreUser extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getResponsibles(){

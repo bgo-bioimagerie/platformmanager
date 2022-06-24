@@ -35,9 +35,10 @@ class BjEvent extends Model {
             `start_time` int NOT NULL DEFAULT 0,
             `end_time` int NOT NULL DEFAULT 0,
             `id_space` int NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`),
+            PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

@@ -345,7 +345,7 @@ class CoreDB extends Model {
         $sql = "SELECT * FROM `bj_collections`;";
         $resdb = $this->runRequest($sql);
         if($resdb!=null) {
-            while ($res = $resdb->fetch) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
@@ -863,6 +863,7 @@ class CoreDB extends Model {
         $upgradeFiles = scandir('db/upgrade');
         sort($upgradeFiles);
         foreach ($upgradeFiles as $f) {
+
             if(!str_ends_with($f, '.php')) {
                 continue;
             }
@@ -879,7 +880,7 @@ class CoreDB extends Model {
             }
             Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
             try {
-                include "db/upgrade/$f";
+                require_once "db/upgrade/$f";
                 $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
                 $this->runRequest($sql, [$record]);
             } catch(Throwable $e) {

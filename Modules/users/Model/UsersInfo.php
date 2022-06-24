@@ -32,6 +32,7 @@ class UsersInfo extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_core) {

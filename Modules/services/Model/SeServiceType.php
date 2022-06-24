@@ -67,19 +67,19 @@ class SeServiceType extends Model {
 
     // Should we leave createTable() here for upgrade ?
     /**
-     * Create the unit table
      * 
      * @return PDOStatement
      */
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `se_service_types` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(100) NOT NULL DEFAULT '',
-		`local_name` varchar(100) NOT NULL DEFAULT '',		
-		PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(100) NOT NULL DEFAULT '',
+            `local_name` varchar(100) NOT NULL DEFAULT '',		
+            PRIMARY KEY (`id`)
 		);";
-        return $this->runRequest($sql);
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     /**

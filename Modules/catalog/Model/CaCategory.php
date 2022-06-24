@@ -23,7 +23,7 @@ class CaCategory extends Model {
 		);";
 
         $this->runRequest($sql);
-        
+        $this->baseSchema();
     }
 
     public function add($id_space, $name, $displayOrder = 0) {

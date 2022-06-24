@@ -34,6 +34,7 @@ class Mailer extends Model {
             PRIMARY KEY (`id`)
             );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function create(int $id_space, string $subject, string $message, int $type) {

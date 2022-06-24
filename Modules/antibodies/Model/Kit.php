@@ -27,8 +27,8 @@ class Kit extends Model {
  				PRIMARY KEY (`id`)
 				);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getBySpace($id_space) {

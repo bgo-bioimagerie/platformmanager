@@ -38,6 +38,7 @@ class ReResps extends Model {
             PRIMARY KEY (`id`)
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     // [multi_-tenant] : filter by id_space ?

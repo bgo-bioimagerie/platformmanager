@@ -44,6 +44,7 @@ class InInvoiceItem extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getInvoiceItems($id_space, $id_invoice) {

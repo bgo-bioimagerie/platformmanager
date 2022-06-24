@@ -31,6 +31,7 @@ class SePurchaseItem extends Model {
             `id_space` int NOT NULL DEFAULT 0
           )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getForPurchase($id_space, $id_purchase) {

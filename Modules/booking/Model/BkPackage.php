@@ -2,8 +2,33 @@
 
 require_once 'Framework/Model.php';
 
+
+class BkPackagesPrices extends Model {
+    public function __construct() {
+        $this->tableName = "bk_j_packages_prices";
+    }
+
+    /**
+     * Create the package / price link table
+     *
+     * @return PDOStatement
+     */
+    public function createTable() {
+       
+        $sql = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
+		`id_package` int(11) NOT NULL,
+		`id_pricing` int(11) NOT NULL,
+		`price` decimal(10,2) NOT NULL
+		);";
+        $this->runRequest($sql);
+        $this->baseSchema();
+
+
+    }
+}
+
 /**
- * Class defining the area model
+ * Class defining the packages model
  *
  * @author Sylvain Prigent
  */
@@ -28,20 +53,11 @@ class BkPackage extends Model {
 		PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
-		`id_package` int(11) NOT NULL,
-		`id_pricing` int(11) NOT NULL,
-		`price` decimal(10,2) NOT NULL
-		);";
-        $this->runRequest($sql2);
+        $sub = new BkPackagesPrices();
+        $sub->createTable();
 
-        // delete package with zero id
-        $sql3 = "DELETE FROM bk_j_packages_prices WHERE id_package IN(SELECT id FROM bk_packages WHERE id_package=0)";
-        $this->runRequest($sql3);
-
-        $sql4 = "DELETE FROM bk_packages WHERE id_package = 0";
-        $this->runRequest($sql4);
     }
 
     public function getByResource($id_space, $id_resource) {

@@ -34,7 +34,8 @@ class ReVisa extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        return $this->runRequest($sql);
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getForListByCategory($id_space, $id_resource_category) {

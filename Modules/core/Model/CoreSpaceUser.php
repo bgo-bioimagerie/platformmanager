@@ -47,6 +47,7 @@ class CoreSpaceUser extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function managersOrAdmin($id_space) {

@@ -26,6 +26,7 @@ class CoreMainMenu extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getFirstIdx(){

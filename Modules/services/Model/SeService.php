@@ -27,6 +27,7 @@ class SeService extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getName($id_space, $id) {

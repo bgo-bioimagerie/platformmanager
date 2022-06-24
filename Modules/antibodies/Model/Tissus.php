@@ -38,6 +38,7 @@ class Tissus extends Model {
 				);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getTissusById($id_space ,$id) {

@@ -10,13 +10,14 @@ class CoreMail extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_mail_unsubscribe` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `id_space` int(11) NOT NULL,
-        `id_user` varchar(30) NOT NULL,
-        `module` varchar(50) NOT NULL,
-        PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL,
+            `id_user` varchar(30) NOT NULL,
+            `module` varchar(50) NOT NULL,
+            PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function unsubscribed($id_user, $id_space, $module) {

@@ -14,13 +14,14 @@ class CoreHistory extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_history` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `id_space` int(11) NOT NULL,
-        `user` varchar(30) NOT NULL,
-        `message` varchar(255) NOT NULL DEFAULT '',
-        PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL,
+            `user` varchar(30) NOT NULL,
+            `message` varchar(255) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     /**

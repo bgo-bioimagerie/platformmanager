@@ -22,11 +22,12 @@ class CoreInstalledModules extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_installed_modules` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(30) NOT NULL DEFAULT '',
-		PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(30) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function setModule($name){

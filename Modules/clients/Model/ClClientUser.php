@@ -25,6 +25,7 @@ class ClClientUser extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getUsersInfo($id_space, $id_client) {

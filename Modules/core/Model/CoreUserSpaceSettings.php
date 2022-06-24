@@ -29,8 +29,8 @@ class CoreUserSpaceSettings extends Model {
         `id_space` int(11) NOT NULL
 		);";
 
-        $pdo = $this->runRequest($sql);
-        return $pdo;
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     /**

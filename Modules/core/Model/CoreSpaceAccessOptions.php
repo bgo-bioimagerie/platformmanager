@@ -33,13 +33,14 @@ class CoreSpaceAccessOptions extends Model {
     {
         $sql='CREATE TABLE IF NOT EXISTS `core_space_access_options` (
             `id` int NOT NULL AUTO_INCREMENT,
-            `id_space` varchar(100) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
             `toolname` varchar(100) DEFAULT NULL,
             `module` varchar(100) DEFAULT NULL,
             `url` varchar(255) DEFAULT NULL,
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function getAll($id_space){

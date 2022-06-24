@@ -65,6 +65,7 @@ class BkScheduling extends Model {
           )';
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getDefault() {

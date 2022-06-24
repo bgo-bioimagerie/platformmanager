@@ -34,6 +34,7 @@ class ClPricing extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getAll($id_space) {

@@ -145,6 +145,24 @@ abstract class Model {
         self::$bdd->exec("SET CHARACTER SET utf8");
     }
 
+    /**
+     * Add base common columns (id_space, created_at, updated_at, deleted, deleted_at)
+     */
+    public function baseSchema(){
+        /*
+            `deleted` int NOT NULL DEFAULT '0',
+            `deleted_at` datetime DEFAULT NULL,
+            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            `id_space` int NOT NULL DEFAULT '0',
+        */
+        $this->addColumn($this->tableName, "deleted", "int(1)", 0);
+        $this->addColumn($this->tableName, "deleted_at", "DATETIME", "", true);
+        $this->addColumn($this->tableName, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
+        $this->addColumn($this->tableName, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
+        $this->addColumn($this->tableName, "id_space", "int(11)", 0);
+    }
+
     public function checkColumn($tableName, $columnName) {
         $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
         $pdo = $this->runRequest($sql, array($columnName));

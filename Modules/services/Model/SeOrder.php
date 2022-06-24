@@ -4,8 +4,28 @@ require_once 'Framework/Model.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
+
+class SeOrderService extends Model {
+
+    public function __construct() {
+        $this->tableName = "se_order_service";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_order_service` (
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_order` int(11) NOT NULL,
+            `id_service` int(11) NOT NULL,
+		    `quantity` varchar(255) NOT NULL,
+		    PRIMARY KEY (`id`)
+		);";
+
+        $this->runRequest($sql);
+        $this->baseSchema();
+    }
+}
 /**
- * Class defining the Unit model for consomable module
+ * Class defining model for service ordres
  *
  * @author Sylvain Prigent
  */
@@ -32,17 +52,11 @@ class SeOrder extends Model {
             PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
 
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_order` int(11) NOT NULL,
-            `id_service` int(11) NOT NULL,
-		    `quantity` varchar(255) NOT NULL,
-		    PRIMARY KEY (`id`)
-		);";
-
-        $this->runRequest($sql2);
+       $m = new SeOrderService();
+       $m->createTable();
     }
 
     public function setCreatedBy($id_space, $id, $id_user){

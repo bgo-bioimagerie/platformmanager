@@ -36,6 +36,7 @@ class CorePendingAccount extends Model {
             PRIMARY KEY (`id`)
         )';
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function validate($id, $validated_by){
