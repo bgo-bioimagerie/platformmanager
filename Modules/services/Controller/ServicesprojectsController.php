@@ -477,7 +477,10 @@ class ServicesprojectsController extends ServicesController {
 
         if ($form->check()) {
             $id = $this->updateProject($id, $id_space, $lang);
-
+            
+            if (!$_SESSION['flash']) {
+                $_SESSION['flash'] = "";
+            }
             $_SESSION['flash'] = $_SESSION['flash'] . " " . ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
 
