@@ -576,7 +576,7 @@ class EventHandler {
             return;
         }
         $b = new BkCalendarEntry();
-        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date']);
+        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date'], CoreSpace::$USER);
         $p = new SeProject();
         $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
         foreach ($pemails as $email) {

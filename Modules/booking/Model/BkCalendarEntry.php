@@ -1103,7 +1103,7 @@ class BkCalendarEntry extends Model {
             return $req->fetchAll();
     }
 
-    public function getEmailsWithEntriesForPeriod($id_space, $date_from, $date_end) {
+    public function getEmailsWithEntriesForPeriod($id_space, $date_from, $date_end, $maxStatus) {
         $sql = "SELECT DISTINCT user.email AS email 
                 FROM core_users AS user
                 INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
@@ -1112,8 +1112,9 @@ class BkCalendarEntry extends Model {
                 AND bk_calendar_entry.id_space=?
                 AND user.is_active = 1
                 AND core_j_spaces_user.status>?
+                AND core_j_spaces_user.status<=?
                 AND bk_calendar_entry.end_time >= ? AND bk_calendar_entry.end_time <= ?;";
-        $params = [$id_space, CoreSpace::$VISITOR, $date_from, $date_end];
+        $params = [$id_space, CoreSpace::$VISITOR, $maxStatus, $date_from, $date_end];
         $req = $this->runRequest($sql, $params);
         return $req->fetchAll();
     }
