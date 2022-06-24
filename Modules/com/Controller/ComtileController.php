@@ -42,14 +42,12 @@ class ComtileController extends ComController {
     public function indexAction($id_space){
         
         $modelParam = new CoreConfig();
-        $spaceModel = new CoreSpace();
-        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
         $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
         $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
 
         $messages = array("message_public" => $message_public);
 
-        if($role >= CoreSpace::$USER) {
+        if($this->role >= CoreSpace::$USER) {
             $messages["message_private"] = $message_private;
         }
         
