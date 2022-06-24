@@ -359,7 +359,7 @@ function cliInstall($from=-1) {
     }
 
     $logger->info("Check for upgrades");
-    $cdb->scanUpgrades();
+    $cdb->scanUpgrades($from);
 
 
     
