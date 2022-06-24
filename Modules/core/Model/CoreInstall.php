@@ -778,42 +778,49 @@ class CoreDB extends Model {
         return $need;
     }
 
-    public function scanUpgrades() {
-        if(file_exists('db/upgrade')) {
-            $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
-                `id` int(11) NOT NULL AUTO_INCREMENT,
-                `record` varchar(255) NOT NULL,
-                `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY (`id`)
-            );";
-            $this->runRequest($sql);
+    public function scanUpgrades(int $from=-1) {
+        if(!file_exists('db/upgrade')) {
+            return;
+        }
+        $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `record` varchar(255) NOT NULL,
+            `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (`id`)
+        );";
+        $this->runRequest($sql);
 
-            $upgradeFiles = scandir('db/upgrade');
-            sort($upgradeFiles);
-            foreach ($upgradeFiles as $f) {
-                if(!str_ends_with($f, '.php')) {
-                    continue;
-                }
-                $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
-                $record = str_replace('.php', '', $f);
-                $res = $this->runRequest($sql, [$record]);
-                if(!$res) {
-                    Configuration::getLogger()->error('request failed');
-                    break;
-                }
-                if($res->rowCount() > 0) {
-                    Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
-                    continue;
-                }
-                Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
-                try {
-                    include "db/upgrade/$f";
-                    $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
-                    $this->runRequest($sql, [$record]);
-                } catch(Throwable $e) {
-                    Configuration::getLogger()->error("[db][upgrade] an error occured", ["error" => $e]);
-                    break;
-                }
+        if($from == 0) {
+            Configuration::getLogger()->info("Installing from $from, resetting upgrades to apply...");
+            $sql = 'DELETE FROM pfm_upgrade';
+            $this->runRequest($sql);
+        }
+
+        $upgradeFiles = scandir('db/upgrade');
+        sort($upgradeFiles);
+        foreach ($upgradeFiles as $f) {
+            if(!str_ends_with($f, '.php')) {
+                continue;
+            }
+            $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
+            $record = str_replace('.php', '', $f);
+            $res = $this->runRequest($sql, [$record]);
+            if(!$res) {
+                Configuration::getLogger()->error('request failed');
+                break;
+            }
+            if($res->rowCount() > 0) {
+                Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
+                continue;
+            }
+            Configuration::getLogger()->info('[db][upgrade] applying', ['file' => $f]);
+            try {
+                include "db/upgrade/$f";
+                $sql = 'INSERT INTO pfm_upgrade (record) VALUES (?)';
+                $this->runRequest($sql, [$record]);
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error("[db][upgrade] an error occured", ["error" => $e]);
+                break;
             }
         }
     }

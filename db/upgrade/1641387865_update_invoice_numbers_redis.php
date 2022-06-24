@@ -13,23 +13,21 @@ class CoreUpgradeDB1641387865 extends Model {
       foreach($spaces as $space) {
       $sql = "SELECT * FROM in_invoice WHERE id_space=? ORDER BY number DESC;";
       $req = $this->runRequest($sql, [$space['id']]);
-      $lastNumber = "";
-      if ($req->rowCount() > 0) {
-          $bill = $req->fetch();
-          $lastNumber = $bill["number"];
-          Configuration::getLogger()->debug('[invoice]', ['number' => $lastNumber]);
-      }
-      if ($lastNumber != "") {
-          $lastNumber = explode("-", $lastNumber);
-          $lastNumberY = $lastNumber[0];
-          $lastNumberN = $lastNumber[1];
-          if ($lastNumberY == date("Y", time())) {
-              
-              $cv = new CoreVirtual();
 
-              Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => intval($lastNumberN)]);
-              $cv->set($space['id'], "invoices:$lastNumberY", intval($lastNumberN));
-          }
+      $bills = [];
+      while($bill = $req->fetch()) {
+        $lastNumber = $bill["number"];
+        $lastNumber = explode("-", $lastNumber);
+        $lastNumberY = $lastNumber[0];
+        $lastNumberN = $lastNumber[1];
+        if(!isset($bills[$lastNumberY]) || $bills[$lastNumberY] < intval($lastNumberN)) {
+          $bills[$lastNumberY] = intval($lastNumberN);
+        }
+      }
+      foreach($bills as $k => $v) {
+        $cv = new CoreVirtual();
+        Configuration::getLogger()->debug('[invoice][set]', ['space' => $space['id'], 'number' => $v, 'year' => $k]);
+        $cv->set($space['id'], "invoices:$k", $v);
       }
     }
     Configuration::getLogger()->info("[db][upgrade] Apply Update invoice numbers in redis, done!");
