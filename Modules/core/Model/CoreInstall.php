@@ -778,7 +778,7 @@ class CoreDB extends Model {
         return $need;
     }
 
-    public function scanUpgrades(int $from) {
+    public function scanUpgrades(int $from=-1) {
         if(!file_exists('db/upgrade')) {
             return;
         }
