@@ -41,6 +41,7 @@
                         </div>
                         <div class="modal-body">
                             <input
+                                class="form-control"
                                 id="editCategoryName"
                                 type="text"
                                 :value="selectedCategory.name">
@@ -54,151 +55,154 @@
             </div>
 
             <!-- task edit modal -->
-            <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskEdit" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <div v-if="selectedTask.done == true">
+            <div class="modal fade" v-if="selectedTask" id="taskModal" tabindex="-1" aria-labelledby="taskEdit" aria-hidden="true">
+                <form id="taskForm" name="taskForm" @submit.prevent="editTask()" method="post">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <div v-if="selectedTask.done == true">
+                                    <input
+                                        type="button"
+                                        class="btn btn-success"
+                                        aria-label="This task is done"
+                                        value="Done"
+                                        disabled>
+                                </div>
+                                <h5 class="modal-title ms-2" id="taskEditTitle">{{"{{textContent.edit}}"}} {{"{{selectedTask.name}}"}}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label for="taskName">{{"{{textContent.name}}"}}</label>
                                 <input
+                                    id="taskName"
+                                    name="taskName"
+                                    class="form-control"
+                                    type="text"
+                                    v-model="selectedTask.name">
+
+                                <label for="taskDetails">{{"{{textContent.details}}"}}</label>
+                                <textarea
+                                    id="taskDetails"
+                                    class="contentArea"
+                                    name="taskDetails">
+                                        {{"{{selectedTask.content}}"}}
+                                </textarea>
+
+                                <label for="taskUser">{{"{{textContent.assignee}}"}}</label>
+                                <select
+                                    id="taskUser"
+                                    :list="projectUsers"
+                                    class="form-control"
+                                    name="taskUser"
+                                    :value="selectedTask.id_user">
+                                    <option v-if="projectUsers.length == 0" value="" disabled selected hidden>
+                                        {{"{{textContent.noUserAssigned}}"}}
+                                    </option>
+                                    <option v-else v-for="user in projectUsers" :value=user.id>
+                                        {{"{{user.name}}"}}
+                                    </option>
+                                </select>
+
+                                <label for="taskVisibility">{{"{{textContent.visibility}}"}}</label>
+                                <select
+                                    id="taskVisibility"
+                                    class="form-control"
+                                    name="taskVisibility"
+                                    :value="selectedTask.private">
+                                    <option value="false" default>
+                                        Public
+                                    </option>
+                                    <option value="true">
+                                        {{"{{textContent.private}}"}}
+                                    </option>
+                                </select>
+                                                        
+                                <label for="services">Services</label>
+                                <select
+                                    id="taskServices"
+                                    :list="projectServices"
+                                    class="form-control"
+                                    name="services"
+                                    :value="selectedTask.services"
+                                    multiple>
+                                    <option v-if="projectServices.length == 0" value="" disabled selected>
+                                        {{"{{textContent.noServiceAssigned}}"}}
+                                    </option>
+                                    <option v-else v-for="service in projectServices" :value=service.id>
+                                        {{"{{service.name}}"}}
+                                    </option>
+                                </select>
+
+                                <button
+                                    id="clearServices"
+                                    name="clearServices"
                                     type="button"
-                                    class="btn btn-success"
-                                    aria-label="This task is done"
-                                    value="Done"
-                                    disabled>
-                            </div>
-                            <h5 class="modal-title ms-2" id="taskEditTitle">{{"{{textContent.edit}}"}} {{"{{selectedTask.name}}"}}</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <label for="taskName">{{"{{textContent.name}}"}}</label>
-                            <input
-                                id="taskName"
-                                name="taskName"
-                                type="text"
-                                v-model="selectedTask.name">
-
-                            <label for="details">{{"{{textContent.details}}"}}</label>
-                            <textarea
-                                id="taskDetails"
-                                class="contentArea"
-                                name="details">
-                                    {{"{{selectedTask.content}}"}}
-                            </textarea>
-
-                            <label for="taskUser">{{"{{textContent.assignee}}"}}</label>
-                            <select
-                                id="taskUser"
-                                :list="projectUsers"
-                                class="form-control"
-                                name="taskUser"
-                                :value="selectedTask.id_user">
-                                <option v-if="projectUsers.length == 0" value="" disabled selected hidden>
-                                    {{"{{textContent.noUserAssigned}}"}}
-                                </option>
-                                <option v-else v-for="user in projectUsers" :value=user.id>
-                                    {{"{{user.name}}"}}
-                                </option>
-                            </select>
-
-                            <label for="taskVisibility">{{"{{textContent.visibility}}"}}</label>
-                            <select
-                                id="taskVisibility"
-                                class="form-control"
-                                name="taskVisibility"
-                                :value="selectedTask.private">
-                                <option value="false" default>
-                                    Public
-                                </option>
-                                <option value="true">
-                                    {{"{{textContent.private}}"}}
-                                </option>
-                            </select>
-                                                    
-                            <label for="services">Services</label>
-                            <select
-                                id="taskServices"
-                                :list="projectServices"
-                                class="form-control"
-                                name="services"
-                                :value="selectedTask.services"
-                                multiple>
-                                <option v-if="projectServices.length == 0" value="" disabled selected>
-                                    {{"{{textContent.noServiceAssigned}}"}}
-                                </option>
-                                <option v-else v-for="service in projectServices" :value=service.id>
-                                    {{"{{service.name}}"}}
-                                </option>
-                            </select>
-
-                            <button
-                                id="clearServices"
-                                name="clearServices"
-                                type="button"
-                                class="btn-close"
-                                @click="clearTaskServicesSelection(selectedTask)"
-                                aria-label="Clear selection"
-                                value="Clear selection">
-                            </button>
-                            <label
-                                for="clearServices"
-                                style="display:inline-block; horizontal-align:right; vertical-align:bottom; margin-top:0px;">
-                                {{"{{textContent.clearSelection}}"}}
-                            </label>
-
-                            <div class="row mt-3">
+                                    class="btn-close"
+                                    @click="clearTaskServicesSelection(selectedTask)"
+                                    aria-label="Clear selection"
+                                    value="Clear selection">
+                                </button>
                                 <label
-                                    for="uploadTaskFile"
-                                    class="btn btn-primary"
-                                    style="display:inline-block; horizontal-align:right; vertical-align:bottom">
-                                    {{"{{textContent.addFile}}"}}
+                                    for="clearServices"
+                                    style="display:inline-block; horizontal-align:right; vertical-align:bottom; margin-top:0px;">
+                                    {{"{{textContent.clearSelection}}"}}
                                 </label>
-                                <input
-                                    type="file"
-                                    id="uploadTaskFile"
-                                    name="uploadTaskFile"
-                                    style="display: none">
+
+                                <div class="row mt-3">
+                                    <label
+                                        for="uploadTaskFile"
+                                        class="btn btn-primary"
+                                        style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                        {{"{{textContent.addFile}}"}}
+                                    </label>
+                                    <input
+                                        type="file"
+                                        id="uploadTaskFile"
+                                        name="uploadTaskFile"
+                                        style="display: none">
+                                </div>
+
+                                <div v-if="selectedTask.file" class="row mt-2">
+                                    <label style="display:inline-block; horizontal-align:right; vertical-align:bottom">
+                                        {{"{{textContent.download}}"}}
+                                    </label>
+                                    <a
+                                        :href="selectedTask.file"
+                                        :text="selectedTask.fileName"
+                                        id="downloadTaskFile">
+                                    </a>
+                                </div>
+
+                                <div class="row form-control mt-3">
+                                    <label for="start_date">
+                                        {{"{{textContent.startDate}}"}}
+                                    </label>
+                                    <input
+                                        id="taskStartDate"
+                                        type="date"
+                                        class="form-control"
+                                        name="start_date"
+                                        :value="selectedTask.start_date">
+
+                                    <label for="end_date">
+                                        {{"{{textContent.endDate}}"}}
+                                    </label>
+                                    <input
+                                        id="taskEndDate"
+                                        type="date"
+                                        class="form-control"
+                                        name="end_date"
+                                        :value="selectedTask.end_date">
+                                </div>
+
                             </div>
-
-                            <div v-if="selectedTask.file" class="row mt-2">
-                                <label style="display:inline-block; horizontal-align:right; vertical-align:bottom">
-                                    {{"{{textContent.download}}"}}
-                                </label>
-                                <a
-                                    :href="selectedTask.file"
-                                    :text="selectedTask.fileName"
-                                    id="downloadTaskFile">
-                                </a>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{"{{textContent.close}}"}}</button>
+                                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">{{"{{textContent.save}}"}}</button>
                             </div>
-
-                            <div class="row form-control mt-3">
-                                <label for="start_date">
-                                    {{"{{textContent.startDate}}"}}
-                                </label>
-                                <input
-                                    id="taskStartDate"
-                                    type="date"
-                                    class="form-control"
-                                    name="start_date"
-                                    :value="selectedTask.start_date">
-
-                                <label for="end_date">
-                                    {{"{{textContent.endDate}}"}}
-                                </label>
-                                <input
-                                    id="taskEndDate"
-                                    type="date"
-                                    class="form-control"
-                                    name="end_date"
-                                    :value="selectedTask.end_date">
-                            </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{"{{textContent.close}}"}}</button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="editTask()">{{"{{textContent.save}}"}}</button>
                         </div>
                     </div>
-                </div>
+                </form>
             </div>
 
             <draggable id="categories" class="kanban-categories" :list="categories" group="categories" @change="changeCategoryPosition">
@@ -272,19 +276,16 @@ Vue.createApp({
             this.showTaskContent(this.selectedTask);
         }
     },
-    updated() {
-        this.updateCategoriesColors();
-    },
     methods: {
 
         // tasks related methods
 
         editTask() {
-            console.log("in validate task");
-            this.selectedTask.name = document.getElementById("taskName").value;
-            this.selectedTask.content = document.getElementById("taskDetails").value;
-            this.selectedTask.user = document.getElementById("taskUser").value;
-            this.updateTaskVisibility();
+            let formData = new FormData(document.getElementById("taskForm"));
+            this.selectedTask.name = formData.get("taskName");
+            this.selectedTask.content = formData.get("taskDetails");
+            this.selectedTask.user = formData.get("taskUser");
+            this.updateTaskVisibility(formData.get("taskVisibility"));
             this.updateTaskServices();
             this.updateTask(this.selectedTask);
         },
@@ -309,8 +310,7 @@ Vue.createApp({
                 this.updateTask(event.added.element);
             }
         },
-        updateTaskVisibility() {
-            let value = document.getElementById("taskVisibility").value;
+        updateTaskVisibility(value) {
             this.selectedTask.private = value;
             this.selectedTask.id_owner = value ? this.sessionUserId : null;
         },
@@ -446,22 +446,22 @@ Vue.createApp({
             if (newName != null) {
                 this.selectedCategory.name = newName.replace(/\s/g, '').toLowerCase();
             }
-            this.openCategoryColorPicker();
-            this.updateCategories();
+            this.openCategoryColorPicker(this.selectedCategory);
+            this.updateCategory(this.selectedCategory);
         },
-        openCategoryColorPicker() {
-            let colorInput = document.getElementById(this.selectedCategory.id).getElementsByClassName("categoryColorInput")[0];
+        openCategoryColorPicker(category) {
+            let colorInput = document.getElementById(category.id).getElementsByClassName("categoryColorInput")[0];
             colorInput.click();
         },
         editCategoryColor(event, category) {
             category.color = event.target.value;
+            this.updateCategory(category);
             this.updateCategoriesColors();
         },
         updateCategoriesColors() {
             this.categories.forEach(category => {
                 this.getRGBAColor(category);
             });
-            this.updateCategories();
         },
         getRGBAColor(category, opacity=0.5) {
             let h = category.color.substring(1,7);
@@ -490,7 +490,8 @@ Vue.createApp({
                     tasks: []
                 };
                 this.categories.push(this.newCategory);
-                await this.updateCategories();
+                await this.updateCategory(this.newCategory);
+                this.updateCategoriesColors();
                 this.newCategory = "";
             }
         },
@@ -516,14 +517,48 @@ Vue.createApp({
                 });
             });
         },
+        async updateCategory(category) {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/settaskcategory/`;
+            let apiRoute = targetUrl + this.id_space + "/" + this.id_project;
+            
+            cfg.body = JSON.stringify({
+                category: category
+            });
+            await fetch(apiRoute, cfg, true).
+                then((response) => response.json()).
+                then(data => {
+                    category.id = data.id;
+            });
+        },
         deleteCategory(category) {
             if (confirm(category.name + ": " + this.textContent.deleteCategory )) {
                 // remove tasks
                 category.tasks.forEach(task => {
                     this.deleteTask(task, false);
                 });
+
+                // update tasks states
+               this.tasks.forEach(task => {
+                    if (task.state > category.position) {
+                        task.state--;
+                    }
+                    this.updateTask(task);
+                });
+
                 // remove category
                 this.categories.splice(this.categories.indexOf(this.categories.find(element => element.id == category.id)), 1);
+                // update categories position
+                this.categories.forEach((category, index) => {
+                    category.position = index;
+                });
                 const headers = new Headers();
                 headers.append('Content-Type','application/json');
                 headers.append('Accept', 'application/json');
