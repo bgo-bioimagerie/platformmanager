@@ -654,9 +654,9 @@ class ServicesprojectsController extends ServicesController {
             $taskData['services'],
             $taskData['id_user'],
             $taskData['id_owner'],
-            $taskData['done'],
-            // cast string to boolean
-            ($taskData['private'] === 'true')
+            // cast string to int
+            $taskData['done'] === "true" ? 1 : 0,
+            $taskData['private'] === 'true' ? 1 : 0
         );
         $this->render(['data' => ['id' => $id]]);
     }
