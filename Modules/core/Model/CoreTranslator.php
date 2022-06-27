@@ -590,9 +590,16 @@ class CoreTranslator {
 
     public static function Close($lang = "") {
         if ($lang == "fr") {
-            return "Fermé";
+            return "Fermer";
         }
         return "Close";
+    }
+
+    public static function Closed($lang = "") {
+        if ($lang == "fr") {
+            return "Fermé";
+        }
+        return "Closed";
     }
 
     public static function Modules_configuration($lang = "") {

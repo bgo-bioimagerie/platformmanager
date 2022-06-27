@@ -28,7 +28,32 @@
             </div>
         </div>
 
+
         <div class="row mt-3">
+
+            <!-- category edit modal -->
+            <div class="modal fade" id="categoryModal" tabindex="-1" aria-labelledby="categoryEdit" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="categoryEditTitle">{{"{{textContent.renameCategory}}"}}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input
+                                id="editCategoryName"
+                                type="text"
+                                :value="selectedCategory.name">
+                            </input>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="openCategoryColorPicker">{{"{{textContent.close}}"}}</button>
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="editCategory()">{{"{{textContent.save}}"}}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="taskContent" class="modal-element" v-if="showModal">
                 <div class="modal-dialog modal-mask" role="document">
                     <div class="modal-content">
@@ -166,7 +191,7 @@
                         <div v-if="category.name != 'done'" class="bi bi-x-square-fill deleteBtn" @click="deleteCategory(category)"></div>
                         <h3>
                             {{"{{category.name}}"}}
-                            <button v-if="category.name != 'done'" class="bi bi-pencil-square round" @click="editCategory($event, category)"></button>
+                            <button v-if="category.name != 'done'" class="bi bi-pencil-square round" data-bs-toggle="modal" data-bs-target="#categoryModal" @click="selectedCategory = category"></button>
                         </h3>
                         <input hidden class="categoryColorInput" type="color" v-model="category.color" aria-placeholder="Choose Color" @change="editCategoryColor($event, category)"/>
                         
@@ -206,7 +231,8 @@ Vue.createApp({
             mainUser: {{ mainUser }},
             personInCharge: {{ personInCharge }},
             showModal: false,
-            selectedTask: null
+            selectedTask: null,
+            selectedCategory: null,
         }
     },
     components:{
@@ -216,6 +242,7 @@ Vue.createApp({
         this.categories.forEach(category => {
             category.name = category.name.replace(/\s/g, '').toLowerCase();
         });
+        this.selectedCategory = this.categories[0];
         this.tasks.forEach(task => {
             if (task.private == "false" || task.id_owner == this.sessionUserId) {
                 this.categories[task.state].tasks.push(task);
@@ -354,7 +381,6 @@ Vue.createApp({
         },
         async updateTaskFile($event, selectedTask) {
             let file = $event.target.files[0];
-            console.log('file: ', file);
             let data = new FormData();
             data.append("file", $event.target.files[0]);
             const cfg = {
@@ -422,16 +448,17 @@ Vue.createApp({
                 await this.updateCategories();
             }
         },
-        editCategory(event, category) {
-            let categoryName = category.name
-            let newName = prompt(this.textContent.renameCategory, categoryName);
+        editCategory() {
+            let newName = document.getElementById("editCategoryName").value;
             if (newName != null) {
-                category.name = newName;
-                category.name = category.name.replace(/\s/g, '').toLowerCase();
-                let colorInput = document.getElementById(category.id).getElementsByClassName("categoryColorInput")[0];
-                colorInput.click();
+                this.selectedCategory.name = newName.replace(/\s/g, '').toLowerCase();
             }
+            this.openCategoryColorPicker();
             this.updateCategories();
+        },
+        openCategoryColorPicker() {
+            let colorInput = document.getElementById(this.selectedCategory.id).getElementsByClassName("categoryColorInput")[0];
+            colorInput.click();
         },
         editCategoryColor(event, category) {
             category.color = event.target.value;
@@ -441,6 +468,7 @@ Vue.createApp({
             this.categories.forEach(category => {
                 this.getRGBAColor(category);
             });
+            this.updateCategories();
         },
         getRGBAColor(category, opacity=0.5) {
             let h = category.color.substring(1,7);

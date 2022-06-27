@@ -164,7 +164,7 @@ class ServicesordersController extends ServicesController {
         $form->addText("no_identification", ServicesTranslator::No_identification($lang), false, $value["no_identification"]);
         $form->addSelectMandatory("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"], $clientSelect['value']);
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-        $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Close($lang)), array(1, 0), $value["id_status"]);
+        $form->addSelect("id_status", CoreTranslator::Status($lang), array(CoreTranslator::Open($lang), CoreTranslator::Closed($lang)), array(1, 0), $value["id_status"]);
 
         $form->addDate("date_open", ServicesTranslator::Opened_date($lang), false, $value["date_open"]);
         $form->addDate("date_close", ServicesTranslator::Closed_date($lang), false, $value["date_close"]);
