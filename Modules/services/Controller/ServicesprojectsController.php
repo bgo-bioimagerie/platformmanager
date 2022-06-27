@@ -603,6 +603,8 @@ class ServicesprojectsController extends ServicesController {
             "download" => ServicesTranslator::downloadAttachedFile($lang),
             "close" => CoreTranslator::Close($lang),
             "save" => CoreTranslator::Save($lang),
+            "edit" => CoreTranslator::Edit($lang),
+            "name" => CoreTranslator::Name($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
