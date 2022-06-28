@@ -123,7 +123,7 @@
                                     :list="projectServices"
                                     class="form-control"
                                     name="services"
-                                    :value="selectedTask.services"
+                                    v-model="selectedTask.services"
                                     multiple>
                                     <option v-if="projectServices.length == 0" value="" disabled selected>
                                         {{"{{textContent.noServiceAssigned}}"}}
@@ -268,6 +268,7 @@ Vue.createApp({
         });
         this.selectedCategory = this.categories[0];
         this.selectedTask = this.tasks[0];
+        console.log('this.selectedTask.services: ', this.selectedTask.services);
     },
     mounted() {
         this.updateCategoriesColors();
@@ -286,18 +287,10 @@ Vue.createApp({
             this.selectedTask.content = formData.get("taskDetails");
             this.selectedTask.id_user = formData.get("taskUser");
             this.updateTaskVisibility(formData.get("taskVisibility"));
-            this.updateTaskServices();
             this.updateTask(this.selectedTask);
         },
         clearTaskServicesSelection() {
             this.selectedTask.services = [];
-        },
-        updateTaskServices() {       
-            let selectedValues = this.getMultipleSelectValues(document.getElementById("taskServices"));
-            selectedValues.forEach(value => {
-                this.selectedTask.services.push(value);
-            });
-            this.selectedTask.services = this.removeDuplicates(this.selectedTask.services);
         },
         setFileName() {
             if (this.selectedTask.file) {
@@ -609,9 +602,6 @@ Vue.createApp({
             }
             return result;
         },
-        removeDuplicates(arr) {
-            return arr.filter((item, index) => arr.indexOf(item) === index);
-        }
     }
 }).mount('#board');
 </script>
