@@ -50,7 +50,7 @@ class ServicesprojectsController extends ServicesController {
         }
         $m = new SeProject();
         $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
-        $this->render(['data' => ['projects' => $projects]]);
+        return $this->render(['data' => ['projects' => $projects]]);
     }
 
     /**
