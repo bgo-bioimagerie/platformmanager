@@ -284,7 +284,7 @@ Vue.createApp({
             let formData = new FormData(document.getElementById("taskForm"));
             this.selectedTask.name = formData.get("taskName");
             this.selectedTask.content = formData.get("taskDetails");
-            this.selectedTask.user = formData.get("taskUser");
+            this.selectedTask.id_user = formData.get("taskUser");
             this.updateTaskVisibility(formData.get("taskVisibility"));
             this.updateTaskServices();
             this.updateTask(this.selectedTask);
@@ -297,6 +297,7 @@ Vue.createApp({
             selectedValues.forEach(value => {
                 this.selectedTask.services.push(value);
             });
+            this.selectedTask.services = this.removeDuplicates(this.selectedTask.services);
         },
         setFileName() {
             if (this.selectedTask.file) {
@@ -608,6 +609,9 @@ Vue.createApp({
             }
             return result;
         },
+        removeDuplicates(arr) {
+            return arr.filter((item, index) => arr.indexOf(item) === index);
+        }
     }
 }).mount('#board');
 </script>

@@ -160,7 +160,7 @@ class SeTask extends Model {
 
     public function setTaskService($id_space, $id_task, $id_service) {
         if ($this->isTaskService($id_space, $id_task, $id_service)) {
-            $sql = "UPDATE se_task_service (id_space, id_task, id_service) VALUES (?, ?, ?)";
+            $sql = "UPDATE se_task_service SET id_space=?, id_task=?, id_service=?;";
                 $this->runRequest($sql, array($id_space, $id_task, $id_service));
         } else {
             $sql = "INSERT INTO se_task_service (id_space, id_task, id_service) VALUES (?, ?, ?)";
