@@ -308,6 +308,8 @@ Vue.createApp({
             this.selectedTask.name = formData.get("taskName");
             this.selectedTask.content = formData.get("taskDetails");
             this.selectedTask.id_user = formData.get("taskUser");
+            this.selectedTask.start_date = formData.get("start_date");
+            this.selectedTask.end_date = formData.get("end_date");
             this.updateTaskVisibility(formData.get("taskVisibility"));
             this.updateTaskFile(formData.get("uploadTaskFile"), this.selectedTask);
             this.updateTask(this.selectedTask);
@@ -330,20 +332,6 @@ Vue.createApp({
         updateTaskVisibility(value) {
             this.selectedTask.private = value;
             this.selectedTask.id_owner = value ? this.sessionUserId : null;
-        },
-        updateTaskDate(event, task) {
-            switch (event.target.name) {
-                case "start_date":
-                    task.start_date = event.target.value;
-                    this.updateTask(task);
-                    break;
-                case "end_date":
-                    task.end_date = event.target.value;
-                    this.updateTask(task);
-                    break;
-                default:
-                    break;
-            }
         },
         async addTask(task=null) {
             if(this.newTask) {
