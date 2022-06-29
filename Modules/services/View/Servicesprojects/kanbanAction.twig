@@ -299,7 +299,7 @@ Vue.createApp({
                 if (response.status == 200) {
                     window.open(response.url, "_self");
                 } else {
-                    alert(this.textContent.fileError);
+                    alert(this.textContent.downLoadError);
                 }
             });
         },
@@ -390,7 +390,6 @@ Vue.createApp({
                 });
         },
         async updateTaskFile(file, task) {
-            //let file = $event.target.files[0];
             let data = new FormData();
             data.append("file", file);
             const cfg = {
@@ -399,8 +398,13 @@ Vue.createApp({
             };
             let targetUrl = `/servicesprojects/uploadtaskfile/`;
             let apiRoute = targetUrl + this.id_space + "/" + task.id;
-            await fetch(apiRoute, cfg, true).then(() => {
-                this.getTaskFile(task);
+            await fetch(apiRoute, cfg, true).then((response) => {
+                console.log(response);
+                if (response.status == 200) {
+                    this.getTaskFile(task);
+                } else {
+                    alert(this.textContent.uploadError);
+                }
             });
         },
         async getTaskFile(task) {

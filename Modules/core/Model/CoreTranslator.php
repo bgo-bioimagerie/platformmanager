@@ -2260,11 +2260,18 @@ class CoreTranslator {
         return "Current file";
     }
 
-    public static function FileError($lang = "") {
+    public static function DownloadError($lang = "") {
         if ($lang == "fr") {
-            return "Une erreur est survenue durant le Téléchargement du fichier.";
+            return "Une erreur est survenue durant le téléchargement du fichier.";
         }
         return "An error occured during file download.";
+    }
+
+    public static function UploadError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le téléversement du fichier.";
+        }
+        return "An error occured during file upload.";
     }
     
 }

@@ -616,7 +616,8 @@ class ServicesprojectsController extends ServicesController {
             "edit" => CoreTranslator::Edit($lang),
             "name" => CoreTranslator::Name($lang),
             "currentFile" => CoreTranslator::CurrentFile($lang),
-            "fileError" => CoreTranslator::FileError($lang),
+            "downloadError" => CoreTranslator::DownloadError($lang),
+            "uploadError" => CoreTranslator::UploadError($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -683,8 +684,10 @@ class ServicesprojectsController extends ServicesController {
         $target_dir = "data/services/projecttasks/";        
         if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
             $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
-            FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
-            $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
+            $uploaded = FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
+            if ($uploaded) {
+                $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
+            }
         }
     }
 
