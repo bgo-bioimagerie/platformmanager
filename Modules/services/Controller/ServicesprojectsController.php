@@ -719,9 +719,7 @@ class ServicesprojectsController extends ServicesController {
             header('Content-Length: ' . filesize($file));
             readfile($file);
         } else {
-            $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
-            $_SESSION['flashClass'] = "warning";
-            $this->redirect("servicesprojects/kanban" . $id_space . "/" . $id_project);
+            throw new PfmFileException("File not found", 404);
         }
     }
 
