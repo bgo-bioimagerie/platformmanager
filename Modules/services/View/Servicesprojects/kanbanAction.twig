@@ -221,7 +221,7 @@
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.name}}"}}
-                                <button class="bi bi-pencil-square round" data-bs-toggle="modal" data-bs-target="#taskModal" @click="selectedTask = element"></button>
+                                <button id="openModalBtn" class="bi bi-pencil-square round" data-bs-toggle="modal" data-bs-target="#taskModal" @click="selectedTask = element"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
                             </div>
                         </draggable>
@@ -271,13 +271,17 @@ Vue.createApp({
             }
         });
         this.selectedCategory = this.categories[0];
-        this.selectedTask = this.tasks[0];
+        if (this.id_task != "0") {
+            this.selectedTask = this.tasks.find(task => task.id == this.id_task);
+        } else {
+            this.selectedTask = this.tasks[0]
+        }
+        
     },
     mounted() {
         this.updateCategoriesColors();
         if (this.id_task != "0") {
-            this.selectedTask = this.tasks.find(task => task.id == this.id_task);
-            this.showTaskContent(this.selectedTask);
+            document.getElementById('openModalBtn').click();
         }
     },
     methods: {
@@ -294,7 +298,7 @@ Vue.createApp({
                 body: null
             };
             let targetUrl = `/servicesprojects/openfile/`;
-            let apiRoute = targetUrl + this.id_space + "/" + this.id_project + "/" + task.id;
+            let apiRoute = targetUrl + this.id_space + "/" + task.id;
             await fetch(apiRoute, cfg, true).then(response => {
                 if (response.status == 200) {
                     window.open(response.url, "_self");

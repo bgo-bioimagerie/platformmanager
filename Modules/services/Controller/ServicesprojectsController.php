@@ -697,7 +697,7 @@ class ServicesprojectsController extends ServicesController {
         $this->render(['data' => $file]);
     }
 
-    public function openFileAction($id_space, $id_project, $id_task) {
+    public function openFileAction($id_space, $id_task) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
         $task = $taskModel->getById($id_space, $id_task);
