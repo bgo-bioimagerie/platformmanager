@@ -701,10 +701,13 @@ class ServicesprojectsController extends ServicesController {
         $taskModel = new SeTask();
         $task = $taskModel->getById($id_space, $id_task);
 
-        // If private task, check if user is the owner of the task
-        if ($task['private'] == 1 && $task['id_owner'] != $_SESSION["id_user"]) {
-            throw new PfmAuthException('private document');
+        // If private task, check if user is the owner of the task or if user is at least manager
+        if ($task['private'] == 1
+            && (!$this->role >= CoreSpace::$MANAGER || $task['id_owner'] != $_SESSION["id_user"])) {
+                throw new PfmAuthException('private document');
         }
+        
+        
 
         $file = $taskModel->getFile($id_space, $id_task)['file'];
         if (file_exists($file)) {
