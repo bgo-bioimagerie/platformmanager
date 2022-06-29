@@ -658,7 +658,6 @@ class ServicesprojectsController extends ServicesController {
                 }
             }
         }
-
         // add/update task
         $id = $taskModel->set(
             $taskData['id'],
@@ -672,9 +671,9 @@ class ServicesprojectsController extends ServicesController {
             $taskData['services'],
             $taskData['id_user'],
             $taskData['id_owner'],
-            // cast string to int
-            $taskData['done'] === "true" ? 1 : 0,
-            $taskData['private'] === 'true' ? 1 : 0
+            // cast bool to int
+            $taskData['done'] ? 1 : 0,
+            $taskData['private'] ? 1 : 0
         );
         $this->render(['data' => ['id' => $id]]);
     }

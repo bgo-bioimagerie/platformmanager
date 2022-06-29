@@ -221,7 +221,7 @@
                         <draggable :id="category.id" class="list-group kanban-category" :list="category.tasks" group="tasks" @change="changeTaskState($event, cindex)">
                             <div class="list-group-item" style="cursor:grab;" v-for="element in category.tasks" :key="element.id">
                                 {{"{{element.name}}"}}
-                                <button id="openModalBtn" class="bi bi-pencil-square round" data-bs-toggle="modal" data-bs-target="#taskModal" @click="selectedTask = element"></button>
+                                <button :id="'taskBtn_' + element.id" class="bi bi-pencil-square round" data-bs-toggle="modal" data-bs-target="#taskModal" @click="selectedTask = element"></button>
                                 <div class="bi bi-trash deleteBtn" @click="deleteTask(element)"></div>
                             </div>
                         </draggable>
@@ -271,7 +271,7 @@ Vue.createApp({
             }
         });
         this.selectedCategory = this.categories[0];
-        if (this.id_task != "0") {
+        if (this.id_task != 0) {
             this.selectedTask = this.tasks.find(task => task.id == this.id_task);
         } else {
             this.selectedTask = this.tasks[0]
@@ -280,8 +280,8 @@ Vue.createApp({
     },
     mounted() {
         this.updateCategoriesColors();
-        if (this.id_task != "0") {
-            document.getElementById('openModalBtn').click();
+        if (this.id_task != 0) {
+            document.getElementById('taskBtn_' + this.selectedTask.id).click();
         }
     },
     methods: {
@@ -362,6 +362,7 @@ Vue.createApp({
         },
         async updateTask(task) {
             task.done = task.state == this.getDoneCategoryPosition() ? true : false;
+            task.private = task.private == "true";
             const headers = new Headers();
             headers.append('Content-Type','application/json');
             headers.append('Accept', 'application/json');
@@ -391,7 +392,6 @@ Vue.createApp({
             let targetUrl = `/servicesprojects/uploadtaskfile/`;
             let apiRoute = targetUrl + this.id_space + "/" + task.id;
             await fetch(apiRoute, cfg, true).then((response) => {
-                console.log(response);
                 if (response.status == 200) {
                     this.getTaskFile(task);
                 } else {
