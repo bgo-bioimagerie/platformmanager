@@ -54,7 +54,7 @@ class SeTask extends Model {
     }
 
     public function getById($id_space, $id_task) {
-        $sql = "SELECT * FROM se_task WHERE id=? id_space=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id=? AND id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_task, $id_space));
         return $req->fetch();
     }

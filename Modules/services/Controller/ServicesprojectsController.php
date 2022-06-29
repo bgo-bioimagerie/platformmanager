@@ -687,17 +687,25 @@ class ServicesprojectsController extends ServicesController {
 
     public function openFileAction($id_space, $id_project, $id_task) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
-
         $taskModel = new SeTask();
+        $task = $taskModel->getById($id_space, $id_task);
+
+        // If private task, check if user is the owner of the task
+        if ($task['private'] == 1 && $task['id_owner'] != $_SESSION["id_user"]) {
+            throw new PfmAuthException('private document');
+        }
+
         $file = $taskModel->getFile($id_space, $id_task)['file'];
         if (file_exists($file)) {
-            header("Cache-Control: public");
-            header("Content-Description: File Transfer");
-            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
-            header("Content-Type: binary/octet-stream");
-            header("Content-Transfer-Encoding: binary");
-            // read the file from disk
-            $this->render(['data' => readfile($file)]);
+            $mime = mime_content_type($file);
+            header('Content-Description: File Transfer');
+            header('Content-Type: '.$mime);
+            header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
         } else {
             $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
             $_SESSION['flashClass'] = "warning";
