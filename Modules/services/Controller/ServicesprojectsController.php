@@ -50,7 +50,7 @@ class ServicesprojectsController extends ServicesController {
         }
         $m = new SeProject();
         $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
-        $this->render(['data' => ['projects' => $projects]]);
+        return $this->render(['data' => ['projects' => $projects]]);
     }
 
     /**
@@ -422,6 +422,11 @@ class ServicesprojectsController extends ServicesController {
         $modelClient = new ClClient();
         $modelVisa = new SeVisa();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
+        // remove users first entry if == ""
+        if (!empty($users) && $users["ids"][0] == "") {
+            array_shift($users["ids"]);
+            array_shift($users["names"]);
+        }
         $clients = $modelClient->getForList($id_space);
         $inChargeList = $modelVisa->getForList($id_space);
 
@@ -472,9 +477,13 @@ class ServicesprojectsController extends ServicesController {
 
         if ($form->check()) {
             $id = $this->updateProject($id, $id_space, $lang);
-
-            $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
+            
+            if (!isset($_SESSION['flash'])) {
+                $_SESSION['flash'] = "";
+            }
+            $_SESSION['flash'] = $_SESSION['flash'] . " " . ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
+
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
             return;
         }
@@ -842,14 +851,22 @@ class ServicesprojectsController extends ServicesController {
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
             $formProjectUserIds = $this->request->getParameter("users");
         }
-        array_push($formProjectUserIds, $id_user);
+        if (!in_array($id_user, $formProjectUserIds)) {
+            array_push($formProjectUserIds, $id_user);
+            // if main project user not in users list, display warning
+            $_SESSION['flash'] = ServicesTranslator::MainUserNotInList($lang);
+        }
         
         if($id>0) {
             // remove deleted users
-            $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);
+            $dbProjectUserIds = [];
+            $dbProjectUsers = $modelProject->getProjectUsersIds($id_space, $id);
+            foreach ($dbProjectUsers as $dbProjectUser) {
+                array_push($dbProjectUserIds, $dbProjectUser["id_user"]);
+            }
             $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
             foreach($toDeleteList as $toDelete) {
-                $modelProject->deleteProjectUser($id_space, $toDelete['id_user'], $id);
+                $modelProject->deleteProjectUser($id_space, $toDelete, $id);
             }
         }
             
