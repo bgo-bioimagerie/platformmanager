@@ -2245,5 +2245,26 @@ class CoreTranslator {
         }
         return "You are in visitor mode, you should <a href=\"/coreconnection\">login</a> to access full space features";
     }
+
+    public static function File($lang) {
+        if($lang == "fr") {
+            return "Fichier";
+        }
+        return "File";
+    }
+
+    public static function CurrentFile($lang) {
+        if($lang == "fr") {
+            return "Fichier actuel";
+        }
+        return "Current file";
+    }
+
+    public static function FileError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le Téléchargement du fichier.";
+        }
+        return "An error occured during file download.";
+    }
     
 }

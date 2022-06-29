@@ -147,30 +147,33 @@
                                     style="display:inline-block; horizontal-align:right; vertical-align:bottom; margin-top:0px;">
                                     {{"{{textContent.clearSelection}}"}}
                                 </label>
+                                
+                                <label v-if="selectedTask.file" for="taskFile">
+                                    {{"{{textContent.replaceFile}}"}}
+                                </label>
+                                <label v-else="selectedTask.file" for="taskFile">
+                                    {{"{{textContent.addFile}}"}}
+                                </label>
 
-                                <div class="row mt-3">
-                                    <label
-                                        for="uploadTaskFile"
-                                        class="btn btn-primary"
-                                        style="display:inline-block; horizontal-align:right; vertical-align:bottom">
-                                        {{"{{textContent.addFile}}"}}
+                                <div id="taskFile" name="taskFile" class="row form-control">
+                                    <label v-if="selectedTask.file" for="uploadTaskFile">
+                                        {{"{{textContent.currentFile}}"}}: {{"{{selectedTask.fileName}}"}}
                                     </label>
-                                    <input
-                                        type="file"
-                                        id="uploadTaskFile"
-                                        name="uploadTaskFile"
-                                        style="display: none">
-                                </div>
+                                    <div id="fileUpload" class="mt-2 col-6">
+                                        <input
+                                            type="file"
+                                            id="uploadTaskFile"
+                                            name="uploadTaskFile"
+                                            class="hidden">
+                                    </div>
 
-                                <div v-if="selectedTask.file" class="row mt-2">
-                                    <label style="display:inline-block; horizontal-align:right; vertical-align:bottom">
-                                        {{"{{textContent.download}}"}}
-                                    </label>
-                                    <a
-                                        :href="selectedTask.file"
-                                        :text="selectedTask.fileName"
-                                        id="downloadTaskFile">
-                                    </a>
+                                    <div id="fileDownload" v-if="selectedTask.file" class="mt-2">
+                                        <input
+                                            type="button"
+                                            class="btn btn-success"
+                                            :value="textContent.download"
+                                            @click="openFile(selectedTask)">
+                                    </div>
                                 </div>
 
                                 <div class="row form-control mt-3">
@@ -264,11 +267,11 @@ Vue.createApp({
         this.tasks.forEach(task => {
             if (task.private == "false" || task.id_owner == this.sessionUserId) {
                 this.categories[task.state].tasks.push(task);
+                this.setFileName(task);
             }
         });
         this.selectedCategory = this.categories[0];
         this.selectedTask = this.tasks[0];
-        console.log('this.selectedTask.services: ', this.selectedTask.services);
     },
     mounted() {
         this.updateCategoriesColors();
@@ -281,20 +284,40 @@ Vue.createApp({
 
         // tasks related methods
 
+        async openFile(task) {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/openfile/`;
+            let apiRoute = targetUrl + this.id_space + "/" + this.id_project + "/" + task.id;
+            await fetch(apiRoute, cfg, true).then(response => {
+                if (response.status == 200) {
+                    window.open(response.url, "_self");
+                } else {
+                    alert(this.textContent.fileError);
+                }
+            });
+        },
         editTask() {
             let formData = new FormData(document.getElementById("taskForm"));
             this.selectedTask.name = formData.get("taskName");
             this.selectedTask.content = formData.get("taskDetails");
             this.selectedTask.id_user = formData.get("taskUser");
             this.updateTaskVisibility(formData.get("taskVisibility"));
+            this.updateTaskFile(formData.get("uploadTaskFile"), this.selectedTask);
             this.updateTask(this.selectedTask);
         },
         clearTaskServicesSelection() {
             this.selectedTask.services = [];
         },
-        setFileName() {
-            if (this.selectedTask.file) {
-                this.selectedTask.fileName = this.selectedTask.file.split("data/services/projecttasks/" + this.selectedTask.id + "_").pop();
+        setFileName(task) {
+            if (task.file) {
+                task.fileName = task.file.split("data/services/projecttasks/" + task.id + "_").pop();
             }
         },
         changeTaskState(event, categoryIndex) {
@@ -366,18 +389,18 @@ Vue.createApp({
                     task.id = data.id;
                 });
         },
-        async updateTaskFile($event, selectedTask) {
-            let file = $event.target.files[0];
+        async updateTaskFile(file, task) {
+            //let file = $event.target.files[0];
             let data = new FormData();
-            data.append("file", $event.target.files[0]);
+            data.append("file", file);
             const cfg = {
                 method: 'POST',
                 body: data
             };
             let targetUrl = `/servicesprojects/uploadtaskfile/`;
-            let apiRoute = targetUrl + this.id_space + "/" + selectedTask.id;
+            let apiRoute = targetUrl + this.id_space + "/" + task.id;
             await fetch(apiRoute, cfg, true).then(() => {
-                this.getTaskFile(selectedTask);
+                this.getTaskFile(task);
             });
         },
         async getTaskFile(task) {

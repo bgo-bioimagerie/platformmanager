@@ -600,11 +600,14 @@ class ServicesprojectsController extends ServicesController {
             "visibility" => ServicesTranslator::Visibility($lang),
             "private" => ServicesTranslator::Private($lang),
             "addFile" => ServicesTranslator::AddFile($lang),
+            "replaceFile" => ServicesTranslator::ReplaceFile($lang),
             "download" => ServicesTranslator::downloadAttachedFile($lang),
             "close" => CoreTranslator::Close($lang),
             "save" => CoreTranslator::Save($lang),
             "edit" => CoreTranslator::Edit($lang),
             "name" => CoreTranslator::Name($lang),
+            "currentFile" => CoreTranslator::CurrentFile($lang),
+            "fileError" => CoreTranslator::FileError($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -680,6 +683,26 @@ class ServicesprojectsController extends ServicesController {
         $taskModel = new SeTask();
         $file = $taskModel->getFile($id_space, $id_task);
         $this->render(['data' => $file]);
+    }
+
+    public function openFileAction($id_space, $id_project, $id_task) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+
+        $taskModel = new SeTask();
+        $file = $taskModel->getFile($id_space, $id_task)['file'];
+        if (file_exists($file)) {
+            header("Cache-Control: public");
+            header("Content-Description: File Transfer");
+            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+            header("Content-Type: binary/octet-stream");
+            header("Content-Transfer-Encoding: binary");
+            // read the file from disk
+            $this->render(['data' => readfile($file)]);
+        } else {
+            $_SESSION['flash'] = DocumentsTranslator::Missing_Document($this->getLanguage());
+            $_SESSION['flashClass'] = "warning";
+            $this->redirect("servicesprojects/kanban" . $id_space . "/" . $id_project);
+        }
     }
 
     public function getTasksAction($id_space, $id_project) {

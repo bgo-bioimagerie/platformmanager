@@ -1225,6 +1225,14 @@ class ServicesTranslator {
         }
     }
 
+    public static function ReplaceFile($lang) {
+        if ($lang == "fr") {
+            return "Remplacer le fichier";
+        } else {
+            return "Replace file";
+        }
+    }
+
     public static function downloadAttachedFile($lang) {
         if ($lang == "fr") {
             return "Télécharger le fichier joint";
