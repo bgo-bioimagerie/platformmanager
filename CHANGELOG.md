@@ -1,5 +1,9 @@
 # Changes
 
+## 2.8.0
+
+* [booking] support multiple calendars
+
 ## 2.7.0
 
 ### Features / enhancements

@@ -9,6 +9,8 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/resources/Model/ReArea.php';
+require_once 'Modules/resources/Model/ResourceInfo.php';
+
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
@@ -32,6 +34,49 @@ class BookingschedulingController extends BookingsettingsController {
         $modelArea = new ReArea();
         $areas = $modelArea->getForSpace($id_space);
 
+        $modelResource = new ResourceInfo();
+        $resources = $modelResource->getForSpace($id_space);
+
+        $bk = new BkScheduling();
+        $bkcalendars = $bk->getAll($id_space);
+        $bklist = ["0" => "default"];
+        foreach ($bkcalendars as $cal) {
+            $bklist[$cal['id']] = $cal['name'];
+        }
+
+        $bks = new BkResourceSchedule();
+        $calendars = $bks->all($id_space);
+        $resourcesCalendars = [];
+        $reareasCalendars = [];
+        foreach ($calendars as $cal) {
+            if($cal['id_resource'] == 0 && $cal['id_rearea'] == 0) {
+                continue;
+            }
+            if($cal['id_resource'] > 0){
+                $resourcesCalendars[$cal['id_resource']] = $cal;
+            }
+            if($cal['id_rearea'] > 0){
+                $reareasCalendars[$cal['id_rearea']] = $cal;
+            }
+        }
+
+        $mareas = [];
+
+        foreach ($areas as $i => $r) {
+            $areas[$i]['calendar'] = $reareasCalendars[$r['id']] ?? 0;
+            $mareas[$areas[$i]['id']] = $areas[$i];
+        }
+
+        foreach ($resources as $i => $r) {
+            if(isset($resourcesCalendars[$r['id']])) {
+                $resources[$i]['calendar'] = $resourcesCalendars[$r['id']];
+            } else {
+                $resources[$i]['calendar'] = $reareasCalendars[$r['id_area']] ?? 0;
+            }
+            $mareas[$resources[$i]['id_area']]['resources'][] = $resources[$i];
+        }
+
+
         if (empty($areas)) {
             $_SESSION['flash'] = ResourcesTranslator::Area_Needed($lang);
             $_SESSION['flashClass'] = "warning";
@@ -45,7 +90,7 @@ class BookingschedulingController extends BookingsettingsController {
         
         $tableHtml = $table->view($areas, $headers);
         
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml, "areas" => $mareas, "calendars" => $bklist));
     }
     
     public function editAction($id_space, $id) {
@@ -64,14 +109,15 @@ class BookingschedulingController extends BookingsettingsController {
         $name = $area['name'];
         
         $modelScheduling = new BkScheduling();
-        $bkScheduling = $modelScheduling->getByReArea($id_space, $id_rearea);
-        if ($bkScheduling['id_rearea'] == 0) {
-            $bkScheduling['id_rearea'] = $id_rearea;
+        $bkScheduling = $modelScheduling->get($id_space, $id);
+        if ($bkScheduling['id_space'] == 0) {
             $bkScheduling["id_space"] = $id_space;
         }
 
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name, 3);
+        $form->addHidden("id", $bkScheduling['id'] ?? 0);
+        $form->addText("name", CoreTranslator::Name($lang), true, $bkScheduling['name'] ?? '');
         $form->addChoicesList(BookingTranslator::Availables_days($lang),
                 BookingTranslator::DaysList($lang), 
                 array("is_monday", "is_tuesday", "is_wednesday", "is_thursday", "is_friday", "is_saturday", "is_sunday"),
@@ -132,7 +178,10 @@ class BookingschedulingController extends BookingsettingsController {
 
 
         if ($form->check()) {
-            $id_bkScheduling = $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
+            $id_bkScheduling = $modelScheduling->edit($id_space,
+                    $this->request->getParameterNoException("id"), 
+                    $this->request->getParameterNoException("name"), 
+                    $bkScheduling['id_rearea'],
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 

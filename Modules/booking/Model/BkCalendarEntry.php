@@ -934,7 +934,8 @@ class BkCalendarEntry extends Model {
         $id_client = $booking['responsible_id'];
         $start_time = $booking['start_time'];
         $end_time = $booking['end_time'];
-        $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $bkScheduling = $modelScheduling->getByResource($id_space, $id_resource);
+        // $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
         $day_begin = $bkScheduling['day_begin'];
         $day_end = $bkScheduling['day_end'];
 
