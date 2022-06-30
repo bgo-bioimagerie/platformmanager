@@ -188,13 +188,14 @@ class SeOrder extends Model {
 
     public function entries($id_space, $sortentry = 'id') {
 
-        $sql = "SELECT * from se_order WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order INNER JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
-        $modelUser = new CoreUser();
+        // $modelUser = new CoreUser();
 
         for ($i = 0; $i < count($entries); $i++) {
-            $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
+            // $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
+            $entries[$i]["user_name"] = $entries[$i]["name"] . " " . $entries[$i]["firstname"];
         }
         return $entries;
     }
