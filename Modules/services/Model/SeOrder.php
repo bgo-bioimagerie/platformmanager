@@ -265,9 +265,7 @@ class SeOrder extends Model {
     public function getEntry($id_space, $id) {
         $sql = "SELECT * from se_order where id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
-        $entry = $req->fetch();
-
-        return $entry;
+        return $req->fetch();
     }
 
     public function setEntryCloded($id_space, $id) {
@@ -294,7 +292,7 @@ class SeOrder extends Model {
         $sql = "SELECT * FROM se_order WHERE deleted=0 AND id_space = ? AND date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
-
+        /*
         for($i = 0 ; $i < count($orders) ; $i++){
             if ($orders[$i]["id_resp"] == 0){
                 $sql = "SELECT id_client FROM cl_j_client_user WHERE id_user=? AND id_space=? AND deleted=0";
@@ -302,6 +300,7 @@ class SeOrder extends Model {
                 $orders[$i]["id_resp"] = !empty($resp_id) ? $resp_id[0] : 0;
             }
         }
+        */
         return $orders;
     }
 
@@ -313,14 +312,15 @@ class SeOrder extends Model {
         $modelServices = new SeService();
         $items = $modelServices->getBySpace($id_space);
 
-        $modelClientUser = new ClClientUser();
+        // $modelClientUser = new ClClientUser();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
-
+            /*
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 $resps = $modelClientUser->getUserClientAccounts($orders[$i]["id_user"], $id_space);
                 $orders[$i]["id_resp"] = !empty($resps) ? $resps[0]["id"] : 0;
             }
+            */
             $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_space=? AND deleted=0";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"], $id_space));
 
@@ -352,14 +352,15 @@ class SeOrder extends Model {
         $orders = $req1->fetchAll();
 
         $items = array();
-        $modelUserClient = new ClClientUser();
+        // $modelUserClient = new ClClientUser();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($orders); $i++) {
-
+            /*
             if( !isset($orders[$i]["id_resp"]) || $orders[$i]["id_resp"] == 0 ){
                 $resps = $modelUserClient->getUserClientAccounts($orders[$i]["id_user"], $id_space);
                 $orders[$i]["id_resp"] = !empty($resps) ? $resps[0]["id"] : 0;
             }
+            */
             $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_space=? AND deleted=0";
             $itemsSummary = $this->runRequest($sql, array($orders[$i]["id"], $id_space));
 
