@@ -267,7 +267,6 @@ Vue.createApp({
         this.tasks.forEach(task => {
             if (task.private == "false" || task.id_owner == this.sessionUserId) {
                 this.categories[task.state].tasks.push(task);
-                this.setFileName(task);
             }
         });
         this.selectedCategory = this.categories[0];
@@ -320,11 +319,6 @@ Vue.createApp({
         },
         clearTaskServicesSelection() {
             this.selectedTask.services = [];
-        },
-        setFileName(task) {
-            if (task.file) {
-                task.fileName = task.file.split("data/services/projecttasks/" + this.id_space + "/" + task.id + "_").pop();
-            }
         },
         changeTaskState(event, categoryIndex) {
             if (event.added) {
@@ -414,7 +408,7 @@ Vue.createApp({
                 then((response) => response.json()).
                 then(data => {
                     this.selectedTask.file = data.file;
-                    this.setFileName(this.selectedTask);
+                    this.selectedTask.fileName = data.file_name;
                 });
         },
         deleteTask(task, displayAlert=true) {

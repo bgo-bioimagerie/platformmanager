@@ -682,16 +682,17 @@ class ServicesprojectsController extends ServicesController {
         $taskModel = new SeTask();
         $target_dir = "data/services/projecttasks/" . $id_space . "/";
         if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
-            $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
+            $fileName = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
+            $url = $target_dir . $id_task . "_" . $fileName;
 
             // If target directory doesn't exist, creates it
             if(!file_exists($target_dir)) {
                 mkdir($target_dir, 0755, true);
             }
-
-            $uploaded = FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
+            
+            $uploaded = FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $fileName);
             if ($uploaded) {
-                $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
+                $taskModel->setFile($id_space, $id_task, $url, $fileName);
             }
         }
     }
