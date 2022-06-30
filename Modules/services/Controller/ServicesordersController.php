@@ -73,6 +73,7 @@ class ServicesordersController extends ServicesController {
         $headersArray = array(
             "no_identification" => ServicesTranslator::No_identification($lang),
             "user_name" => CoreTranslator::User($lang),
+            "client_name" => ClientsTranslator::Client($lang),
             "id_status" => CoreTranslator::Status($lang),
             "date_open" => ServicesTranslator::Opened_date($lang),
             "date_close" => ServicesTranslator::Closed_date($lang),

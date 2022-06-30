@@ -193,7 +193,7 @@ class SeOrder extends Model {
 
     public function entries($id_space, $sortentry = 'id') {
 
-        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name  as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
         // $modelUser = new CoreUser();
@@ -217,7 +217,7 @@ class SeOrder extends Model {
     }
 
     public function openedEntries($id_space, $sortentry = 'id') {
-        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_status=1 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_status=1 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         //$sql = "select * from se_order where deleted=0 AND id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
 
@@ -232,7 +232,7 @@ class SeOrder extends Model {
     }
 
     public function closedEntries($id_space, $sortentry = 'id') {
-        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_status=0 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_status=0 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         // $sql = "select * from se_order where id_space=? AND deleted=0 AND id_status=0 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
 
