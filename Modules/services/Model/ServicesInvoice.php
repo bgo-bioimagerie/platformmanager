@@ -83,7 +83,6 @@ class ServicesInvoice extends InvoiceModel {
         $modelOrder = new SeOrder();
         // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $id_space);
-
         if (count($orders) == 0) {
             return $orders;
         }
@@ -97,7 +96,6 @@ class ServicesInvoice extends InvoiceModel {
         }
         $details = $this->parseOrdersToDetails($id_space, $orders);
         $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
-
         return [
             'total_ht' => $total_ht,
             'content' => $content,
@@ -117,10 +115,11 @@ class ServicesInvoice extends InvoiceModel {
 
     protected function parseServicesToContent($id_space, $services, $id_belonging) {
         $addedServices = array();
+        $idServices = [];
         $modelPrice = new SePrice();
         for ($i = 0; $i < count($services); $i++) {
             $quantity = 0;
-            if (!in_array($services[$i]["id_service"], $addedServices)) {
+            if (!in_array($services[$i]["id_service"], $idServices)) {
                 for ($j = $i; $j < count($services); $j++) {
                     if ($services[$j]["id_service"] == $services[$i]["id_service"]) {
                         $quantity += floatval($services[$j]["quantity"]);
@@ -134,6 +133,7 @@ class ServicesInvoice extends InvoiceModel {
                     'content' => $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";",
                     'id_order' => $services[$i]["id_order"]
                 ];
+                $idServices[] = $services[$i]["id_service"];
             }
         }
         return $addedServices;

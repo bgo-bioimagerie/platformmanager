@@ -64,6 +64,11 @@ class SeOrder extends Model {
         $this->runRequest($sql, array($id_invoice, $id, $id_space));
     }
 
+    public function setInvoiceIDByNum($id_space, $no_identification, $id_invoice){
+        $sql = "UPDATE se_order SET id_invoice=? WHERE no_identification=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($id_invoice, $no_identification, $id_space));
+    }
+
     public function setService($id_space, $id_order, $id_service, $quantity) {
         if ($this->isOrderService($id_space, $id_order, $id_service)) {
             $sql = "UPDATE se_order_service SET quantity=? WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
@@ -188,7 +193,7 @@ class SeOrder extends Model {
 
     public function entries($id_space, $sortentry = 'id') {
 
-        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order INNER JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
         // $modelUser = new CoreUser();
@@ -203,7 +208,7 @@ class SeOrder extends Model {
     public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space) {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_client' => $id_client, 'id_space' => $id_space);
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
-                . "AND id_user IN (SELECT id_user FROM cl_j_client_user WHERE id_client=:id_client AND id_space=:id_space AND deleted=0) "
+                . "AND id_resp=:id_client "
                 . "AND date_open>=:start "
                 . "AND (date_close IS NULL OR date_close<=:end) "
                 . "AND id_space=:id_space AND deleted=0";
@@ -212,28 +217,32 @@ class SeOrder extends Model {
     }
 
     public function openedEntries($id_space, $sortentry = 'id') {
-        $sql = "select * from se_order where deleted=0 AND id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_status=1 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        //$sql = "select * from se_order where deleted=0 AND id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
-        $modelUser = new CoreUser();
+        // $modelUser = new CoreUser();
 
         for ($i = 0; $i < count($entries); $i++) {
-            $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
+            $entries[$i]["user_name"] = $entries[$i]["name"] . " " . $entries[$i]["firstname"];
+            // $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
         }
         return $entries;
     }
 
     public function closedEntries($id_space, $sortentry = 'id') {
-        $sql = "select * from se_order where id_space=? AND deleted=0 AND id_status=0 order by " . $sortentry . " ASC;";
+        $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id WHERE se_order.id_status=0 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
+        // $sql = "select * from se_order where id_space=? AND deleted=0 AND id_status=0 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
 
         $entries = $req->fetchAll();
 
-        $modelUser = new CoreUser();
+        // $modelUser = new CoreUser();
 
         for ($i = 0; $i < count($entries); $i++) {
-            $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
+            $entries[$i]["user_name"] = $entries[$i]["name"] . " " . $entries[$i]["firstname"];
+            // $entries[$i]["user_name"] = $modelUser->getUserFUllName($entries[$i]['id_user']);
         }
         return $entries;
     }
@@ -242,6 +251,7 @@ class SeOrder extends Model {
 
         $entry["id"] = "";
         $entry["id_user"] = "";
+        $entry["id_resp"] = "";
         $entry["id_space"] = 0;
         $entry["id_status"] = 1;
         $entry["date_open"] = date("Y-m-d", time());
@@ -266,17 +276,18 @@ class SeOrder extends Model {
         $this->runRequest($sql, array(date("Y-m-d", time()), $id, $id_space));
     }
 
-    public function reopenEntry($id_space, $id){
-        $sql = "UPDATE se_order set id_status=1, date_close is null
-		        where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id, $id_space));
+    public function reopenEntry($id_space, $no_identification){
+        $sql = "UPDATE se_order set id_status=1, date_close=null
+		        where no_identification=? AND id_space=? AND deleted=0";
+        $this->runRequest($sql, array($no_identification, $id_space));
     }
 
     public function openedItemsForClient($id_space, $id_client){
-        $userList = " SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0 ";
-        $orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1 AND id_space=? AND deleted=0";
+        //$userList = " SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0 ";
+        //$orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1 AND id_space=? AND deleted=0";
+        $orderList = " SELECT id FROM se_order WHERE id_resp=? AND id_status=1 AND id_space=? AND deleted=0";
         $sql = "SELECT * FROM se_order_service WHERE id_order IN (".$orderList.")";
-        return $this->runRequest($sql, array($id_client, $id_space, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_client, $id_space))->fetchAll();
     }
 
     public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
