@@ -61,7 +61,11 @@ export class DynamicForms {
                         let elements = Array.isArray(data.elements) ? data.elements : [data.elements];
                         let cloneElement = targetElement.cloneNode(false);
                         elements.forEach((element) => {
-                            cloneElement.appendChild(new Option(element.name, element.id));
+                            if(element.firstname != undefined) {
+                                cloneElement.appendChild(new Option(element.firstname +' ' + element.name , element.id));
+                            } else {
+                                cloneElement.appendChild(new Option(element.name , element.id));
+                            }
                         });
                         targetElement.replaceWith(cloneElement);
                         break;
