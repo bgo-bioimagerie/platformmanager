@@ -25,10 +25,23 @@
 
     <div class="table-responsive mb-3">
         <table class="table" aria-label="list of calendars">
-            <thead><tr><th scope="col"><?php echo $area['name'] ?></th><th scope="col"><?php echo $area['calendar'] ?></th></tr></thead>
+            <thead><tr><th scope="col"><?php echo $area['name'] ?></th><th scope="col">
+                <select id="area<?php echo $area['id']?>" onchange="setAreaCalendar(<?php echo $area['id'] ?>, this.value)" data-cal="<?php echo $area['calendar'] ?>" class="form-select" value="<?php echo $area['calendar'] ?>">
+                    <?php foreach ($calendars as $i => $c) { ?>
+                        <option value="<?php echo $i ?>"><?php echo $c ?></option>
+                    <?php } ?>
+                </select>          
+            </th></tr></thead>
             <tbody>
                 <?php foreach($area['resources'] as $res) { ?>
-                    <tr><td><?php echo $res['name'] ?></td><td><?php echo $res['calendar'] ?></td></tr>
+                    <tr><td><?php echo $res['name'] ?></td>
+                    <td>
+                    <select id="resource<?php echo $area['id']?>" onchange="setResourceCalendar(<?php echo $res['id'] ?>, this.value)" data-cal="<?php echo $res['calendar'] ?>" class="form-select <?php echo "area".$area['id'] ?>" value="<?php echo $res['calendar'] ?>">
+                        <?php foreach ($rescalendars as $i => $c) { ?>
+                            <option value="<?php echo $i ?>"><?php echo $c ?></option>
+                        <?php } ?>
+                    </select>
+                    </td></tr>
                 <?php } ?>
             </tbody>
         </table>
@@ -37,4 +50,14 @@
     <?php } ?>
 
 </div>
+<script>
+    function setResourceCalendar(id, cal) {
+        console.log('TODO set resource calendar', id, cal)
+    }
+
+    function setAreaCalendar(id, cal) {
+        console.log('TODO set area calendar', id, cal)
+    }
+
+</script>
 <?php endblock(); ?>

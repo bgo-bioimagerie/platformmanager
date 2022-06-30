@@ -39,12 +39,19 @@ class BookingschedulingController extends BookingsettingsController {
 
         $bk = new BkScheduling();
         $bkcalendars = $bk->getAll($id_space);
-        $bklist = ["0" => "default"];
+        $bks = new BkResourceSchedule();
+        $def = $bks->getDefault($id_space);
+        if ($def == null) {
+            $def = 0;
+        }
+        $bklist = [$def => "default"];
+        $resbklist = [$def => "area"];
         foreach ($bkcalendars as $cal) {
             $bklist[$cal['id']] = $cal['name'];
+            $resbklist[$cal['id']] = $cal['name'];
         }
 
-        $bks = new BkResourceSchedule();
+        
         $calendars = $bks->all($id_space);
         $resourcesCalendars = [];
         $reareasCalendars = [];
@@ -63,7 +70,7 @@ class BookingschedulingController extends BookingsettingsController {
         $mareas = [];
 
         foreach ($areas as $i => $r) {
-            $areas[$i]['calendar'] = $reareasCalendars[$r['id']] ?? 0;
+            $areas[$i]['calendar'] = $reareasCalendars[$r['id']] ?? $def;
             $mareas[$areas[$i]['id']] = $areas[$i];
         }
 
@@ -71,7 +78,7 @@ class BookingschedulingController extends BookingsettingsController {
             if(isset($resourcesCalendars[$r['id']])) {
                 $resources[$i]['calendar'] = $resourcesCalendars[$r['id']];
             } else {
-                $resources[$i]['calendar'] = $reareasCalendars[$r['id_area']] ?? 0;
+                $resources[$i]['calendar'] = $def;
             }
             $mareas[$resources[$i]['id_area']]['resources'][] = $resources[$i];
         }
@@ -90,7 +97,7 @@ class BookingschedulingController extends BookingsettingsController {
         
         $tableHtml = $table->view($areas, $headers);
         
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml, "areas" => $mareas, "calendars" => $bklist));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml, "areas" => $mareas, "calendars" => $bklist, 'rescalendars' => $resbklist));
     }
     
     public function editAction($id_space, $id) {
