@@ -131,7 +131,8 @@ class ServicesInvoice extends InvoiceModel {
                     'id' => $services[$i]["id_service"],
                     'quantity' => $quantity,
                     'unitprice' => $price,
-                    'content' => $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";"
+                    'content' => $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";",
+                    'id_order' => $services[$i]["id_order"]
                 ];
             }
         }
@@ -260,9 +261,18 @@ class ServicesInvoice extends InvoiceModel {
         $content['total_ht'] += $ordersContent['total_ht'];
         $orders = $ordersContent['orders'];
         $ordersServices = $ordersContent['services'];
+
+        $morder = [];
+        foreach($orders as $order){
+            $morder[$order['id']] = $order['no_identification'];
+        }
         foreach($ordersServices as $orderService) {
             $name = $ssm->getName($id_space, $orderService['id']);
-            $content["count"][] = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice']);
+            $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
+            if(isset($morder[$orderService['id_order']])) {
+                $orderInfo['no_identification'] = $morder[$orderService['id_order']];
+            }
+            $content["count"][] = $orderInfo;
         }
 
         // close orders

@@ -13,6 +13,7 @@
 * [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
 * [com] allow private and public messages on welcome space message
+* [invoices] for global invoices, in invoice details, show order identification number
 
 ## 2.6.4
 
