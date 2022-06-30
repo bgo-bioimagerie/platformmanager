@@ -86,7 +86,12 @@ class ServicesInvoice extends InvoiceModel {
         if (count($orders) == 0) {
             return $orders;
         }
-        $services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $id_orders = [];
+        foreach($orders as $order) {
+            $id_orders[] = $order['id'];
+        }
+        //$services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $services = $modelOrder->openedOrdersItems($id_space, $id_orders);
         $modelClPricing = new ClPricing();
         $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0];
         $contentServices = $this->parseServicesToContent($id_space, $services, $pricing['id']);
