@@ -235,6 +235,7 @@ class ServicesInvoice extends InvoiceModel {
                     $data["id_service"] = $services[$i]["id_service"];
                     $data["comment"] = $services[$i]["comment"];
                     $data["quantity"] = $quantity;
+                    $data["no_identification"] = $id_proj;
                     $servicesMerged[] = $data;
                 }
             }
@@ -251,7 +252,8 @@ class ServicesInvoice extends InvoiceModel {
                     'id' => $servicesMerged[$i]["id_service"],
                     'quantity' => $quantity,
                     'unitprice' => $price,
-                    'comment' => $servicesMerged[$i]["comment"]
+                    'comment' => $servicesMerged[$i]["comment"],
+                    'no_identification' => $servicesMerged[$i]['no_identification']
                 ];
 
             }
@@ -312,7 +314,17 @@ class ServicesInvoice extends InvoiceModel {
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
             $name = $ssm->getName($id_space, $projectService['id']);
-            $content["count"][] = array("id" => $projectService['id'], "label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
+            $pname = '';
+            if(isset($projectService['no_identification'])) {
+                $pname = $modelProject->getName($id_space, $projectService['no_identification']);
+            }
+            $content["count"][] = array(
+                "id" => $projectService['id'],
+                "label" => $name,
+                "quantity" => $projectService['quantity'],
+                "unitprice" => $projectService['unitprice'],
+                "no_identification" => $pname
+            );
             // $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
         }
         foreach($projectsContent['servicesToInvoice'] as $s){
