@@ -268,7 +268,7 @@ class SeOrder extends Model {
         return $req->fetch();
     }
 
-    public function setEntryCloded($id_space, $id) {
+    public function setEntryClosed($id_space, $id) {
         $sql = "UPDATE se_order set id_status=0, date_close=?
 		        where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(date("Y-m-d", time()), $id, $id_space));
