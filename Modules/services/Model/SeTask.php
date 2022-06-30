@@ -97,6 +97,12 @@ class SeTask extends Model {
     }
     
     public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user, $id_owner, $done, $private) {
+         if ($start_date == "")  {
+            $start_date = null;
+         }
+         if ($end_date == "")  {
+            $end_date = null;
+         }
         if ($this->isTask($id_space, $id)) {
             $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=?, id_owner=?, done=?, private=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_owner, $done, $private, $id, $id_space));

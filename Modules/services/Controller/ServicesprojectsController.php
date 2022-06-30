@@ -555,6 +555,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $isManager = $this->role >= CORESPACE::$MANAGER;
         $id_task = $this->request->params()["task"] ?? 0;
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
@@ -640,7 +641,8 @@ class ServicesprojectsController extends ServicesController {
             "projectServices" => json_encode($services),
             "projectUsers" => json_encode($projectUsers),
             "mainUser" => $projectMainUser,
-            "personInCharge" => $project['in_charge']
+            "personInCharge" => $project['in_charge'],
+            "userIsManager" => json_encode($isManager),
         ));
     }
 
@@ -658,6 +660,7 @@ class ServicesprojectsController extends ServicesController {
                 }
             }
         }
+
         // add/update task
         $id = $taskModel->set(
             $taskData['id'],

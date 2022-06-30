@@ -253,6 +253,7 @@ Vue.createApp({
             textContent: {{ textContent | raw }},
             mainUser: {{ mainUser }},
             personInCharge: {{ personInCharge }},
+            userIsManager: {{ userIsManager | raw }},
             selectedTask: null,
             selectedCategory: null,
         }
@@ -265,7 +266,7 @@ Vue.createApp({
             category.name = category.name.replace(/\s/g, '').toLowerCase();
         });
         this.tasks.forEach(task => {
-            if (task.private == "false" || task.id_owner == this.sessionUserId) {
+            if (this.userIsManager || task.private == "false" || task.id_owner == this.sessionUserId) {
                 this.categories[task.state].tasks.push(task);
             }
         });
