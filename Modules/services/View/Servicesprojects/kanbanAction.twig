@@ -323,7 +323,7 @@ Vue.createApp({
         },
         setFileName(task) {
             if (task.file) {
-                task.fileName = task.file.split("data/services/projecttasks/" + task.id + "_").pop();
+                task.fileName = task.file.split("data/services/projecttasks/" + this.id_space + "/" + task.id + "_").pop();
             }
         },
         changeTaskState(event, categoryIndex) {
