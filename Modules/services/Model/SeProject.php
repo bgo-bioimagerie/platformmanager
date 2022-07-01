@@ -570,7 +570,7 @@ class SeProject extends Model {
         return $entry;
     }
 
-    public function setEntryCloded($id_space, $id, $date_close) {
+    public function setEntryClosed($id_space, $id, $date_close) {
         if($date_close == "") {
             $date_close = null;
         }

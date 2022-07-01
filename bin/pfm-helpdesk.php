@@ -196,6 +196,10 @@ if(!$origin) {
 
 Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
 
+if(Configuration::get('sentry_dsn', '')) {
+    \Sentry\init(['dsn' => Configuration::get('sentry_dsn')]);
+}
+
 while(true) {
     try {
         $mbox = imap_open('{'.$inbox.':'.$port.'/pop3'.$tls.'}', $login, $password);
