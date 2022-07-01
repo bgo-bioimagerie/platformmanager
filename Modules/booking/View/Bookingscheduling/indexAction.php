@@ -27,9 +27,9 @@
     <div class="table-responsive mb-3">
         <table class="table" aria-label="list of calendars">
             <thead><tr><th scope="col"><?php echo $area['name'] ?></th><th scope="col">
-                <select id="area<?php echo $area['id']?>" onchange="setAreaCalendar(<?php echo $area['id'] ?>, this.value)" data-cal="<?php echo $area['calendar'] ?>" class="form-select" value="<?php echo $area['calendar'] ?>">
+                <select id="area<?php echo $area['id']?>" onchange="setAreaCalendar(<?php echo $area['id'] ?>, this.value)" data-cal="<?php echo $area['calendar'] ?>" class="form-select"">
                     <?php foreach ($calendars as $i => $c) { ?>
-                        <option value="<?php echo $i ?>"><?php echo $c ?></option>
+                        <option <?php if($area['calendar']==$i) { echo "selected";} ?> value="<?php echo $i ?>"><?php echo $c ?></option>
                     <?php } ?>
                 </select>          
             </th></tr></thead>
@@ -37,10 +37,9 @@
                 <?php foreach($area['resources'] as $res) { ?>
                     <tr><td><?php echo $res['name'] ?></td>
                     <td>
-                        <?php echo $res['calendar'] ?>??
-                    <select id="resource<?php echo $area['id']?>" onchange="setResourceCalendar(<?php echo $res['id'] ?>, this.value)" data-cal="<?php echo $res['calendar'] ?>" class="form-select <?php echo "area".$area['id'] ?>" value="<?php echo $res['calendar'] ?>">
+                    <select id="resource<?php echo $area['id']?>" onchange="setResourceCalendar(<?php echo $res['id'] ?>, this.value)" data-cal="<?php echo $res['calendar'] ?>" class="form-select <?php echo "area".$area['id'] ?>">
                         <?php foreach ($rescalendars as $i => $c) { ?>
-                            <option value="<?php echo $i ?>"><?php echo $c ?></option>
+                            <option <?php if($res['calendar']==$i) { echo "selected";} ?> value="<?php echo $i ?>"><?php echo $c ?></option>
                         <?php } ?>
                     </select>
                     </td></tr>
@@ -54,7 +53,6 @@
 </div>
 <script>
     function setResourceCalendar(id, cal) {
-        console.log('TODO set resource calendar POST /bookingscheduling/assign/1/[i:id_space]/[i:id_resource]/[i:id_calendar]', id, cal)
         let headers = new Headers()
                 headers.append('Content-Type','application/json')
                 headers.append('Accept', 'application/json')
@@ -65,11 +63,9 @@
         fetch(`/bookingscheduling/assign/1/<?php echo $id_space ?>/${id}/${cal}`, cfg).catch(err => {
             console.error('failed to assign resource...', err)
         })
-        // TODO if setting to area, then unlink
     }
 
     function setAreaCalendar(id, cal) {
-        console.log('TODO set area calendar POST /bookingscheduling/assign/0/[i:id_space]/[i:id_resource]/[i:id_calendar]', id, cal)
         let headers = new Headers()
                 headers.append('Content-Type','application/json')
                 headers.append('Accept', 'application/json')

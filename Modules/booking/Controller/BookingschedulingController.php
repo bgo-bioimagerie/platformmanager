@@ -236,12 +236,13 @@ class BookingschedulingController extends BookingsettingsController {
             $link = $bks->linkArea($id_space, $id, $id_calendar);
         } else if ($kind == 1) {
             // resource
-            if ($id == 0) {
+            if ($id_calendar == 0) {
                 $bks->unlinkResource($id_space, $id);
             } else {
                 $link = $bks->linkResource($id_space, $id, $id_calendar);
             }
         }
+
         return $this->render(['data' => ['id' => $link]]);
     }
 

@@ -37,8 +37,7 @@ class BkResourceSchedule extends Model {
     }
 
     public function linkResource($id_space, $id_resource, $id_bkschedule){
-        $sql = 'DELETE FROM bk_resource_schedule WHERE id_space=? AND  id_bkschedule=? AND id_resource=?';
-        $this->runRequest($sql, [$id_space, $id_bkschedule, $id_resource]);
+        $this->unlinkResource($id_space, $id_resource);
         $sql = 'INSERT INTO bk_resource_schedule (id_space, id_bkschedule, id_resource) VALUES (?, ?, ?)';
         $this->runRequest($sql, [$id_space, $id_bkschedule, $id_resource]);
         return $this->getDatabase()->lastInsertId();
@@ -60,8 +59,7 @@ class BkResourceSchedule extends Model {
     }
 
     public function linkArea($id_space, $id_rearea, $id_bkschedule){
-        $sql = 'DELETE FROM bk_resource_schedule WHERE id_space=? AND  id_bkschedule=? AND id_rearea=?';
-        $this->runRequest($sql, [$id_space, $id_bkschedule, $id_rearea]);
+        $this->unlinkArea($id_space, $id_rearea);
         $sql = 'INSERT INTO bk_resource_schedule (id_space, id_bkschedule, id_rearea) VALUES (?, ?, ?)';
         $this->runRequest($sql, [$id_space, $id_bkschedule, $id_rearea]);
         return $this->getDatabase()->lastInsertId();
