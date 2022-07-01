@@ -713,7 +713,7 @@ class ServicesprojectsController extends ServicesController {
 
         // If private task, check if user is the owner of the task or if user is at least manager
         if ($task['private'] == 1
-            && (!$this->role >= CoreSpace::$MANAGER || $task['id_owner'] != $_SESSION["id_user"])) {
+            && (!$this->role >= CoreSpace::$MANAGER && $task['id_owner'] != $_SESSION["id_user"])) {
                 throw new PfmAuthException('private document');
         }
 
