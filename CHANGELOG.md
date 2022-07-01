@@ -16,6 +16,11 @@
 * [invoices] for global invoices, in invoice details, show order identification number
 * [services][sql] speed up orders list
 
+### Fixes
+
+* [services][orders] fix import of old pfm version for orders,
+  fix order reopen on invoice deletion,
+
 ## 2.6.4
 
 * [core][cli] fix base columns settings (issue for old upgrades)
