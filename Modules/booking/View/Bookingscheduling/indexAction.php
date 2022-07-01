@@ -65,6 +65,7 @@
         fetch(`/bookingscheduling/assign/1/<?php echo $id_space ?>/${id}/${cal}`, cfg).catch(err => {
             console.error('failed to assign resource...', err)
         })
+        // TODO if setting to area, then unlink
     }
 
     function setAreaCalendar(id, cal) {

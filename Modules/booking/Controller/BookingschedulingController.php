@@ -46,7 +46,7 @@ class BookingschedulingController extends BookingsettingsController {
         }
         $def = $defScheduling['id'];
         $bklist = [$def => "default"];
-        $resbklist = [$def => "area"];
+        $resbklist = [0 => "area"];
         foreach ($bkcalendars as $cal) {
             $bklist[$cal['id']] = $cal['name'];
             $resbklist[$cal['id']] = $cal['name'];
@@ -236,7 +236,11 @@ class BookingschedulingController extends BookingsettingsController {
             $link = $bks->linkArea($id_space, $id, $id_calendar);
         } else if ($kind == 1) {
             // resource
-            $link = $bks->linkResource($id_space, $id, $id_calendar);
+            if ($id == 0) {
+                $bks->unlinkResource($id_space, $id);
+            } else {
+                $link = $bks->linkResource($id_space, $id, $id_calendar);
+            }
         }
         return $this->render(['data' => ['id' => $link]]);
     }
