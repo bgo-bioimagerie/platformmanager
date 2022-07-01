@@ -73,7 +73,7 @@ class ServicesInvoice extends InvoiceModel {
         $modelInvoice->setNumber($id_space, $id_invoice, $number);
 
         foreach ($orders as $order) {
-            $modelOrder->setEntryCloded($id_space, $order["id"]);
+            $modelOrder->setEntryClosed($id_space, $order["id"]);
             $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
         }
         return true;
@@ -83,11 +83,15 @@ class ServicesInvoice extends InvoiceModel {
         $modelOrder = new SeOrder();
         // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $id_space);
-
         if (count($orders) == 0) {
             return $orders;
         }
-        $services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $id_orders = [];
+        foreach($orders as $order) {
+            $id_orders[] = $order['id'];
+        }
+        //$services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $services = $modelOrder->openedOrdersItems($id_space, $id_orders);
         $modelClPricing = new ClPricing();
         $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0];
         $contentServices = $this->parseServicesToContent($id_space, $services, $pricing['id']);
@@ -97,7 +101,6 @@ class ServicesInvoice extends InvoiceModel {
         }
         $details = $this->parseOrdersToDetails($id_space, $orders);
         $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
-
         return [
             'total_ht' => $total_ht,
             'content' => $content,
@@ -117,24 +120,37 @@ class ServicesInvoice extends InvoiceModel {
 
     protected function parseServicesToContent($id_space, $services, $id_belonging) {
         $addedServices = array();
+        $idServices = [];
         $modelPrice = new SePrice();
+        $s2o = [];
         for ($i = 0; $i < count($services); $i++) {
             $quantity = 0;
-            if (!in_array($services[$i]["id_service"], $addedServices)) {
+            if (!in_array($services[$i]["id_service"], $idServices)) {
                 for ($j = $i; $j < count($services); $j++) {
                     if ($services[$j]["id_service"] == $services[$i]["id_service"]) {
                         $quantity += floatval($services[$j]["quantity"]);
                     }
+                    if(!isset($s2o[$services[$j]["id_service"]])) {
+                        $s2o[$services[$j]["id_service"]] = [];
+                    }
+                    if(!in_array($services[$j]["id_order"],  $s2o[$services[$j]["id_service"]])) {
+                        $s2o[$services[$j]["id_service"]][] = $services[$j]["id_order"];
+                    }
                 }
                 $price = $modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging);
+
                 $addedServices[] = [
                     'id' => $services[$i]["id_service"],
                     'quantity' => $quantity,
                     'unitprice' => $price,
                     'content' => $services[$i]["id_service"] . "=" . $quantity . "=" . $price . ";",
-                    'id_order' => $services[$i]["id_order"]
+                    // 'id_order' => $services[$i]["id_order"]
                 ];
+                $idServices[] = $services[$i]["id_service"];
             }
+        }
+        foreach($addedServices as $i => $s) {
+            $addedServices[$i]['id_order'] = implode(',', $s2o[$s['id']]);
         }
         return $addedServices;
     }
@@ -219,6 +235,7 @@ class ServicesInvoice extends InvoiceModel {
                     $data["id_service"] = $services[$i]["id_service"];
                     $data["comment"] = $services[$i]["comment"];
                     $data["quantity"] = $quantity;
+                    $data["no_identification"] = $id_proj;
                     $servicesMerged[] = $data;
                 }
             }
@@ -235,7 +252,8 @@ class ServicesInvoice extends InvoiceModel {
                     'id' => $servicesMerged[$i]["id_service"],
                     'quantity' => $quantity,
                     'unitprice' => $price,
-                    'comment' => $servicesMerged[$i]["comment"]
+                    'comment' => $servicesMerged[$i]["comment"],
+                    'no_identification' => $servicesMerged[$i]['no_identification']
                 ];
 
             }
@@ -269,16 +287,21 @@ class ServicesInvoice extends InvoiceModel {
         foreach($ordersServices as $orderService) {
             $name = $ssm->getName($id_space, $orderService['id']);
             $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
-            if(isset($morder[$orderService['id_order']])) {
-                $orderInfo['no_identification'] = $morder[$orderService['id_order']];
+            $id_orders = explode(',', $orderService['id_order']);
+            $orderInfo['no_identification'] = [];
+            foreach($id_orders as $id_order) {
+                if(isset($morder[$id_order])) {
+                    $orderInfo['no_identification'][] = $morder[$id_order];
+                }
             }
+            $orderInfo['no_identification'] = implode(',', $orderInfo['no_identification']);
             $content["count"][] = $orderInfo;
         }
 
         // close orders
         $modelOrder = new SeOrder();
         foreach ($orders as $order) {
-            $modelOrder->setEntryCloded($id_space, $order["id"]);
+            $modelOrder->setEntryClosed($id_space, $order["id"]);
             $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
         }
 
@@ -291,7 +314,17 @@ class ServicesInvoice extends InvoiceModel {
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
             $name = $ssm->getName($id_space, $projectService['id']);
-            $content["count"][] = array("id" => $projectService['id'], "label" => $name, "quantity" => $projectService['quantity'], "unitprice" => $projectService['unitprice']);
+            $pname = '';
+            if(isset($projectService['no_identification'])) {
+                $pname = $modelProject->getName($id_space, $projectService['no_identification']);
+            }
+            $content["count"][] = array(
+                "id" => $projectService['id'],
+                "label" => $name,
+                "quantity" => $projectService['quantity'],
+                "unitprice" => $projectService['unitprice'],
+                "no_identification" => $pname
+            );
             // $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
         }
         foreach($projectsContent['servicesToInvoice'] as $s){
