@@ -40,10 +40,11 @@ class BookingschedulingController extends BookingsettingsController {
         $bk = new BkScheduling();
         $bkcalendars = $bk->getAll($id_space);
         $bks = new BkResourceSchedule();
-        $def = $bks->getDefault($id_space);
-        if ($def == null) {
-            $def = 0;
+        $defScheduling = $bks->getDefault($id_space);
+        if ($defScheduling == null) {
+            throw new PfmException("No default scheduling found", 500);
         }
+        $def = $defScheduling['id'];
         $bklist = [$def => "default"];
         $resbklist = [$def => "area"];
         foreach ($bkcalendars as $cal) {
@@ -60,10 +61,10 @@ class BookingschedulingController extends BookingsettingsController {
                 continue;
             }
             if($cal['id_resource'] > 0){
-                $resourcesCalendars[$cal['id_resource']] = $cal;
+                $resourcesCalendars[$cal['id_resource']] = $cal['id_bkschedule'];
             }
             if($cal['id_rearea'] > 0){
-                $reareasCalendars[$cal['id_rearea']] = $cal;
+                $reareasCalendars[$cal['id_rearea']] = $cal['id_bkschedule'];
             }
         }
 
@@ -83,7 +84,6 @@ class BookingschedulingController extends BookingsettingsController {
             $mareas[$resources[$i]['id_area']]['resources'][] = $resources[$i];
         }
 
-
         if (empty($areas)) {
             $_SESSION['flash'] = ResourcesTranslator::Area_Needed($lang);
             $_SESSION['flashClass'] = "warning";
@@ -102,11 +102,12 @@ class BookingschedulingController extends BookingsettingsController {
     
     public function editAction($id_space, $id) {
         // That to avoid some confusions between id_rearea and bkScheduling['id']
-        $id_rearea = $id;
+        // $id_rearea = $id;
         
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         
+        /*
         $modelArea = new ReArea();
         $area = $modelArea->get($id_space, $id_rearea);
         if (!$area) {
@@ -114,12 +115,14 @@ class BookingschedulingController extends BookingsettingsController {
         }
         
         $name = $area['name'];
+        */
         
         $modelScheduling = new BkScheduling();
         $bkScheduling = $modelScheduling->get($id_space, $id);
         if ($bkScheduling['id_space'] == 0) {
             $bkScheduling["id_space"] = $id_space;
         }
+        $name = $bkScheduling['name'];
 
         $form = new Form($this->request, "bookingschedulingedit");
         $form->setTitle(BookingTranslator::Edit_scheduling($lang) . ": " . $name, 3);
@@ -165,7 +168,7 @@ class BookingschedulingController extends BookingsettingsController {
         $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $bkScheduling["default_color_id"]);
         
         $todo = $this->request->getParameterNoException('redirect');
-        $validationUrl = "bookingschedulingedit/".$id_space."/".$id_rearea;
+        $validationUrl = "bookingschedulingedit/".$id_space."/".$id;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
@@ -188,7 +191,6 @@ class BookingschedulingController extends BookingsettingsController {
             $id_bkScheduling = $modelScheduling->edit($id_space,
                     $this->request->getParameterNoException("id"), 
                     $this->request->getParameterNoException("name"), 
-                    $bkScheduling['id_rearea'],
                     $this->request->getParameterNoException("is_monday"), 
                     $this->request->getParameterNoException("is_tuesday"), 
                     $this->request->getParameterNoException("is_wednesday"), 
@@ -212,7 +214,7 @@ class BookingschedulingController extends BookingsettingsController {
             if ($todo) {
                 return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
-                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_bkScheduling, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
             }
             
         }
@@ -224,5 +226,24 @@ class BookingschedulingController extends BookingsettingsController {
             "data" => ["bkScheduling" => $bkScheduling]
         ));
         
+    }
+
+    public function assignAction($kind, $id_space, $id, $id_calendar) {
+        $bks = new BkResourceSchedule();
+        $link = 0;
+        if ($kind == 0) {
+            // area
+            $link = $bks->linkArea($id_space, $id, $id_calendar);
+        } else if ($kind == 1) {
+            // resource
+            $link = $bks->linkResource($id_space, $id, $id_calendar);
+        }
+        return $this->render(['data' => ['id' => $link]]);
+    }
+
+    public function deleteAction($id_space, $id) {
+        $bk= new BkScheduling();
+        $bk->delete($id_space, $id);
+        $this->redirect('/bookingscheduling/'.$id_space);
     }
 }

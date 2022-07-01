@@ -18,6 +18,7 @@ class BkResourceSchedule extends Model {
 		    PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function unlinkResource($id_space, $id_resource){
@@ -36,12 +37,15 @@ class BkResourceSchedule extends Model {
     }
 
     public function linkResource($id_space, $id_resource, $id_bkschedule){
+        $sql = 'DELETE FROM bk_resource_schedule WHERE id_space=? AND  id_bkschedule=? AND id_resource=?';
+        $this->runRequest($sql, [$id_space, $id_bkschedule, $id_resource]);
         $sql = 'INSERT INTO bk_resource_schedule (id_space, id_bkschedule, id_resource) VALUES (?, ?, ?)';
         $this->runRequest($sql, [$id_space, $id_bkschedule, $id_resource]);
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function all($id_space) {
-        $sql = 'SELECT bk_resource_schedule.*, bk_schedulings.name FROM bk_resource_schedule INNER JOIN bk_schedulings ON bk_schedulings.id=bk_resource_schedule.id_bkschedule WHERE id_space=?';
+        $sql = 'SELECT bk_resource_schedule.*, bk_schedulings.name FROM bk_resource_schedule INNER JOIN bk_schedulings ON bk_schedulings.id=bk_resource_schedule.id_bkschedule WHERE bk_resource_schedule.id_space=?';
         return $this->runRequest($sql, [$id_space])->fetchAll();
     }
 
@@ -56,8 +60,11 @@ class BkResourceSchedule extends Model {
     }
 
     public function linkArea($id_space, $id_rearea, $id_bkschedule){
+        $sql = 'DELETE FROM bk_resource_schedule WHERE id_space=? AND  id_bkschedule=? AND id_rearea=?';
+        $this->runRequest($sql, [$id_space, $id_bkschedule, $id_rearea]);
         $sql = 'INSERT INTO bk_resource_schedule (id_space, id_bkschedule, id_rearea) VALUES (?, ?, ?)';
         $this->runRequest($sql, [$id_space, $id_bkschedule, $id_rearea]);
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function setDefault($id_space, $id_bkschedule){
@@ -152,7 +159,7 @@ class BkScheduling extends Model {
         return array(
             "id" => 0,
             "id_space" => $id_space,
-            "name" => "default",
+            "name" => "",
             "is_monday" => 1,
             "is_tuesday" => 1,
             "is_wednesday" => 1,
@@ -403,10 +410,47 @@ class BkScheduling extends Model {
      * @param unknown $id
      */
     public function delete($id_space, $id) {
+        $def = $this->getDefault($id_space);
+        if($def['name'] == 'default'){
+            throw new PfmParamException('Cannot delete default scheduling');
+        }
         $sql = "UPDATE bk_schedulings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
         $bks = new BkResourceSchedule();
         $bks->unlinkAll($id_space, $id);
+    }
+
+    public function createDefault($id_space){
+        $default = $this->getDefault($id_space);
+        if ($default['id']) {
+            Configuration::getLogger()->warning('[scheduling][create default] a default already exists', ['id' => $default['id']]);
+            return $default['id'];
+        }
+        Configuration::getLogger()->warning('[scheduling][create default]', ['id_space' => $id_space, 'default' => $default]);
+        $id = $this->add(
+            $id_space,
+            'default',
+            $default['is_monday'],
+            $default['is_tuesday'],
+            $default['is_wednesday'],
+            $default['is_thursday'],
+            $default['is_friday'],
+            $default['is_saturday'],
+            $default['is_sunday'],
+            $default['day_begin'],
+            $default['day_end'],
+            $default['size_bloc_resa'],
+            $default['booking_time_scale'],
+            $default['resa_time_setting'],
+            $default['default_color_id'],
+            $default['force_packages'],
+            $default['shared']
+        );
+        if($id) {
+            $bks = new BkResourceSchedule();
+            $bks->setDefault($id_space, $id);
+        }
+        return $id;
     }
 
 }
