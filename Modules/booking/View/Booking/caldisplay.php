@@ -57,7 +57,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 
 
 	$isAvailableDay = false;
-	if($scheduling["is_".strtolower($dayStream)] == 1) {
+	if(!$shareCalendar || $scheduling["is_".strtolower($dayStream)] == 1) {
 	//if ($available_days[$d] == 1){
 		$isAvailableDay = true;
 			
@@ -161,7 +161,11 @@ th {
 					}
 					if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
 					$closedByCalendar = false;
-					if($i < $rCalendars[$resourcesBase[$r]['id']]['day_begin'] || $i >= $rCalendars[$resourcesBase[$r]['id']]['day_end']) {
+					if( !$shareCalendar && (
+						$i < $rCalendars[$resourcesBase[$r]['id']]['day_begin'] ||
+						$i >= $rCalendars[$resourcesBase[$r]['id']]['day_end'] ||
+						$rCalendars[$resourcesBase[$r]['id']]["is_".strtolower($calDayEntry)] == 0
+					)) {
 						$closedByCalendar = true;
 						$style .= 'background-color: darkgray;';
 					}
