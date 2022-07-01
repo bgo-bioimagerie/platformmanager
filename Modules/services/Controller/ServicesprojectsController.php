@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -588,10 +589,22 @@ class ServicesprojectsController extends ServicesController {
         $seProjectUsers = $projectModel->getProjectUsersIds($id_space, $id_project);
         $projectMainUser = $project['id_user'];
 
+
         $modelUser = new CoreUser();
         $projectUsers = array();
+        $ids = [];
         foreach($seProjectUsers as $seProjectUser) {
+            $ids[] = $seProjectUser['id_user'];
             array_push($projectUsers, $modelUser->getUser($seProjectUser['id_user']));
+        }
+
+        $csu = new CoreSpaceUser();
+        $managers = $csu->managersOrAdmin($id_space);
+        foreach ($managers as $manager) {
+            if(in_array($manager['id_user'], $ids)) {
+                continue;
+            }
+            array_push($projectUsers, $modelUser->getUser($manager['id_user']));
         }
 
         $textContent = [
