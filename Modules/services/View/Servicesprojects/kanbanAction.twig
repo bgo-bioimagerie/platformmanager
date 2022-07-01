@@ -92,14 +92,14 @@
                                 <select
                                     id="taskUser"
                                     :list="projectUsers"
-                                    class="form-control"
+                                    class="form-select"
                                     name="taskUser"
                                     :value="selectedTask.id_user">
                                     <option v-if="projectUsers.length == 0" value="" disabled selected hidden>
                                         {{"{{textContent.noUserAssigned}}"}}
                                     </option>
                                     <option v-else v-for="user in projectUsers" :value=user.id>
-                                        {{"{{user.name}}"}}
+                                        {{"{{user.firstname}} {{user.name}}"}}
                                     </option>
                                 </select>
 
@@ -326,7 +326,7 @@ Vue.createApp({
                     start_date: null,
                     end_date: null,
                     services: [],
-                    id_user: this.mainUser,
+                    id_user: this.sessionUserId,
                     done: false,
                     private: "false"
                 };

@@ -592,6 +592,8 @@ class ServicesprojectsController extends ServicesController {
 
         $modelUser = new CoreUser();
         $projectUsers = array();
+        array_push($projectUsers, ['id' => 0, 'name' => '---', 'firstname' => '---']);
+
         $ids = [];
         foreach($seProjectUsers as $seProjectUser) {
             $ids[] = $seProjectUser['id_user'];
