@@ -113,7 +113,7 @@ th {
 <?php
 	foreach ($days as $calDay) {
 
-		if(!array_key_exists($resId, $calData[$calDay]) || $rCalendars[$resId]["is_".strtolower($calDay)] == 0){
+		if(!array_key_exists($resId, $calData[$calDay]) || (!$shareCalendar && $rCalendars[$resId]["is_".strtolower($calDay)] == 0)){
 			echo "<td></td>";
 			continue;
 		}
