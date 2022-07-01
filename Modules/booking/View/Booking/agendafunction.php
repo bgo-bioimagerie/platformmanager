@@ -18,7 +18,7 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
         $qt .= '&view=simple';
         $qb .= '&view=simple';
         $qa .= '&view=simple';
-    } else {
+    }  else {
         $qc .= '&view=detailed';
         $qt .= '&view=detailed';
         $qb .= '&view=detailed';
