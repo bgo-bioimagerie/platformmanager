@@ -175,7 +175,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
                         'info' => ''
                     ];
                     if (isset($d['no_identification'])) {
-                        $oinfo['info'] = 'order='.$d['no_identification'].' ['.$d['order'].']';
+                        $oinfo['info'] = $d['no_identification'];
                     }
                     $others[] = $oinfo;
                 }
