@@ -98,7 +98,7 @@
                             }
                             ?>
 
-                            <td><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
+                            <td onclick="showedit('<?php echo $openlink ?>_<?php echo $dnote["id"] ?>')"><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
                                 <?php
                             if ($dnote["type"] == 2) {
                                 $editTxt = BulletjournalTranslator::MarkAsDone($lang);

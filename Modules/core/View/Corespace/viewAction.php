@@ -6,9 +6,6 @@
 <?php
     if ($showCom) {
 ?>
-<!--  *************  -->
-<!--  Popup window  -->
-<!--  *************  -->
 
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
@@ -30,7 +27,7 @@ if ($space['color'] == "") {
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
-        $navController = new ComtileController(new Request(array(), false));
+        $navController = new ComtileController(new Request(array(), false), $space);
         echo $navController->indexAction($id_space);
         ?>
 
@@ -159,10 +156,8 @@ foreach($spaceMenuItems as $item) {
 
 <script>
 
-
-var app = new Vue({
-    el: '#tiles',
-    data () {
+Vue.createApp({
+    data() {
         return {
             id_space: <?php echo $id_space ?>,
             logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
@@ -195,14 +190,11 @@ var app = new Vue({
             }).catch((error) => {
                 console.debug('failed to get notifications', modName, error);
             })
-
         });
-        
     },
     methods: {
     }
-})
-
+}).mount('#tiles')
 
 </script>
 

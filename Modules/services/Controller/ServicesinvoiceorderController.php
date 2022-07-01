@@ -128,7 +128,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         // re-open orders and remove invoice number
         foreach ($details as $detail) {
             $modelOrder->reopenEntry($id_space, $detail[0]);
-            $modelOrder->setInvoiceID($id_space, $detail[0], 0);
+            $modelOrder->setInvoiceIDByNum($id_space, $detail[0], 0);
         }
     }
 
@@ -307,7 +307,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
+        $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 
 }

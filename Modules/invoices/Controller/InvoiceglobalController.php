@@ -167,12 +167,17 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 }
             } else {
                 foreach($detail['data']['count'] as $d) {
-                    $others[] = [
+                    $oinfo = [
                         'module' => $module,
                         'id' => $d['id'] ?? '',
                         'quantity' => $d['quantity'],
-                        'resource' => $d['label']
+                        'resource' => $d['label'],
+                        'info' => ''
                     ];
+                    if (isset($d['no_identification'])) {
+                        $oinfo['info'] = $d['no_identification'];
+                    }
+                    $others[] = $oinfo;
                 }
 
             }
@@ -189,7 +194,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $table2 = new TableView('otherDetails');
         $table2->setTitle("Others - " . $invoice['number'], 3);
-        $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity");
+        $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity", "info" => "Info");
         $tableHtml2 = $table2->view($others, $headers2);
 
         $this->render(['lang' => $lang, 'id_space' => $id_space, 'table' => $tableHtml, 'table2' => $tableHtml2, 'invoice' => $invoice, 'data' => ['invoicedetails' => $details]]);
@@ -221,7 +226,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         if ($details > 0) {
             $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
         }
-        $this->generatePDF($id_space, $number, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos, lang: $lang);
+        $this->generatePDF($id_space, $id_invoice, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos, lang: $lang);
     }
 
     public function editqueryAction($id_space, $id_invoice) {

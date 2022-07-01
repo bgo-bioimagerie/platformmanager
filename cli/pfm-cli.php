@@ -314,6 +314,7 @@ function cliInstall($from=-1) {
 
         $modelCreateDatabase = new CoreInstall();
         $modelCreateDatabase->createDatabase();
+
         $logger->info("Database installed");
         
 

@@ -209,7 +209,8 @@ class ServicesBaseTest extends BaseTest {
             "id_origin" => $origin['id'],
             "time_limit" => $date->format('Y-m-d'),
             "date_open" => date('Y-m-d'),
-            "date_close" => ""
+            "date_close" => "",
+            "users" => [$client_user['id']]
         ]);
         $c = new ServicesprojectsController($req, $space);
         $data = $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id' => 0]);

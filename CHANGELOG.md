@@ -1,5 +1,21 @@
 # Changes
 
+## 2.7.0
+
+### Features / enhancements
+
+* [antibodies] use bootstrap modals and fix some menu urls
+* [booking] add caldav support
+* [services] feature kanban for project management
+* [services] new gantt interface for project management
+* [core] upgrade vue2 -> vue3
+* [booking] calendar display updates for supplementaries, left align on detailed view (minor)
+* [core] use ckeditor5 and allow to use multiple textareas with editor
+* [invoices] get invoice by id (no longer by number) for generating pdf
+* [com] allow private and public messages on welcome space message
+* [invoices] for global invoices, in invoice details, show order identification number
+* [services][sql] speed up orders list
+
 ## 2.6.4
 
 * [core][cli] fix base columns settings (issue for old upgrades)
@@ -23,7 +39,6 @@
 * [core] disable by default tls for smtp, allow to activate via config smtp_tls
 
 ## 2.6.0
-
 ### Warning
 
 Now, quote module manage its own template for pdf generation. Existing template is copied from invoices if exists at install time. If no template is available, a default example will be used.
@@ -51,6 +66,7 @@ Quote templates are configured the same way than invoice templates.
 ### Bug fixes
 
 * [bulletjournal] fixes on creation and edit
+* [cli] add config option to display configuration
 * [booking][supplementaries] avoid having two sups with the same name for the same resource
 * [booking][supplementaries] allow to delete duplicates or refering to a deleted resource
 * [booking][supplementaries] can't add a resource to a sup in which it is already included
