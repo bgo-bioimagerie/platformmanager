@@ -27,8 +27,8 @@ class SeTask extends Model {
 		    `end_date` DATE,
             `done` int(1) NOT NULL DEFAULT 0,
             `private` int(1) NOT NULL DEFAULT 0,
-            `file` varchar(250) NOT NULL DEFAULT '',
-            `file_name` varchar(250) NOT NULL DEFAULT '',
+            /* `file` varchar(250) NOT NULL DEFAULT '',
+            `file_name` varchar(250) NOT NULL DEFAULT '', */
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -43,9 +43,9 @@ class SeTask extends Model {
 
         $this->runRequest($sql2);
 
-        if (!file_exists('data/services/projecttasks/')) {
+        /* if (!file_exists('data/services/projecttasks/')) {
             mkdir('data/services/projecttasks/', 0755, true);
-        }
+        } */
     }
 
     public function getForSpace($id_space) {
@@ -120,7 +120,9 @@ class SeTask extends Model {
         return $id;
     }
 
-    public function setFile($id_space, $id_task, $url, $fileName) {
+    // task files related methods => to be used in next release
+
+    /* public function setFile($id_space, $id_task, $url, $fileName) {
         $sql = "UPDATE se_task SET file=?, file_name=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($url, $fileName, $id_task, $id_space));
     }
@@ -129,7 +131,7 @@ class SeTask extends Model {
         $sql = "SELECT file, file_name FROM se_task WHERE id=? AND id_space=?";
         $req = $this->runRequest($sql, array($id_task, $id_space));
         return $req->fetch();
-    }
+    } */
     
     public function isTask($id_space, $id) {
         $sql = "SELECT * FROM se_task WHERE id=? AND id_space=? AND deleted=0";

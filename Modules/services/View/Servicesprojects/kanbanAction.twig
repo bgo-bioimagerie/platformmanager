@@ -148,7 +148,7 @@
                                     {{"{{textContent.clearSelection}}"}}
                                 </label>
                                 
-                                <label v-if="selectedTask.file" for="taskFile">
+                                {# <label v-if="selectedTask.file" for="taskFile">
                                     {{"{{textContent.replaceFile}}"}}
                                 </label>
                                 <label v-else="selectedTask.file" for="taskFile">
@@ -174,7 +174,7 @@
                                             :value="textContent.download"
                                             @click="openFile(selectedTask)">
                                     </div>
-                                </div>
+                                </div> #}
 
                                 <div class="row form-control mt-3">
                                     <label for="start_date">
@@ -288,25 +288,6 @@ Vue.createApp({
 
         // tasks related methods
 
-        async openFile(task) {
-            const headers = new Headers();
-            headers.append('Content-Type','application/json');
-            headers.append('Accept', 'application/json');
-            const cfg = {
-                headers: headers,
-                method: 'POST',
-                body: null
-            };
-            let targetUrl = `/servicesprojects/openfile/`;
-            let apiRoute = targetUrl + this.id_space + "/" + task.id;
-            await fetch(apiRoute, cfg, true).then(response => {
-                if (response.status == 200) {
-                    window.open(response.url, "_self");
-                } else {
-                    alert(this.textContent.downLoadError);
-                }
-            });
-        },
         editTask() {
             let formData = new FormData(document.getElementById("taskForm"));
             this.selectedTask.name = formData.get("taskName");
@@ -315,7 +296,7 @@ Vue.createApp({
             this.selectedTask.start_date = formData.get("start_date");
             this.selectedTask.end_date = formData.get("end_date");
             this.updateTaskVisibility(formData.get("taskVisibility"));
-            this.updateTaskFile(formData.get("uploadTaskFile"), this.selectedTask);
+            // this.updateTaskFile(formData.get("uploadTaskFile"), this.selectedTask);
             this.updateTask(this.selectedTask);
         },
         clearTaskServicesSelection() {
@@ -377,6 +358,29 @@ Vue.createApp({
                     task.id = data.id;
                 });
         },
+        deleteTask(task, displayAlert=true) {
+            if (!displayAlert || confirm(this.textContent.deleteTask + task.name)) {
+                let tasks = this.categories[task.state].tasks;
+                tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
+                const headers = new Headers();
+                headers.append('Content-Type','application/json');
+                headers.append('Accept', 'application/json');
+                const cfg = {
+                    headers: headers,
+                    method: 'POST',
+                    body: null
+                };
+                cfg.body = JSON.stringify({
+                    task: task
+                });
+                let targetUrl = `/servicesprojects/deletetask/`
+                let apiRoute = targetUrl + this.id_space + "/" + task.id;
+                fetch(apiRoute, cfg, true)
+            }
+        },
+
+        // Task files related methods => to be used in next release
+
         async updateTaskFile(file, task) {
             let data = new FormData();
             data.append("file", file);
@@ -412,26 +416,26 @@ Vue.createApp({
                     this.selectedTask.fileName = data.file_name;
                 });
         },
-        deleteTask(task, displayAlert=true) {
-            if (!displayAlert || confirm(this.textContent.deleteTask + task.name)) {
-                let tasks = this.categories[task.state].tasks;
-                tasks.splice(tasks.indexOf(tasks.find(element => element.id == task.id)), 1);
-                const headers = new Headers();
-                headers.append('Content-Type','application/json');
-                headers.append('Accept', 'application/json');
-                const cfg = {
-                    headers: headers,
-                    method: 'POST',
-                    body: null
-                };
-                cfg.body = JSON.stringify({
-                    task: task
-                });
-                let targetUrl = `/servicesprojects/deletetask/`
-                let apiRoute = targetUrl + this.id_space + "/" + task.id;
-                fetch(apiRoute, cfg, true)
-            }
+        async openFile(task) {
+            const headers = new Headers();
+            headers.append('Content-Type','application/json');
+            headers.append('Accept', 'application/json');
+            const cfg = {
+                headers: headers,
+                method: 'POST',
+                body: null
+            };
+            let targetUrl = `/servicesprojects/openfile/`;
+            let apiRoute = targetUrl + this.id_space + "/" + task.id;
+            await fetch(apiRoute, cfg, true).then(response => {
+                if (response.status == 200) {
+                    window.open(response.url, "_self");
+                } else {
+                    alert(this.textContent.downLoadError);
+                }
+            });
         },
+        
 
         // Categories related methods
 

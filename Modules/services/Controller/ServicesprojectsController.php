@@ -681,7 +681,9 @@ class ServicesprojectsController extends ServicesController {
         $this->render(['data' => ['id' => $id]]);
     }
 
-    public function uploadTaskFileAction($id_space, $id_task) {
+    // task files related methods => to be used in next release
+    
+    /* public function uploadTaskFileAction($id_space, $id_task) {
         $taskModel = new SeTask();
         $target_dir = "data/services/projecttasks/" . $id_space . "/";
         if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
@@ -731,7 +733,7 @@ class ServicesprojectsController extends ServicesController {
         } else {
             throw new PfmFileException("File not found", 404);
         }
-    }
+    } */
 
     public function getTasksAction($id_space, $id_project) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);        
