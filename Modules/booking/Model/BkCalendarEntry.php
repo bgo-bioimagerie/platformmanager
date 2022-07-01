@@ -928,7 +928,7 @@ class BkCalendarEntry extends Model {
     }
 
     public function computeDuration($id_space, $booking) {
-        $modelResource = new ResourceInfo();
+        //$modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
         $id_resource = $booking['resource_id'];
         $id_client = $booking['responsible_id'];

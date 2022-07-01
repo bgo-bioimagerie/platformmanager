@@ -25,6 +25,26 @@ if ($size_bloc_resa == 900){
 	$nbBlocks = 2;
 }
 
+// $schedule = $mschedule->getByResource($id_space, $curentResource);
+$rCalendars = [];
+if(!$shareCalendar) {
+	foreach ($resourcesBase as $r) {
+		$mschedule = new BkScheduling();
+		$s = $mschedule->getByResource($id_space, $r['id']);
+
+		if($day_begin > $s['day_begin']) {
+			$day_begin = $s['day_begin'];
+		}
+		if($day_end < $s['day_end']) {
+			$day_end = $s['day_end'];
+		}
+		if($size_bloc_resa > $s['size_bloc_resa']) {
+			$size_bloc_resa = $s['size_bloc_resa'];
+		}
+		$rCalendars[$r['id']] = $s;
+	}
+}
+
 for ($d = 0 ; $d < $nbDays ; $d++){
 	// day title
 	$temp = explode("-", $startDate);
@@ -140,19 +160,26 @@ th {
 						$style .= 'border-top-style: hidden !important;';
 					}
 					if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
+					$closedByCalendar = false;
+					if($i < $rCalendars[$resourcesBase[$r]['id']]['day_begin'] || $i >= $rCalendars[$resourcesBase[$r]['id']]['day_end']) {
+						$closedByCalendar = true;
+						$style .= 'background-color: darkgray;';
+					}
 				?>
 					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
-						<?php if($hcalEntry['free']) { ?>
-							<?php if ($hcalEntry['link']) { ?>
-							<div><a  data-status="free" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+						<?php if (!$closedByCalendar) { ?>
+							<?php if($hcalEntry['free']) { ?>
+								<?php if ($hcalEntry['link']) { ?>
+								<div><a  data-status="free" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
+								<?php } ?>
+							<?php } else { ?>
+							<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
+								<?php if(!$hcalEntry['expand']) { ?>
+								<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+								</a>
+								<?php } ?>
+							</div>
 							<?php } ?>
-						<?php } else { ?>
-						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
-							<?php if(!$hcalEntry['expand']) { ?>
-							<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
-							</a>
-							<?php } ?>
-						</div>
 						<?php } ?>
 					</td>
 				

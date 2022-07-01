@@ -18,6 +18,11 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
         $qt .= '&view=simple';
         $qb .= '&view=simple';
         $qa .= '&view=simple';
+    } else {
+        $qc .= '&view=detailed';
+        $qt .= '&view=detailed';
+        $qb .= '&view=detailed';
+        $qa .= '&view=detailed';        
     }
 
 	$html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';

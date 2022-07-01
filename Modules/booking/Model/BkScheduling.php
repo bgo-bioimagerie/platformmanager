@@ -250,12 +250,14 @@ class BkScheduling extends Model {
     public function getByResource($id_space, $id_resource) {
         $bks = new BkResourceSchedule();
         $sched = $bks->getResourceScheduling($id_space, $id_resource);
+
         if ($sched == null) {
             return $this->getDefault();
         }
         $sql = "SELECT * FROM bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
-        $res = $this->runRequest($sql, array($sched['id'], $id_space));
+        $res = $this->runRequest($sql, array($sched['id_bkschedule'], $id_space));
         $scheduling = $res->fetch();
+
         if (!$scheduling) {
             $scheduling = $this->getDefault($id_space);
         }

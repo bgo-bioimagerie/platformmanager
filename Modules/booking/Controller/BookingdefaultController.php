@@ -74,9 +74,10 @@ class BookingdefaultController extends BookingabstractController {
         $hourArray = explode("-", $hour);
         $id_resource = $paramVect[3];
 
-        $modelResource = new ResourceInfo();
+        // $modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
-        $schedule = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        // schedule = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $schedule = $modelScheduling->getByResource($id_space, $id_resource);
 
         $minutes = 0;
         if (count($hourArray) == 2) {
@@ -223,8 +224,8 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelScheduling = new BkScheduling();
-        $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
-
+        // $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
+        $schedule = $modelScheduling->getByResource($id_space, $id_resource);
 
         if($all_day_long == 1){
             $start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
@@ -947,8 +948,10 @@ END:VCALENDAR
 
         $modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
-        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
-        $forcePackages = $schedul['force_packages'] ?? 0;
+        // $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $schedule = $modelScheduling->getByResource($id_space, $id_resource);
+
+        $forcePackages = $schedule['force_packages'] ?? 0;
         if($forcePackages) {
             $packageChecked = true;
         }
