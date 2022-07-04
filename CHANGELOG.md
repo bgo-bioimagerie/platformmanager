@@ -6,6 +6,7 @@
 
 * [services] add missing base columns on se_project_user_table on upgrade
 * [core] fix role checks on user unjoin (test was failing and email not sent)
+* [helpdesk] handle some error cases
 
 ## 2.7.0
 
