@@ -24,7 +24,7 @@
 ### Setup
 
 * add support for env variable PFM_MEMORY which overrides default PHP memory limit for pfm-x processes,
-  example: PFM_MEMMORY: 1024M
+  example: PFM_MEMORY: 1024M
 
 ## 2.6.4
 
