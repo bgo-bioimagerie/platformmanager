@@ -643,9 +643,16 @@ class ServicesTranslator {
 
     public static function projectEdited($lang) {
         if ($lang == "fr") {
-            return "La fiche projet à bien été enregistrée !";
+            return "La fiche projet a bien été enregistrée !";
         }
         return "Project sheet has been saved !";
+    }
+
+    public static function MainUserNotInList($lang) {
+        if ($lang == "fr") {
+            return "L'utilisateur⋅ice principal⋅e a été ajouté⋅e automatiquement à la liste des utilisateur⋅ice⋅s.";
+        }
+        return "Main user being not in the list, they was automatically added.";
     }
 
     public static function Description($lang) {
@@ -1222,6 +1229,14 @@ class ServicesTranslator {
             return "Attacher un fichier";
         } else {
             return "Attach file";
+        }
+    }
+
+    public static function ReplaceFile($lang) {
+        if ($lang == "fr") {
+            return "Remplacer le fichier";
+        } else {
+            return "Replace file";
         }
     }
 

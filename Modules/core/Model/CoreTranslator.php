@@ -590,9 +590,16 @@ class CoreTranslator {
 
     public static function Close($lang = "") {
         if ($lang == "fr") {
-            return "Fermé";
+            return "Fermer";
         }
         return "Close";
+    }
+
+    public static function Closed($lang = "") {
+        if ($lang == "fr") {
+            return "Fermé";
+        }
+        return "Closed";
     }
 
     public static function Modules_configuration($lang = "") {
@@ -2237,6 +2244,34 @@ class CoreTranslator {
 
         }
         return "You are in visitor mode, you should <a href=\"/coreconnection\">login</a> to access full space features";
+    }
+
+    public static function File($lang) {
+        if($lang == "fr") {
+            return "Fichier";
+        }
+        return "File";
+    }
+
+    public static function CurrentFile($lang) {
+        if($lang == "fr") {
+            return "Fichier actuel";
+        }
+        return "Current file";
+    }
+
+    public static function DownloadError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le téléchargement du fichier.";
+        }
+        return "An error occured during file download.";
+    }
+
+    public static function UploadError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le téléversement du fichier.";
+        }
+        return "An error occured during file upload.";
     }
     
 }

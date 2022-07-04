@@ -34,12 +34,12 @@ class ClClientUser extends Model {
     }
     
     public function getUserClientAccounts($id_user, $id_space){
-        $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 AND id IN (SELECT id_client FROM cl_j_client_user WHERE id_user=?)";
+        $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 AND id IN (SELECT id_client FROM cl_j_client_user WHERE id_user=?) ORDER BY name";
         return $this->runRequest( $sql, array($id_space, $id_user))->fetchAll();
     }
 
     public function getClientUsersAccounts($id_client, $id_space){
-        $sql = "SELECT * FROM core_users WHERE deleted=0 AND id IN (SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=?)";
+        $sql = "SELECT * FROM core_users WHERE deleted=0 AND id IN (SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=?) ORDER BY name";
         return $this->runRequest( $sql, array($id_client, $id_space))->fetchAll();
     }
 

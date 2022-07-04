@@ -59,6 +59,20 @@ class ComTranslator {
         return "Space tile message";
     }
 
+    public static function PrivateTilemessage($lang = "") {
+        if ($lang == "fr") {
+            return "Message d'accueil privé (visible uniquement par les membres de l'espace)";
+        }
+        return "Private tile message (only visible by space members)";
+    }
+
+    public static function PublicTilemessage($lang = "") {
+        if ($lang == "fr") {
+            return "Message d'accueil public";
+        }
+        return "Public tile message";
+    }
+
     public static function News($lang) {
         if ($lang == "fr") {
             return "Actualités";

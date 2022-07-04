@@ -12,6 +12,19 @@
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 * [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
+* [com] allow private and public messages on welcome space message
+* [invoices] for global invoices, in invoice details, show order identification number
+* [services][sql] speed up orders list
+
+### Fixes
+
+* [services][orders] fix import of old pfm version for orders,
+  fix order reopen on invoice deletion,
+
+### Setup
+
+* add support for env variable PFM_MEMORY which overrides default PHP memory limit for pfm-x processes,
+  example: PFM_MEMORY: 1024M
 
 ## 2.6.4
 
