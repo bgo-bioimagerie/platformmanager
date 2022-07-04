@@ -226,12 +226,20 @@ class CoreUser extends Model {
             }
 
             if($remove) {
+                $sql = "SELECT status FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                $res = $this->runRequest($sql, array($r['id'], $r['space']));
+                $role = 0;
+                if($res->rowCount() == 1) {
+                    $obj = $res->fetch();
+                    $role = $obj['status'];
+                }
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
                 $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_UNJOIN,
                     "space" => ["id" => $r['space']],
                     "user" => ["id" => intval($r['id'])],
+                    "role" => $role
                 ]); 
             } else {
                 $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
