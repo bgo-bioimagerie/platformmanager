@@ -58,9 +58,9 @@ class BkScheduling extends Model {
             `booking_time_scale` int NOT NULL DEFAULT 1,
             `resa_time_setting` int NOT NULL DEFAULT 1,
             `default_color_id` int NOT NULL DEFAULT 1,
-            `id_rearea` int NOT NULL DEFAULT 0,
             `shared` tinyint NOT NULL DEFAULT 0,
             `force_packages` tinyint NOT NULL DEFAULT 0,
+            `name` varchar(100) NOT NULL DEFAULT "",
             PRIMARY KEY (`id`)
           )';
 
