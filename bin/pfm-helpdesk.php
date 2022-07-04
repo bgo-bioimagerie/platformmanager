@@ -257,6 +257,7 @@ while(true) {
                     $headersDetailed = parse_rfc822_all_headers($headerText);
 
                     $mailContent = _get_body_attach($mbox, $mail->uid);
+                    imap_delete($mbox, $mail->uid);
 
                     $from=$header->from;
                     $to = $header->to;
@@ -349,8 +350,8 @@ while(true) {
 
                 } catch(Throwable $e) {
                     Configuration::getLogger()->error('[helpdesk] mail parsing error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+                    imap_delete($mbox, $mail->uid);
                 }
-                imap_delete($mbox, $mail->uid);
 
             }
             imap_close($mbox, CL_EXPUNGE);
