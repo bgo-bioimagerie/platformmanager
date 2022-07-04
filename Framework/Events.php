@@ -175,7 +175,7 @@ class EventHandler {
     private function isSpaceOwner($id_space, $id_user) {
         $sum = new CoreSpaceUser();
         $link = $sum->getUserSpaceInfo2($id_space, $id_user);
-        if($link['status'] >= CoreSpace::$MANAGER) {
+        if($link && $link['status'] >= CoreSpace::$MANAGER) {
             return true;
         }
         return false;
@@ -349,7 +349,9 @@ class EventHandler {
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+        // User is already removed, check if role set in message
+        // if user is at least manager, remove from grafana
+        if(isset($msg['role']) && $msg['role'] >= CoreSpace::$MANAGER ) {
             $g->delUser($space['shortname'], $user['login']);
         }
 
