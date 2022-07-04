@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.1
+
+* [services] add missing base columns on se_project_user_table on upgrade
+
 ## 2.7.0
 
 ### Features / enhancements
