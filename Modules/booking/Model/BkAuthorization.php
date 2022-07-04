@@ -248,8 +248,6 @@ class BkAuthorization extends Model {
      * @param number $resource_id
      * @return multitype: Authorizations informations
      * 
-     *  @bug osallou: refer to ec_units, get unit name from user
-     * TODO: to be tested
      */
     public function getActiveAuthorizationForResourceCategory($id_space, $resource_id) {
         $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.id AS user_id, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, se_visa.name AS visa, re_category.name AS resource

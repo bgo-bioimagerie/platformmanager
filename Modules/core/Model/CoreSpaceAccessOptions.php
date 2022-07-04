@@ -16,7 +16,6 @@ class CoreSpaceAccessOptions extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-        // TODO BUG id_space type: `id_space` int NOT NULL DEFAULT 0
         $this->tableName = "core_space_access_options";
         /*
         $this->setColumnsInfo("id", "int(11)", "");

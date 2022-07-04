@@ -14,8 +14,7 @@ require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * 
- * @author sprigent
- * Controller for the home page
+ * Controller for the gantt services project page
  */
 class ServicesprojectganttController extends ServicesController {
 
@@ -23,9 +22,6 @@ class ServicesprojectganttController extends ServicesController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-
-     // TODO: gérer les autorisations par projet ?
-
     public function indexAction($id_space, $allPeriod = 0, $incharge = "", $id_project = null) {
 
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
