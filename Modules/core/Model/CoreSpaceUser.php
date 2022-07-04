@@ -40,7 +40,7 @@ class CoreSpaceUser extends Model {
             `id` int NOT NULL AUTO_INCREMENT,
             `id_user` int DEFAULT NULL,
             `id_space` int DEFAULT NULL,
-            `status` varchar(100) DEFAULT NULL,
+            `status` int DEFAULT NULL,
             `date_convention` date DEFAULT NULL,
             `convention_url` varchar(255) DEFAULT NULL,
             `date_contract_end` date DEFAULT NULL,
