@@ -345,6 +345,7 @@ abstract class Controller {
         // Generate the view
         $dataView["currentSpace"] = $this->currentSpace;
         $dataView["context"] = [
+            "id_user" => isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0,
             "mainMenu" => $this->mainMenu(),
             "sideMenu" => $this->sideMenu(),
             "spaceMenu" => $this->spaceMenu(),

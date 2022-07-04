@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.1
+
+* [services] add missing base columns on se_project_user_table on upgrade
+
 ## 2.7.0
 
 ### Features / enhancements
@@ -20,6 +24,11 @@
 
 * [services][orders] fix import of old pfm version for orders,
   fix order reopen on invoice deletion,
+
+### Setup
+
+* add support for env variable PFM_MEMORY which overrides default PHP memory limit for pfm-x processes,
+  example: PFM_MEMORY: 1024M
 
 ## 2.6.4
 
