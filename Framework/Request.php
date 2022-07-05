@@ -58,7 +58,7 @@ class Request {
      * @return bool True if the parameter exists and is not empty
      */
     public function isParameterNotEmpty($name) {
-        return (isset($this->parameters [$name]) && $this->parameters [$name] != "");
+        return (isset($this->parameters[$name]) && $this->parameters[$name] != "");
     }
 
     /**
@@ -69,7 +69,7 @@ class Request {
      * @return bool True if the parameter exists and is not empty
      */
     public function isParameter($name) {
-        return (isset($this->parameters [$name]) );
+        return (isset($this->parameters[$name]) );
     }
 
     /**
@@ -83,10 +83,10 @@ class Request {
     public function getParameter($name, $clean = true) {
         if ($this->isParameter($name)) {
             if($clean){
-                return $this->clean($this->parameters [$name]);
+                return $this->clean($this->parameters[$name]);
             }
             else{
-                return $this->parameters [$name];    
+                return $this->parameters[$name];
             }
         } else {
             throw new PfmParamException("Parameter '$name' is not in the request");
@@ -96,20 +96,21 @@ class Request {
     /**
      * Return the value of a parameter
      *
-     * @param string $name
-     *        	Name of the parameter
-     * @return string|array Value of the parameter, or en empty string if the parameter is not set
+     * @param string $name Name of the parameter
+     * @param bool $clean remove html special chars
+     * @param mixed $default default value if not in parameters
+     * @return mixed Value of the parameter, or default parameter if the parameter is not set (empty string by default)
      */
-    public function getParameterNoException($name, $clean = true) {
+    public function getParameterNoException($name, $clean = true, $default='') {
         if ($this->isParameter($name)) {
             if($clean){
-                return $this->clean($this->parameters [$name]);
+                return $this->clean($this->parameters[$name]);
             }
             else{
-                return $this->parameters [$name];    
+                return $this->parameters[$name];
             }
         } else {
-            return '';
+            return $default;
         }
     }
     
