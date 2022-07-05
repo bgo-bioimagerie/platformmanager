@@ -260,7 +260,10 @@ while(true) {
                     imap_delete($mbox, $mail->uid);
 
                     $from=$header->from;
-                    $to = $header->to;
+                    $to = $header->to ?? [];
+                    $cc = $header->cc ?? [];
+                    $bcc = $header->bcc ?? [];
+                    $to = array_merge($to, $cc, $bcc);
 
                     if(isAutoReply($mail, $headersDetailed) || ignore($from[0])) {
                         Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip message', ['from' => $from[0]]);
