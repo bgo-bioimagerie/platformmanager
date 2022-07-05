@@ -160,7 +160,7 @@ class CoreProjects extends Model {
 		if ($project->rowCount() == 1) {
     		return $project->fetch();  // get the first line of the result
 		} else {
-    		throw new PfmException("Cannot find the project using the given id", 404); 
+    		throw new PfmParamException("Cannot find the project using the given id", 404); 
 		}
 	}
 	

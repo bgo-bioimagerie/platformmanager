@@ -943,7 +943,7 @@ class BkCalendarEntry extends Model {
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
         if(!$pricingInfo) {
-            throw new PfmException('no pricing found for client '.$id_client);
+            throw new PfmParamException('no pricing found for client '.$id_client);
         }
 
         $night_begin = $pricingInfo['night_start'];
