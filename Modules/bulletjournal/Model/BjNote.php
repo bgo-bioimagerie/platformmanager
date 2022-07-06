@@ -17,6 +17,8 @@ class BjNote extends Model {
     public function __construct() {
 
         $this->tableName = "bj_notes";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(250)", "");
@@ -25,6 +27,23 @@ class BjNote extends Model {
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("is_month_task", "int(1)", "0");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bj_notes` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `name` varchar(250) DEFAULT NULL,
+            `type` int NOT NULL DEFAULT 0,
+            `content` text,
+            `date` date DEFAULT NULL,
+            `is_month_task` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

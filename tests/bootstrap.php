@@ -33,7 +33,11 @@ $cdb = new CoreDB();
 $cdb->createTable();
 
 $modelCreateDatabase = new CoreInstall();
-$modelCreateDatabase->createDatabase();
+try {
+    $modelCreateDatabase->createDatabase();
+}catch(Throwable $e) {
+    $logger->error("Error", ["error" => $e->getMessage(), "line" => $e->getFile().':'.$e->getLine(), "stack" => $e->getTraceAsString()]);
+}
 $logger->info("Database installed");
 
 
@@ -42,6 +46,7 @@ $logger->info("Upgrading modules");
 $modulesInstalled = '';
 
 try {
+
     $first = true;
     $modules = Configuration::get('modules');
     for ($i = 0; $i < count($modules); ++$i) {
@@ -67,7 +72,7 @@ try {
         }
     }
 } catch (Exception $e) {
-        $logger->error("Error", ["error" => $e->getMessage()]);
+        $logger->error("Error", ["error" => $e->getMessage(), "line" => $e->getFile().':'.$e->getLine(), "stack" => $e->getTraceAsString()]);
 }
 
 // update db release and launch upgrade

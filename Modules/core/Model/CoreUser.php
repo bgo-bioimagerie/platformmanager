@@ -21,6 +21,7 @@ class CoreUser extends Model {
 
     public function __construct() {
         $this->tableName = "core_users";
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("login", "varchar(100)", "");
         $this->setColumnsInfo("pwd", "varchar(100)", "");
@@ -39,6 +40,34 @@ class CoreUser extends Model {
         $this->setColumnsInfo("validated", "int(1)", 1);
         $this->setColumnsInfo("apikey", "varchar(30)", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `core_users` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `login` varchar(100) DEFAULT NULL,
+            `pwd` varchar(100) DEFAULT NULL,
+            `hash` int NOT NULL DEFAULT 0,
+            `name` varchar(100) DEFAULT NULL,
+            `firstname` varchar(100) DEFAULT NULL,
+            `email` varchar(255) DEFAULT NULL,
+            `phone` varchar(255) DEFAULT NULL,
+            `status_id` int NOT NULL DEFAULT 1,
+            `source` varchar(30) NOT NULL DEFAULT "local",
+            `is_active` int NOT NULL DEFAULT 1,
+            `date_created` date DEFAULT NULL,
+            `date_end_contract` date DEFAULT NULL,
+            `date_last_login` date DEFAULT NULL,
+            `remember_key` varchar(255) DEFAULT NULL,
+            `validated` int NOT NULL DEFAULT 1,
+            `apikey` varchar(30) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getResponsibles(){

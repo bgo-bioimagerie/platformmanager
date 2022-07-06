@@ -8,6 +8,8 @@ class Quote extends Model {
 
     public function __construct() {
         $this->tableName = "qo_quotes";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("recipient", "varchar(100)", "");
@@ -19,6 +21,26 @@ class Quote extends Model {
         $this->setColumnsInfo("date_open", "date", "");
         $this->setColumnsInfo("date_last_modified", "date", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `qo_quotes` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `recipient` varchar(100) DEFAULT NULL,
+            `recipient_email` varchar(100) DEFAULT NULL,
+            `address` text,
+            `id_belonging` int DEFAULT NULL,
+            `id_user` int DEFAULT NULL,
+            `id_client` int DEFAULT NULL,
+            `date_open` date DEFAULT NULL,
+            `date_last_modified` date DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getAll($id_space) {

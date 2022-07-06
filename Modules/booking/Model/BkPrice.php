@@ -25,6 +25,7 @@ class BkPrice extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function getPrice($id_space, $id_resource, $id_belongings){

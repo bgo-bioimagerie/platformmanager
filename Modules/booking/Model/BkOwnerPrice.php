@@ -25,6 +25,7 @@ class BkOwnerPrice extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function removeNotListed($id_space, $id_resource, $units) {

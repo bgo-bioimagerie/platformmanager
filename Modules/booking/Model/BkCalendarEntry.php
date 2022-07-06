@@ -50,16 +50,13 @@ class BkCalendarEntry extends Model {
         `invoice_id` int(11) NOT NULL DEFAULT 0,
         `period_id` int(11) NOT NULL DEFAULT 0,
         `all_day_long` int(1) NOT NULL DEFAULT 0,
-        `deleted` int(1) NOT NULL DEFAULT 0,
         `reason` int NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
 
-        $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
-        $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
-        $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
     }
     
     public function getEntriesForUserResource($id_space, $id_user, $id_resource){

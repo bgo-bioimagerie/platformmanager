@@ -6,12 +6,30 @@ class BkRestrictions extends Model {
 
     public function __construct() {
         $this->tableName = "bk_restrictions";
+
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("maxbookingperday", "int(11)", 0);
         $this->setColumnsInfo("bookingdelayusercanedit", "int(11)", 0);
-
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bk_restrictions` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_resource` int NOT NULL DEFAULT 0,
+            `maxbookingperday` int NOT NULL DEFAULT 0,
+            `bookingdelayusercanedit` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function init($id_space) {

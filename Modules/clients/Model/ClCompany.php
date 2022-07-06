@@ -6,6 +6,8 @@ class ClCompany extends Model {
 
     public function __construct() {
         $this->tableName = "cl_company";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("name", "varchar(255)", 0);
@@ -20,6 +22,28 @@ class ClCompany extends Model {
         $this->setColumnsInfo("approval_number", "varchar(255)", 0);
         
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `cl_company` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `name` varchar(255) NOT NULL DEFAULT "",
+            `address` text,
+            `zipcode` varchar(255) NOT NULL DEFAULT "",
+            `city` varchar(255) NOT NULL DEFAULT "",
+            `county` varchar(255) NOT NULL DEFAULT "",
+            `country` varchar(255) NOT NULL DEFAULT "",
+            `tel` varchar(255) NOT NULL DEFAULT "",
+            `fax` varchar(255) NOT NULL DEFAULT "",
+            `email` varchar(255) NOT NULL DEFAULT "",
+            `approval_number` varchar(255) NOT NULL DEFAULT "",
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function default($id_space) {

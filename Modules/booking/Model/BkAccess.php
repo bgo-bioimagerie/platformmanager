@@ -22,8 +22,21 @@ class BkAccess extends Model {
     public function __construct() {
 
         $this->tableName = "bk_access";
+        /*
         $this->setColumnsInfo("id_resource", "int(11)", 0);
         $this->setColumnsInfo("id_access", "int(11)", 0);
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bk_access` (
+            `id_resource` int NOT NULL DEFAULT 0,
+            `id_access` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function set($id_space, $id_resources, $id_access){

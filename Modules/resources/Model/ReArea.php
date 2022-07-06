@@ -17,11 +17,27 @@ class ReArea extends Model {
     public function __construct() {
 
         $this->tableName = "re_area";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(250)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("restricted", "int(1)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `re_area` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(250) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            `restricted` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function get($id_space, $id) {

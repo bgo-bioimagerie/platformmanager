@@ -16,6 +16,8 @@ class ResourceInfo extends Model {
     public function __construct() {
 
         $this->tableName = "re_info";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(150)", "");
         $this->setColumnsInfo("brand", "varchar(250)", "");
@@ -28,6 +30,27 @@ class ResourceInfo extends Model {
         $this->setColumnsInfo("display_order", "int(11)", 0);
         $this->setColumnsInfo("image", "varchar(255)", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `re_info` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `name` varchar(150) DEFAULT NULL,
+            `brand` varchar(250) DEFAULT NULL,
+            `type` varchar(250) DEFAULT NULL,
+            `description` varchar(500) DEFAULT NULL,
+            `long_description` text,
+            `id_category` int NOT NULL DEFAULT 0,
+            `id_area` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            `display_order` int NOT NULL DEFAULT 0,
+            `image` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getDefault() {

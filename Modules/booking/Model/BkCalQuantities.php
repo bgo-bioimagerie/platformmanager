@@ -30,7 +30,8 @@ class BkCalQuantities extends Model {
 		PRIMARY KEY (`id`)
 		);";
 
-        return $this->runRequest($sql);
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     /**

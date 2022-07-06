@@ -33,18 +33,7 @@ class CoreConfig extends Model {
 		);";
 
         $this->runRequest($sql);
-
-        $sqlCol = "SHOW COLUMNS FROM `core_config` WHERE Field='id';";
-        $reqCol = $this->runRequest($sqlCol);
-
-        if ($reqCol->rowCount() > 0){
-            $sql2 = "ALTER TABLE core_config CHANGE id `keyname` varchar(30) NOT NULL;";
-            $this->runRequest($sql2);
-            $sql3 = "alter table core_config drop primary key;";
-            $this->runRequest($sql3);
-        }
-
-        $this->addColumn('core_config', 'id_space', 'int(11)', 0);
+        $this->baseSchema();
     }
 
     /**

@@ -2,6 +2,27 @@
 
 require_once 'Framework/Model.php';
 
+class SeTaskService extends Model {
+
+    public function __construct() {
+        $this->tableName = "se_task_service";
+    }
+
+    public function createTable()
+    {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_task_service` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_task` int(11) NOT NULL,
+            `id_service` int(11) NOT NULL,
+            `id_space` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+        );";
+
+        $this->runRequest($sql);
+        $this->baseSchema();
+    }
+}
+
 /**
  * Class defining projects tasks
  *
@@ -9,7 +30,7 @@ require_once 'Framework/Model.php';
  */
 class SeTask extends Model {
 
-        public function __construct() {
+    public function __construct() {
         $this->tableName = "se_task";
     }
 
@@ -32,16 +53,10 @@ class SeTask extends Model {
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
 
-        $sql2 = "CREATE TABLE IF NOT EXISTS `se_task_service` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_task` int(11) NOT NULL,
-            `id_service` int(11) NOT NULL,
-            `id_space` int(11) NOT NULL,
-            PRIMARY KEY (`id`)
-        );";
-
-        $this->runRequest($sql2);
+        $m = new SeTaskService();
+        $m->createTable();
 
         /* if (!file_exists('data/services/projecttasks/')) {
             mkdir('data/services/projecttasks/', 0755, true);

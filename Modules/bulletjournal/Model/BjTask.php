@@ -18,11 +18,28 @@ class BjTask extends Model {
     public function __construct() {
 
         $this->tableName = "bj_tasks";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_note", "int(11)", 0);
         $this->setColumnsInfo("priority", "int(5)", 0);
         $this->setColumnsInfo("deadline", "date", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bj_tasks` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_note` int NOT NULL DEFAULT 0,
+            `priority` int NOT NULL DEFAULT 0,
+            `deadline` date DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function openedForMigration($id_space, $year, $month){

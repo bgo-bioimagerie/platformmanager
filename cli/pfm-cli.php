@@ -351,12 +351,15 @@ function cliInstall($from=-1) {
         } catch (Exception $e) {
                 $logger->error("Error", ["error" => $e->getMessage()]);
         }
-        $cdb->base();
+        if(!$freshInstall) {
+            // force update on quite old versions
+            Configuration::getLogger()->warning("[db][upgrade] Applying some schema update in case of old schema");
+            require_once 'db/upgrade/1655982779_fix_db_creation.php';
+        }
         // update db release and launch upgrade
         $cdb->upgrade($from);
     } else {
         $logger->info("Db already at release ".$cdb->getVersion());
-        $cdb->base();
     }
 
     $logger->info("Check for upgrades");

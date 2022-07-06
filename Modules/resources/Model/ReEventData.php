@@ -17,10 +17,26 @@ class ReEventData extends Model {
     public function __construct() {
         
         $this->tableName = "re_event_data";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_event", "int(11)", "");
         $this->setColumnsInfo("url", "varchar(255)", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `re_event_data` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_event` int DEFAULT NULL,
+            `url` varchar(255) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function addFile($id_space, $id_event, $url){

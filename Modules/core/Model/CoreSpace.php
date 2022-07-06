@@ -78,6 +78,31 @@ class CorePlan {
     }
 }
 
+class CoreSpaceMenus extends Model {
+
+    public function __construct() {
+        $this->tableName = 'core_space_menus';
+    }
+
+    public function createTable() {
+         // name = module
+         $sql = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(1) NOT NULL DEFAULT 1,
+            `module` varchar(60) NOT NULL DEFAULT '',
+            `url` varchar(120) NOT NULL DEFAULT '',
+            `icon` varchar(120) NOT NULL DEFAULT '',
+            `user_role` int(1) NOT NULL DEFAULT 1,
+            `display_order` int(11) NOT NULL DEFAULT 0,
+            `has_sub_menu` int(1) NOT NULL DEFAULT 1,
+            `color` varchar(7) NOT NULL DEFAULT '#000000',
+            `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
+            PRIMARY KEY (`id`)
+		);";
+        $this->runRequest($sql);
+        $this->baseSchema();
+    }
+}
 
 /**
  * Class defining the Status model
@@ -141,63 +166,29 @@ class CoreSpace extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_spaces` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(30) NOT NULL DEFAULT '',
-        `status` int(1) NOT NULL DEFAULT 0,
-        `color` varchar(7) NOT NULL DEFAULT '#000000',
-        `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
-        `description` text NOT NULL,
-        `image` varchar(255) NOT NULL DEFAULT '',
-        `shortname` varchar(30) NOT NULL DEFAULT '',
-        `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
-        `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
-        `plan` int NOT NULL DEFAULT 0,
-        `plan_expire` int NOT NULL DEFAULT 0,
-        `user_desactivate` int(1) NOT NULL DEFAULT 1,
-        `termsofuse` varchar(255),  /* terms of use URL */
-        `on_user_desactivate` int NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
-        $this->runRequest($sql);
-        $this->addColumn('core_spaces', 'color', 'varchar(7)', "#000000");
-        $this->addColumn('core_spaces', 'description', 'text', '');
-        $this->addColumn('core_spaces', 'image', "varchar(255)", '');
-        $this->addColumn('core_spaces', 'txtcolor', 'varchar(7)', "#ffffff");
-        $this->addColumn('core_spaces', 'plan', "int", '0');
-        $this->addColumn('core_spaces', 'plan_expire', "int", '0');
-        $this->addColumn('core_spaces', 'user_desactivate', "int(1)", '1');
-        $this->addColumn('core_spaces', 'termsofuse', "varchar(255)", '');
-        $this->addColumn('core_spaces', 'on_user_desactivate', "int", '0');
-
-        /* Created in CoreSpaceUser
-        $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
-		`id_user` int(11) NOT NULL DEFAULT 1,
-		`id_space` int(11) NOT NULL DEFAULT 1,
-                `status` int(1) NOT NULL DEFAULT 1
-		);";
-        $this->runRequest($sql2);
-        */
-
-        // name = module
-        $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_space` int(1) NOT NULL DEFAULT 1,
-            `module` varchar(60) NOT NULL DEFAULT '',
-            `url` varchar(120) NOT NULL DEFAULT '',
-            `icon` varchar(120) NOT NULL DEFAULT '',
-            `user_role` int(1) NOT NULL DEFAULT 1,
-            `display_order` int(11) NOT NULL DEFAULT 0,
-            `has_sub_menu` int(1) NOT NULL DEFAULT 1,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(30) NOT NULL DEFAULT '',
+            `status` int(1) NOT NULL DEFAULT 0,
             `color` varchar(7) NOT NULL DEFAULT '#000000',
             `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
+            `description` text NOT NULL,
+            `image` varchar(255) NOT NULL DEFAULT '',
+            `shortname` varchar(30) NOT NULL DEFAULT '',
+            `contact` varchar(100) NOT NULL DEFAULT '',  /* email contact for space */
+            `support` varchar(100) NOT NULL DEFAULT '',  /* support email contact for space */
+            `plan` int NOT NULL DEFAULT 0,
+            `plan_expire` int NOT NULL DEFAULT 0,
+            `user_desactivate` int(1) NOT NULL DEFAULT 1,
+            `termsofuse` varchar(255),  /* terms of use URL */
+            `on_user_desactivate` int NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`)
 		);";
-        $this->runRequest($sql3);
+        $this->runRequest($sql);
+        $this->baseSchema();
 
-        $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);
-        $this->addColumn('core_space_menus', 'has_sub_menu', "int(1)", 1);
-        $this->addColumn('core_space_menus', 'color', "varchar(7)", "#000000");
-        $this->addColumn('core_space_menus', 'txtcolor', "varchar(7)", "#ffffff");
+       $m = new CoreSpaceMenus();
+       $m->createTable();
+
     }
 
     /**

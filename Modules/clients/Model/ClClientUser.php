@@ -6,10 +6,26 @@ class ClClientUser extends Model {
 
     public function __construct() {
         $this->tableName = "cl_j_client_user";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_client", "int(11)", 0);
         $this->setColumnsInfo("id_user", "int(11)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql =  'CREATE TABLE IF NOT EXISTS `cl_j_client_user` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_client` int NOT NULL DEFAULT 0,
+            `id_user` int NOT NULL DEFAULT 0,
+            `id_space` int NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getUsersInfo($id_space, $id_client) {

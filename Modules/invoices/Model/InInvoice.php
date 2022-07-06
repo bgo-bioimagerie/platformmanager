@@ -18,6 +18,7 @@ class InInvoice extends Model {
     public function __construct() {
 
         $this->tableName = "in_invoice";
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("number", "varchar(50)", "");
         $this->setColumnsInfo("id_space", "int(11)", "");
@@ -38,6 +39,35 @@ class InInvoice extends Model {
         $this->setColumnsInfo("id_edited_by", "int(11)", 0);
         $this->setColumnsInfo("discount", "varchar(100)", 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `in_invoice` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `number` varchar(50) DEFAULT NULL,
+            `id_space` int DEFAULT NULL,
+            `period_begin` date DEFAULT NULL,
+            `period_end` date DEFAULT NULL,
+            `date_generated` date DEFAULT NULL,
+            `date_send` date DEFAULT NULL,
+            `visa_send` int NOT NULL DEFAULT 0,
+            `date_paid` date DEFAULT NULL,
+            `id_unit` int NOT NULL DEFAULT 0,
+            `id_responsible` int NOT NULL DEFAULT 0,
+            `total_ht` varchar(50) NOT NULL DEFAULT 0,
+            `id_project` int NOT NULL DEFAULT 0,
+            `title` varchar(255) DEFAULT NULL,
+            `is_paid` int NOT NULL DEFAULT 0,
+            `module` varchar(200) DEFAULT NULL,
+            `controller` varchar(200) DEFAULT NULL,
+            `id_edited_by` int NOT NULL DEFAULT 0,
+            `discount` varchar(100) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function mergeUsers($users){

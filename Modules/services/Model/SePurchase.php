@@ -12,12 +12,29 @@ class SePurchase extends Model {
         public function __construct() {
 
         $this->tableName = "se_purchase";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("comment", "varchar(255)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
         $this->setColumnsInfo("date", "date", "");
         $this->setColumnsInfo("doc_url", "varchar(250)", "");
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `se_purchase` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `comment` varchar(255) DEFAULT NULL,
+            `id_space` int NOT NULL DEFAULT 0,
+            `date` date DEFAULT NULL,
+            `doc_url` varchar(250) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+          )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getForSpace($id_space) {

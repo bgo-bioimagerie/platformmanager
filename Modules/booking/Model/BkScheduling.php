@@ -17,6 +17,8 @@ class BkScheduling extends Model {
     public function __construct() {
 
         $this->tableName = "bk_schedulings";
+
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("is_monday", "int(1)", 1);
         $this->setColumnsInfo("is_tuesday", "int(1)", 1);
@@ -35,6 +37,35 @@ class BkScheduling extends Model {
         $this->setColumnsInfo("force_packages", "tinyint", 0);
         $this->setColumnsInfo('shared', 'tinyint', 0);
         $this->primaryKey = "id";
+        */
+    }
+
+    public function createTable()
+    {
+        $sql = 'CREATE TABLE IF NOT EXISTS `bk_schedulings` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `is_monday` int NOT NULL DEFAULT 1,
+            `is_tuesday` int NOT NULL DEFAULT 1,
+            `is_wednesday` int NOT NULL DEFAULT 1,
+            `is_thursday` int NOT NULL DEFAULT 1,
+            `is_friday` int NOT NULL DEFAULT 1,
+            `is_saturday` int NOT NULL DEFAULT 1,
+            `is_sunday` int NOT NULL DEFAULT 1,
+            `day_begin` int NOT NULL DEFAULT 8,
+            `day_end` int NOT NULL DEFAULT 18,
+            `size_bloc_resa` int NOT NULL DEFAULT 3600,
+            `booking_time_scale` int NOT NULL DEFAULT 1,
+            `resa_time_setting` int NOT NULL DEFAULT 1,
+            `default_color_id` int NOT NULL DEFAULT 1,
+            `shared` tinyint NOT NULL DEFAULT 0,
+            `force_packages` tinyint NOT NULL DEFAULT 0,
+            `name` varchar(100) NOT NULL DEFAULT "",
+            PRIMARY KEY (`id`)
+          )';
+
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getDefault() {

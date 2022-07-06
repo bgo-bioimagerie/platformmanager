@@ -18,9 +18,10 @@ class SeVisa extends Model {
 		    `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_user` int(11) NOT NULL,
             `id_space` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+		    PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function mergeUsers($users) {

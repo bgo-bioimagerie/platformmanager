@@ -28,7 +28,7 @@ class AcStaining extends Model {
 				);";
 
         $this->runRequest($sql);
-
+        $this->baseSchema();
     }
 
     public function getBySpace($id_space) {

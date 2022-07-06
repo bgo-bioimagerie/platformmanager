@@ -30,9 +30,8 @@ class Status extends Model {
 				PRIMARY KEY (`id`)
 				);";
 
-        $pdo = $this->runRequest($sql);
-        $this->addColumn("ac_status", "display_order", "INT(11)", 0);
-        return $pdo;
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     public function getBySpace($id_space) {

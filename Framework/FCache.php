@@ -194,26 +194,23 @@ class FCache extends Model {
      */
     protected function createTableURL() {
         $sql = "CREATE TABLE IF NOT EXISTS `cache_urls` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`identifier` varchar(255) NOT NULL DEFAULT '',
-                `url` varchar(255) NOT NULL DEFAULT '',
-                `module` varchar(255) NOT NULL DEFAULT '',
-                `controller` varchar(255) NOT NULL DEFAULT '',
-                `action` varchar(255) NOT NULL DEFAULT '',
-                `isapi` int(1) NOT NULL DEFAULT 0,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `identifier` varchar(255) NOT NULL DEFAULT '',
+            `url` varchar(255) NOT NULL DEFAULT '',
+            `module` varchar(255) NOT NULL DEFAULT '',
+            `controller` varchar(255) NOT NULL DEFAULT '',
+            `action` varchar(255) NOT NULL DEFAULT '',
+            `isapi` int(1) NOT NULL DEFAULT 0,
 		PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql);
-        
-        $this->addColumn("cache_urls", "isapi", "int(1)", 0);
-        
 
         $sqlg = "CREATE TABLE IF NOT EXISTS `cache_urls_gets` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-                `url_id` int(11) NOT NULL,
-		`name` varchar(255) NOT NULL DEFAULT '',
-                `regexp` varchar(255) NOT NULL DEFAULT '',	
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `url_id` int(11) NOT NULL,
+		    `name` varchar(255) NOT NULL DEFAULT '',
+            `regexp` varchar(255) NOT NULL DEFAULT '',
 		PRIMARY KEY (`id`)
 		);";
 

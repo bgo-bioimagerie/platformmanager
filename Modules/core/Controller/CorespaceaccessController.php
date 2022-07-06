@@ -624,8 +624,7 @@ class CorespaceaccessController extends CoresecureController {
 
             $_SESSION["flash"] = CoreTranslator::UserAccountHasBeenActivated($lang);
             $_SESSION["flashClass"] = "success";
-            $this->redirect("corespaceuseredit/".$id_space."/" . $userId, ["origin" => "spaceaccess"], ['message' => 'user activated']);
-            return;
+            return $this->redirect("corespaceuseredit/".$id_space."/" . $userId, ["origin" => "spaceaccess"], ['message' => 'user activated']);
         }
 
         return $this->render(array(

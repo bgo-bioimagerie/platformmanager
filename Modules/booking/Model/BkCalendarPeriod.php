@@ -29,8 +29,7 @@ class BkCalendarPeriod extends Model {
 		);";
 
         $this->runRequest($sql);
-        
-        $this->addColumn('bk_calendar_period', 'enddate', 'date', "");
+        $this->baseSchema();
     }
 
     public function setEndDate($id_space, $id, $date) {

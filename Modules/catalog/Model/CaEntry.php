@@ -26,17 +26,8 @@ class CaEntry extends Model {
 		);";
 
         $this->runRequest($sql);
+        $this->baseSchema();
 
-        // add columns if no exists
-        $sql2 = "SHOW COLUMNS FROM `ca_entries` LIKE 'image_url'";
-        $pdo = $this->runRequest($sql2);
-        $isColumn = $pdo->fetch();
-        if ($isColumn === false) {
-            $sql = "ALTER TABLE `ca_entries` ADD `image_url` varchar(300) NOT NULL";
-            $this->runRequest($sql);
-        }
-        
-        $this->addColumn("ca_entries", "id_space", "int(11)", 0);
     }
 
     public function add($id_space, $id_category, $title, $short_desc, $full_desc) {

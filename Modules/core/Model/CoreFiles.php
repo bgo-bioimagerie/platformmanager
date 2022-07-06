@@ -19,17 +19,18 @@ class CoreFiles extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `core_files` (
-        `id` int(11) NOT NULL AUTO_INCREMENT,
-        `name` varchar(150) NOT NULL,
-        `id_space` int(11) NOT NULL,
-        `id_user` int(11),
-        `module` varchar(30) NOT NULL,
-        `role` int(11) NOT NULL,
-        `status` int NOT NULL DEFAULT 0,
-        `msg` varchar(255) NOT NULL DEFAULT '',
-        PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `name` varchar(150) NOT NULL,
+            `id_space` int(11) NOT NULL,
+            `id_user` int(11),
+            `module` varchar(30) NOT NULL,
+            `role` int(11) NOT NULL,
+            `status` int NOT NULL DEFAULT 0,
+            `msg` varchar(255) NOT NULL DEFAULT '',
+            PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
+        $this->baseSchema();
     }
 
     /**

@@ -16,15 +16,30 @@ class CoreSpaceAccessOptions extends Model {
      * @return PDOStatement
      */
     public function __construct() {
-
         $this->tableName = "core_space_access_options";
+        /*
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "varchar(100)", "");
         $this->setColumnsInfo("toolname", "varchar(100)", "");
         $this->setColumnsInfo("module", "varchar(100)", "");
         $this->setColumnsInfo("url", "varchar(255)", "");
         $this->primaryKey = "id";
+        */
 
+    }
+
+    public function createTable()
+    {
+        $sql='CREATE TABLE IF NOT EXISTS `core_space_access_options` (
+            `id` int NOT NULL AUTO_INCREMENT,
+            `id_space` int NOT NULL DEFAULT 0,
+            `toolname` varchar(100) DEFAULT NULL,
+            `module` varchar(100) DEFAULT NULL,
+            `url` varchar(255) DEFAULT NULL,
+            PRIMARY KEY (`id`)
+        )';
+        $this->runRequest($sql);
+        $this->baseSchema();
     }
     
     public function getAll($id_space){

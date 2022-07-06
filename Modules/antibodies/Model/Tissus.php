@@ -38,8 +38,7 @@ class Tissus extends Model {
 				);";
 
         $this->runRequest($sql);
-
-        $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
+        $this->baseSchema();
     }
 
     public function getTissusById($id_space ,$id) {

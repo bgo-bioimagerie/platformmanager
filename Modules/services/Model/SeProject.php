@@ -9,10 +9,48 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/StockShelf.php';
 
+class SeProjectUser extends Model {
+    public function __construct() {
+        $this->tableName = "se_project_user";
+    }
 
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_project_user` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_user` int(11) NOT NULL,
+            `id_project` int(11) NOT NULL,
+            `id_space` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+        );";
+
+        $this->runRequest($sql);
+        $this->baseSchema();
+    }
+}
+
+class SeProjectService extends Model {
+    public function __construct() {
+        $this->tableName = "se_project_service";
+    }
+
+    public function createTable() {
+        $sql = "CREATE TABLE IF NOT EXISTS `se_project_service` (
+		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_project` int(11) NOT NULL,
+            `id_service` int(11) NOT NULL,
+            `date` date,
+            `quantity` varchar(255) NOT NULL,
+            `comment` varchar(255) NOT NULL,
+            `id_invoice` int(11) NOT NULL DEFAULT 0,
+            PRIMARY KEY (`id`)
+		);";
+
+        $this->runRequest($sql);
+        $this->baseSchema();
+    }
+}
 
 /**
- * Class defining the Unit model for consomable module
  *
  * @author Sylvain Prigent
  */
@@ -45,38 +83,12 @@ class SeProject extends Model {
             PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+        $this->baseSchema();
 
-        $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
-        $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
-        $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
-        $this->addColumn('se_project', 'samplereturn', 'TEXT', '');
-        $this->addColumn('se_project', 'samplereturndate', 'date', '');
-        $this->addColumn('se_project', 'id_sample_cabinet', 'int(11)', 0);
-        $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
-        $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
-
-        $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_project` int(11) NOT NULL,
-            `id_service` int(11) NOT NULL,
-            `date` date,
-            `quantity` varchar(255) NOT NULL,
-            `comment` varchar(255) NOT NULL,
-            `id_invoice` int(11) NOT NULL DEFAULT 0,
-            PRIMARY KEY (`id`)
-		);";
-
-        $this->runRequest($sql2);
-
-        $sql3 = "CREATE TABLE IF NOT EXISTS `se_project_user` (
-            `id` int(11) NOT NULL AUTO_INCREMENT,
-            `id_user` int(11) NOT NULL,
-            `id_project` int(11) NOT NULL,
-            `id_space` int(11) NOT NULL,
-            PRIMARY KEY (`id`)
-        );";
-
-        $this->runRequest($sql3);
+        $m = new SeProjectUser();
+        $m->createTable();
+        $m = new SeProjectService();
+        $m->createTable();
     }
 
     public function setSampleStock($id_space, $id, $samplestocked, $id_cabinet, $cabinetcomment){
