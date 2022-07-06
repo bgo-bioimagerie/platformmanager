@@ -36,6 +36,8 @@ require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/core/Model/CoreMail.php';
+require_once 'Modules/core/Model/CoreCron.php';
+
 
 
 define("DB_VERSION", 5);
@@ -1045,6 +1047,9 @@ class CoreInstall extends Model {
         $modelStar->createTable();
         $modelMail = new CoreMail();
         $modelMail->createTable();
+
+        $modelCron = new CoreCron();
+        $modelCron->createTable();
 
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0755, true);
