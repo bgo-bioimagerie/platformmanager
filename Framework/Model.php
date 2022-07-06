@@ -161,6 +161,8 @@ abstract class Model {
         $this->addColumn($this->tableName, "created_at", "TIMESTAMP", "INSERT_TIMESTAMP");
         $this->addColumn($this->tableName, "updated_at", "TIMESTAMP", "UPDATE_TIMESTAMP");
         $this->addColumn($this->tableName, "id_space", "int(11)", 0);
+
+        $this->createSpacesView();
     }
 
     public function checkColumn($tableName, $columnName) {
@@ -430,6 +432,42 @@ abstract class Model {
             $params = [$id_space];
         }
         return $this->runRequest($sql, $params)->fetch();
+    }
+
+    public function createSpacesView() {
+        Configuration::getLogger()->debug('[db][views] create views for '.$this->tableName);
+        $dsn = Configuration::get("dsn", null);
+        if(!$dsn) {
+            $dsn = Configuration::get("dsn", 'mysql:host='.Configuration::get('mysql_host', 'mysql').';dbname='.Configuration::get('mysql_dbname', 'platform_manager').';charset=utf8');
+        }
+        $login = Configuration::get("mysql_admin_login", "root");
+        $pwd = Configuration::get("mysql_admin_pwd", "platform_manager");
+        $pdo = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+        $pdo->exec("SET CHARACTER SET utf8");
+
+        try {
+        $sql = 'SELECT * from core_spaces';
+        $spaces = $pdo->query($sql);
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('[db][view] core_spaces may not be available yet: '.$e->getMessage());
+            return;
+        }
+        if(!$spaces) {
+            Configuration::getLogger()->debug('[db][view] no space found');
+            return;
+        }
+        foreach($spaces as $space) {
+            Configuration::getLogger()->debug('[db][view] create view', ['id_space' => $space['id'], 'view' => $this->tableName]);
+            $spaceID = $space['id'];
+            $spaceName = "pfm".$spaceID;
+            $table = $this->tableName;
+            try {
+            $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
+            $pdo->query($sql);
+            } catch(Exception $e) {
+                Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);
+            }
+        }
     }
 
     /**
