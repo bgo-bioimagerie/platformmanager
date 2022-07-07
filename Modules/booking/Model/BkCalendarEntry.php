@@ -1113,6 +1113,7 @@ class BkCalendarEntry extends Model {
  * 
  * Sample influxdb query in grafana:
  * 
+ * # usage per resource
  * from(bucket:"space1")
  * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
  * |> filter(fn: (r) => r["_measurement"] == "booking_usage")
@@ -1120,6 +1121,19 @@ class BkCalendarEntry extends Model {
  * |> group(columns: ["resource", "kind"])
  * |> sum(column: "_value")
  * |> pivot(rowKey: ["resource"], columnKey: ["kind"], valueColumn: "_value")
+ * |> map(fn: (r) => ({r with _value: (r.users / r.open) * 100.0}))
+ * |> drop(columns: ["open", "users"])
+ * |> group()
+ * |> yield(name: "total")
+ * 
+ * # usage per area
+ * from(bucket:"space1")
+ * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+ * |> filter(fn: (r) => r["_measurement"] == "booking_usage")
+ * |> filter(fn: (r) => r["kind"] == "open" or r["kind"] == "users")
+ * |> group(columns: ["area", "kind"])
+ * |> sum(column: "_value")
+ * |> pivot(rowKey: ["area"], columnKey: ["kind"], valueColumn: "_value")
  * |> map(fn: (r) => ({r with _value: (r.users / r.open) * 100.0}))
  * |> drop(columns: ["open", "users"])
  * |> group()
