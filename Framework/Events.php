@@ -562,6 +562,11 @@ class EventHandler {
         }
     }
 
+    public function bookingStatisticsRequest($msg) {
+        $bs = new BkCalendarEntryStats();
+        $bs->run();
+    }
+
     public function invoiceRequest($msg) {
         $id_space = $msg['space']['id'];
         $id_user = $msg['user']['id'];
@@ -708,6 +713,8 @@ class EventHandler {
                 case Events::ACTION_STATISTICS_REQUEST:
                     $this->statRequest($data);
                     break;
+                case Events::ACTION_BOOKING_STATISTICS:
+                    $this->bookingStatisticsRequest($data);
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -757,6 +764,8 @@ class Events {
     public const ACTION_SERVICE_PROJECT_DELETE = 711;
 
     public const ACTION_STATISTICS_REQUEST = 800;
+
+    public const ACTION_BOOKING_STATISTICS = 900;
 
     private static $connection;
     private static $channel;

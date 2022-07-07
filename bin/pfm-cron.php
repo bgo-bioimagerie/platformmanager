@@ -12,7 +12,7 @@ if(Configuration::get('sentry_dsn', '')) {
 
 try {
 	$m = new CoreCron();
-	$m->add(CoreCron::DAILY, 'test');
+	$m->add(CoreCron::DAILY, 'booking_statistics');
 } catch(Throwable $e) {
 	Configuration::getLogger()->error('[init] Something went wrong', ['error' => $e->getMessage()]);
 	if(Configuration::get('sentry_dsn', '')) {
@@ -24,15 +24,19 @@ try {
 while(true) {
 
 	try {
-		$dailyJob = $m->get(CoreCron::DAILY, 'test');
+		$dailyJob = $m->get('test_day');
 		if($dailyJob){
 			Configuration::getLogger()->debug('[daily][test] should execute something');
 		}
-		$monthlyJob = $m->get(CoreCron::DAILY, 'test');
-		if($monthlyJob){
-			Configuration::getLogger()->debug('[monthly][test] should execute something');
+		$bookingStatistics = $m->get('booking_statistics');
+		if($bookingStatistics){
+			Configuration::getLogger()->debug('[monthly][bookingStatistics] run');
+			Events::send([
+				"action" => Events::ACTION_BOOKING_STATISTICS,
+				"space" => ["id" => 0],
+			]);
 		}
-		
+
 	} catch(Throwable $e) {
 		Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage()]);
 		if(Configuration::get('sentry_dsn', '')) {
