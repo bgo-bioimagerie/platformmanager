@@ -14,7 +14,7 @@ try {
 	$m = new CoreCron();
 	$m->add(CoreCron::DAILY, 'booking_statistics');
 } catch(Throwable $e) {
-	Configuration::getLogger()->error('[init] Something went wrong', ['error' => $e->getMessage()]);
+	Configuration::getLogger()->error('[init] Something went wrong', ['error' => $e->getMessage()]);
 	if(Configuration::get('sentry_dsn', '')) {
 		\Sentry\captureException($e);
 	}
@@ -24,11 +24,11 @@ try {
 while(true) {
 
 	try {
-		$dailyJob = $m->get('test_day');
+		$dailyJob = $m->run('test_day');
 		if($dailyJob){
 			Configuration::getLogger()->debug('[daily][test] should execute something');
 		}
-		$bookingStatistics = $m->get('booking_statistics');
+		$bookingStatistics = $m->run('booking_statistics');
 		if($bookingStatistics){
 			Configuration::getLogger()->debug('[monthly][bookingStatistics] run');
 			Events::send([

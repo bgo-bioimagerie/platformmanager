@@ -715,6 +715,7 @@ class EventHandler {
                     break;
                 case Events::ACTION_BOOKING_STATISTICS:
                     $this->bookingStatisticsRequest($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;

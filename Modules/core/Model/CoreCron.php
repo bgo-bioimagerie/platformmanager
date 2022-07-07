@@ -34,7 +34,7 @@ class CoreCron extends Model {
         if($this->exists($name)) {
             return 0;
         }
-        $sql = 'INSERT INTO core_cron (kind, name) VALUES (?,?)';
+        $sql = 'INSERT INTO core_cron (kind, name, last) VALUES (?,?,0)';
         $this->runRequest($sql, array($kind, $name));
         return $this->getDatabase()->lastInsertId();
     }
@@ -98,6 +98,11 @@ class CoreCron extends Model {
         $this->runRequest($sql, [$name]);
     }
 
+    /**
+     * Checks if job needs to be run
+     * 
+     * returns true if is to be executed, and update last parameter
+     */
     public function run(string $name) {
         $job = $this->get($name);
         if($job == null) {
@@ -139,7 +144,10 @@ class CoreCron extends Model {
         }
 
         if($doJob) {
+            Configuration::getLogger()->debug('[cron] run', ['name' => $name]);
             $this->next($name);
+        } else {
+            Configuration::getLogger()->debug('[cron] skip', ['name' => $name]);
         }
         return $doJob;
 

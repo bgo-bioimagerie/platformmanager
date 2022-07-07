@@ -9,6 +9,8 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
+require_once 'Modules/resources/Model/ReArea.php';
+
 
 /**
  * Class defining the booking entries
