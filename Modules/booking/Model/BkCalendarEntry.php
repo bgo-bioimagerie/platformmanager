@@ -1108,7 +1108,24 @@ class BkCalendarEntry extends Model {
 
 
 
-
+/**
+ * Stats for bookings
+ * 
+ * Sample influxdb query in grafana:
+ * 
+ * from(bucket:"space1")
+ * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+ * |> filter(fn: (r) => r["_measurement"] == "booking_usage")
+ * |> filter(fn: (r) => r["kind"] == "open" or r["kind"] == "users")
+ * |> group(columns: ["resource", "kind"])
+ * |> sum(column: "_value")
+ * |> pivot(rowKey: ["resource"], columnKey: ["kind"], valueColumn: "_value")
+ * |> map(fn: (r) => ({r with _value: (r.users / r.open) * 100.0}))
+ * |> drop(columns: ["open", "users"])
+ * |> group()
+ * |> yield(name: "total")
+ * 
+ */
 class BkCalendarEntryStats extends Model {
 
     public function get(DateTime $yesterday, DateTime $today) {
