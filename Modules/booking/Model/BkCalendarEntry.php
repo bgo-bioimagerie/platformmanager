@@ -9,6 +9,8 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/booking/Model/BkScheduling.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
+require_once 'Modules/resources/Model/ReArea.php';
+
 
 /**
  * Class defining the booking entries
@@ -1103,3 +1105,170 @@ class BkCalendarEntry extends Model {
     }
 
 }
+
+
+
+/**
+ * Stats for bookings
+ * 
+ * Sample influxdb query in grafana:
+ * 
+ * # usage per resource
+ * from(bucket:"space1")
+ * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+ * |> filter(fn: (r) => r["_measurement"] == "booking_usage")
+ * |> filter(fn: (r) => r["kind"] == "open" or r["kind"] == "users")
+ * |> group(columns: ["resource", "kind"])
+ * |> sum(column: "_value")
+ * |> pivot(rowKey: ["resource"], columnKey: ["kind"], valueColumn: "_value")
+ * |> map(fn: (r) => ({r with _value: (r.users / r.open) * 100.0}))
+ * |> drop(columns: ["open", "users"])
+ * |> group()
+ * |> yield(name: "total")
+ * 
+ * # usage per area
+ * from(bucket:"space1")
+ * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+ * |> filter(fn: (r) => r["_measurement"] == "booking_usage")
+ * |> filter(fn: (r) => r["kind"] == "open" or r["kind"] == "users")
+ * |> group(columns: ["area", "kind"])
+ * |> sum(column: "_value")
+ * |> pivot(rowKey: ["area"], columnKey: ["kind"], valueColumn: "_value")
+ * |> map(fn: (r) => ({r with _value: (r.users / r.open) * 100.0}))
+ * |> drop(columns: ["open", "users"])
+ * |> group()
+ * |> yield(name: "total")
+ * 
+ */
+class BkCalendarEntryStats extends Model {
+
+    public function get(DateTime $yesterday, DateTime $today) {
+      $m = new CoreSpace();
+      $spaces = $m->getSpaces('id');
+      $r = new ResourceInfo();
+      foreach($spaces as $space){
+  
+        $sql = 'SELECT * from bk_schedulings where id_space=?';
+        $req = $this->runRequest($sql, [$space['id']]);
+        $scheds = $req->fetchAll();
+        $amap = [];
+        foreach($scheds as $sched) {
+          $amap[$sched['id_rearea']] = $sched;
+        }
+  
+        $anames =  [];
+        $am = new ReArea();
+        $areas = $am->getForSpace($space['id']);
+        foreach ($areas as $area) {
+          $anames[$area['id']] = $area['name'];
+        }
+  
+        $rmap = [];
+        $resources = $r->getBySpace($space['id']);
+        foreach($resources as $resource) {
+          $rmap[$resource['id']] = $resource['id_area'];
+          $areaName = $anames[$resource['id_area']];
+          $resourceName = $resource['name'];
+  
+          $sched = $amap[$resource['id_area']] ?? null;
+          Configuration::getLogger()->debug('[sched]', ['sched' => $sched]);
+          if(!$sched) {
+            $s = new BkScheduling();
+            $sched = $s->getDefault();
+          }
+  
+          $duration = ($sched['day_end']-$sched['day_begin'])*3600;
+          $weekday = 'is_'.strtolower($yesterday->format('l'));
+          if(!$sched[$weekday]){
+            Configuration::getLogger()->debug('[closed]', ['weekday' => $weekday]);
+            $duration = 0;
+            continue;
+          }
+          $q = array('id_resource' => $resource['id'], 'id_space' => $space['id'], 'start' =>  $yesterday->getTimestamp(), 'end' =>  $today->getTimestamp());
+          $sql = "SELECT bk_calendar_entry.*, resources.name as resource_name FROM bk_calendar_entry ";
+          $sql .= ' INNER JOIN re_info AS resources ON resources.id = bk_calendar_entry.resource_id';
+          $sql .= " WHERE bk_calendar_entry.resource_id=:id_resource AND bk_calendar_entry.deleted=0 AND bk_calendar_entry.id_space=:id_space";
+          $sql .= " AND ((bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time > :start AND bk_calendar_entry.end_time <= :end) OR
+          (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start AND bk_calendar_entry.end_time <= :end) OR
+          (bk_calendar_entry.start_time >=:start AND bk_calendar_entry.start_time < :end AND bk_calendar_entry.end_time >= :end) OR 
+          (bk_calendar_entry.start_time <=:start AND bk_calendar_entry.end_time >= :end)) ";
+          $req = $this->runRequest($sql, $q);
+          $entries =  $req->fetchAll();
+          $rduration = ['users' => 0, 'holidays' => 0, 'maintenance' => 0];
+          foreach ($entries as $entry) {
+            if($entry['end_time'] > $today->getTimestamp()){
+              $day_end = 24;
+              if($sched['day_end'] != 0) {
+                $day_end = $sched['day_end'];
+              }
+              $entry['end_time'] = $today->getTimestamp() - ((24 - $day_end)*3600);
+            }
+            if($entry['start_time'] < $yesterday->getTimestamp()){
+              $entry['start_time'] = $yesterday->getTimestamp() + $sched['day_begin'] + 3600;
+            }
+            switch ($entry['reason']) {
+              case BkCalendarEntry::$REASON_BOOKING:
+                $rduration['users'] += $entry['end_time'] - $entry['start_time'];
+                break;
+              case BkCalendarEntry::$REASON_HOLIDAY:
+                $rduration['holidays'] += $entry['end_time'] - $entry['start_time'];
+                break;
+              case BkCalendarEntry::$REASON_MAINTENANCE:
+                $rduration['maintenance'] += $entry['end_time'] - $entry['start_time'];
+                break;
+              default:
+                Configuration::getLogger()->error('unknown booking reason', ['entry' => $entry]);
+                break;
+            }
+          }
+          $rtotal = $rduration['users'] + $rduration['holidays'] + $rduration['maintenance'];
+          $maxopen = $duration -  $rduration['holidays'] - $rduration['maintenance'];
+          Configuration::getLogger()->info('[stat]', ['ts' => $yesterday->getTimestamp(), 'date' => $yesterday->format('Y-m-d'), 'resource' => $resource['id'], 'max' => $duration, 'used' => $rduration, 'total_used' => $rtotal]);
+  
+          $statHandler = new Statistics();
+          if($duration) {
+            $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($duration)], 'tags' =>['kind' => 'max', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+            $statHandler->record($space['shortname'], $stat);
+            $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($rtotal)], 'tags' =>['kind' => 'used', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+            $statHandler->record($space['shortname'], $stat);
+              $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($rduration['users'])], 'tags' =>['kind' => 'users', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+              $statHandler->record($space['shortname'], $stat);
+              $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($rduration['holidays'])], 'tags' =>['kind' => 'holidays', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+              $statHandler->record($space['shortname'], $stat);
+              $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($rduration['maintenance'])], 'tags' =>['kind' => 'maintenance', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+              $statHandler->record($space['shortname'], $stat);
+              $stat = ['name' => 'booking_usage', 'fields' => ['value' => intval($maxopen)], 'tags' =>['kind' => 'open', 'area' => $areaName, 'resource' => $resourceName], 'time' => $yesterday->getTimestamp()];
+              $statHandler->record($space['shortname'], $stat);
+          }
+  
+        }
+      }
+    }
+  
+    public function run(int|null $from=null){
+      if ($from == null || $from == 0) {
+        $from = time();
+      }
+      $sql = "SELECT MIN(start_time) as day_min, MAX(end_time) as day_max FROM bk_calendar_entry WHERE start_time >= ?";
+      $res = $this->runRequest($sql,[$from]);
+      $dates = $res->fetch();
+      Configuration::getLogger()->info('[ranges]', ['dates' => $dates]);
+      $today = new DateTime();
+      $today->setTimestamp(intval($dates['day_min']));
+      $today->setTime(0, 0, 0);
+      $stopAt = new DateTime();
+      $stopAt->setTimestamp(intval($dates['day_max']));
+      $stopAt->setTime(0, 0, 0);
+      Configuration::getLogger()->info('[range]', ['from' => $today->format('Y-m-d'), 'to' => $stopAt->format('Y-m-d')]);
+  
+      while ($today <= $stopAt) {
+        $yesterday  = new DateTime();
+        $yesterday->setTimestamp($today->getTimestamp());
+        $interval = new DateInterval('P1D');
+        $yesterday->sub($interval);
+        Configuration::getLogger()->info('[range]', ['today' => $today->format('Y-m-d'), 'yesterday' => $yesterday->format('Y-m-d')]);
+        $this->get($yesterday, $today);
+        $today->modify('+1 day');
+      }
+    }
+  }

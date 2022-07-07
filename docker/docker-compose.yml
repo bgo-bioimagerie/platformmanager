@@ -1,5 +1,43 @@
 version: "3"
 services:
+  pfm-cron:
+    image: quay.io/genouest/pfm
+    build:
+      context: .
+    depends_on:
+      - mysql
+      - pfm-rabbitmq
+      - influxdb
+    environment:
+      WAIT_HOSTS: pfm-rabbitmq:5672,mysql:3306
+      MYSQL_HOST: mysql 
+      MYSQL_DBNAME: platform_manager
+      MYSQL_USER: platform_manager
+      MYSQL_PASS: ${MYSQL_PASSWORD}
+      SMTP_HOST: ${PFM_SMTP_HOST}
+      SMTP_PORT: 1025
+      SMTP_FROM: ${PFM_SMTP_FROM}
+      DEBUG: 0
+      DEBUG_SQL: 0
+      PFM_MODE: dev
+      PFM_PUBLIC_URL: ${PFM_WEB_URL}
+      PFM_AMQP_HOST: pfm-rabbitmq
+      PFM_AMQP_USER: pfm
+      PFM_AMQP_PASSWORD: pfm
+      PFM_INFLUXDB_URL: http://influxdb:8086
+      PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}
+      PFM_INFLUXDB_ORG: pfm
+      PFM_ADMIN_USER: pfmadmin
+      PFM_ADMIN_EMAIL: admin@pfm.org
+      PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
+      PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
+      PFM_REDIS_HOST: redis
+      PFM_TIMEZONE: 'UTC'
+    working_dir: /var/www/platformmanager
+    entrypoint: ["/pfmextra-entrypoint.sh", "cron"]
+    volumes:
+      - ./data:/var/www/platformmanager/data # Mount the application data directory
+
   pfm-helpdesk:
     image: quay.io/genouest/pfm
     build:

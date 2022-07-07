@@ -80,7 +80,7 @@ class Statistics {
         return Configuration::get('influxdb_url', '') !== '';
     }
 
-    public function getClient($space) {
+    public function getClient($space) :InfluxDB2\Client {
         if(!isset($this->clients[$space])) {
             if (!$this->enabled()) {
                 Configuration::getLogger()->debug('[stats] disabled');
@@ -110,7 +110,7 @@ class Statistics {
         unset($this->wapis[$space]);
     }
 
-    public function getWriteApi($space) {
+    public function getWriteApi($space) :InfluxDB2\WriteApi {
         if(!isset($this->clients[$space])) {
             $this->getClient($space);
         }
@@ -143,7 +143,7 @@ class Statistics {
             if($writeApi == null) {
                 return true;
             }
-            $writeApi->write($point);
+            $writeApi->write($point, InfluxDB2\Model\WritePrecision::S);
         } catch(Throwable $e) {
             Configuration::getLogger()->error('[stats] stat error', ['message' => $e->getMessage(), 'stat' => $stat]);
             $this->closeClient($space);

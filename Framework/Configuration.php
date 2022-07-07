@@ -115,22 +115,27 @@ class Configuration {
             self::$parameters['mysql_admin_pwd']= getenv('MYSQL_ADMIN_PWD');
         }
 
+        $mysqlOverride = false;
         if(getenv('MYSQL_HOST')) {
             self::$parameters['mysql_host']= getenv('MYSQL_HOST');
+            $mysqlOverride = true;
         }
         if(getenv('MYSQL_DBNAME')) {
             self::$parameters['mysql_dbname']= getenv('MYSQL_DBNAME');
+            $mysqlOverride = true;
         }
         if(getenv('MYSQL_USER')) {
             self::$parameters['login']= getenv('MYSQL_USER');
+            $mysqlOverride = true;
         }
         if(getenv('MYSQL_PASS')) {
             self::$parameters['pwd']= getenv('MYSQL_PASS');
+            $mysqlOverride = true;
         }
         if(getenv('MYSQL_DSN')) {
             self::$parameters['dsn'] = getenv('MYSQL_DSN');
         }
-        if(!isset(self::$parameters['dsn'])) {
+        if(!isset(self::$parameters['dsn']) || $mysqlOverride) {
             try {
                 if(!isset(self::$parameters['mysql_host']) || !isset(self::$parameters['mysql_dbname'])) {
                     throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
