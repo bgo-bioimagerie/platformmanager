@@ -5,6 +5,7 @@
 ### Fixes
 
 * [core] fix invalid check on core pending accounts
+* [com] fix news popup display on space welcome page
 
 ## 2.7.1
 
