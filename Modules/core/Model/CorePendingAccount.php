@@ -57,7 +57,7 @@ class CorePendingAccount extends Model {
      * @return bool
      */
     public function exists($id_space, $id_user){
-        $sql = "SELECT id FROM core_pending_accounts WHERE id_user=? AND id_space=?";
+        $sql = "SELECT id FROM core_pending_accounts WHERE id_user=? AND id_space=? AND (validated=0 OR (validated=1 AND validated_by=0)";
         $req = $this->runRequest($sql, array($id_user, $id_space));
         if ($req->rowCount() > 0){
             return true;

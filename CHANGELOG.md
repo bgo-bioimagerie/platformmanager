@@ -1,5 +1,11 @@
 # Changes
 
+## 2.8.0
+
+### Fixes
+
+* [core] fix invalid check on core pending accounts
+
 ## 2.7.1
 
 ### Fixes
