@@ -346,7 +346,7 @@ class CorespaceaccessController extends CoresecureController {
             }
 
             $pendingModel = new CorePendingAccount();
-            if($pendingModel->exists($id_space, $user['idUser'])) {
+            if($pendingModel->isActuallyPending($id_space, $user['idUser'])) {
                 $this->displayFormWarnings("PendingUserAccount", $id_space, $lang);
                 return;
             }
