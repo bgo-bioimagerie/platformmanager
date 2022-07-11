@@ -1,5 +1,11 @@
 # Changes
 
+## 2.8.0
+
+### Fixes
+
+* [com] fix news popup display on space welcome page
+
 ## 2.7.1
 
 ### Fixes
