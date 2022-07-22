@@ -215,7 +215,7 @@ class BookingconfigController extends CoresecureController {
 
     protected function bookingSetDefaultView($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
-        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, 0);
+        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
         
         $form = new Form($this->request, "BkSetdefaultViewForm");
         $form->addSeparator(BookingTranslator::Set_default_booking_view($lang));
