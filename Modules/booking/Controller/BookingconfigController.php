@@ -99,6 +99,14 @@ class BookingconfigController extends CoresecureController {
         
             return $this->redirect("bookingconfig/".$id_space);
         }
+
+        $formbookingSetDefaultView = $this->bookingSetDefaultView($id_space, $lang);
+        if ($formbookingSetDefaultView->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("BkSetDefaultView", $this->request->getParameter("BkSetDefaultView"), $id_space);
+        
+            return $this->redirect("bookingconfig/".$id_space);
+        }
         
         /*
         $formBookingCanUserEditStartedResa = $this->bookingCanUserEditStartedResa($id_space, $lang);
@@ -149,6 +157,7 @@ class BookingconfigController extends CoresecureController {
             $formSettingsMenusactivation->getHtml($lang), 
             $formSettingsMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
+            $formbookingSetDefaultView->getHtml($lang),
             //$formBookingCanUserEditStartedResa->getHtml($lang),
             //$bookingRestrictionForm->getHtml($lang),
             $formBookingOption->getHtml($lang), 
@@ -198,6 +207,35 @@ class BookingconfigController extends CoresecureController {
         $form->addSeparator(BookingTranslator::Use_recurent_booking($lang));
         
         $form->addSelect("BkUseRecurentBooking", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkUseRecurentBooking);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+
+        return $form;
+    }
+
+    protected function bookingSetDefaultView($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, 0);
+        
+        $form = new Form($this->request, "BkSetdefaultViewForm");
+        $form->addSeparator(BookingTranslator::Set_default_booking_view($lang));
+
+        $optionsNames = array(
+            BookingTranslator::Day($lang),
+            BookingTranslator::Day_Area($lang),
+            BookingTranslator::Week($lang),
+            BookingTranslator::Week_Area($lang),
+            BookingTranslator::Month($lang)
+        );
+        $optionsValues = array(
+            "bookingday",
+            "bookingdayarea",
+            "bookingweek",
+            "bookingweekarea",
+            "bookingmonth"
+        );
+        
+        $form->addSelect("BkSetDefaultView", "", $optionsNames, $optionsValues, $BkSetDefaultView);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
 
