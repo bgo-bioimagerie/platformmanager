@@ -2,6 +2,10 @@
 
 ## 2.8.0
 
+### Features / enhancements
+
+* [booking] add calendar default view option in booking config
+
 ### Fixes
 
 * [core] fix invalid check on core pending accounts

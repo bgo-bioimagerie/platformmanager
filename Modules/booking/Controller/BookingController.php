@@ -148,14 +148,16 @@ class BookingController extends BookingabstractController {
         ];
 
 
-        $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
+        $bkUserDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");        
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
             $this->redirect($lastView . "/" . $id_space, $qc);
-        } else if ($calendarDefaultView == "") {
-            $this->redirect("bookingdayarea/" . $id_space, $qc);
+        } else if ($bkUserDefaultView == "") {
+            $modelCoreConfig = new CoreConfig();
+            $bkSpaceDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
+            $this->redirect($bkSpaceDefaultView . "/" . $id_space, $qc);
         } else {
-            $this->redirect($calendarDefaultView . "/" . $id_space, $qc);
+            $this->redirect($bkUserDefaultView . "/" . $id_space, $qc);
         }
     }
 
