@@ -10,6 +10,7 @@
 
 * [core] fix invalid check on core pending accounts
 * [com] fix news popup display on space welcome page
+* [invoices] fix global invoice if no order is to be charged (Closes #688)
 
 ## 2.7.1
 

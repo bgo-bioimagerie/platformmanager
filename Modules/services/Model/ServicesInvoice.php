@@ -52,7 +52,7 @@ class ServicesInvoice extends InvoiceModel {
         $sim = new ServicesInvoice();
         $contentAll = $sim->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
 
-        if (empty($contentAll)) {
+        if (empty($contentAll['orders'])) {
             return false;
         }
 
@@ -84,7 +84,13 @@ class ServicesInvoice extends InvoiceModel {
         // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $id_space);
         if (count($orders) == 0) {
-            return $orders;
+            return [
+                'total_ht' => 0,
+                'content' => '',
+                'details' => '',
+                'orders' => [],
+                'services' => []
+            ];
         }
         $id_orders = [];
         foreach($orders as $order) {
@@ -275,34 +281,35 @@ class ServicesInvoice extends InvoiceModel {
 
         // orders
         $ordersContent = $this->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
+        if (!empty($ordersContent['orders'])) {
+            $content['total_ht'] += $ordersContent['total_ht'];
+            $orders = $ordersContent['orders'];
+            $ordersServices = $ordersContent['services'];
 
-        $content['total_ht'] += $ordersContent['total_ht'];
-        $orders = $ordersContent['orders'];
-        $ordersServices = $ordersContent['services'];
-
-        $morder = [];
-        foreach($orders as $order){
-            $morder[$order['id']] = $order['no_identification'];
-        }
-        foreach($ordersServices as $orderService) {
-            $name = $ssm->getName($id_space, $orderService['id']);
-            $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
-            $id_orders = explode(',', $orderService['id_order']);
-            $orderInfo['no_identification'] = [];
-            foreach($id_orders as $id_order) {
-                if(isset($morder[$id_order])) {
-                    $orderInfo['no_identification'][] = $morder[$id_order];
-                }
+            $morder = [];
+            foreach($orders as $order){
+                $morder[$order['id']] = $order['no_identification'];
             }
-            $orderInfo['no_identification'] = implode(',', $orderInfo['no_identification']);
-            $content["count"][] = $orderInfo;
-        }
+            foreach($ordersServices as $orderService) {
+                $name = $ssm->getName($id_space, $orderService['id']);
+                $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
+                $id_orders = explode(',', $orderService['id_order']);
+                $orderInfo['no_identification'] = [];
+                foreach($id_orders as $id_order) {
+                    if(isset($morder[$id_order])) {
+                        $orderInfo['no_identification'][] = $morder[$id_order];
+                    }
+                }
+                $orderInfo['no_identification'] = implode(',', $orderInfo['no_identification']);
+                $content["count"][] = $orderInfo;
+            }
 
-        // close orders
-        $modelOrder = new SeOrder();
-        foreach ($orders as $order) {
-            $modelOrder->setEntryClosed($id_space, $order["id"]);
-            $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
+            // close orders
+            $modelOrder = new SeOrder();
+            foreach ($orders as $order) {
+                $modelOrder->setEntryClosed($id_space, $order["id"]);
+                $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
+            }
         }
 
         // projects
