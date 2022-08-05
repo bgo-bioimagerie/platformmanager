@@ -10,6 +10,7 @@
 
 * [core] fix invalid check on core pending accounts
 * [com] fix news popup display on space welcome page
+* [booking] show old client account used for a booking, in booking edition in case user switched to new client
 
 ## 2.7.1
 
