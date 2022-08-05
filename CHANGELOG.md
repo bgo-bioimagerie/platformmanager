@@ -7,6 +7,7 @@
 * [services] add missing base columns on se_project_user_table on upgrade
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
+* [booking] show old client account used for a booking, in booking edition in case user switched to new client
 
 ## 2.7.0
 

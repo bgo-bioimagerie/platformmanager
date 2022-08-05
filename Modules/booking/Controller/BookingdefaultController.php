@@ -19,6 +19,7 @@ require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
 
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
@@ -769,6 +770,16 @@ END:VCALENDAR
             $form->addHidden("id_resource", $id_resource);
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
+
+        $clName = null;
+        if($resaInfo['responsible_id']) {
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $resaInfo['responsible_id']);
+            if(!$clName) {
+                $clName = 'Unknown';
+            }
+        }
+
         // responsible
         if ($canEditReservation) {
             $modelResp = new ClClientUser();
@@ -783,7 +794,12 @@ END:VCALENDAR
                 $choicesid[] = $r["id"];
                 $choices[] = ($r["name"]);
             }
+            if($resaInfo['responsible_id'] && !in_array($resaInfo['responsible_id'], $choicesid)){
+                $choicesid[] = $resaInfo['responsible_id'];
+                $choices[] = '[!]'.$clName;
+            }
             $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+
         } else {
             $modelResp = new ClClientUser();
             $resps = $modelResp->getUserClientAccounts($_SESSION["id_user"], $id_space);
