@@ -12,6 +12,8 @@ class Constants {
     const DATE_FORMAT = 'Y-m-d';
     const TIME_FORMAT = 'H:i';
 
+    const UNKNOWN = 'Unknown';
+
 }
 
 ?>

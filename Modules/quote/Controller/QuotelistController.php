@@ -147,7 +147,7 @@ class QuotelistController extends QuoteController {
                 $modelCl = new ClClient();
                 $clName = $modelCl->getName($id_space, $info['id_client']);
                 if(!$clName) {
-                    $clName = 'Unknown';
+                    $clName = Constants::UNKNOWN;
                 }
                 array_push($clientSelect['choices'], '[!] '.$clName);
                 array_push($clientSelect['choicesid'], $info['id_client']);
@@ -232,7 +232,7 @@ class QuotelistController extends QuoteController {
                 $items[$i]["name"] = $modelResource->getName($id_space, $items[$i]["id_content"]);
             }
             if ($items[$i]["module"] == "services") {
-                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]) ?? 'unknown';
+                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]) ?? Constants::UNKNOWN;
             }
         }
         $headers = array(
@@ -283,7 +283,7 @@ class QuotelistController extends QuoteController {
             $modelCl = new ClClient();
             $clName = $modelCl->getName($id_space, $info['id_client']);
             if(!$clName) {
-                $clName = 'Unknown';
+                $clName = Constants::UNKNOWN;
             }
             array_push($clientNames, '[!] '.$clName);
             array_push($clientIds, $info['id_client']);
@@ -411,7 +411,7 @@ class QuotelistController extends QuoteController {
                 $unitprice = $modelBookingPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             } else if ($item['module'] == "services") {
-                $name = $modelServices->getItemName($id_space, $item['id_content']) ?? 'unknown';
+                $name = $modelServices->getItemName($id_space, $item['id_content']) ?? Constants::UNKNOWN;
                 $quantity = $item['quantity'];
                 $unitprice = $modelServicesPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);

@@ -185,7 +185,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? 'unknown', $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
             }
         }
         return $contentList;

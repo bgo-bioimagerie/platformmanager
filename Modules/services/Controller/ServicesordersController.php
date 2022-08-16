@@ -155,7 +155,7 @@ class ServicesordersController extends ServicesController {
                 $modelCl = new ClClient();
                 $clName = $modelCl->getName($id_space, $value['id_resp']);
                 if(!$clName) {
-                    $clName = 'Unknown';
+                    $clName = Constants::UNKNOWN;
                 }
                 array_push($clientSelect['choices'], '[!] '.$clName);
                 array_push($clientSelect['choicesid'], $value['id_resp']);
