@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Email.php';
+require_once 'Framework/Model.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -376,6 +377,7 @@ while(true) {
             Configuration::getLogger()->debug('Close error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
     }
+    Model::resetDatabase();
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 
     }

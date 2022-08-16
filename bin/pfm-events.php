@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once 'Framework/Events.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Model.php';
 require_once 'Framework/Statistics.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
@@ -34,6 +35,7 @@ while(true) {
 					\Sentry\captureException($e);
 				}
 			}
+			Model::resetDatabase();
 			$msg->ack();
 		};
 
