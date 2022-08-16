@@ -796,7 +796,7 @@ END:VCALENDAR
             }
             if($resaInfo['responsible_id'] && !in_array($resaInfo['responsible_id'], $choicesid)){
                 $choicesid[] = $resaInfo['responsible_id'];
-                $choices[] = '[!]'.$clName;
+                $choices[] = '[!] '.$clName;
             }
             $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
 

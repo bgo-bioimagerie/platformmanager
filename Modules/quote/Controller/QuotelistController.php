@@ -143,6 +143,15 @@ class QuotelistController extends QuoteController {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
+            if($info['id_client'] && !in_array($info['id_client'], $clientSelect['choicesid'])){
+                $modelCl = new ClClient();
+                $clName = $modelCl->getName($id_space, $info['id_client']);
+                if(!$clName) {
+                    $clName = 'Unknown';
+                }
+                array_push($clientSelect['choices'], '[!] '.$clName);
+                array_push($clientSelect['choicesid'], $info['id_client']);
+            }
             $clientSelect['value'] = ($info['id_client'] != 0) ? $info['id_client'] : $userClients[0]['id'] ?? "";
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
@@ -269,6 +278,18 @@ class QuotelistController extends QuoteController {
             array_push($clientIds, $client['id']);
             array_push($clientNames, $client['name']);
         }
+
+        if($info['id_client'] && !in_array($info['id_client'], $clientIds)){
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $info['id_client']);
+            if(!$clName) {
+                $clName = 'Unknown';
+            }
+            array_push($clientNames, '[!] '.$clName);
+            array_push($clientIds, $info['id_client']);
+        }
+
+
         // set selected client by default
         $selectedClientId = $info['id_client'] ?? $clientIds[0];
         $addressToDisplay = "";

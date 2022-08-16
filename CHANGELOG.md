@@ -12,6 +12,8 @@
 * [com] fix news popup display on space welcome page
 * [invoices] fix global invoice if no order is to be charged (Closes #688)
 * [bin/] close database connexion after each message/run
+* [clients] on client removal, remove user/client link
+* [quotes] show old client account used for a quote, in quote edition in case user switched to new client
 
 ## 2.7.1
 

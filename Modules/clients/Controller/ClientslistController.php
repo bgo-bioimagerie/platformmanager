@@ -8,7 +8,7 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Model/ClAddress.php';
-
+require_once 'Modules/clients/Model/ClClientUser.php';
 require_once 'Modules/clients/Form/AddressForm.php';
 require_once 'Modules/clients/Controller/ClientsController.php';
 
@@ -233,6 +233,10 @@ class ClientslistController extends ClientsController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+
+        // remove users from client
+        $clu = new ClClientUser();
+        $clu->deleteClientUsers($id, $id_space);
 
         // query to delete the provider
         $this->clientModel->delete($id_space, $id);
