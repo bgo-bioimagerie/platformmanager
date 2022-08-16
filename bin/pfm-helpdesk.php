@@ -271,6 +271,11 @@ while(true) {
                         continue;
                     }
 
+                    if(!$to) {
+                        Configuration::getLogger()->debug('[helpdesk] no destination found skip message', ['from' => $from[0]]);
+                        continue;
+                    }
+
                     $id_space = 0;
                     $toSpace = null;
                     $otherDests = [];
