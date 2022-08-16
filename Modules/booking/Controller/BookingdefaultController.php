@@ -330,7 +330,7 @@ class BookingdefaultController extends BookingabstractController {
         if ($use_package == "yes") {
             $package_id = $this->request->getParameter("package_id");
             $modelPackage = new BkPackage();
-            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id);
+            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id, true);
             $end_time = $start_time + 3600 * $pk_duration;
         }
 
@@ -381,7 +381,7 @@ class BookingdefaultController extends BookingabstractController {
             $_SESSION["flash"] = "Error: Start Time Cannot Be Null";
             $valid = false;
         }
-        if ($start_time == 0) {
+        if ($end_time == 0) {
             $_SESSION["flash"] = "Error: End Time Cannot Be Null";
             $valid = false;
         }
@@ -895,6 +895,12 @@ END:VCALENDAR
         // conditionnal on package
         $modelPackage = new BkPackage();
         $packages = $modelPackage->getByResource($id_space, $id_resource);
+
+        // if resa was saved with a deleted package, add it to $packages
+        if ($resaInfo["package_id"] > 0 && $modelPackage->isDeleted($id_space, $resaInfo["package_id"])) {
+            array_push($packages, $modelPackage->getById($id_space, $resaInfo["package_id"]));
+        }
+
         $pNames = array();
         $pIds = array();
         foreach ($packages as $p) {

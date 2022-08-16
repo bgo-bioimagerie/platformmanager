@@ -127,8 +127,11 @@ class BkPackage extends Model {
         return $packages;
     }
 
-    public function getPackageDuration($id_space, $id) {
-        $sql = "SELECT duration FROM bk_packages WHERE id=? AND deleted=0 AND id_space=?";
+    public function getPackageDuration($id_space, $id,$include_deleted = false) {
+        $sql = "SELECT duration FROM bk_packages WHERE id=? AND id_space=?";
+        if (!$include_deleted) {
+            $sql .= " AND deleted=0";
+        }
         $req = $this->runRequest($sql, array($id, $id_space));
         $duration = $req->fetch();
         return $duration ? $duration[0] : null;
