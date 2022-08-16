@@ -537,7 +537,7 @@ class ServicesprojectsController extends ServicesController {
         $modelInvoice = new InInvoice();
         $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
             $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
