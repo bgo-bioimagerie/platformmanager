@@ -429,6 +429,17 @@ class ServicesprojectsController extends ServicesController {
             array_shift($users["names"]);
         }
         $clients = $modelClient->getForList($id_space);
+
+        if($value['id_resp'] && !in_array($value['id_resp'], $clients["ids"])){
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $value['id_resp']);
+            if(!$clName) {
+                $clName = 'Unknown';
+            }
+            array_push($clients["names"], '[!] '.$clName);
+            array_push($clients["ids"], $value['id_resp']);
+        }
+
         $inChargeList = $modelVisa->getForList($id_space);
 
         $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
@@ -526,7 +537,7 @@ class ServicesprojectsController extends ServicesController {
         $modelInvoice = new InInvoice();
         $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
             $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
