@@ -46,10 +46,22 @@ class BkPackage extends Model {
         $this->runRequest($sql4);
     }
 
-    public function getByResource($id_space, $id_resource) {
-        $sql = "SELECT * FROM bk_packages WHERE id_resource=? AND deleted=0 AND id_space=?";
+    public function getByResource($id_space, $id_resource, $include_deleted = false) {
+        $sql = "SELECT * FROM bk_packages WHERE id_resource=? AND id_space=?";
+        if (!$include_deleted) {
+            $sql .= " AND deleted=0";
+        }
         $req = $this->runRequest($sql, array($id_resource, $id_space));
         return $req->fetchAll();
+    }
+
+    /**
+     * check if a package is deleted
+     */
+    public function isDeleted($id_space, $id_pkg) {
+        $sql = "SELECT * FROM bk_packages WHERE id=? AND id_space=? AND deleted=1";
+        $req = $this->runRequest($sql, array($id_pkg, $id_space));
+        return $req->rowCount() > 0;
     }
 
     public function getAll($id_space, $sortentrey) {
@@ -58,8 +70,11 @@ class BkPackage extends Model {
         return $req->fetchAll();
     }
     
-    public function getName($id_space, $id){
-        $sql = "SELECT name FROM bk_packages WHERE id=? AND deleted=0 AND id_space=?";
+    public function getName($id_space, $id, $include_deleted = false) {
+        $sql = "SELECT name FROM bk_packages WHERE id=? AND id_space=?";
+        if (!$include_deleted) {
+            $sql .= " AND deleted=0";
+        }
         $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req ? $req[0] : null;
     }
@@ -67,6 +82,11 @@ class BkPackage extends Model {
     public function getForSpace($id_space, $sort) {
         $sql = "SELECT * FROM bk_packages WHERE deleted=0 AND id_space=? ORDER BY " . $sort . " ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
+    }
+
+    public function getById($id_space, $id_pk) {
+        $sql = "SELECT * FROM bk_packages WHERE id=? AND id_space=?";
+        return $this->runRequest($sql, array($id_pk, $id_space))->fetch();
     }
 
     /**

@@ -193,6 +193,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoice = new InInvoice();
         $modelClient = new ClClient();
+        $modelResource = new ResourceInfo();
         
         $invoiceInfo = $modelInvoice->get($id_space ,$id_invoice);
 
@@ -202,11 +203,20 @@ class BookinginvoiceController extends InvoiceAbstractController {
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
         $contentArray = explode(";", $item["content"]);
         $total = 0;
+        $deletedPackages = array();
+        $bkPackageModel = new BkPackage();
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
                 $itemIds[] = $id_item;
                 $itemServices[] = $data[0];
+                // if package and is deleted, add it to the list of deleted packages
+                if (strpos($data[0], '_pk_')) {
+                    $pk_id = explode('_pk_', $data[0])[1];
+                    if ($bkPackageModel->isDeleted($id_space, $pk_id)) {
+                        $deletedPackages[] = $pk_id;
+                    }
+                }
                 $itemQuantities[] = $data[1];
                 $itemPrices[] = $data[2];
                 if (is_numeric($data[1]) && is_numeric($data[2])) {
@@ -219,6 +229,17 @@ class BookinginvoiceController extends InvoiceAbstractController {
         }
 
         $listResources = $this->getResourcesList($id_space, $id_belonging, $lang);
+
+        // add selected deleted packages to $listResources
+        if (!empty($deletedPackages)) {
+            foreach ($deletedPackages as $id_package) {
+                $p = $bkPackageModel->getById($id_space, $id_package);
+                $r = $modelResource->get($id_space, $p["id_resource"]);
+                array_push($listResources["ids"], $r["id"] . "_pk_" . $p["id"]);
+                array_push($listResources["names"], $r["name"] . " " . $p["name"]);
+            }
+        }
+
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ResourcesTranslator::Resource($lang), $listResources["names"], $listResources["ids"], $itemServices);
         $formAdd->addFloat("quantity", InvoicesTranslator::Quantity($lang), $itemQuantities);
@@ -503,7 +524,7 @@ class BookinginvoiceController extends InvoiceAbstractController {
                     }
                 } else if (count($idArray) == 3) {
                     $name = $modelResources->getName($id_space, $idArray[0]);
-                    $name .= " " . $modelPackage->getName($id_space, $idArray[2]);
+                    $name .= " " . $modelPackage->getName($id_space, $idArray[2], include_deleted:true);
                 }
 
                 $contentList[] = array($name, $data[1], $data[2]);

@@ -520,7 +520,7 @@ class BookingInvoice extends InvoiceModel {
         $modelPriceOwner = new BkOwnerPrice();
         foreach ($resources as $resource) {
             // get the packages prices
-            $packages = $modelPackage->getByResource($id_space ,$resource["id"]);
+            $packages = $modelPackage->getByResource($id_space ,$resource["id"], include_deleted:true);
 
             $pricesPackages = array();
             for ($i = 0; $i < count($packages); $i++) {
