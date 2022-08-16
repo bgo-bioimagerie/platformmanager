@@ -185,7 +185,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? 'unknown', $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -222,6 +222,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         }
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+        foreach ($itemServices as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);

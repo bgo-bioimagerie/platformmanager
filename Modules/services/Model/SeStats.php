@@ -189,7 +189,7 @@ class SeOrderStats {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item, true) ?? 'unknown' ;
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -324,7 +324,7 @@ class SeOrderStats {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item[0]);
+            $name = $modelItem->getItemName($id_space, $item[0], true) ?? 'unknown';
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -1473,7 +1473,7 @@ class SeStats extends Model {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item, true) ?? 'unknown';
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -1561,7 +1561,7 @@ class SeStats extends Model {
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item[0]);
+            $name = $modelItem->getItemName($id_space, $item[0], true) ?? 'unknown';
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;

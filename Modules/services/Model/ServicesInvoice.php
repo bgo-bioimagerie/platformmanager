@@ -291,7 +291,7 @@ class ServicesInvoice extends InvoiceModel {
                 $morder[$order['id']] = $order['no_identification'];
             }
             foreach($ordersServices as $orderService) {
-                $name = $ssm->getName($id_space, $orderService['id']);
+                $name = $ssm->getName($id_space, $orderService['id'], true);
                 $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
                 $id_orders = explode(',', $orderService['id_order']);
                 $orderInfo['no_identification'] = [];
@@ -320,7 +320,7 @@ class ServicesInvoice extends InvoiceModel {
         $content['total_ht'] += $projectsContent['total_ht'];
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
-            $name = $ssm->getName($id_space, $projectService['id']);
+            $name = $ssm->getName($id_space, $projectService['id'], true);
             $pname = '';
             if(isset($projectService['no_identification'])) {
                 $pname = $modelProject->getName($id_space, $projectService['no_identification']);
@@ -344,9 +344,8 @@ class ServicesInvoice extends InvoiceModel {
     public function details($id_space, $invoice_id, $lang) {
 
         // services
-        $sqls = "SELECT * FROM se_services WHERE id_space=? AND deleted=0";
+        $sqls = "SELECT * FROM se_services WHERE id_space=?";
         $services = $this->runRequest($sqls, array($id_space))->fetchAll();
-
 
         $modelProject = new SeProject();
 

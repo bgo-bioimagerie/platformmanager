@@ -232,7 +232,7 @@ class QuotelistController extends QuoteController {
                 $items[$i]["name"] = $modelResource->getName($id_space, $items[$i]["id_content"]);
             }
             if ($items[$i]["module"] == "services") {
-                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]);
+                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]) ?? 'unknown';
             }
         }
         $headers = array(
@@ -411,7 +411,7 @@ class QuotelistController extends QuoteController {
                 $unitprice = $modelBookingPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             } else if ($item['module'] == "services") {
-                $name = $modelServices->getItemName($id_space, $item['id_content']);
+                $name = $modelServices->getItemName($id_space, $item['id_content']) ?? 'unknown';
                 $quantity = $item['quantity'];
                 $unitprice = $modelServicesPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);

@@ -191,6 +191,13 @@ class ServicesordersController extends ServicesController {
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
 
+        foreach ($items['services'] as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
+
         $formAddName = "orderEditForm";
         $formAdd = new FormAdd($this->request, $formAddName);
         $formAdd->addSelect("services", ServicesTranslator::services($lang), $services["names"], $services["ids"], $items["services"]);
