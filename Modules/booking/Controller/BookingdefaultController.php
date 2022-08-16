@@ -872,10 +872,6 @@ END:VCALENDAR
             }
         }
         foreach ($quantitiesInfo as $q) {
-            $name = $q["name"];
-            if ($q["mandatory"] == 1) {
-                $name .= "*";
-            }
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
             $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
