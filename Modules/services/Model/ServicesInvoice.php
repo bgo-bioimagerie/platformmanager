@@ -99,7 +99,8 @@ class ServicesInvoice extends InvoiceModel {
         //$services = $modelOrder->openedItemsForClient($id_space, $id_client);
         $services = $modelOrder->openedOrdersItems($id_space, $id_orders);
         $modelClPricing = new ClPricing();
-        $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0];
+        $clpricing = $modelClPricing->getPricingByClient($id_space, $id_client);
+        $pricing = empty($clpricing) ? ['id' => 0, 'name' => Constants::UNKNOWN] : $clpricing[0];
         $contentServices = $this->parseServicesToContent($id_space, $services, $pricing['id']);
         $content = '';
         foreach ($contentServices as $c) {
