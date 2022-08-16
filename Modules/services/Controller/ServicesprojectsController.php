@@ -429,6 +429,17 @@ class ServicesprojectsController extends ServicesController {
             array_shift($users["names"]);
         }
         $clients = $modelClient->getForList($id_space);
+
+        if($value['id_resp'] && !in_array($value['id_resp'], $clients["ids"])){
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $value['id_resp']);
+            if(!$clName) {
+                $clName = 'Unknown';
+            }
+            array_push($clients["names"], '[!] '.$clName);
+            array_push($clients["ids"], $value['id_resp']);
+        }
+
         $inChargeList = $modelVisa->getForList($id_space);
 
         $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);

@@ -150,6 +150,18 @@ class ServicesordersController extends ServicesController {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
+
+            if($value['id_resp'] && !in_array($value['id_resp'], $clientSelect['choicesid'])){
+                $modelCl = new ClClient();
+                $clName = $modelCl->getName($id_space, $value['id_resp']);
+                if(!$clName) {
+                    $clName = 'Unknown';
+                }
+                array_push($clientSelect['choices'], '[!] '.$clName);
+                array_push($clientSelect['choicesid'], $value['id_resp']);
+            }
+
+
             $clientSelect['value'] = ($value['id_resp'] != 0) ? $value['id_resp'] : $userClients[0]['id'] ?? "";
         } else {
             $value = $modelOrder->defaultEntryValues();
