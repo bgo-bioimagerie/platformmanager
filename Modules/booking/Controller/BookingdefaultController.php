@@ -318,11 +318,14 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource, true);
+
         $quantities = "";
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
-            $quantities .= $q["id"] . "=" . $qt . ";";
+            if (!empty($qt)) {
+                $quantities .= $q["id"] . "=" . $qt . ";";
+            }
         }
 
         $use_package = $this->request->getParameterNoException("use_package");
@@ -861,6 +864,7 @@ END:VCALENDAR
         // quantities
         $modelQuantities = new BkCalQuantities();
         $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
+
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
         $qDataValue = array();
@@ -869,6 +873,10 @@ END:VCALENDAR
             if (count($sd) == 2) {
                 $qDataId[] = $sd[0];
                 $qDataValue[] = $sd[1];
+                // if resa was saved with a deleted quantity, add it to $quantitiesInfos
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelQuantities->isDeleted($id_space, $sd[0])) {
+                    array_push($quantitiesInfo, $modelQuantities->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($quantitiesInfo as $q) {
