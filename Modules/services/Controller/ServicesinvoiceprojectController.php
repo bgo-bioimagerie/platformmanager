@@ -163,10 +163,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
             }
             if (count($data) > 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]) . " " . $data[3], $data[1], $data[2]);
+                $contentList[] = array(($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN) . " " . $data[3], $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -223,6 +223,13 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         }
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+        foreach ($itemServices as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
+
 
         $formAdd = new FormAdd($this->request, "editinvoiceprojectformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);

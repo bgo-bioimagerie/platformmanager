@@ -1016,9 +1016,9 @@ class CoreUser extends Model {
             return $req->fetch();
         } else {
             return array("id" => 0,
-                "login" => 'unknown',
-                "firstname" => 'unknown',
-                "name" => 'unknown',
+                "login" => Constants::UNKNOWN,
+                "firstname" => Constants::UNKNOWN,
+                "name" => Constants::UNKNOWN,
                 "email" => '',
                 "pwd" => '',
                 "id_status" => 1,

@@ -16,6 +16,7 @@
 * [quotes] show old client account used for a quote, in quote edition in case user switched to new client
 * [services] show old client account used for a order/project, in order/project edition in case user switched to new client
 * [services/clients] prevent pricing removal if used by a client
+* [invoice] manage invoicing/display in case of deleted service
 
 ## 2.7.1
 

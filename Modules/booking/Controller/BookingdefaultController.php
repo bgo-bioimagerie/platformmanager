@@ -776,7 +776,7 @@ END:VCALENDAR
             $modelCl = new ClClient();
             $clName = $modelCl->getName($id_space, $resaInfo['responsible_id']);
             if(!$clName) {
-                $clName = 'Unknown';
+                $clName = Constants::UNKNOWN;
             }
         }
 
