@@ -434,7 +434,7 @@ class ServicesprojectsController extends ServicesController {
             $modelCl = new ClClient();
             $clName = $modelCl->getName($id_space, $value['id_resp']);
             if(!$clName) {
-                $clName = 'Unknown';
+                $clName = Constants::UNKNOWN;
             }
             array_push($clients["names"], '[!] '.$clName);
             array_push($clients["ids"], $value['id_resp']);
@@ -537,7 +537,11 @@ class ServicesprojectsController extends ServicesController {
         $modelInvoice = new InInvoice();
         $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            $name = $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            if($name == null){
+                $name = '[!] '.($modelServices->getItemName($id_space, $items[$i]["id_service"], true) ?? Constants::UNKNOWN);
+            }
+            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $name;
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
             $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
@@ -936,7 +940,7 @@ class ServicesprojectsController extends ServicesController {
 
             $content .= $entry["date"] . ";";
             $content .= str_replace(";", ",", $entry["comment"]) . ";";
-            $content .= $modelItem->getItemName($id_space, $entry["id_service"]) . ";";
+            $content .= ($modelItem->getItemName($id_space, $entry["id_service"]) ?? Constants::UNKNOWN) . ";";
             if ($modelItem->getItemType($id_space, $entry["id_service"]) == 4) {
 
                 $content .= 1 . ";";

@@ -155,7 +155,7 @@ class ServicesordersController extends ServicesController {
                 $modelCl = new ClClient();
                 $clName = $modelCl->getName($id_space, $value['id_resp']);
                 if(!$clName) {
-                    $clName = 'Unknown';
+                    $clName = Constants::UNKNOWN;
                 }
                 array_push($clientSelect['choices'], '[!] '.$clName);
                 array_push($clientSelect['choicesid'], $value['id_resp']);
@@ -190,6 +190,13 @@ class ServicesordersController extends ServicesController {
         
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+
+        foreach ($items['services'] as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
 
         $formAddName = "orderEditForm";
         $formAdd = new FormAdd($this->request, $formAddName);
