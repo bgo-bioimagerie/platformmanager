@@ -209,7 +209,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($err);
         }
-        exit(1);
+        sleep(120);
+        continue;
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
@@ -217,7 +218,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
         }
-        exit(1);
+        sleep(120);
+        continue;
     } else {
         $info = imap_check($mbox);
         if (FALSE !== $info) {
