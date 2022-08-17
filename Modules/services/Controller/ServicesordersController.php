@@ -254,7 +254,7 @@ class ServicesordersController extends ServicesController {
             }
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = intval($servicesQuantities[$i]) - $qOld;
+                $qDelta = intval($servicesQuantities[$i]) - intval($qOld);
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }
