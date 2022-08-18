@@ -133,8 +133,8 @@ class BookingInvoice extends InvoiceModel {
         $modelClient = new ClClient();
         $LABpricingid = $modelClient->getPricingID($id_space, $id_resp);
         Configuration::getLogger()->debug('[invoice][booking] get pricing for client', ['client' => $id_resp, 'id' => $LABpricingid]);
-        $modelResouces = new ResourceInfo();
-        $resources = $modelResouces->getBySpace($id_space);
+        $modelResources = new ResourceInfo();
+        $resources = $modelResources->getBySpace($id_space);
 
         // get the pricing
         $timePrices = $this->getUnitTimePricesForEachResource($id_space, $resources, $LABpricingid, $id_resp);
@@ -214,6 +214,12 @@ class BookingInvoice extends InvoiceModel {
                 $resaQuantityId = $calQuantityId;
                 $deletedInvoicingQuantityId = null;
 
+                /*
+                 * For a reservation with invoicing units:
+                 * if there is a new invoicing unit for this resource and it is used in this reservation, this is the one which will be used: it replaces the deleted one.
+                 * if there are more than 1 deleted invoicing unit used in this reservation: throws an exception
+                 * if a deleted invoicing unit is used and there is no current invoicing unit used in this reservation, then the deleted one will be used
+                */
                 if ($reservation["quantities"] && $reservation["quantities"] != null) {
                     // Genrate an array of quantity's ids used in this reservation
                     $resaQtes = explode(";", $reservation["quantities"]);
@@ -229,8 +235,11 @@ class BookingInvoice extends InvoiceModel {
                         if (in_array($qteId, $invoicingDeletedCalQteIds)) {
                             $count++;
                             if ($count > 1) {
-                                // TODO: add resa details in exception message
-                                throw new PfmException("There are more than one invoicing unit (cf booking quantities) in reservation " . $reservation["id"]);
+                                $modelUser = new CoreUser();
+                                $resourceName = $modelResources->getName($id_space, $reservation["resource_id"]);
+                                $bookerLogin = $modelUser->getInfo($reservation["booked_by_id"])["login"];
+                                $start_time = date("Y-m-d H:i:s", $reservation["start_time"]);
+                                throw new PfmException("There are more than one invoicing unit in reservation " . $reservation["id"] . " starting at " . $start_time . " for resource " . $resourceName . ", booked by " . $bookerLogin);
                             }
                             $deletedInvoicingQuantityId = $qteId;
                         }
@@ -238,7 +247,7 @@ class BookingInvoice extends InvoiceModel {
 
                     // Determine which invoicing unit should be taken into account
                     if ($deletedInvoicingQuantityId != null && (!$resaIsInvoicingUnit || !in_array($resaQuantityId, $resaQteIds))) {
-                        // if no not deleted invoicing unit or if it is not used in this resa, we use the deleted one
+                        // if no not deleted invoicing unit or if it is not used in this resa, uses the deleted one
                         $resaQuantityId = $deletedInvoicingQuantityId;
                         $resaIsInvoicingUnit = true;
                     } // else, follows normal process
