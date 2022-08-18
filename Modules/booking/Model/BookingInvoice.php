@@ -152,7 +152,27 @@ class BookingInvoice extends InvoiceModel {
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
 
             // get list of quantities
-            $calQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], true);
+
+            // TODO::
+            /* if qte as invoicing unit deleted for a resource, will use it anyway => should check if used. If not, use normal tarification.
+            * + handle case where old + new invoicing units
+            */
+
+            $allCalQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], include_deleted:true);
+
+            // Get non-deleted quantities
+            $calQuantities = array_filter($allCalQuantities, function($calQte) {
+                return $calQte["deleted"] == 0;
+            });
+
+            // Get deleted quantities which are not used as invoicing unit
+            $invoicingDeletedCalQtes = array_filter($allCalQuantities, function($calQte) {
+                return $calQte["deleted"] == 1 && $calQte["is_invoicing_unit"] == 1;
+            });
+            $invoicingDeletedCalQteIds = array_map(function($calQte) {
+                return $calQte["id"];
+            }, $invoicingDeletedCalQtes);
+
             $calQuantities = ($calQuantities != null) ? $calQuantities : [];
 
             // tell if there's an invoicing unit for this resource amongst quantities and get its ID
@@ -187,8 +207,42 @@ class BookingInvoice extends InvoiceModel {
             // $userDetails = [];
 
             $totalQte = 0; // $totalQte = total number of items booked
+            
 
             foreach ($reservations as $reservation) {
+                $resaIsInvoicingUnit = $isInvoicingUnit;
+                $resaQuantityId = $calQuantityId;
+                $deletedInvoicingQuantityId = null;
+
+                if ($reservation["quantities"] && $reservation["quantities"] != null) {
+                    // Genrate an array of quantity's ids used in this reservation
+                    $resaQtes = explode(";", $reservation["quantities"]);
+                    array_pop($resaQtes);
+                    $resaQteIds = array_map(function($qte) {
+                        return explode("=", $qte)[0];
+                    }, $resaQtes);
+
+                    // Is one of them amongst the deleted invoicable quantities?
+                    // If there are more than one, raises an exception
+                    $count = 0;
+                    foreach($resaQteIds as $qteId) {
+                        if (in_array($qteId, $invoicingDeletedCalQteIds)) {
+                            $count++;
+                            if ($count > 1) {
+                                // TODO: add resa details in exception message
+                                throw new PfmException("There are more than one invoicing unit (cf booking quantities) in reservation " . $reservation["id"]);
+                            }
+                            $deletedInvoicingQuantityId = $qteId;
+                        }
+                    }
+
+                    // Determine which invoicing unit should be taken into account
+                    if ($deletedInvoicingQuantityId != null && (!$resaIsInvoicingUnit || !in_array($resaQuantityId, $resaQteIds))) {
+                        // if no not deleted invoicing unit or if it is not used in this resa, we use the deleted one
+                        $resaQuantityId = $deletedInvoicingQuantityId;
+                        $resaIsInvoicingUnit = true;
+                    } // else, follows normal process
+                }
 
                 // count: day night we, packages
                 if ($reservation["package_id"] > 0) {
@@ -214,11 +268,15 @@ class BookingInvoice extends InvoiceModel {
                     $resaDayNightWe = $slots['hours'];
                     Configuration::getLogger()->debug('[invoice][booking] night and week ends', ['resource' => $res['id'], 'count' => $resaDayNightWe]);
 
-                    if ($isInvoicingUnit) {
+                    if ($resaIsInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
+                            
+
+
                             // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
                             // get number of resources booked
-                            $strToFind = strval($calQuantityId) . "=";
+                            $strToFind = strval($resaQuantityId) . "=";
+                            
                             $lastPos = 0;
                             $positions = array();
                             while(($lastPos = strpos($reservation["quantities"], $strToFind, $lastPos))!==false) {
@@ -227,6 +285,7 @@ class BookingInvoice extends InvoiceModel {
                             }
                             $foundStr = substr($reservation["quantities"], $positions[0]);
                             $qte = intval(explode("=", $foundStr)[1]);
+
                         } else {
                             $qte = 0;
                         }
@@ -252,7 +311,6 @@ class BookingInvoice extends InvoiceModel {
                             'user' => $reservation['recipient_id']
                         ];
                         */
-                        
                     } else {
                         $userTime["nb_hours_day"] += $resaDayNightWe["nb_hours_day"];
                         $userTime["nb_hours_night"] += $resaDayNightWe["nb_hours_night"];
@@ -269,7 +327,7 @@ class BookingInvoice extends InvoiceModel {
                             'user' => $reservation['recipient_id']
                         ];
                         */
-                    }                    
+                    }              
                 }
 
                 $modelCal->setReservationInvoice($id_space, $reservation["id"], $invoice_id);
