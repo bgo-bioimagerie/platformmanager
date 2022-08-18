@@ -306,11 +306,13 @@ class BookingdefaultController extends BookingabstractController {
 
 
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource, true);
         $supplementaries = "";
         foreach ($supInfos as $sup) {
             $q = $this->request->getParameterNoException("sup" . $sup["id"]);
-            $supplementaries .= $sup["id"] . "=" . $q . ";";
+            if (!empty($q)) {
+                $supplementaries .= $sup["id"] . "=" . $q . ";";
+            }
             if($sup['mandatory'] && !$q){
                 Configuration::getLogger()->debug('Missing supp ', ['supp' => $sup]);
                 throw new PfmParamException('Field '.$sup['name'].' mandatory');
@@ -831,7 +833,7 @@ END:VCALENDAR
 
         // supplemetaries informations
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supData = explode(";", $resaInfo["supplementaries"]);
         $supDataId = array();
         $supDataValue = array();
@@ -840,6 +842,9 @@ END:VCALENDAR
             if (count($sd) == 2) {
                 $supDataId[] = $sd[0];
                 $supDataValue[] = $sd[1];
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelSupInfo->isDeleted($id_space, $sd[0])) {
+                    array_push($supInfos, $modelSupInfo->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($supInfos as $sup) {
