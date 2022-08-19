@@ -781,7 +781,7 @@ END:VCALENDAR
             $modelCl = new ClClient();
             $clName = $modelCl->getName($id_space, $resaInfo['responsible_id']);
             if(!$clName) {
-                $clName = 'Unknown';
+                $clName = Constants::UNKNOWN;
             }
         }
 
@@ -872,7 +872,6 @@ END:VCALENDAR
         // quantities
         $modelQuantities = new BkCalQuantities();
         $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
-
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
         $qDataValue = array();

@@ -18,6 +18,8 @@
 * [services/clients] prevent pricing removal if used by a client
 * [booking] keep deleted packages/supplementaries/quantities infos in existing reservations
 * [invoices] allow to invoice existing reservations with deleted packages or invoicable quantities
+* [invoice] manage invoicing/display in case of deleted service
+* [services] fix orders edition form
 
 ## 2.7.1
 

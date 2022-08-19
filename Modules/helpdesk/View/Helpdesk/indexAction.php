@@ -502,7 +502,7 @@ Vue.createApp({
                 case 4:
                     return 'Spam';
                 default:
-                    return 'Unknown';
+                    return Constants::UNKNOWN;
             }
         },
         fetchTicket (id) {

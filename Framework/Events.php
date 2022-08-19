@@ -268,8 +268,6 @@ class EventHandler {
 
     public function spaceQuoteEdit($action, $msg) {
         $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
-        $model = new CoreSpace();
-        $space = $model->getSpace($msg['space']['id']);
         $modelQuote = new Quote();
         
         if (array_key_exists('quote', $msg)) {

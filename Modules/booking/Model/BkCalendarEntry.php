@@ -101,6 +101,9 @@ class BkCalendarEntry extends Model {
                 foreach ($darray as $di) {
                     $diarray = explode("=", $di);  // @bug was using d and di was not used, to be tested
                     if ($diarray[0] == $quantities[$i]["id"]) {
+                        if(!is_numeric($diarray[1])){
+                            continue;
+                        }
                         $count += $diarray[1];
                     }
                 }

@@ -209,7 +209,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($err);
         }
-        exit(1);
+        sleep(120);
+        continue;
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
@@ -217,7 +218,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
         }
-        exit(1);
+        sleep(120);
+        continue;
     } else {
         $info = imap_check($mbox);
         if (FALSE !== $info) {
@@ -268,6 +270,11 @@ while(true) {
 
                     if(isAutoReply($mail, $headersDetailed) || ignore($from[0])) {
                         Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip message', ['from' => $from[0]]);
+                        continue;
+                    }
+
+                    if(!$to) {
+                        Configuration::getLogger()->debug('[helpdesk] no destination found skip message', ['from' => $from[0]]);
                         continue;
                     }
 

@@ -14,7 +14,7 @@
             {
                 elementId: "id_user",
                 apiRoute: `clientusers/getusers/`,
-                activateOnLoad: true,
+                activateOnLoad: false,
                 addEmptyItem: true
             }
         ];
