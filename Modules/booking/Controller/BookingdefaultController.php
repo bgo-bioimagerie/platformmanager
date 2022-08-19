@@ -842,6 +842,7 @@ END:VCALENDAR
             if (count($sd) == 2) {
                 $supDataId[] = $sd[0];
                 $supDataValue[] = $sd[1];
+                // If used, add deleted supplementary info
                 if ($sd[0] > 0 && $sd[1] > 0 && $modelSupInfo->isDeleted($id_space, $sd[0])) {
                     array_push($supInfos, $modelSupInfo->getById($id_space, $sd[0]));
                 }
@@ -850,10 +851,12 @@ END:VCALENDAR
         foreach ($supInfos as $sup) {
             $key = array_search($sup["id"], $supDataId);
             $value = "";
+            // if deleted, add a [!] warning
+            $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
             if ($key !== false) {
                 $value = $supDataValue[$key];
             }
-            $form->addText("sup" . $sup["id"], $sup["name"], $sup["mandatory"], $value);
+            $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
         }
 
         $modelColors = new BkColorCode();
@@ -885,13 +888,10 @@ END:VCALENDAR
             }
         }
         foreach ($quantitiesInfo as $q) {
-            $name = $q["name"];
-            if ($q["mandatory"] == 1) {
-                $name .= "*";
-            }
+            $qName = $q["deleted"] == 1 ? '[!] ' . $q["name"] : $q["name"];
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
-            $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
+            $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
         }
 
         // booking nav bar
@@ -917,7 +917,8 @@ END:VCALENDAR
         $pNames = array();
         $pIds = array();
         foreach ($packages as $p) {
-            $pNames[] = $p["name"];
+            $pName = $p["deleted"] == 1 ? '[!] ' . $p["name"] : $p["name"];
+            $pNames[] = $pName;
             $pIds[] = $p["id"];
         }
 

@@ -16,6 +16,8 @@
 * [quotes] show old client account used for a quote, in quote edition in case user switched to new client
 * [services] show old client account used for a order/project, in order/project edition in case user switched to new client
 * [services/clients] prevent pricing removal if used by a client
+* [booking] keep deleted packages/supplementaries/quantities infos in existing reservations
+* [invoices] allow to invoice existing reservations with deleted packages or invoicable quantities
 
 ## 2.7.1
 
