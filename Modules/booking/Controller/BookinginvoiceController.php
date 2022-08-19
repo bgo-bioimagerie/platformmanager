@@ -234,9 +234,10 @@ class BookinginvoiceController extends InvoiceAbstractController {
         if (!empty($deletedPackages)) {
             foreach ($deletedPackages as $id_package) {
                 $p = $bkPackageModel->getById($id_space, $id_package);
+                $pName = $p["name"] . " [!]";
                 $r = $modelResource->get($id_space, $p["id_resource"]);
                 array_push($listResources["ids"], $r["id"] . "_pk_" . $p["id"]);
-                array_push($listResources["names"], $r["name"] . " " . $p["name"]);
+                array_push($listResources["names"], $r["name"] . " " . $pName);
             }
         }
 
