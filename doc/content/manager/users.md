@@ -12,16 +12,27 @@ their space if user does not already have an account
 If user already have an account, he can request to join the space via the web
 interface (Join button).
 
-## Create a user as a space admin
+## Create/add a user as a space admin
 
-If you want to directly link a user to a specific space or if you are *space admin*, not superadmin, you can create user from within a space by going into *Users module* in your space homepage.
+If you want to directly link a user to a specific space or if you are *space admin*, not superadmin, you can create a new user or add an existing user to your space from within a space by going into *Users module* in your space homepage.
 
 ![admin space homepage](../../install_12.png)
 
 ![user creation](../../create_user_5.png)
 
-Once in *Users module* main page, you have to click *Add* at the bottom of the left side menu.
-The *Create an account* screen displays.
+Once in *Users module* main page, you have to click *Add User* at the bottom of the left side menu.
+The *Create an account* / *Add existing account* screen displays.
+
+### Add an existing user to your space
+
+Under the *Add existing account* section, fill in the login of the user you want to add to your space, then affect them a role.
+Once validated, a flash message will confirm the user has been added.
+
+![user creation](../../create_user_10.png)
+
+### Create a new user
+
+Fill the *Create an account* form in.
 
 ![user creation](../../create_user_6.png)
 

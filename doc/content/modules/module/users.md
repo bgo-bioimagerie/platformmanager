@@ -12,7 +12,7 @@ Within this module, you can:
 - [authorize *users* to access your *space*](./#users-management)
 - [affect roles to users within your *space*](./#users-management)
 - [manage users *booking access*](./#manage-users-booking-access)
-- [manage users *client accounts*](./#link-users-to-a-client)
+- [manage users *client accounts*](./#link-clients-to-a-user)
 
 ## Item definition
 
@@ -41,7 +41,7 @@ Within a *space*, a *user* as a *role*. The role is used to manage access to spa
 
 ### User activity state
 
-Relatively to a space, a user can be *pending*, *active*, or *inactive*.
+Relatively to a space a user can be *pending*, *active*, or *inactive*.
 
 #### Pending
 When a user account is linked to a space, his activity state is first set to *pending*. It means that they still have been affected no role for this space.
@@ -66,31 +66,39 @@ Creating a *user* creates an *account*. A *user account* can be member of multip
 ## Set a space admin
 See [Promote a user to space administration](../../../manager/users/#promote-a-user-to-space-administration)
 
-## Link users to a client
+## Users Access
 
-You can link users to a client by clicking the *Client accounts* button for a user.
+Within the access page, you can manage users *space access*, *booking access* and *client accounts*.
+It is accessible by clicking the *Access* button for the desired user.
 
-![basic configuration](../../../users_module_4.png)
+### Manage users space access
 
-Then, just choose a client amongst the Clients selector and click *Add*.
-
-![basic configuration](../../../users_module_5.png)
-
-## Manage users booking access
-
-By default, users are not authorized to book resources. To make users able to book a resource, you have to manage their booking access.
-Note that, since you need to have activated the *Booking module* to display the *Booking access* button aside the users names.
+Under this section, you can change their role and enter informations relative to their contract and to your platform convention.
 
 ![basic configuration](../../../users_module_1.png)
 
-Click the *Booking access* button for the user you want to be able to book a resource.
+### Link clients to a user
+
+You can link users to a client by clicking the *Client accounts* button from the access page.
+
+Then, just choose a client amongst the Clients selector and click *Add*.
 
 ![basic configuration](../../../users_module_2.png)
 
-Then click *Add* button (*i.e.* "add" this the user to the list of users who can book this resource) for the resource you want them to be able to book.
+### Manage users booking access
+
+Depending on your booking settings, users may have to be authorized  in order to being able to book resources.
+Booking authorizations target resources categories, not resources themselves.
+To make users being able to book a resource, you have to manage their booking access.
+Note that you need first to have activated the *Booking module* and set at least one category and one visa.
+
+Click the *Booking access* button to move into the Booking authorizations section.
 
 ![basic configuration](../../../users_module_3.png)
 
-Fill *Activation date* and, eventually, *Visa* if you set your *Booking module* to require visas.
+Then select the category to add to user's authorisations, the related visa and click *Save* button for the resource you want them to be able to book.
 
-[comment]: # (When editing this doc, not filling visa returns an error)
+Under *Authorisations for [username]* figures a summary of the current authorisations.
+
+Under *Authorizations history for [username] figures an history of user's authorisations modifications.
+
