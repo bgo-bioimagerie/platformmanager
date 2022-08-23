@@ -6,7 +6,7 @@ date: 2022-08-23T13:30:30+02:00
 
 **Invoices module** allows you to create and send invoices related bookings, orders and projects.
 
-![resources_module](../../../resources_module_6.png)
+![invoices_module](../../../invoices_module_5.png)
 
 Within this module, you can:
 - [*generate booking invoices*](./#booking-invoices)
