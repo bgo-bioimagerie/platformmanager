@@ -35,7 +35,7 @@ It is defined by its ("\*" for *mandatory*):
 
 ### Category
 
-A **category** contain multiple resources. For example, if you have 3 scanners (_scanner1_, _scanner2_, _scanner3_), they can be grouped under the category _Scanners_.
+A **category** contains multiple resources. For example, if you have 3 scanners (_scanner1_, _scanner2_, _scanner3_), they can be grouped under the category _Scanners_.
 
 ### Area
 
