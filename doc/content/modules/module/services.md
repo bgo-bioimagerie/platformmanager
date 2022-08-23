@@ -1,6 +1,6 @@
 ---
 title: "Services"
-date: 2021-08-13T13:30:30+02:00
+date: 2022-08-23T13:30:30+02:00
 ---
 
 
@@ -9,10 +9,10 @@ date: 2021-08-13T13:30:30+02:00
 ![resources_module](../../../services_module_1.png)
 
 Within this module, you can:
-- [manage *projects*](./#add-a-resource)
-- [manage *orders*](./#add-an-area)
-- [manage *services*](./#add-a-category)
-- [manage *stocks*](./#add-a-visa)
+- [manage *projects*](./#manage-projects)
+- [manage *orders*](./#manage-orders)
+- [manage *services*](./#creating-a-service)
+- [manage *stocks*](./#manage-stocks)
 ## Item definition
 
 ### Project
@@ -58,7 +58,7 @@ Within your space, go into _Configuration_ module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _resources_ line.
+Then click edit button in _services_ line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 
