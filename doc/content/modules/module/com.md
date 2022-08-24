@@ -4,7 +4,7 @@ date: 2022-08-23T13:30:30+02:00
 ---
 
 
-**Com module** allows you display informational messages news on your home page.
+**Com module** allows you to display informational messages news on your home page.
 
 ![com_module](../../../com_module_5.png)
 
