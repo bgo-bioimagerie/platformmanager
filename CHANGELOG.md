@@ -18,6 +18,7 @@
 * [services/clients] prevent pricing removal if used by a client
 * [invoice] manage invoicing/display in case of deleted service
 * [services] fix orders edition form
+* [com] avoid displaying news popup if no news
 
 ## 2.7.1
 
