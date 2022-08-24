@@ -54,8 +54,11 @@ let newsView = Vue.createApp({
                             });
                         });
                     }
+                    return data;
                 }).
-                then(this.displayPopup());
+                then(data => {
+                    if (data.news.length > 0) {this.displayPopup();}
+                });
         },
         displayPopup() {
             let myModal = new bootstrap.Modal(document.getElementById('compopup_box'))
