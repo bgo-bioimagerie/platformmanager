@@ -14,7 +14,7 @@ Within this module, you can:
 
 ## Module activation and configuration
 
-Within your space, go into _Configuration_ module. Com module could be found on the second page.
+Within your space, go into _Com_ module. Com module could be found on the second page.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
