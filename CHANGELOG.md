@@ -19,6 +19,7 @@
 * [invoice] manage invoicing/display in case of deleted service
 * [services] fix orders edition form
 * [com] avoid displaying news popup if no news
+* [catalog] fix catalog public page header file upload
 
 ## 2.7.1
 
