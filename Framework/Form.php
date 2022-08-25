@@ -34,6 +34,7 @@ class Form {
     private $readonly;
     private $checkUnicity;
     private $suggestLogin;
+    private $confirmIdenticity;
 
     private $choices;
     private $choicesid;
@@ -314,7 +315,7 @@ class Form {
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false) {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false, $confirmIdenticity = false) {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -330,6 +331,9 @@ class Form {
         $this->checkUnicity[] = $checkUnicity;
         if ($suggestLogin) {
             $this->suggestLogin = true;
+        }
+        if ($confirmIdenticity) {
+            $this->confirmIdenticity = $confirmIdenticity;
         }
     }
 
@@ -440,7 +444,7 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addEmail($name, $label, $isMandatory = false, $value = "", $checkUnicity = false) {
+    public function addEmail($name, $label, $isMandatory = false, $value = "", $checkUnicity = false, $confirmIdenticity = false) {
         $this->types[] = "email";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -454,6 +458,9 @@ class Form {
         $this->submitOnChange[] = false;
         $this->readonly[] = false;
         $this->checkUnicity[] = $checkUnicity;
+        if ($confirmIdenticity) {
+            $this->confirmIdenticity = $confirmIdenticity;
+        }
     }
 
     /**
@@ -769,6 +776,10 @@ class Form {
         
         if ($this->suggestLogin) {
             $html .= $formHtml->suggestLoginScript();
+        }
+
+        if ($this->confirmIdenticity) {
+            $html .= $formHtml->confirmIdenticityScript();
         }
 
         if ($this->isFormAdd === true) {

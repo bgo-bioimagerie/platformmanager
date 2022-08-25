@@ -714,4 +714,12 @@ class FormHtml {
         return file_get_contents("Framework/suggestLogin_script.php");
     }
 
+    /**
+     * 
+     * @return type
+     */
+    static public function confirmIdenticityScript() {
+        return file_get_contents("Framework/confirmidenticity_script.php");
+    }
+
 }
