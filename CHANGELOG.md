@@ -5,6 +5,7 @@
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
+* [doc] general update, add missing modules documentation
 
 ### Fixes
 
