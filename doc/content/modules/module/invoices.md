@@ -3,12 +3,12 @@ title: "Invoices"
 date: 2022-08-23T13:30:30+02:00
 ---
 
-
 **Invoices module** allows you to create and send invoices related bookings, orders and projects.
 
 ![invoices_module](../../../invoices_module_5.png)
 
 Within this module, you can:
+
 - [*generate booking invoices*](./#booking-invoices)
 - [*generate project invoices*](./#project-invoices)
 - [*generate order invoices*](./#order-invoices)
@@ -17,11 +17,11 @@ Within this module, you can:
 
 ## Module activation and configuration
 
-Within your space, go into _Configuration_ module.
+Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _invoices_ line.
+Then click edit button in *invoices* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 

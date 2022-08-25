@@ -3,7 +3,6 @@ title: "Catalog"
 date: 2022-08-23T13:30:30+02:00
 ---
 
-
 **Catalog module** allows you to showcase your bookable resources. Alongside, it also allows to create custom categories of items (services, etc...) to show.
 
 As for resources, *Antibodies module* is automatically bindable to the *Catalog module*.
@@ -11,17 +10,18 @@ As for resources, *Antibodies module* is automatically bindable to the *Catalog 
 ![catalog_module](../../../catalog_module_2.png)
 
 Within this module, you can:
+
 - [*Resources showcase*](./#resources-showcase)
 - [*Custom items*](./#custom-items)
 - [*Antibodies showcase*](./#antibodies-showcase)
 
 ## Module activation and configuration
 
-Within your space, go into _Catalog_ module. Com module could be found on the second page.
+Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _catalog_ line.
+Then click edit button in *catalog* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 
@@ -62,5 +62,3 @@ Each item created will have to be associated to a category. It will rejoin the s
 If you have both the [*Antibodies module*](../../module/antibodies) and the antibodies parameter in [*Catalog config*](./#module-activation-and-configuration) activated, your antibodies dataset will appear in the catalog.
 
 ![catalog_module](../../../catalog_module_5.png)
-
-

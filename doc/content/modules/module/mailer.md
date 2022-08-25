@@ -9,11 +9,11 @@ date: 2022-08-23T13:30:30+02:00
 
 ## Module activation and configuration
 
-Within your space, go into _Catalog_ module. Com module could be found on the second page.
+Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _mailer_ line.
+Then click edit button in *mailer* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 
@@ -30,6 +30,7 @@ Don't forget to save your choice.
 Classic email interface with the add of a filter to select to which group to send the email.
 
 You can filter users by:
+
 - role
 - resource area
 - resource

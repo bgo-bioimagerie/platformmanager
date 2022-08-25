@@ -10,6 +10,7 @@ date: 2021-08-13T13:30:30+02:00
 ![resources_module](../../../resources_module_6.png)
 
 Within this module, you can:
+
 - [manage *resources*](./#add-a-resource)
 - [manage *areas*](./#add-an-area)
 - [manage *categories*](./#add-a-category)
@@ -20,6 +21,7 @@ Within this module, you can:
 
 A **resource** is a bookable item.
 It is defined by its ("\*" for *mandatory*):
+
 - name*
 - [category*](./#category)
 - [area*](./#area)
@@ -32,7 +34,6 @@ It is defined by its ("\*" for *mandatory*):
 
 ## Related items definition
 
-
 ### Category
 
 A **category** contains multiple resources. For example, if you have 3 scanners (_scanner1_, _scanner2_, _scanner3_), they can be grouped under the category _Scanners_.
@@ -41,14 +42,13 @@ A **category** contains multiple resources. For example, if you have 3 scanners 
 
 An **area** is a specific zone, or place. If your resources are shared between 2 labs (_lab1_, _lab2_), then your areas are _lab1_ and _lab2_.
 
-
 ## Module activation and configuration
 
-Within your space, go into _Configuration_ module.
+Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _resources_ line.
+Then click edit button in *resources* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 
@@ -97,4 +97,5 @@ You can add a visa by clicking the '+' icon next to *Visas* in the left side men
 ![basic configuration](../../../resources_module_5.png)
 
 ### Manage resources Accessibilities
+
 See [booking settings accessibilities](../booking#accessibilities)

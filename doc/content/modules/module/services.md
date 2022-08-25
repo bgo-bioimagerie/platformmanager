@@ -3,16 +3,17 @@ title: "Services"
 date: 2022-08-23T13:30:30+02:00
 ---
 
-
 **Services module** allows you to create **projects**, **services** and **orders** as well as managing **stocks**.
 
 ![resources_module](../../../services_module_1.png)
 
 Within this module, you can:
+
 - [manage *projects*](./#manage-projects)
 - [manage *orders*](./#manage-orders)
 - [manage *services*](./#creating-a-service)
 - [manage *stocks*](./#manage-stocks)
+
 ## Item definition
 
 ### Project
@@ -24,6 +25,7 @@ Invoicable items - *services* - can be added to a project to have a track of wha
 ![resources_module](../../../services_module_3.png)
 
 A **Project** is defined by its ("\*" for *mandatory*):
+
 - identification number*
 - [client account*](../../module/clients/#item-definition)
 - [user*](../../module/users/#item-definition) (*i.e.* main user of the project)
@@ -36,10 +38,12 @@ A **Project** is defined by its ("\*" for *mandatory*):
 - users (*i.e. other users related to the project. Main user will automatically be part of it)
 
 ### Order
+
 ### Service
 
 A **Service** stands for an invoicable item to be related to a project or an order.
 It is defined by its:
+
 - name
 - description
 - type
@@ -48,17 +52,16 @@ It is defined by its:
 
 ### Stock
 
-// TODO: complete that
 [comment]: # (TODO: Document that)
 
 
 ## Module activation and configuration
 
-Within your space, go into _Configuration_ module.
+Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _services_ line.
+Then click edit button in *services* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 

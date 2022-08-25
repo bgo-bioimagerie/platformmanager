@@ -3,7 +3,6 @@ title: "Com"
 date: 2022-08-23T13:30:30+02:00
 ---
 
-
 **Com module** allows you to display informational messages news on your home page.
 
 ![com_module](../../../com_module_5.png)
@@ -14,11 +13,11 @@ Within this module, you can:
 
 ## Module activation and configuration
 
-Within your space, go into _Com_ module. Com module could be found on the second page.
+Within your space, go into *Com* module. Com module could be found on the second page.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _com_ line.
+Then click edit button in *com* line.
 
 You can now select the minimum role required to access the module. "Inactive" option stands for "the module is not active".
 
@@ -44,7 +43,6 @@ The first one, *Public tile message*, corresponds with a message visible by any 
 
 The second one, *Private tile message* will, in any case, only be visible to your space members.
 
-
 ![com_module](../../../com_module_1.png)
 
 ![com_module](../../../com_module_2.png)
@@ -60,4 +58,3 @@ Displayed news will take place in a popup window. For each of them, you can set 
 ![com_module](../../../com_module_3.png)
 
 ![com_module](../../../com_module_4.png)
-
