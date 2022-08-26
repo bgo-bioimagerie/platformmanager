@@ -15,58 +15,13 @@ form = document.getElementById("editForm")
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form ? form.getElementsByTagName("input") : [];
 
-// let inputs = document.getElementsByTagName('input');
-checkEmailsIdenticity = isCheckEmailsIdenticity(inputs);
 
-if (checkEmailsIdenticity) {
-    setEmailsMatchControl(inputs);
+emails = getEmailInputs();
+
+if (emails.confirmEmail && emails.email) {
+    createErrorDiv(emails.confirmEmail);
+    emails.confirmEmail.setAttribute("onblur", "doEmailsMatch()");
 }
-
-function isCheckEmailsIdenticity() {
-    let result = false;
-    [...inputs].forEach( input => {
-        if (input.type.toLowerCase() == "email") {
-            if (input.name.includes("confirm")) {
-                result = true;
-            }
-        }
-    });
-    return result;
-}
-
-function getEmailInputs() {
-    let emails = [];
-    [...inputs].forEach( input => {
-        if (input.type.toLowerCase() == "email") {
-            emails.push(input);
-        }
-    });
-    return emails;
-}
-
-function setEmailsMatchControl(inputs) {
-    let emails = getEmailInputs();
-    if (emails.length == 2) {
-        createErrorDiv(emails[1]);
-        emails[1].setAttribute("onblur", "doEmailsMatch()");
-    }
-}
-
-function doEmailsMatch() {
-    let result = true;
-    let emails = getEmailInputs();
-    if (emails.length == 2) {
-        let errors = emails[1].parentElement.getElementsByClassName("errorMessage");
-        if (emails[0].value != emails[1].value) {
-            displayError(errors, emails[1], "emails do not match");
-            result = false;
-        } else {
-            hideErrors(errors, emails[1]);
-        }
-    }
-    return result;
-}
-
 
 isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
@@ -229,6 +184,30 @@ function validateEmail(email) {
     // Also checked backend at form submission
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*))@((([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+function getEmailInputs() {
+    let result = {email: null, confirmEmail: null};
+    [...inputs].forEach( input => {
+        if (input.type.toLowerCase() == "email") {
+            input.id.toLowerCase().includes("confirm") ? result.confirmEmail = input : result.email = input;
+        }
+    });
+    return result;
+}
+
+function doEmailsMatch() {
+    let result = true;
+    if (emails.confirmEmail && emails.email) {
+        let errors = emails.confirmEmail.parentElement.getElementsByClassName("errorMessage");
+        if (emails.email.value != emails.confirmEmail.value) {
+            displayError(errors, emails.confirmEmail, "emails do not match");
+            result = false;
+        } else {
+            hideErrors(errors, emails.confirmEmail);
+        }
+    }
+    return result;
 }
 
 /**
