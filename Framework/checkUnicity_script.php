@@ -7,6 +7,33 @@ if (document.getElementById("id")) {
     userId = 0;
 }
 
+let inputs = document.getElementsByTagName('input');
+let confirmEmail = false;
+
+let itemsToCompare = [];
+[...inputs].forEach( input => {
+    if (input.type.toLowerCase() == "email") {
+        if (input.name.includes("confirm")) {
+            confirmEmail = true;
+        }
+        itemsToCompare.push(input);
+    }
+});
+
+if (itemsToCompare[1]) {
+    let email = itemsToCompare[0];
+    let confirmEmail = itemsToCompare[1];
+    createErrorDiv(itemsToCompare[1]);
+    confirmEmail.addEventListener("blur", function () {
+        let errors = itemsToCompare[1].parentElement.getElementsByClassName("errorMessage");
+        if (email.value != confirmEmail.value) {
+            displayError(errors, confirmEmail, "emails do not match");
+        } else {
+            hideErrors(errors, confirmEmail);
+        }
+    });
+}
+
 form = document.getElementById("editForm")
     || document.getElementById("createuseraccountform")
     || document.getElementById("createaccountform")
