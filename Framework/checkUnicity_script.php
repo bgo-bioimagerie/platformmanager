@@ -7,33 +7,6 @@ if (document.getElementById("id")) {
     userId = 0;
 }
 
-let inputs = document.getElementsByTagName('input');
-let confirmEmail = false;
-
-let itemsToCompare = [];
-[...inputs].forEach( input => {
-    if (input.type.toLowerCase() == "email") {
-        if (input.name.includes("confirm")) {
-            confirmEmail = true;
-        }
-        itemsToCompare.push(input);
-    }
-});
-
-if (itemsToCompare[1]) {
-    let email = itemsToCompare[0];
-    let confirmEmail = itemsToCompare[1];
-    createErrorDiv(itemsToCompare[1]);
-    confirmEmail.addEventListener("blur", function () {
-        let errors = itemsToCompare[1].parentElement.getElementsByClassName("errorMessage");
-        if (email.value != confirmEmail.value) {
-            displayError(errors, confirmEmail, "emails do not match");
-        } else {
-            hideErrors(errors, confirmEmail);
-        }
-    });
-}
-
 form = document.getElementById("editForm")
     || document.getElementById("createuseraccountform")
     || document.getElementById("createaccountform")
@@ -41,6 +14,60 @@ form = document.getElementById("editForm")
     
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form ? form.getElementsByTagName("input") : [];
+
+// let inputs = document.getElementsByTagName('input');
+checkEmailsIdenticity = isCheckEmailsIdenticity(inputs);
+
+if (checkEmailsIdenticity) {
+    setEmailsMatchControl(inputs);
+}
+
+function isCheckEmailsIdenticity() {
+    let result = false;
+    [...inputs].forEach( input => {
+        if (input.type.toLowerCase() == "email") {
+            if (input.name.includes("confirm")) {
+                result = true;
+            }
+        }
+    });
+    return result;
+}
+
+function getEmailInputs() {
+    let emails = [];
+    [...inputs].forEach( input => {
+        if (input.type.toLowerCase() == "email") {
+            emails.push(input);
+        }
+    });
+    return emails;
+}
+
+function setEmailsMatchControl(inputs) {
+    let emails = getEmailInputs();
+    if (emails.length == 2) {
+        createErrorDiv(emails[1]);
+        emails[1].setAttribute("onblur", "doEmailsMatch()");
+    }
+}
+
+function doEmailsMatch() {
+    let result = true;
+    let emails = getEmailInputs();
+    if (emails.length == 2) {
+        let errors = emails[1].parentElement.getElementsByClassName("errorMessage");
+        if (emails[0].value != emails[1].value) {
+            displayError(errors, emails[1], "emails do not match");
+            result = false;
+        } else {
+            hideErrors(errors, emails[1]);
+        }
+    }
+    return result;
+}
+
+
 isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
 pwdConfirmInput = "";
@@ -101,6 +128,7 @@ function createErrorDiv(element) {
 function validateUserForm(origin) {
     let unicity = true;
     let pwdIdentical = true;
+    let emailsMatch = true;
     let msg;
     let submissionRequest = !(!origin.target);
     let elemsToCheck = [...uniqueElems];
@@ -112,6 +140,8 @@ function validateUserForm(origin) {
         origin.preventDefault();
         // check if passwords match
         pwdIdentical = isPwd ? validatePasswords() : true;
+        // check if emails match
+        emailsMatch = doEmailsMatch();
     }
 
     const headers = new Headers();
@@ -158,7 +188,7 @@ function validateUserForm(origin) {
                     if (errorDisplayed) {
                         hideErrors(errors, elemHTML)
                     }
-                    if ((index === (elemsToCheck.length - 1)) && submissionRequest && (unicity && pwdIdentical)) {
+                    if ((index === (elemsToCheck.length - 1)) && submissionRequest && (unicity && pwdIdentical && emailsMatch)) {
                         /* submission has been requested
                         AND all unique inputs have been tested and have returned true
                         AND, if password input, passwords match */
