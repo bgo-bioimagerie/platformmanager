@@ -5,6 +5,7 @@
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
+* [coreconnexion] add email confirmation at account creation
 
 ### Fixes
 
