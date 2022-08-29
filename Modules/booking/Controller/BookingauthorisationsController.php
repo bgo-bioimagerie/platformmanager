@@ -201,10 +201,13 @@ class BookingauthorisationsController extends CoresecureController {
             $categoryName = " / " . $modelCategory->getName($id_space, $id_category);
         }
 
+
+
         $table = new TableView();
         $table->setTitle(BookingTranslator::Authorisations_history_for($lang) . " " . $userName . $categoryName);
         $table->setColorIndexes(array("active" => "authorised_color"));
         $table->addLineEditButton("bookingauthorisationsedit/" . $id_space, "id");
+        $table->addDeleteButton("bookingauthorisationsdelete/" . $id_space, deleteNameIndex: "delete_text");
 
         $modelVisa = new BkAuthorization();
         
@@ -227,6 +230,7 @@ class BookingauthorisationsController extends CoresecureController {
                 $data[$i]["authorised_color"] = "#FF8C00";
                 $data[$i]["active"] = CoreTranslator::no($lang);
             }
+            $data[$i]["delete_text"] = $data[$i]["resource_category"] . " authorisation";
         }
 
         $headers = array(
@@ -325,6 +329,24 @@ class BookingauthorisationsController extends CoresecureController {
             'formHtml' => $form->getHtml($lang),
             'space' => $space
         ));
+    }
+
+    /**
+     * Remove a provider
+     */
+    public function deleteAction($id_space, $id) {
+        // security
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+
+        $modelAuth = new BkAuthorization();
+
+        //get auth user
+        $authUser = $modelAuth->get($id_space, $id)["user_id"];
+
+        // remove bookingauth
+        $modelAuth->delete($id_space, $id);
+
+        $this->redirect("corespaceuseredit/" . $id_space . "/" . $authUser . "?origin=bookingaccesshistory");
     }
 
 }
