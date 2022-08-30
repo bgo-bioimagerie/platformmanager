@@ -159,7 +159,7 @@ class BookingInvoice extends InvoiceModel {
                 return $calQte["deleted"] == 0;
             });
 
-            // Get deleted quantities which are not used as invoicing unit
+            // Get deleted quantities which are used as invoicing unit
             $invoicingDeletedCalQtes = array_filter($allCalQuantities, function($calQte) {
                 return $calQte["deleted"] == 1 && $calQte["is_invoicing_unit"] == 1;
             });
