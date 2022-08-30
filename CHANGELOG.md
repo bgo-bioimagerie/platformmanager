@@ -5,6 +5,9 @@
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
+* [booking] allow to delete bookingAuthorisations
+* [antibodies] add reactivity attribute
+* [doc] general update, add missing modules documentation
 * [coreconnexion] add email confirmation at account creation
 
 ### Fixes
