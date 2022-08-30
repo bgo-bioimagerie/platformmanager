@@ -118,7 +118,7 @@ class BkCalSupInfo extends Model {
      * @param String $name
      * @param String|Int $mandatory
      */
-    public function setSupplementary($id_space, $id_supinfo, $id_resource, $name, $mandatory) {
+    public function setSupplementary($id_space, $id_supinfo, $id_resource, $name, $mandatory, $is_invoicing_unit, $duration) {
 
         if ($this->isCalSupInfoId($id_space, $id_supinfo, $id_resource)) {
             $this->updateCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory);
