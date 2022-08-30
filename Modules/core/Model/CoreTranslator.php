@@ -265,6 +265,13 @@ class CoreTranslator {
         return "Email";
     }
 
+    public static function Confirm_email($lang) {
+        if ($lang == "fr") {
+            return "Confirmez votre Courriel";
+        }
+        return "Confirm your email";
+    }
+
     public static function Phone($lang) {
         if ($lang == "fr") {
             return "Téléphone";
