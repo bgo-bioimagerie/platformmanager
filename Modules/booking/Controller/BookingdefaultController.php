@@ -1058,7 +1058,7 @@ END:VCALENDAR
 
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        $sendEmail = intval($this->request->getParameter("sendmail"));
+        $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {

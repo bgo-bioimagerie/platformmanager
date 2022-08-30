@@ -5,6 +5,8 @@
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
+* [booking] allow to delete bookingAuthorisations
+* [antibodies] add reactivity attribute
 
 ### Fixes
 
@@ -20,6 +22,9 @@
 * [invoices] allow to invoice existing reservations with deleted packages or invoicable quantities
 * [invoice] manage invoicing/display in case of deleted service
 * [services] fix orders edition form
+* [com] avoid displaying news popup if no news
+* [catalog] fix catalog public page header file upload
+* [booking] fix booking delete sendemail
 
 ## 2.7.1
 
