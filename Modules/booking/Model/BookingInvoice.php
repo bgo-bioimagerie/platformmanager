@@ -158,8 +158,12 @@ class BookingInvoice extends InvoiceModel {
             $calQuantities = array_filter($allCalQuantities, function($calQte) {
                 return $calQte["deleted"] == 0;
             });
-
-            // Get deleted quantities which are used as invoicing unit
+            
+            /* 
+             * Get deleted quantities which are used as invoicing unit
+             * Since bk_calendar_entry does not tell if the quantities are invoicable or not,
+             * we have to compare the reservation quantity ids with the resource invoicable quantity Ids
+             */
             $invoicingDeletedCalQtes = array_filter($allCalQuantities, function($calQte) {
                 return $calQte["deleted"] == 1 && $calQte["is_invoicing_unit"] == 1;
             });
