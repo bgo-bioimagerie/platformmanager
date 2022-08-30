@@ -59,10 +59,12 @@ class ClientslistController extends ClientsController {
             "pricing_name" => ClientsTranslator::Pricing($lang)
         ));
 
+        $pageTitle = ClientsTranslator::Clients($lang);
+
         // render the View
         return $this->render(array(
             'id_space' => $id_space,
-            'lang' => $lang,
+            'pageTitle' => $pageTitle,
             'tableHtml' => $tableHtml,
             'data' => ['clients' => $providersArray]
         ));
