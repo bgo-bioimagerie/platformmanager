@@ -104,7 +104,7 @@ class AntibodieslistController extends AntibodiesController {
             $data .= $anticorps ['stockage'] . " ; ";
             $data .= $anticorps ['fournisseur'] . " ; ";
             $data .= $anticorps ['source'] . " ; ";
-            $data .= $anticorps ['reactivite'] . " ; ";
+            $data .= $anticorps ['reactivity'] . " ; ";
             $data .= $anticorps ['reference'] . " ; ";
             $data .= $anticorps ['clone'] . " ; ";
             $data .= $anticorps ['lot'] . " ; ";
