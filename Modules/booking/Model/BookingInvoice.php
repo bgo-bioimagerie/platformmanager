@@ -152,12 +152,6 @@ class BookingInvoice extends InvoiceModel {
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
 
             // get list of quantities
-
-            // TODO::
-            /* if qte as invoicing unit deleted for a resource, will use it anyway => should check if used. If not, use normal tarification.
-            * + handle case where old + new invoicing units
-            */
-
             $allCalQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], include_deleted:true);
 
             // Get non-deleted quantities
