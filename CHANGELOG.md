@@ -7,6 +7,7 @@
 * [booking] add calendar default view option in booking config
 * [booking] allow to delete bookingAuthorisations
 * [antibodies] add reactivity attribute
+* [doc] general update, add missing modules documentation
 
 ### Fixes
 

@@ -17,7 +17,9 @@ In the *admin* menu, go to *Spaces*
 
 ![admin menu](../../install_2.png)
 
-Add a space
+Add a space.
+
+Note that you can choose to *pre-configure* your space. That will activate the base modules: [Booking](../../modules/module/booking/), [Resources](../../modules/module/resources) and [Clients](../../modules/module/clients)
 
 ![create space](../../install_3.png)
 
@@ -77,7 +79,7 @@ There are two ways to create a new user:
 - As a superadmin
 
 ### Create a user as a space admin
-See [Users management](../../manager/users/#creat-a-user-as-a-space-admin)
+See [Users management](../../manager/users/#create-a-user-as-a-space-admin)
 
 ### Create a user as a superadmin
 
