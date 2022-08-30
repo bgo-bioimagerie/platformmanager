@@ -95,7 +95,7 @@ class AntibodieslistController extends AntibodiesController {
 
         // make csv file
         $data = " Anticorps; ; ; ; ; ; ; ; ; Protocole; ; Tissus; ; ; ; ; ; Propriétaire; ; ;  \r\n";
-        $data .= " No; Nom; St; Fournisseur; Source; Référence; Clone; lot; Isotype; proto; Acl dil; commentaire; espèce; organe; statut; ref. bloc; prélèvement; Nom; disponibilité; Date réception;  No Dossier \r\n";
+        $data .= " No; Nom; St; Fournisseur; Source; Réactivité; Référence; Clone; lot; Isotype; proto; Acl dil; commentaire; espèce; organe; statut; ref. bloc; prélèvement; Nom; disponibilité; Date réception;  No Dossier \r\n";
 
         foreach ($anticorpsArray as $anticorps) {
 
@@ -104,6 +104,7 @@ class AntibodieslistController extends AntibodiesController {
             $data .= $anticorps ['stockage'] . " ; ";
             $data .= $anticorps ['fournisseur'] . " ; ";
             $data .= $anticorps ['source'] . " ; ";
+            $data .= $anticorps ['reactivity'] . " ; ";
             $data .= $anticorps ['reference'] . " ; ";
             $data .= $anticorps ['clone'] . " ; ";
             $data .= $anticorps ['lot'] . " ; ";
@@ -275,7 +276,7 @@ class AntibodieslistController extends AntibodiesController {
         $form = $this->createEditForm($id_space, $anticorps, $id);
         if ($form->check()) {
 
-            $idNew = $this->antibody->setAntibody($id, $id_space, $form->getParameter("name"), $form->getParameter("no_h2p2"), $form->getParameter("fournisseur"), $form->getParameter("id_source"), $form->getParameter("reference"), $form->getParameter("clone"), $form->getParameter("lot"), $form->getParameter("id_isotype"), $form->getParameter("stockage")
+            $idNew = $this->antibody->setAntibody($id, $id_space, $form->getParameter("name"), $form->getParameter("no_h2p2"), $form->getParameter("fournisseur"), $form->getParameter("id_source"), $form->getParameter("reactivity"), $form->getParameter("reference"), $form->getParameter("clone"), $form->getParameter("lot"), $form->getParameter("id_isotype"), $form->getParameter("stockage")
             );
             
             $this->antibody->setApplicationStaining($id_space, $idNew, $form->getParameter("id_staining"), $form->getParameter("id_application")
@@ -474,6 +475,7 @@ class AntibodieslistController extends AntibodiesController {
         $sourcesList = $modelSource->getForList($id_space);
         $form->addSelect("id_source", AntibodiesTranslator::Source($lang), $sourcesList["names"], $sourcesList["ids"], $anticorps["id_source"]);
 
+        $form->addText("reactivity", AntibodiesTranslator::Reactivity($lang), false, $anticorps["reactivity"]);
         $form->addText("reference", AntibodiesTranslator::Reference($lang), false, $anticorps["reference"]);
         $form->addText("clone", AntibodiesTranslator::AcClone($lang), false, $anticorps["clone"]);
         $form->addText("lot", AntibodiesTranslator::Lot($lang), false, $anticorps["lot"]);
