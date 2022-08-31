@@ -9,6 +9,7 @@
 * [antibodies] add reactivity attribute
 * [doc] general update, add missing modules documentation
 * [coreconnexion] add email confirmation at account creation
+* [booking] add month to default booking views in user's settings
 * [clients] make address forms facultative
 
 ### Fixes
