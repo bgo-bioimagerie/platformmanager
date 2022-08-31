@@ -1,8 +1,42 @@
-{% extends "Modules/layout.twig" %}
-    
+{% extends "Modules/clients/View/layout.twig" %}
+
 {% block content %}
-{% include "Modules/clients/View/Clientslist/clientstabs.twig" %}
-<div class="pm-form-short">
-    {{formHtml | raw}}
+
+<div class="row pm-table" id="corespaceuseredit">
+
+    <div id="btnSection">
+     {% for key, value in data.formsHtml %}
+        <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{key}}</button>
+     {% endfor %}
+    </div>
+
+    <div id="formSection" style="margin:5px;">
+        {% for formid, form in data.formsHtml %}
+            <div id="{{formid}}" class="container" style="display: none">
+                    {{form | raw}}
+            </div>
+        {% endfor %}
+    </div>
+    
 </div>
+
+<script>
+
+let formSection = document.getElementById('formSection');
+let defaultForm = '{{data.defaultForm}}';
+
+show(defaultForm);
+
+function show(formToDisplay) {
+    [...formSection.children].forEach( formElement => {
+        if (formElement.id === formToDisplay) {
+            formElement.style.display = '';    
+        } else {
+            formElement.style.display = 'none';
+        }
+    });
+}
+
+</script>
+
 {% endblock %}
