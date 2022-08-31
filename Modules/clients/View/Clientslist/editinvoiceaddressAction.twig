@@ -1,7 +1,7 @@
-{% extends "Modules/clients/View/layout.twig" %}
-
+{% extends "Modules/layout.twig" %}
     
 {% block content %}
+{% include "Modules/clients/View/Clientslist/clientstabs.twig" %}
 <div class="pm-form-short">
     {{formHtml | raw}}
 </div>

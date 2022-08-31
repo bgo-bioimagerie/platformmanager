@@ -131,12 +131,13 @@ class ClientslistController extends ClientsController {
             // after the provider is saved we redirect to the providers list page
             return $this->redirect("clclienteditinvoice/" . $id_space . "/" . $idNew, [], ['client' => ['id' => $idNew]]);
         }
-
+        
         // render the view
         return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
+            'urls' => $this->getClienteditionUrls($id_space, $client['id']),
             'data' => ['client'  => $client]
         ));
     }
@@ -175,6 +176,7 @@ class ClientslistController extends ClientsController {
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
+            'urls' => $this->getClienteditionUrls($id_space, $client['id']),
             'formHtml' => $formi->getHtml($lang),
         ));
         
@@ -215,6 +217,7 @@ class ClientslistController extends ClientsController {
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
+            'urls' => $this->getClienteditionUrls($id_space, $client['id']),
             'formHtml' => $formd->getHtml($lang),
         ));
     }
@@ -245,6 +248,11 @@ class ClientslistController extends ClientsController {
 
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clclients/" . $id_space);
+    }
+
+    protected function getClienteditionUrls($id_space, $id_client) {
+        $endUrl = $id_space . "/" . $id_client;
+        return ["clients" => "clclientedit/" . $endUrl , "institution" => "clclienteditdelivery/" . $endUrl, "invoice" => "clclienteditinvoice/" . $endUrl];
     }
 
 }

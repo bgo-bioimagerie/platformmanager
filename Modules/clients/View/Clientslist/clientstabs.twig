@@ -1,13 +1,22 @@
-{% extends "Modules/layout.twig" %}
-   
-{% block content %}
+{% block tabs %}
 
-<div class="row pm-table" id="corespaceuseredit">
+<div class="row pm-table" id="clientedittabs">
+{{urls['invoice']}}
     <div id="formSection">
-        <button id="clientForm" onclick="show('clientForm')" class="btn btn-secondary" style="margin:5px;">Client</button>
-        <button id="institutionForm" onclick="show('clientForm')" class="btn btn-secondary" style="margin:5px;">Institution</button>
-        <button id="invoiceForm" onclick="show('clientForm')" class="btn btn-secondary" style="margin:5px;">Invoice informations</button>
+        <button id="clientForm" onclick="show('clientForm', '{{urls["clients"]}}')" class="btn btn-secondary" style="margin:5px;">Client</button>
+        <button id="institutionForm" onclick="show('institutionForm', '{{urls["institution"]}}')" class="btn btn-secondary" style="margin:5px;">Institution</button>
+        <button id="invoiceForm" onclick="show('invoiceForm', '{{urls["invoice"]}}')" class="btn btn-secondary" style="margin:5px;">Invoice informations</button>
     </div>
 </div>
+
+<script type="text/javascript">
+
+function show(form, url) {
+    console.log('showing', form);
+    console.log('url: ', url);
+    window.location = url;
+}
+
+</script>
 
 {% endblock %}
