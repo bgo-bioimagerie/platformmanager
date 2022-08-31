@@ -9,6 +9,7 @@
 * [antibodies] add reactivity attribute
 * [doc] general update, add missing modules documentation
 * [coreconnexion] add email confirmation at account creation
+* [clients] make address forms facultative
 
 ### Fixes
 
