@@ -132,6 +132,7 @@ class ClientslistController extends ClientsController {
         // Set form to display
         $origin = $this->request->getParameterNoException('origin');
         $defaultForm = ($origin && $origin != "") ? $origin : 'client';
+        $accessAddressForms = $id > 0;
 
         // render the view
         return $this->render(array(
@@ -141,7 +142,8 @@ class ClientslistController extends ClientsController {
             'data' => [
                 'client'  => $client,
                 'formsHtml' => $forms,
-                'defaultForm' => $defaultForm
+                'defaultForm' => $defaultForm,
+                'accessAddressForms' => $accessAddressForms
             ]
         ));
     }
@@ -187,7 +189,7 @@ class ClientslistController extends ClientsController {
         $addressInvoice = $modelAdress->get($id_space, $client["address_invoice"]);
         
         // Address invoice
-        $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", "clclientedit/" . $id_space . "/" . $client['id']);
+        $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", "clclientedit/" . $id_space . "/" . $client['id'], "clclients/" . $id_space);
         $formAddressInvoice->setLang($lang);
         $formAddressInvoice->setTitle(ClientsTranslator::AddressInvoice($lang));
         $formAddressInvoice->setSpace($id_space);
@@ -202,7 +204,7 @@ class ClientslistController extends ClientsController {
         $addressDelivery = $modelAdress->get($id_space, $client["address_delivery"]);
         
         // Address delivery
-        $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", "clclientedit/" . $id_space . "/" . $client['id']);
+        $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", "clclientedit/" . $id_space . "/" . $client['id'], "clclients/" . $id_space);
         $formAddressDelivery->setLang($lang);
         $formAddressDelivery->setTitle(ClientsTranslator::AddressDelivery($lang));
         $formAddressDelivery->setSpace($id_space);

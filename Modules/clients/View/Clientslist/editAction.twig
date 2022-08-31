@@ -6,7 +6,9 @@
 
     <div id="btnSection">
      {% for key, value in data.formsHtml %}
-        <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{key}}</button>
+        {% if key == 'client' or data.accessAddressForms %}
+            <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{key}}</button>
+        {% endif %}
      {% endfor %}
     </div>
 
@@ -17,7 +19,7 @@
             </div>
         {% endfor %}
     </div>
-    
+
 </div>
 
 <script>
@@ -30,9 +32,11 @@ show(defaultForm);
 function show(formToDisplay) {
     [...formSection.children].forEach( formElement => {
         if (formElement.id === formToDisplay) {
-            formElement.style.display = '';    
+            formElement.style.display = '';
+            document.getElementById('b_'+ formElement.id).className = 'btn btn-primary';
         } else {
             formElement.style.display = 'none';
+            document.getElementById('b_'+ formElement.id).className = 'btn btn-secondary';
         }
     });
 }
