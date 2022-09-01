@@ -93,11 +93,9 @@ class ClientslistController extends ClientsController {
             $this->validateClientForm($id_space, $id, $formClient);
         }
         if ($formInvoice->getForm()->check()) {
-            Configuration::getLogger()->debug('[TEST]', ["invoice check"]);
             $this->validateClientInvoiceForm($id_space, $id, $formInvoice);
         }
         if ($formInstitution->getForm()->check()) {
-            Configuration::getLogger()->debug('[TEST]', ["institution check"]);
             $this->validateClientInstitutionForm($id_space, $id, $formInstitution);
         }
 
