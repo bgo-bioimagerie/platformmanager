@@ -90,13 +90,13 @@ class ClientslistController extends ClientsController {
         
         // Check if a form has been validated
         if ($formClient->check()) {
-            $this->validateClientForm($id_space, $id, $formClient);
+            return $this->validateClientForm($id_space, $id, $formClient);
         }
         if ($formInvoice->getForm()->check()) {
-            $this->validateClientInvoiceForm($id_space, $id, $formInvoice);
+            return $this->validateClientInvoiceForm($id_space, $id, $formInvoice);
         }
         if ($formInstitution->getForm()->check()) {
-            $this->validateClientInstitutionForm($id_space, $id, $formInstitution);
+            return $this->validateClientInstitutionForm($id_space, $id, $formInstitution);
         }
 
         // get html forms for rendering
