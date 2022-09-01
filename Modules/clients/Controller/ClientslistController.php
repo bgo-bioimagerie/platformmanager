@@ -54,7 +54,7 @@ class ClientslistController extends ClientsController {
 
         $table = new TableView();
 
-        $table->addLineEditButton("clclientedit/" . $id_space);
+        $table->addLineEditButton($this->clientEditUrl . $id_space);
         $table->addLineButton("clclientusers/" . $id_space, "id", CoreTranslator::Users($lang));
         $table->addDeleteButton("clclientdelete/" . $id_space);
         $tableHtml = $table->view($providersArray, array(
@@ -188,7 +188,7 @@ class ClientslistController extends ClientsController {
         $form->addSelectMandatory("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
         $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "clclientedit/" . $id_space . "/" . $client['id']);
+        $form->setValidationButton(CoreTranslator::Save($lang), $this->clientEditUrl . $id_space . "/" . $client['id']);
         $form->setColumnsWidth(3, 9);
         $form->setCancelButton(CoreTranslator::Cancel($lang), $this->clientsListUrl . $id_space);
         return $form;
@@ -200,7 +200,7 @@ class ClientslistController extends ClientsController {
         $addressInvoice = $modelAdress->get($id_space, $client["address_invoice"]);
         
         // Address invoice
-        $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", "clclientedit/" . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
+        $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", $this->clientEditUrl . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
         $formAddressInvoice->setLang($lang);
         $formAddressInvoice->setTitle(ClientsTranslator::AddressInvoice($lang));
         $formAddressInvoice->setSpace($id_space);
@@ -215,7 +215,7 @@ class ClientslistController extends ClientsController {
         $addressDelivery = $modelAdress->get($id_space, $client["address_delivery"]);
         
         // Address delivery
-        $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", "clclientedit/" . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
+        $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", $this->clientEditUrl . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
         $formAddressDelivery->setLang($lang);
         $formAddressDelivery->setTitle(ClientsTranslator::AddressDelivery($lang));
         $formAddressDelivery->setSpace($id_space);
