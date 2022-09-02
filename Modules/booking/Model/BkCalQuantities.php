@@ -44,10 +44,13 @@ class BkCalQuantities extends Model {
         return $data->fetchAll();
     }
 
-    public function getByResource($id_space, $id_resource, $include_deleted=false) {
+    public function getByResource($id_space, $id_resource, $include_deleted=false, $sort=false) {
         $sql = "SELECT * from bk_calquantities WHERE id_resource=? AND id_space=?";
         if (!$include_deleted) {
             $sql .= " AND deleted=0";
+        }
+        if ($sort) {
+            $sql .= " ORDER BY id DESC, deleted DESC";
         }
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }

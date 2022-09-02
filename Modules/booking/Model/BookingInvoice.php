@@ -151,37 +151,12 @@ class BookingInvoice extends InvoiceModel {
         foreach ($resources as $res) {
             $reservations = $modelCal->getUnpricedReservations($id_space, $beginPeriod, $endPeriod, $res["id"], $id_resp);
 
-            // get list of quantities
-            $allCalQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], include_deleted:true);
-
-            // Get non-deleted quantities
-            $calQuantities = array_filter($allCalQuantities, function($calQte) {
-                return $calQte["deleted"] == 0;
+            // get list of quantities sorted by deleted (ASC), then by id (desc)
+            $allCalQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], include_deleted:true, sort:true);
+            // get invoicable ones
+            $invoicableCalQtes = array_filter($allCalQuantities, function($calQte) {
+                return $calQte["is_invoicing_unit"] == 1;
             });
-            
-            /* 
-             * Get deleted quantities which are used as invoicing unit
-             * Since bk_calendar_entry does not tell if the quantities are invoicable or not,
-             * we have to compare the reservation quantity ids with the resource invoicable quantity Ids
-             */
-            $invoicingDeletedCalQtes = array_filter($allCalQuantities, function($calQte) {
-                return $calQte["deleted"] == 1 && $calQte["is_invoicing_unit"] == 1;
-            });
-            $invoicingDeletedCalQteIds = array_map(function($calQte) {
-                return $calQte["id"];
-            }, $invoicingDeletedCalQtes);
-
-            $calQuantities = ($calQuantities != null) ? $calQuantities : [];
-
-            // tell if there's an invoicing unit for this resource amongst quantities and get its ID
-            $isInvoicingUnit = false;
-            $calQuantityId = "";
-            foreach ($calQuantities as $calQuantity) {
-                if ($calQuantity["is_invoicing_unit"] && intval($calQuantity["is_invoicing_unit"]) === 1) {
-                    $calQuantityId = $calQuantity["id"];
-                    $isInvoicingUnit = true;
-                }
-            }
 
             // get all packages
             $userPackages = array();
@@ -208,16 +183,14 @@ class BookingInvoice extends InvoiceModel {
             
 
             foreach ($reservations as $reservation) {
-                $resaIsInvoicingUnit = $isInvoicingUnit;
-                $resaQuantityId = $calQuantityId;
-                $deletedInvoicingQuantityId = null;
-
+                $resaIsInvoicingUnit = false;
+                $resaQuantityId = "";
                 /*
                  * For a reservation with invoicing units:
-                 * if there is a new invoicing unit for this resource and it is used in this reservation, this is the one which will be used: it replaces the deleted one.
-                 * if there are more than 1 deleted invoicing unit used in this reservation: throws an exception
-                 * if a deleted invoicing unit is used and there is no current invoicing unit used in this reservation, then the deleted one will be used
-                */
+                 * if there is a non deleted invoicing unit for this resource and it is used in this reservation, this is the one which will be used: it replaces the deleted one.
+                 * * if a deleted invoicing unit is used and there is no current invoicing unit used in this reservation, then the deleted one will be used
+                 * if there are more than 1 deleted invoicing unit used in this reservation: use the last created one (max id)
+                 */
                 if ($reservation["quantities"] && $reservation["quantities"] != null) {
                     // Genrate an array of quantity's ids used in this reservation
                     $resaQtes = explode(";", $reservation["quantities"]);
@@ -226,29 +199,16 @@ class BookingInvoice extends InvoiceModel {
                         return explode("=", $qte)[0];
                     }, $resaQtes);
 
+
                     // Is one of them amongst the deleted invoicable quantities?
                     // If there are more than one, raises an exception
-                    $count = 0;
-                    foreach($resaQteIds as $qteId) {
-                        if (in_array($qteId, $invoicingDeletedCalQteIds)) {
-                            $count++;
-                            if ($count > 1) {
-                                $modelUser = new CoreUser();
-                                $resourceName = $modelResources->getName($id_space, $reservation["resource_id"]);
-                                $bookerLogin = $modelUser->getInfo($reservation["booked_by_id"])["login"];
-                                $start_time = date("Y-m-d H:i:s", $reservation["start_time"]);
-                                throw new PfmException("There are more than one invoicing unit in reservation " . $reservation["id"] . " starting at " . $start_time . " for resource " . $resourceName . ", booked by " . $bookerLogin);
-                            }
-                            $deletedInvoicingQuantityId = $qteId;
+                    foreach ($invoicableCalQtes as $invoicableQte) {
+                        if (in_array($invoicableQte['id'], $resaQteIds)) {
+                            $resaQuantityId = $invoicableQte['id'];
+                            $resaIsInvoicingUnit = true;
+                            break;
                         }
                     }
-
-                    // Determine which invoicing unit should be taken into account
-                    if ($deletedInvoicingQuantityId != null && (!$resaIsInvoicingUnit || !in_array($resaQuantityId, $resaQteIds))) {
-                        // if no not deleted invoicing unit or if it is not used in this resa, uses the deleted one
-                        $resaQuantityId = $deletedInvoicingQuantityId;
-                        $resaIsInvoicingUnit = true;
-                    } // else, follows normal process
                 }
 
                 // count: day night we, packages
