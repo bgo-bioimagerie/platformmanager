@@ -2,6 +2,11 @@
 
 ## 2.8.0
 
+### Docker
+
+* Add specific rabbitmq config in docker-compose to increase max background process duration;
+  sets consumer_timeout to 2h in /etc/rabbitmq/conf.d/pfm.conf
+
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
@@ -10,6 +15,7 @@
 * [doc] general update, add missing modules documentation
 * [coreconnexion] add email confirmation at account creation
 * [booking] add month to default booking views in user's settings
+* [invoice] for global invoice, fix discount display
 
 ### Fixes
 
