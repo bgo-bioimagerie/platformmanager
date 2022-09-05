@@ -88,7 +88,11 @@
 
             }
         }
-        total_ht -= $('#invoicediscount').val();
+
+        discount = $('#invoicediscount').val();
+        total_ht = (1-(discount/100))*total_ht;
+
+        //total_ht -= $('#invoicediscount').val();
         $('#invoicetablebody').html(html);
         $('#invoicetotalht').attr("value", total_ht.toFixed(2));
 
@@ -146,7 +150,9 @@
         lines.each(function () {
             total_ht += parseFloat($(this).find('.invoicequantity').val()) * parseFloat($(this).find('.invoiceprice').val());
         });
-        total_ht -= $('#invoicediscount').val();
+
+        discount = $('#invoicediscount').val();
+        total_ht = (1-(discount/100))*total_ht;
         $('#invoicetotalht').attr("value", total_ht.toFixed(2));
     }
 
