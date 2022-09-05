@@ -13,6 +13,7 @@ require_once 'Modules/booking/Controller/BookingController.php';
 require_once 'Modules/booking/Controller/BookingnightweController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
+require_once 'Modules/booking/Controller/BookingquantitiesController.php';
 require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
@@ -277,6 +278,26 @@ class BookingBaseTest extends BaseTest {
         $c = new BookingauthorisationsController($req, $space);
         $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
         $this->assertTrue(!empty($data['bkauthorizations']));
+    }
+
+    protected function addBkQuantity($space, $user, $resource) {
+        Configuration::getLogger()->debug('add bk cal quantity', ['for' => $user, 'space' => $space, 'resource' => $resource]);
+        $req = $this->request([
+            "path" => "bookingquantities/".$space['id'],
+            "formid" => "supsForm",
+            "id_sups" => [0],
+            "id_resources" => [$resource['id']],
+            "names" => ["quantity1"],
+            "mandatory" => [true],
+            "is_invoicing_unit" => [true]
+        ]);
+        $c = new BookingquantitiesController($req, $space);
+        $data = $c->runAction('bookingsettings', 'index', ['id_space' => $space['id']]);
+        $this->assertTrue($data !== null);
+        $this->assertTrue(array_key_exists('bksupids', $data));
+        $bkcalquantityId = $data['bksupids'][0];
+        $this->assertTrue($bkcalquantityId > 0);
+        return $bkcalquantityId;
     }
 
 }
