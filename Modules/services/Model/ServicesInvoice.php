@@ -344,12 +344,59 @@ class ServicesInvoice extends InvoiceModel {
 
     public function details($id_space, $invoice_id, $lang) {
 
+        $sql1 = 'SELECT SUM(se_project_service.quantity)  as quantity,se_services.name as label, se_project.name as origin FROM se_project_service
+        INNER JOIN se_project ON se_project.id=se_project_service.id_project
+        INNER JOIN se_services ON se_services.id=se_project_service.id_service
+        WHERE se_project_service.id_invoice=?
+        AND se_project_service.id_space=? AND se_project_service.deleted=0
+        GROUP BY se_services.name, se_project.name
+        ORDER BY se_services.name ASC';
+
+        $sql2 = 'SELECT SUM(se_order_service.quantity) as quantity,se_services.name as label, se_order.no_identification as origin FROM se_order_service
+        INNER JOIN se_order ON se_order.id=se_order_service.id_order
+        INNER JOIN se_services ON se_services.id=se_order_service.id_service
+        WHERE se_order.id_invoice=?
+        AND se_order_service.id_space=? AND se_order_service.deleted=0
+        GROUP BY se_services.name, se_order.no_identification
+        ORDER BY se_services.name ASC';
+
+        $data = array();
+        $data["title"] = ServicesTranslator::Services($lang);
+        $data["header"] = array(
+            "label" => ServicesTranslator::Service($lang),
+            "origin" => ServicesTranslator::Project() . "/" . ServicesTranslator::Orders($lang),
+            "quantity" => ServicesTranslator::Quantity($lang)
+        );
+        $data["content"] = array();
+
+
+        $res = $this->runRequest($sql1, [$invoice_id, $id_space]);
+        $detail = null;
+        while($detail = $res->fetch()) {
+            $data["content"][] = array(
+                "label" => $detail["label"],
+                "origin" => $detail["origin"],
+                "quantity" => $detail["quantity"]
+            );
+        }
+        $res = $this->runRequest($sql2, [$invoice_id, $id_space]);
+        $detail = null;
+        while($detail = $res->fetch()) {
+            $data["content"][] = array(
+                "label" => $detail["label"],
+                "origin" => $detail["origin"],
+                "quantity" => $detail["quantity"]
+            );
+        }
+        return $data;
+
+        /*
+
         // services
         $sqls = "SELECT * FROM se_services WHERE id_space=?";
         $services = $this->runRequest($sqls, array($id_space))->fetchAll();
 
         $modelProject = new SeProject();
-
         // orders
         $sqlo = "SELECT id, no_identification FROM se_order WHERE id_invoice=? AND id_space=? AND deleted=0";
         $orders = $this->runRequest($sqlo, array($invoice_id, $id_space))->fetchAll();
@@ -403,6 +450,7 @@ class ServicesInvoice extends InvoiceModel {
             }
         }
         return $data;
+        */
     }
 
     public function delete($id_space, $id_invoice) {
