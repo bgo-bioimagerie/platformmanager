@@ -66,22 +66,22 @@
         });
 
         // print the data
-        var data = JSON.parse('<?php echo $invoiceitem["content"] ?>');
+        let data = JSON.parse('<?php echo $invoiceitem["content"] ?>');
 
-        var html = "";
-        var total_ht = 0;
-        var datalength = data.length;
-        for (var i = 0; i < datalength; i++) {
+        let html = "";
+        let total_ht = 0;
+        let datalength = data.length;
+        for (let i = 0; i < datalength; i++) {
 
             module = data[i]["module"];
             content = data[i]["data"]["count"];
-            var contentlength = content.length;
-            for (var j = 0; j < contentlength; j++) {
+            let contentlength = content.length;
+            for (let j = 0; j < contentlength; j++) {
 
                 html += '<tr>';
                 html += '   <td class="invoicelabel" data-module="' + module + '">' + content[j]["label"] + '</td>';
-                html += '   <td><input class="form-control invoicequantity" id="quantity_' + content[j]["label"].split(' ').join('_') + '" type="text" value="' + content[j]["quantity"] + '"/></td>';
-                html += '   <td><input class="form-control invoiceprice" id="price_' + content[j]["label"].split(' ').join('_') + '" type="text" value="' + content[j]["unitprice"] + '"/></td>';
+                html += '   <td><input class="form-control invoicequantity" id="quantity_' + j + '" type="text" value="' + content[j]["quantity"] + '"/></td>';
+                html += '   <td><input class="form-control invoiceprice" id="price_' + j + '" type="text" value="' + content[j]["unitprice"] + '"/></td>';
                 html += '</tr>';
 
                 total_ht += parseFloat(content[j]["quantity"]) * parseFloat(content[j]["unitprice"]);
@@ -109,14 +109,14 @@
         });
         $('#invoicevalidate').click(function () {
 
-            for (var i = 0; i < datalength; i++) {
+            for (let i = 0; i < datalength; i++) {
 
                 content = data[i]["data"]["count"];
-                var contentlength = content.length;
-                for (var j = 0; j < contentlength; j++) {
+                let contentlength = content.length;
+                for (let j = 0; j < contentlength; j++) {
 
-                    quantity = $('#quantity_' + content[j]["label"].split(' ').join('_')).val();
-                    price = $('#price_' + content[j]["label"].split(' ').join('_')).val();
+                    quantity = $('#quantity_' + j).val();
+                    price = $('#price_' + j).val();
 
                     data[i]["data"]["count"][j]["quantity"] = quantity;
                     data[i]["data"]["count"][j]["unitprice"] = price;
