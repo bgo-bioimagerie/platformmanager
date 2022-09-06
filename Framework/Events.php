@@ -783,10 +783,15 @@ class Events {
      */
     public static function Close() {
         if(self::$channel != null) {
-            self::$channel->close();
-            self::$connection->close();
-            self::$channel = null;
+            try {
+                self::$channel->close();
+                self::$connection->close();
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
+            } 
         }
+        self::$channel = null;
+
     }
 
     /**

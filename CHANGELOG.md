@@ -33,6 +33,7 @@
 * [catalog] fix catalog public page header file upload
 * [booking] fix booking delete sendemail
 * [invoices] in global invoices, some service names prevented invoice edit or discount update
+* [events] fix disconnection from rabbitmq
 
 ## 2.7.1
 

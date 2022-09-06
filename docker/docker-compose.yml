@@ -145,6 +145,8 @@ services:
     environment:
         - RABBITMQ_DEFAULT_USER=pfm
         - RABBITMQ_DEFAULT_PASS=pfm
+    volumes:
+      - rabbitmq-pfm.conf:/etc/rabbitmq/conf.d/pfm.conf
 
   influxdb:
     image: influxdb:2.0
