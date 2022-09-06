@@ -178,7 +178,7 @@ class BookingdefaultController extends BookingabstractController {
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
-
+        $reason = intval($this->request->getParameterNoException("reason"));
         $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaEnd = $this->request->getParameterNoException("resa_end");
         $duration = $this->request->getParameterNoException("resa_duration");
@@ -365,7 +365,8 @@ class BookingdefaultController extends BookingabstractController {
                 "quantities" => $quantities,
                 "supplementaries" => $supplementaries,
                 "package_id" => $package_id,
-                "responsible_id" => 0
+                "responsible_id" => 0,
+                "reason" => $reason
             );
             return $this->editReservation($id_space, $resaInfo);
         }
@@ -729,7 +730,7 @@ END:VCALENDAR
                 $email->sendEmailToSpaceMembers($params, $lang);
             }
         }
-
+        // Configuration::getLogger()->debug('[TEST]', ["returning id_entry from editreservatiinquery" => $id_entry]);
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
@@ -762,7 +763,8 @@ END:VCALENDAR
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
-        if($resaInfo['reason'] > 0) {
+        
+        if($resaInfo['reason'] && $resaInfo['reason'] > 0) {
             $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
         }
 

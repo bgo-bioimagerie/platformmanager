@@ -2,6 +2,10 @@
 
 require_once 'tests/InvoicesBaseTest.php';
 require_once 'Modules/clients/Controller/ClientslistController.php';
+require_once 'Modules/resources/Model/ResourceInfo.php';
+require_once 'Modules/clients/Model/ClClient.php';
+require_once 'Modules/clients/Model/ClClientUser.php';
+require_once 'tests/BookingBaseTest.php';
 
 class InvoicesTest extends InvoicesBaseTest {
 
@@ -92,6 +96,37 @@ class InvoicesTest extends InvoicesBaseTest {
             // 1 space is enough, we tested booking on first space only
             break;
         }       
+    }
+
+    public function testBookingInvoicingUnits() {
+        // test invoicable quantity
+        $ctx = $this->Context();
+        $spaces = $ctx['spaces'];
+        Configuration::getLogger()->debug('[TEST]', ["spaces" => $spaces]);
+        
+        $bkBaseTestModel = new BookingBaseTest();
+        
+        $space = $this->space(array_keys($spaces)[0]);
+        Configuration::getLogger()->debug('[TEST]', ["space" => $space]);
+        $user = $this->user($space["users"][0]);
+        $resourcesModel = new ResourceInfo();
+        $resources = $resourcesModel->getForSpace($space['id']);
+        $clientUserModel = new ClClientUser();
+        Configuration::getLogger()->debug('[TEST]', ["user" => $user]);
+        $client = $clientUserModel->getUserClientAccounts($user['id'], $space['id'])[0];
+        Configuration::getLogger()->debug('[TEST]', ["user client" => $client]);
+
+        // set booking
+        $bkCalEntry = $bkBaseTestModel->setReservationWithInvoicingUnit($space, $user, $client, $resources[0]);
+        Configuration::getLogger()->debug('[TEST]', ["bkCalEntry" => $bkCalEntry]);
+        //invoice booking
+        $this->doInvoice($space, $user, $client);
+
+        //get result
+
+
+        // delete invoice
+        
     }
 
 }

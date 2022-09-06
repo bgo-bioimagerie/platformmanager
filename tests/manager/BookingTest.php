@@ -107,9 +107,6 @@ class BookingTest extends BookingBaseTest {
         $this->asUser($admin['login'], $space['id']);
         $this->addAuthorization($space, $user, $resources[1]);
 
-        // test invoicable quantity
-        $bkQuantityId = $this->addBkQuantity($space, $user, $resources[1]);
-
         // now user should be able to book res1
         //$this->asUser($user['login'], $space['id']);
         $this->asUser($user['login'], $space['id']);

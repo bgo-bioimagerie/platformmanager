@@ -18,6 +18,7 @@ require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
+require_once 'Modules/booking/Model/BkCalQuantities.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 
@@ -241,8 +242,9 @@ class BookingBaseTest extends BaseTest {
             "hour_startm" => 0,
             "resa_end" => $bookEnd,
             "hour_endH" => $hour_endH,
-            "hour_endm" => 0 
-        ]);
+            "hour_endm" => 0,
+            "reason" => 0
+        ]);        
         $c = new BookingdefaultController($req, $space);
         $data = $c->runAction('booking', 'editreservationquery', ['id_space' => $space['id']]);
         $this->assertTrue($data !== null);
@@ -280,24 +282,38 @@ class BookingBaseTest extends BaseTest {
         $this->assertTrue(!empty($data['bkauthorizations']));
     }
 
-    protected function addBkQuantity($space, $user, $resource) {
+    protected function addBkQuantity($space, $user, $resource, $isInvoicingUnit=false) {
         Configuration::getLogger()->debug('add bk cal quantity', ['for' => $user, 'space' => $space, 'resource' => $resource]);
+        $qteName = "quantity1";
         $req = $this->request([
             "path" => "bookingquantities/".$space['id'],
             "formid" => "supsForm",
             "id_sups" => [0],
             "id_resources" => [$resource['id']],
-            "names" => ["quantity1"],
+            "names" => [$qteName],
             "mandatory" => [true],
-            "is_invoicing_unit" => [true]
+            "is_invoicing_unit" => [$isInvoicingUnit]
         ]);
         $c = new BookingquantitiesController($req, $space);
         $data = $c->runAction('bookingsettings', 'index', ['id_space' => $space['id']]);
         $this->assertTrue($data !== null);
         $this->assertTrue(array_key_exists('bksupids', $data));
-        $bkcalquantityId = $data['bksupids'][0];
-        $this->assertTrue($bkcalquantityId > 0);
-        return $bkcalquantityId;
+        $id = $data['bksupids'][count($data['bksupids']) - 1];
+        $modelCalQte = new BkCalQuantities();
+        $bkCalQuantity = $modelCalQte->getById($space['id'], $id);
+        $this->assertTrue($bkCalQuantity['name'] === $qteName);
+        $this->assertTrue($id > 0);
+        return $id;
+    }
+
+    public function setReservationWithInvoicingUnit($space, $user, $client, $resource) {
+        $bkQteId = $this->addBkQuantity($space, $user, $resource, true);
+        $bkCalEntryId = $this->book($space, $user, $client, $resource);
+        $this->assertTrue($bkCalEntryId > 0);
+        // get bookDate
+        $bkCalEntryModel = new BkCalendarEntry();
+        $bkCalEntry = $bkCalEntryModel->getEntry($space['id'], $bkCalEntryId);
+        return $bkCalEntry;
     }
 
 }
