@@ -67,36 +67,31 @@
 
         // print the data
         let data = JSON.parse('<?php echo $invoiceitem["content"] ?>');
-
         let html = "";
         let total_ht = 0;
-        let datalength = data.length;
-        for (let i = 0; i < datalength; i++) {
-
-            module = data[i]["module"];
-            content = data[i]["data"]["count"];
-            let contentlength = content.length;
-            for (let j = 0; j < contentlength; j++) {
-
-                html += '<tr>';
-                html += '   <td class="invoicelabel" data-module="' + module + '">' + content[j]["label"] + '</td>';
-                html += '   <td><input class="form-control invoicequantity" id="quantity_' + j + '" type="text" value="' + content[j]["quantity"] + '"/></td>';
-                html += '   <td><input class="form-control invoiceprice" id="price_' + j + '" type="text" value="' + content[j]["unitprice"] + '"/></td>';
-                html += '</tr>';
-
-                total_ht += parseFloat(content[j]["quantity"]) * parseFloat(content[j]["unitprice"]);
-
+        
+        // get an array of all items
+        let items = [];
+        for (let moduleData of data) {
+            for (let elem of moduleData.data.count) {
+                items.push({"module": moduleData.module, "data": elem});
             }
+        }
+
+        for (let i=0; i<items.length; i++) {
+            html += '<tr>';
+            html += '   <td class="invoicelabel" data-module="' + items[i].module + '">' + items[i].data.label + '</td>';
+            html += '   <td><input class="form-control invoicequantity" id="quantity_' + i + '" type="text" value="' + items[i].data.quantity + '"/></td>';
+            html += '   <td><input class="form-control invoiceprice" id="price_' + i + '" type="text" value="' + items[i].data.unitprice + '"/></td>';
+            html += '</tr>';
+            total_ht += parseFloat(items[i].data.quantity) * parseFloat(items[i].data.unitprice);
         }
 
         discount = $('#invoicediscount').val();
         total_ht = (1-(discount/100))*total_ht;
 
-        //total_ht -= $('#invoicediscount').val();
         $('#invoicetablebody').html(html);
         $('#invoicetotalht').attr("value", total_ht.toFixed(2));
-
-
 
         $('.invoicequantity').on('change', function () {
             updateprice();
@@ -108,22 +103,12 @@
             updateprice();
         });
         $('#invoicevalidate').click(function () {
-
-            for (let i = 0; i < datalength; i++) {
-
-                content = data[i]["data"]["count"];
-                let contentlength = content.length;
-                for (let j = 0; j < contentlength; j++) {
-
-                    quantity = $('#quantity_' + j).val();
-                    price = $('#price_' + j).val();
-
-                    data[i]["data"]["count"][j]["quantity"] = quantity;
-                    data[i]["data"]["count"][j]["unitprice"] = price;
-                }
+            for (let i=0; i<items.length; i++) {
+                quantity = $('#quantity_' + i).val();
+                price = $('#price_' + i).val();
+                items[i].data.quantity = quantity;
+                items[i].data.unitprice = price;
             }
-
-            //alert("content = " + JSON.stringify(data) );
 
             data0 = {discount: $('#invoicediscount').val(), total_ht: $('#invoicetotalht').val(), content: JSON.stringify(data)};
 
