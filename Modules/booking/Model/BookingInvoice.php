@@ -378,6 +378,37 @@ class BookingInvoice extends InvoiceModel {
 
     public function details($id_space, $invoice_id, $lang){
 
+
+        $sql = 'SELECT MIN(bk_calendar_entry.start_time) as dstart, MAX(bk_calendar_entry.start_time) as dend, SUM(bk_calendar_entry.end_time-bk_calendar_entry.start_time) as duration, re_info.name as label, core_users.name, core_users.firstname FROM bk_calendar_entry
+        INNER JOIN re_info ON re_info.id=bk_calendar_entry.resource_id
+        INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+        WHERE bk_calendar_entry.invoice_id=?
+        AND bk_calendar_entry.id_space=? AND bk_calendar_entry.deleted=0
+        GROUP BY re_info.name, core_users.name, core_users.firstname
+        ORDER BY re_info.name ASC';
+        $res = $this->runRequest($sql, [$invoice_id, $id_space]);
+
+        $data = array();
+        $data["title"] = BookingTranslator::MAD($lang);
+        $data["header"] = array(
+            "label" => BookingTranslator::Resource($lang),
+            "user" => CoreTranslator::User($lang),
+            "date" => CoreTranslator::Date($lang),
+            "quantity" => BookingTranslator::Quantities($lang)
+        );
+        $data["content"] = array();
+        while($details = $res->fetch()) {
+            $data["content"][] = array(
+                "label" => $details['label'],
+                "user" => $details['name'].' '.$details['firstname'],
+                "date" => CoreTranslator::dateFromEn(date("Y-m-d", $details['dstart']), $lang) . " - " .
+                          CoreTranslator::dateFromEn(date("Y-m-d", $details['dend']), $lang),
+                "quantity" => $details['duration']/3600
+                );
+        }
+        return $data;
+
+        /*
         // all users in the invoice
         $sql = "SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE invoice_id=? AND deleted=0 AND id_space=?";
         $users = $this->runRequest($sql, array($invoice_id, $id_space))->fetchAll();
@@ -426,6 +457,7 @@ class BookingInvoice extends InvoiceModel {
             }
         }
         return $data;
+        */
     }
 
     protected function getUnitTimePricesForEachResource(int $id_space, array $resources, ?int $LABpricingid, $id_client) {
