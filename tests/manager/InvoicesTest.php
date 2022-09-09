@@ -108,25 +108,14 @@ class InvoicesTest extends InvoicesBaseTest {
 
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
-        $admin = null;
-        $user = null;
-        $space = null;
-        
+        $spaceName = array_key_first($spaces);
+
         $nbScenarios = 4;
         for ($scenario=1; $scenario <= $nbScenarios; $scenario++) {
-            // TODO: do this better
-            $count = 0;
-            foreach ($spaces as $spaceName => $data) {
-                if ($count == 1) {
-                    break;
-                }
-                $space = $this->space($spaceName);
-                $userName = $data['users'][0];
-                $user = $this->user($userName);
-                $admin = $data['admins'][0];
-                $this->asUser($admin, $space['id']);
-                $count ++;
-            }
+            $space = $this->space($spaceName);
+            $user = $this->user($spaces[$spaceName]['users'][0]);
+            $admin = $spaces[$spaceName]['admins'][0];
+            $this->asUser($admin, $space['id']);
 
             // delete all calentries
             $calEntries = $bkEntryModel->getAllEntries($space['id']);
