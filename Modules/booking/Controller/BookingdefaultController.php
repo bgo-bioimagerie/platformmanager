@@ -730,7 +730,6 @@ END:VCALENDAR
                 $email->sendEmailToSpaceMembers($params, $lang);
             }
         }
-        // Configuration::getLogger()->debug('[TEST]', ["returning id_entry from editreservatiinquery" => $id_entry]);
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 

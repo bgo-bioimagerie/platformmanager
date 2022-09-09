@@ -100,85 +100,68 @@ class InvoicesTest extends InvoicesBaseTest {
     }
 
     public function testBookingInvoicingUnits() {
-        // test invoicable quantity
+        // test invoicable quantities
+        $bkEntryModel = new BkCalendarEntry();
+        $resourcesModel = new ResourceInfo();
+        $clientUserModel = new ClClientUser();
+        $bkBaseTestModel = new BookingBaseTest();
+
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
         $admin = null;
         $user = null;
         $space = null;
         
-        // TODO: do this better
-        $count = 0;
-        foreach ($spaces as $spaceName => $data) {
-            if ($count == 1) {
-                break;
+        $nbScenarios = 4;
+        for ($scenario=1; $scenario <= $nbScenarios; $scenario++) {
+            // TODO: do this better
+            $count = 0;
+            foreach ($spaces as $spaceName => $data) {
+                if ($count == 1) {
+                    break;
+                }
+                $space = $this->space($spaceName);
+                $userName = $data['users'][0];
+                $user = $this->user($userName);
+                $admin = $data['admins'][0];
+                $this->asUser($admin, $space['id']);
+                $count ++;
             }
-            $space = $this->space($spaceName);
-            $userName = $data['users'][0];
-            $user = $this->user($userName);
-            $admin = $data['admins'][0];
-            $this->asUser($admin, $space['id']);
-            $count ++;
-        }
 
-        // delete all calentries
-        $bkEntryModel = new BkCalendarEntry();
-        $calEntries = $bkEntryModel->getAllEntries($space['id']);
-        if (!empty($calEntries)) {
-            foreach ($calEntries as $entry) {
-                $bkEntryModel->setDeleted($space['id'], $entry['id']);
+            // delete all calentries
+            $calEntries = $bkEntryModel->getAllEntries($space['id']);
+            if (!empty($calEntries)) {
+                foreach ($calEntries as $entry) {
+                    $bkEntryModel->setDeleted($space['id'], $entry['id']);
+                }
             }
-        }
-
-        // delete all previous invoices
-        $invoicesList = $this->listInvoices($space);
-        foreach ($invoicesList as $invoice) {
-            $this->deleteInvoice($space, $invoice);
-        }
-        
-        $resourcesModel = new ResourceInfo();
-        $resources = $resourcesModel->getForSpace($space['id']);
-        $clientUserModel = new ClClientUser();
-        $client = $clientUserModel->getUserClientAccounts($user['id'], $space['id'])[0];
-
-        // set booking
-        $bkBaseTestModel = new BookingBaseTest();
-
-
-        // test for a new not deleted invoicing unit
-        $reservationResult = $bkBaseTestModel->setReservationWithInvoicingUnits($space, $user, $client, $resources[0], 2);
-        
-        //invoice booking
-        $user = $this->asUser($admin, $space['id']);
-        $this->doInvoice($space, $user, $client);
-        
-        // get resulting invoice
-        $resultingInvoice = null;
-        $invoicesList = $this->listInvoices($space);
-        foreach ($invoicesList as $invoice) {
-            if ($invoice["module"] === "booking") {
-                //get result
-                $resultingInvoice = $invoice;
+            // delete all previous invoices
+            $invoicesList = $this->listInvoices($space);
+            foreach ($invoicesList as $invoice) {
+                $this->deleteInvoice($space, $invoice);
             }
+            $resources = $resourcesModel->getForSpace($space['id']);
+            $client = $clientUserModel->getUserClientAccounts($user['id'], $space['id'])[0];
+
+            // set booking
+            $reservationResult = $bkBaseTestModel->setReservationWithInvoicingUnits($space, $user, $client, $resources[0], $scenario); 
+            //invoice booking
+            $user = $this->asUser($admin, $space['id']);
+            $this->doInvoice($space, $user, $client);
+            
+            // get resulting invoice
+            $resultingInvoice = null;
+            $invoicesList = $this->listInvoices($space);
+            foreach ($invoicesList as $invoice) {
+                if ($invoice["module"] === "booking") {
+                    //get result
+                    $resultingInvoice = $invoice;
+                }
+            }
+            // check if resulting invoice data matches with what's expected
+            $invoiceTotalHt = $resultingInvoice['total_ht'];
+            $this->assertTrue($invoiceTotalHt == $reservationResult["expectedCost"]);
         }
-        // check if resulting invoice data matches with what's expected
-        $invoiceTotalHt = $resultingInvoice['total_ht'];
-        Configuration::getLogger()->debug('[TEST]', ["invoiceTotalHt" => $invoiceTotalHt, "expectedCost" => $reservationResult["expectedCost"]]);
-        $this->assertTrue($invoiceTotalHt == $reservationResult["expectedCost"]);
-
-        // test for a deleted invoicing unit
-
-
-        
-
-
-        
-
-
-        // delete invoice
-
-        // delete booking
-        
     }
 
 }
