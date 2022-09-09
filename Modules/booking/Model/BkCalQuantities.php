@@ -50,7 +50,7 @@ class BkCalQuantities extends Model {
             $sql .= " AND deleted=0";
         }
         if ($sort) {
-            $sql .= " ORDER BY id DESC, deleted DESC";
+            $sql .= " ORDER BY deleted ASC, id DESC";
         }
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }

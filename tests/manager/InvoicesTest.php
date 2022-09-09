@@ -6,6 +6,7 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClClientUser.php';
 require_once 'tests/BookingBaseTest.php';
+require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 class InvoicesTest extends InvoicesBaseTest {
 
@@ -102,30 +103,81 @@ class InvoicesTest extends InvoicesBaseTest {
         // test invoicable quantity
         $ctx = $this->Context();
         $spaces = $ctx['spaces'];
-        Configuration::getLogger()->debug('[TEST]', ["spaces" => $spaces]);
+        $admin = null;
+        $user = null;
+        $space = null;
         
-        $bkBaseTestModel = new BookingBaseTest();
+        // TODO: do this better
+        $count = 0;
+        foreach ($spaces as $spaceName => $data) {
+            if ($count == 1) {
+                break;
+            }
+            $space = $this->space($spaceName);
+            $userName = $data['users'][0];
+            $user = $this->user($userName);
+            $admin = $data['admins'][0];
+            $this->asUser($admin, $space['id']);
+            $count ++;
+        }
+
+        // delete all calentries
+        $bkEntryModel = new BkCalendarEntry();
+        $calEntries = $bkEntryModel->getAllEntries($space['id']);
+        if (!empty($calEntries)) {
+            foreach ($calEntries as $entry) {
+                $bkEntryModel->setDeleted($space['id'], $entry['id']);
+            }
+        }
+
+        // delete all previous invoices
+        $invoicesList = $this->listInvoices($space);
+        foreach ($invoicesList as $invoice) {
+            $this->deleteInvoice($space, $invoice);
+        }
         
-        $space = $this->space(array_keys($spaces)[0]);
-        Configuration::getLogger()->debug('[TEST]', ["space" => $space]);
-        $user = $this->user($space["users"][0]);
         $resourcesModel = new ResourceInfo();
         $resources = $resourcesModel->getForSpace($space['id']);
         $clientUserModel = new ClClientUser();
-        Configuration::getLogger()->debug('[TEST]', ["user" => $user]);
         $client = $clientUserModel->getUserClientAccounts($user['id'], $space['id'])[0];
-        Configuration::getLogger()->debug('[TEST]', ["user client" => $client]);
 
         // set booking
-        $bkCalEntry = $bkBaseTestModel->setReservationWithInvoicingUnit($space, $user, $client, $resources[0]);
-        Configuration::getLogger()->debug('[TEST]', ["bkCalEntry" => $bkCalEntry]);
-        //invoice booking
-        $this->doInvoice($space, $user, $client);
+        $bkBaseTestModel = new BookingBaseTest();
 
-        //get result
+
+        // test for a new not deleted invoicing unit
+        $reservationResult = $bkBaseTestModel->setReservationWithInvoicingUnits($space, $user, $client, $resources[0], 2);
+        
+        //invoice booking
+        $user = $this->asUser($admin, $space['id']);
+        $this->doInvoice($space, $user, $client);
+        
+        // get resulting invoice
+        $resultingInvoice = null;
+        $invoicesList = $this->listInvoices($space);
+        foreach ($invoicesList as $invoice) {
+            if ($invoice["module"] === "booking") {
+                //get result
+                $resultingInvoice = $invoice;
+            }
+        }
+        // check if resulting invoice data matches with what's expected
+        $invoiceTotalHt = $resultingInvoice['total_ht'];
+        Configuration::getLogger()->debug('[TEST]', ["invoiceTotalHt" => $invoiceTotalHt, "expectedCost" => $reservationResult["expectedCost"]]);
+        $this->assertTrue($invoiceTotalHt == $reservationResult["expectedCost"]);
+
+        // test for a deleted invoicing unit
+
+
+        
+
+
+        
 
 
         // delete invoice
+
+        // delete booking
         
     }
 

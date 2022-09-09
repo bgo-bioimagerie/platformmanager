@@ -19,6 +19,7 @@ require_once 'Modules/core/Controller/CorespaceuserController.php';
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
+require_once 'Modules/booking/Model/BkPrice.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 
@@ -209,9 +210,8 @@ class BookingBaseTest extends BaseTest {
      * 
      * option duration in hours
      */
-    protected function book($space, $user, $client, $resource, $time=9, $day='monday', $duration=0):mixed {
+    protected function book($space, $user, $client, $resource, $time=9, $day='monday', $duration=0, $quantities=[]):mixed {
         Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space, 'resource' => $resource]);
-        
         $date = new DateTime();
         $date->modify('next '.$day);
         $date->setTime($time, 0, 0);
@@ -225,10 +225,16 @@ class BookingBaseTest extends BaseTest {
             $bookEnd = $resa_end->format('Y-m-d');
             $hour_endH = $resa_end->format('h');
         }
+        // $quantities = $quantities ? 'q' . $quantities["bkQteId"] . '=' . $quantities["bkQteNb"] . ';' : "";
+
+        // $quantityIds = [$quantities["bkQteId"]];
+
+        Configuration::getLogger()->debug('[TEST]', ["quantities" => $quantities]);
+        Configuration::getLogger()->debug('[TEST]', ["resource ID" => $resource['id']]);
 
         Configuration::getLogger()->debug('[book] info', ['resa_start' => $bookDate, 'hour_startH' => $time, 'resa_end' => $bookEnd, 'hour_endH' => $hour_endH]);
 
-        $req = $this->request([
+        $requestData = [
             "path" => "bookingeditreservationquery/".$space['id'],
             "formid" => "editReservationDefault",
             "id" => 0,
@@ -244,12 +250,23 @@ class BookingBaseTest extends BaseTest {
             "hour_endH" => $hour_endH,
             "hour_endm" => 0,
             "reason" => 0
-        ]);        
+        ];
+
+        // add quantities to request
+        if (!empty($quantities)) {
+            foreach ($quantities as $qte) {
+                $requestData['q' . $qte['id']] = $qte['nb'] ;
+            }
+        }
+
+        $req = $this->request($requestData);
+
         $c = new BookingdefaultController($req, $space);
         $data = $c->runAction('booking', 'editreservationquery', ['id_space' => $space['id']]);
         $this->assertTrue($data !== null);
         $this->assertTrue(array_key_exists('bkcalentry', $data));
         $bkcalentry = $data['bkcalentry'];
+        Configuration::getLogger()->debug('[TEST]', ["bkcalentry in book function" => $bkcalentry]);
         $this->assertTrue($bkcalentry['id'] > 0);
         return $bkcalentry['id'];
     }
@@ -282,7 +299,7 @@ class BookingBaseTest extends BaseTest {
         $this->assertTrue(!empty($data['bkauthorizations']));
     }
 
-    protected function addBkQuantity($space, $user, $resource, $isInvoicingUnit=false) {
+    protected function addBkQuantity($space, $user, $resource, $isInvoicingUnit=false, $isDeleted=false) {
         Configuration::getLogger()->debug('add bk cal quantity', ['for' => $user, 'space' => $space, 'resource' => $resource]);
         $qteName = "quantity1";
         $req = $this->request([
@@ -298,22 +315,92 @@ class BookingBaseTest extends BaseTest {
         $data = $c->runAction('bookingsettings', 'index', ['id_space' => $space['id']]);
         $this->assertTrue($data !== null);
         $this->assertTrue(array_key_exists('bksupids', $data));
+        Configuration::getLogger()->debug('[TEST]', ["data in addbkquantity" => $data]);
         $id = $data['bksupids'][count($data['bksupids']) - 1];
         $modelCalQte = new BkCalQuantities();
+        if ($isDeleted) {
+            $modelCalQte->delete($space['id'], $id);
+        }
         $bkCalQuantity = $modelCalQte->getById($space['id'], $id);
         $this->assertTrue($bkCalQuantity['name'] === $qteName);
         $this->assertTrue($id > 0);
         return $id;
     }
 
-    public function setReservationWithInvoicingUnit($space, $user, $client, $resource) {
-        $bkQteId = $this->addBkQuantity($space, $user, $resource, true);
-        $bkCalEntryId = $this->book($space, $user, $client, $resource);
+    protected function deleteBkQuantitiesForResource($space, $resource) {
+        $modelCalQte = new BkCalQuantities();
+        $bkQtes = $modelCalQte->getByResource($space['id'], $resource['id']);
+        foreach ($bkQtes as $bkQte) {
+            $modelCalQte->delete($space['id'], $bkQte['id']);
+        }
+    }
+
+    public function setReservationWithInvoicingUnits($space, $user, $client, $resource, $scenario) {
+        $bkPriceModel = new BkPrice();
+        /* $bkQteId = null;
+        $bkPrice = null;
+        $bkQteNb = null; */
+
+        // delete all bkcalquantities for resource space
+        $this->deleteBkQuantitiesForResource($space, $resource);
+
+        switch ($scenario) {
+            case 1:
+                Configuration::getLogger()->debug('[TEST]', ["scenario 1"]);
+                // Scenario = 1 => test with non deleted bkquantity
+                // add bk cal quantity
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true);
+                // set unit price
+                $bkPrice = 10;
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                $bkQteNb = 10;
+                break;
+            case 2:
+                Configuration::getLogger()->debug('[TEST]', ["scenario 2"]);
+                // Scenario = 2 => test with deleted bkquantity
+                // add bk cal quantity
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:true);
+                // set unit price
+                $bkPrice = 10;
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                $bkQteNb = 10;
+                break;
+            default:
+                break;
+        }
+
+        $this->assertTrue($bkQteId && $bkPrice && $bkQteNb);
+
+        // add authorization to book
+        $this->addAuthorization($space, $user, $resource);
+        $this->asUser($user['login']);
+        $bkCalEntryId = $this->book($space, $user, $client, $resource, 10, "thursday", quantities:[["id" => $bkQteId, "nb" => $bkQteNb]]);
         $this->assertTrue($bkCalEntryId > 0);
         // get bookDate
         $bkCalEntryModel = new BkCalendarEntry();
         $bkCalEntry = $bkCalEntryModel->getEntry($space['id'], $bkCalEntryId);
-        return $bkCalEntry;
+
+        // get quantityId and quantityNb
+        $quantityIds = [];
+        $quantityNbs = [];
+        $quantities = explode(';', $bkCalEntry['quantities']);
+        array_pop($quantities);
+        Configuration::getLogger()->debug('[TEST]', ["quantities" => $quantities]);
+        foreach ($quantities as $quantity) {
+            if (strpos($quantity, '=') !== false) {
+                $data = explode('=', $quantity);
+                Configuration::getLogger()->debug('[TEST]', ["data" => $data]);
+                $quantityIds[] += $data[0];
+                $quantityNbs[] += $data[1];
+            }
+            
+        }
+
+        Configuration::getLogger()->debug('[TEST]', ["bkPrice" => $bkPrice]);
+
+        $expectedCost = !empty($quantityNbs) ? $bkPrice * $quantityNbs[0] : null;
+        
+        return ["bkCalEntry" => $bkCalEntry, "bkPrice" => $bkPrice, "expectedCost" => $expectedCost];
     }
 
 }
