@@ -46,16 +46,15 @@ while(true) {
 			$channel->wait();
 		}
 
-		$channel->close();
-		$connection->close();
-
 	} catch(Throwable $e) {
 		Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage()]);
 		if(Configuration::get('sentry_dsn', '')) {
 			\Sentry\captureException($e);
 		}
-		Configuration::getLogger()->debug('sleep for 1 minute');
-		sleep(1 * 60);
 	}
+
+	Events::Close();
+	Configuration::getLogger()->debug('sleep for 1 minute');
+	sleep(1 * 60);
 
 }

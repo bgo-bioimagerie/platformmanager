@@ -1055,7 +1055,6 @@ class BookingController extends BookingabstractController {
             //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             return $modelDefault->editreservationdefault($id_space, $param);
         } else {
-
             /// todo run plugin
             $modelCache = new FCache();
             $pathInfo = $modelCache->getURLInfos($editResaFunction);

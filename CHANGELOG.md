@@ -2,6 +2,11 @@
 
 ## 2.8.0
 
+### Docker
+
+* Add specific rabbitmq config in docker-compose to increase max background process duration;
+  sets consumer_timeout to 2h in /etc/rabbitmq/conf.d/pfm.conf
+
 ### Features / enhancements
 
 * [booking] add calendar default view option in booking config
@@ -10,6 +15,8 @@
 * [doc] general update, add missing modules documentation
 * [coreconnexion] add email confirmation at account creation
 * [booking] add month to default booking views in user's settings
+* [invoice] for global invoice, fix discount display
+* [invoice] speedup pdf generation with details (sql refactoring)
 * [clients] make address forms facultative
 
 ### Fixes
@@ -22,11 +29,15 @@
 * [quotes] show old client account used for a quote, in quote edition in case user switched to new client
 * [services] show old client account used for a order/project, in order/project edition in case user switched to new client
 * [services/clients] prevent pricing removal if used by a client
+* [booking] keep deleted packages/supplementaries/quantities infos in existing reservations
+* [invoices] allow to invoice existing reservations with deleted packages or invoicable quantities
 * [invoice] manage invoicing/display in case of deleted service
 * [services] fix orders edition form
 * [com] avoid displaying news popup if no news
 * [catalog] fix catalog public page header file upload
 * [booking] fix booking delete sendemail
+* [invoices] in global invoices, some service names prevented invoice edit or discount update
+* [events] fix disconnection from rabbitmq
 
 ## 2.7.1
 

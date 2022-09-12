@@ -203,7 +203,6 @@ class InvoicesBaseTest extends BaseTest {
         ]);
         $c = new ServicesinvoiceprojectController($req, $space);
         $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
-        
     }
 
     protected function listInvoices($space) {
