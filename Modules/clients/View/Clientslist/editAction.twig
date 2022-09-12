@@ -1,0 +1,46 @@
+{% extends "Modules/clients/View/layout.twig" %}
+
+{% block content %}
+
+<div class="row pm-table" id="corespaceuseredit">
+
+    <div id="btnSection">
+     {% for key, value in data.formsHtml %}
+        {% if key == 'client' or data.accessAddressForms %}
+            <button id="b_{{key}}" onclick="show('{{key}}')" class="btn btn-secondary" style="margin:5px;">{{key}}</button>
+        {% endif %}
+     {% endfor %}
+    </div>
+
+    <div id="formSection" style="margin:5px;">
+        {% for formid, form in data.formsHtml %}
+            <div id="{{formid}}" class="container" style="display: none">
+                    {{form | raw}}
+            </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<script>
+
+let formSection = document.getElementById('formSection');
+let defaultForm = '{{data.defaultForm}}';
+
+show(defaultForm);
+
+function show(formToDisplay) {
+    [...formSection.children].forEach( formElement => {
+        if (formElement.id === formToDisplay) {
+            formElement.style.display = '';
+            document.getElementById('b_'+ formElement.id).className = 'btn btn-primary';
+        } else {
+            formElement.style.display = 'none';
+            document.getElementById('b_'+ formElement.id).className = 'btn btn-secondary';
+        }
+    });
+}
+
+</script>
+
+{% endblock %}

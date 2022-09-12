@@ -17,6 +17,7 @@
 * [booking] add month to default booking views in user's settings
 * [invoice] for global invoice, fix discount display
 * [invoice] speedup pdf generation with details (sql refactoring)
+* [clients] make address forms facultative
 
 ### Fixes
 
