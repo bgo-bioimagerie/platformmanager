@@ -1,5 +1,12 @@
 # Changes
 
+## 2.9.0
+
+### Features / enhancements
+
+* [cli] add maintenance option to command-line admin tool
+
+
 ## 2.8.0
 
 ### Docker
