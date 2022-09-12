@@ -485,7 +485,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Antibodies</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/antibodies/" class="gdoc-nav__entry ">
+                        Antibodies
+                    </a>
+                </span>
             
             
 
@@ -529,7 +533,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Catalog</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/catalog/" class="gdoc-nav__entry ">
+                        Catalog
+                    </a>
+                </span>
             
             
 
@@ -573,7 +581,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Com</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/com/" class="gdoc-nav__entry ">
+                        Com
+                    </a>
+                </span>
             
             
 
@@ -641,7 +653,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Invoices</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/invoices/" class="gdoc-nav__entry ">
+                        Invoices
+                    </a>
+                </span>
             
             
 
@@ -661,7 +677,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Mailer</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/mailer/" class="gdoc-nav__entry ">
+                        Mailer
+                    </a>
+                </span>
             
             
 
@@ -729,7 +749,11 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <li>
             
             
-                <span class="flex">Services</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/services/" class="gdoc-nav__entry ">
+                        Services
+                    </a>
+                </span>
             
             
 
@@ -950,7 +974,7 @@ A user is defined by its (&quot;*&quot; for mandatory):">
 <li><a class="gdoc-markdown__link" href="./#users-management">authorize <em>users</em> to access your <em>space</em></a></li>
 <li><a class="gdoc-markdown__link" href="./#users-management">affect roles to users within your <em>space</em></a></li>
 <li><a class="gdoc-markdown__link" href="./#manage-users-booking-access">manage users <em>booking access</em></a></li>
-<li><a class="gdoc-markdown__link" href="./#link-users-to-a-client">manage users <em>client accounts</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#link-clients-to-a-user">manage users <em>client accounts</em></a></li>
 </ul>
 <div class="gdoc-page__anchorwrap">
     <h2 id="item-definition">
@@ -963,7 +987,7 @@ A user is defined by its (&quot;*&quot; for mandatory):">
 <p>A <em>user</em> is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
 <ul>
 <li>
-<p>In Platform-Manager</p>
+<p>In Platform-Manager:</p>
 <ul>
 <li>Login*</li>
 <li>Name*</li>
@@ -973,7 +997,7 @@ A user is defined by its (&quot;*&quot; for mandatory):">
 </ul>
 </li>
 <li>
-<p>In a space</p>
+<p>In a space:</p>
 <ul>
 <li><a class="gdoc-markdown__link" href="./#user-space-role">Space role</a></li>
 <li><a class="gdoc-markdown__link" href="./#user-activity-state">Activity state</a></li>
@@ -1006,7 +1030,7 @@ A user is defined by its (&quot;*&quot; for mandatory):">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h3>
-</div><p>Relatively to a space, a user can be <em>pending</em>, <em>active</em>, or <em>inactive</em>.</p>
+</div><p>Relatively to a space a user can be <em>pending</em>, <em>active</em>, or <em>inactive</em>.</p>
 <div class="gdoc-page__anchorwrap">
     <h4 id="pending">
         Pending
@@ -1058,31 +1082,49 @@ Creating a <em>user</em> creates an <em>account</em>. A <em>user account</em> ca
     </h2>
 </div><p>See <a class="gdoc-markdown__link" href="../../../manager/users/#promote-a-user-to-space-administration">Promote a user to space administration</a></p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="link-users-to-a-client">
-        Link users to a client
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#link-users-to-a-client" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Link users to a client" href="#link-users-to-a-client">
+    <h2 id="users-access">
+        Users Access
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#users-access" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Users Access" href="#users-access">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
-</div><p>You can link users to a client by clicking the <em>Client accounts</em> button for a user.</p>
-<p><img src="../../../users_module_4.png" alt="basic configuration"  /></p>
-<p>Then, just choose a client amongst the Clients selector and click <em>Add</em>.</p>
-<p><img src="../../../users_module_5.png" alt="basic configuration"  /></p>
+</div><p>Within the access page, you can manage users <em>space access</em>, <em>booking access</em> and <em>client accounts</em>.
+It is accessible by clicking the <em>Access</em> button for the desired user.</p>
 <div class="gdoc-page__anchorwrap">
-    <h2 id="manage-users-booking-access">
+    <h3 id="manage-users-space-access">
+        Manage users space access
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#manage-users-space-access" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage users space access" href="#manage-users-space-access">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Under this section, you can change their role and enter informations relative to their contract and to your platform convention.</p>
+<p><img src="../../../users_module_1.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="link-clients-to-a-user">
+        Link clients to a user
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#link-clients-to-a-user" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Link clients to a user" href="#link-clients-to-a-user">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>You can link users to a client by clicking the <em>Client accounts</em> button from the access page.</p>
+<p>Then, just choose a client amongst the Clients selector and click <em>Add</em>.</p>
+<p><img src="../../../users_module_2.png" alt="basic configuration"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="manage-users-booking-access">
         Manage users booking access
         <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/users/#manage-users-booking-access" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage users booking access" href="#manage-users-booking-access">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
-    </h2>
-</div><p>By default, users are not authorized to book resources. To make users able to book a resource, you have to manage their booking access.
-Note that, since you need to have activated the <em>Booking module</em> to display the <em>Booking access</em> button aside the users names.</p>
-<p><img src="../../../users_module_1.png" alt="basic configuration"  /></p>
-<p>Click the <em>Booking access</em> button for the user you want to be able to book a resource.</p>
-<p><img src="../../../users_module_2.png" alt="basic configuration"  /></p>
-<p>Then click <em>Add</em> button (<em>i.e.</em> &ldquo;add&rdquo; this the user to the list of users who can book this resource) for the resource you want them to be able to book.</p>
+    </h3>
+</div><p>Depending on your booking settings, users may have to be authorized  in order to being able to book resources.
+Booking authorizations target resources categories, not resources themselves.
+To make users being able to book a resource, you have to manage their booking access.
+Note that you need first to have activated the <em>Booking module</em> and set at least one category and one visa.</p>
+<p>Click the <em>Booking access</em> button to move into the Booking authorizations section.</p>
 <p><img src="../../../users_module_3.png" alt="basic configuration"  /></p>
-<p>Fill <em>Activation date</em> and, eventually, <em>Visa</em> if you set your <em>Booking module</em> to require visas.</p>
+<p>Then select the category to add to user&rsquo;s authorisations, the related visa and click <em>Save</em> button for the resource you want them to be able to book.</p>
+<p>Under <em>Authorisations for [username]</em> figures a summary of the current authorisations.</p>
+<p>Under *Authorizations history for [username] figures an history of user&rsquo;s authorisations modifications.</p>
 
     </article>
 

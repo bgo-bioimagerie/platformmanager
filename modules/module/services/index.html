@@ -10,7 +10,11 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Services module allows you to create projects, services and orders as well as managing stocks.
+Within this module, you can:
+manage projects manage orders manage services manage stocks Item definition Project Provides project following using kanban board, gantt diagram.
+Invoicable items - services - can be added to a project to have a track of what you&rsquo;ll have to invoice to your clients.
+A Project is defined by its (&quot;*&quot; for mandatory):">
 
 
 
@@ -482,7 +486,11 @@
             <li>
             
             
-                <span class="flex">Antibodies</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/antibodies/" class="gdoc-nav__entry ">
+                        Antibodies
+                    </a>
+                </span>
             
             
 
@@ -526,7 +534,11 @@
             <li>
             
             
-                <span class="flex">Catalog</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/catalog/" class="gdoc-nav__entry ">
+                        Catalog
+                    </a>
+                </span>
             
             
 
@@ -570,7 +582,11 @@
             <li>
             
             
-                <span class="flex">Com</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/com/" class="gdoc-nav__entry ">
+                        Com
+                    </a>
+                </span>
             
             
 
@@ -638,7 +654,11 @@
             <li>
             
             
-                <span class="flex">Invoices</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/invoices/" class="gdoc-nav__entry ">
+                        Invoices
+                    </a>
+                </span>
             
             
 
@@ -658,7 +678,11 @@
             <li>
             
             
-                <span class="flex">Mailer</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/mailer/" class="gdoc-nav__entry ">
+                        Mailer
+                    </a>
+                </span>
             
             
 
@@ -726,7 +750,11 @@
             <li>
             
             
-                <span class="flex">Services</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/services/" class="gdoc-nav__entry is-active">
+                        Services
+                    </a>
+                </span>
             
             
 
@@ -939,7 +967,195 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Services</h1>
-        
+        <p><strong>Services module</strong> allows you to create <strong>projects</strong>, <strong>services</strong> and <strong>orders</strong> as well as managing <strong>stocks</strong>.</p>
+<p><img src="../../../services_module_1.png" alt="resources_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#manage-projects">manage <em>projects</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#manage-orders">manage <em>orders</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#creating-a-service">manage <em>services</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#manage-stocks">manage <em>stocks</em></a></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="item-definition">
+        Item definition
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#item-definition" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Item definition" href="#item-definition">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="project">
+        Project
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#project" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Project" href="#project">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Provides project following using kanban board, gantt diagram.</p>
+<p>Invoicable items - <em>services</em> - can be added to a project to have a track of what you&rsquo;ll have to invoice to your clients.</p>
+<p><img src="../../../services_module_3.png" alt="resources_module"  /></p>
+<p>A <strong>Project</strong> is defined by its (&quot;*&quot; for <em>mandatory</em>):</p>
+<ul>
+<li>identification number*</li>
+<li><a class="gdoc-markdown__link" href="../../module/clients/#item-definition">client account*</a></li>
+<li><a class="gdoc-markdown__link" href="../../module/users/#item-definition">user*</a> (<em>i.e.</em> main user of the project)</li>
+<li><a class="gdoc-markdown__link" href="./#add-a-visa">Manager in charge (visa)*</a></li>
+<li>New team*</li>
+<li>New project*</li>
+<li>Origin*</li>
+<li>Time limit</li>
+<li>Opened date</li>
+<li>users (*i.e. other users related to the project. Main user will automatically be part of it)</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="order">
+        Order
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#order" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Order" href="#order">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="service">
+        Service
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#service" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Service" href="#service">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>A <strong>Service</strong> stands for an invoicable item to be related to a project or an order.
+It is defined by its:</p>
+<ul>
+<li>name</li>
+<li>description</li>
+<li>type</li>
+</ul>
+<p><em>type</em> is to be chosen between <em>quantity</em>, <em>time in minutes</em>, <em>time in hours</em>, <em>half day</em>, <em>day</em> or <em>price</em>.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="stock">
+        Stock
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#stock" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Stock" href="#stock">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>services</em> line.</p>
+<p>You can now select the minimum role required to access the module. &ldquo;Inactive&rdquo; option stands for &ldquo;the module is not active&rdquo;.</p>
+<p><img src="../../../services_module_0.png" alt="resources_configuration"  /></p>
+<p>Don&rsquo;t forget to save your choices: each type of item you want to use will have to be activated to enable it in the services module left side menu.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="manage-projects">
+        Manage projects
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#manage-projects" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage projects" href="#manage-projects">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="creating-a-new-project">
+        Creating a new project
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#creating-a-new-project" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Creating a new project" href="#creating-a-new-project">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>First make sure to have created the <em>origin</em> and <em>visa</em> you want to use foe this project. It can be changed afterwards, but you won&rsquo;t be able to save your project creation if no visa or no origin is selected.</p>
+<p><em>Origin</em> and <em>visa</em> are accessible from the left side menu.</p>
+<p>Then, you can go to <em>New project</em> and fill the form in.</p>
+<p><img src="../../../services_module_2.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="creating-a-service">
+        Creating a service
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#creating-a-service" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Creating a service" href="#creating-a-service">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>At the bottom of the left side menu, under <em>LISTING</em>, you can access the list of existing services by clicking on <em>Services</em> or add a new one by clicking on the <em>+</em> icon.</p>
+<p><img src="../../../services_module_4.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="adding-a-service-to-your-project">
+        Adding a service to your project
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#adding-a-service-to-your-project" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Adding a service to your project" href="#adding-a-service-to-your-project">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Go to your project. You can find it under <em>Opened</em>, <em>Period</em> or <em>Closed</em> projects, depending on its state. Then, click <em>Edit</em>.</p>
+<p>Navigate to the the <em>Follow-up</em> tab then click on <em>New service</em>.</p>
+<p><img src="../../../services_module_5.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="using-the-kanban-board">
+        Using the kanban Board
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#using-the-kanban-board" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Using the kanban Board" href="#using-the-kanban-board">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Kanban board is accessible from your project page under the <em>Kanban board</em> tab.</p>
+<p><img src="../../../services_module_6.png" alt="resources_module"  /></p>
+<p>You can here create new tasks, new categories, and drag and drop each elements (except for the <em>done</em> category, which is always at the last position).</p>
+<p><img src="../../../services_module_7.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="gantt-diagram">
+        Gantt diagram
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#gantt-diagram" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Gantt diagram" href="#gantt-diagram">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Projects are also displayed in a gantt diagram.</p>
+<p><img src="../../../services_module_9.png" alt="resources_module"  /></p>
+<p>By clicking on a project bar, you can access to the related tasks.</p>
+<p><img src="../../../services_module_8.png" alt="resources_module"  /></p>
+<p>Task details are shown by clicking on its bar.</p>
+<p><img src="../../../services_module_10.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="closing--invoicing-projects">
+        Closing / invoicing projects
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#closing--invoicing-projects" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Closing / invoicing projects" href="#closing--invoicing-projects">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h2 id="manage-orders">
+        Manage orders
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#manage-orders" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage orders" href="#manage-orders">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><div class="gdoc-page__anchorwrap">
+    <h3 id="creating-a-new-order">
+        Creating a new order
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#creating-a-new-order" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Creating a new order" href="#creating-a-new-order">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Orders creation is accessible via the <em>New order</em> link, under <em>ORDERS</em> section in the left side menu.</p>
+<p><img src="../../../services_module_11.png" alt="resources_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="adding-a-service-to-your-order">
+        Adding a service to your order
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#adding-a-service-to-your-order" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Adding a service to your order" href="#adding-a-service-to-your-order">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Go to your order. You can find it under <em>Opened</em>, <em>Closed</em> or <em>All</em> orders, depending on its state. Then, click <em>Edit</em>.</p>
+<p>If you already have created services, they will be selectable at the bottom of the form. If not, see <a class="gdoc-markdown__link" href="./#creating-a-service">creating a service</a></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="closing--invoicing-orders">
+        Closing / invoicing orders
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#closing--invoicing-orders" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Closing / invoicing orders" href="#closing--invoicing-orders">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><div class="gdoc-page__anchorwrap">
+    <h2 id="manage-stocks">
+        Manage stocks
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/#manage-stocks" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Manage stocks" href="#manage-stocks">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
     </article>
 
                 

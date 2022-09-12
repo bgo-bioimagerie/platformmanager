@@ -10,10 +10,77 @@
     <item>
       <title>Antibodies</title>
       <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
       
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/antibodies/</guid>
-      <description></description>
+      <description>Antibodies module allows you to manage an antibodies dataset.</description>
+    </item>
+    
+    <item>
+      <title>Catalog</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</link>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</guid>
+      <description>Catalog module allows you to showcase your bookable resources. Alongside, it also allows to create custom categories of items (services, etc&amp;hellip;) to show.
+As for resources, Antibodies module is automatically bindable to the Catalog module.
+Within this module, you can:
+Resources showcase Custom items Antibodies showcase Module activation and configuration Within your space, go into Configuration module.
+Then click edit button in catalog line.
+You can now select the minimum role required to access the module.</description>
+    </item>
+    
+    <item>
+      <title>Com</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</link>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</guid>
+      <description>Com module allows you to display informational messages news on your home page.
+Within this module, you can:
+Display a message on your home page Edit news and program their display Module activation and configuration Within your space, go into Com module. Com module could be found on the second page.
+Then click edit button in com line.
+You can now select the minimum role required to access the module. &amp;ldquo;Inactive&amp;rdquo; option stands for &amp;ldquo;the module is not active&amp;rdquo;.</description>
+    </item>
+    
+    <item>
+      <title>Invoices</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</link>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</guid>
+      <description>Invoices module allows you to create and send invoices related bookings, orders and projects.
+Within this module, you can:
+generate booking invoices generate project invoices generate order invoices generate global invoices define prices Module activation and configuration Within your space, go into Configuration module.
+Then click edit button in invoices line.
+You can now select the minimum role required to access the module. &amp;ldquo;Inactive&amp;rdquo; option stands for &amp;ldquo;the module is not active&amp;rdquo;.</description>
+    </item>
+    
+    <item>
+      <title>Mailer</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</link>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</guid>
+      <description>Mailer module allows you email your space users according to filters on role or resources used.
+Module activation and configuration Within your space, go into Configuration module.
+Then click edit button in mailer line.
+You can now select the minimum role required to access the module. &amp;ldquo;Inactive&amp;rdquo; option stands for &amp;ldquo;the module is not active&amp;rdquo;.
+Edition access selector determines which roles will be able to send emails.
+Don&amp;rsquo;t forget to save your choice.</description>
+    </item>
+    
+    <item>
+      <title>Services</title>
+      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</link>
+      <pubDate>Tue, 23 Aug 2022 13:30:30 +0200</pubDate>
+      
+      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</guid>
+      <description>Services module allows you to create projects, services and orders as well as managing stocks.
+Within this module, you can:
+manage projects manage orders manage services manage stocks Item definition Project Provides project following using kanban board, gantt diagram.
+Invoicable items - services - can be added to a project to have a track of what you&amp;rsquo;ll have to invoice to your clients.
+A Project is defined by its (&amp;quot;*&amp;quot; for mandatory):</description>
     </item>
     
     <item>
@@ -24,18 +91,8 @@
       <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/booking/</guid>
       <description>Booking module allows users book resources.
 Unlike other modules, Booking module has the particularity to be divided into two modules: Booking and Booking settings. You will need to activate both in order set your resources reservation environment.
-Module descritpion
 Item definition A reservation is defined by its:
 Resource User Client account Short description Full description Color code (optional) Additional infos All day, i.e. does this reservation takes all day? Beginning (date + time) End (date + time) (optional) Periodicity Related items definition Color code Additional info Supplementaries info For information on reservation.</description>
-    </item>
-    
-    <item>
-      <title>Catalog</title>
-      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
-      
-      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/catalog/</guid>
-      <description></description>
     </item>
     
     <item>
@@ -49,15 +106,6 @@ Within this module, you can:
 manage clients manage pricings link users to a client Item definition A client is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the client. A user can&amp;rsquo;t be invoiced directly.
 A client is defined by its (&amp;quot;*&amp;quot; for mandatory):
 Identifier* Contact name Phone Email* Pricing* Invoice send preference Related items definition Pricing a pricing is used to define a specific group of prices for resources and services tarification.</description>
-    </item>
-    
-    <item>
-      <title>Com</title>
-      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
-      
-      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/com/</guid>
-      <description></description>
     </item>
     
     <item>
@@ -86,24 +134,6 @@ Space members and managers can see tickets and manage them:</description>
     </item>
     
     <item>
-      <title>Invoices</title>
-      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
-      
-      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Mailer</title>
-      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
-      
-      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/mailer/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>Quote</title>
       <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/quote/</link>
       <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
@@ -125,16 +155,7 @@ Recipient is set in case of a new user quote creation.</description>
       <description>Resources module allows you to create resources that users can book.
 Within this module, you can:
 manage resources manage areas manage categories manage responsibles and visas manage resources states and events Item definition A resource is a bookable item. It is defined by its (&amp;quot;*&amp;quot; for mandatory):
-name* category* area* brand type display order description full description image Related items definition Category A category contain multiple resources. For example, if you have 3 scanners (scanner1, scanner2, scanner3), they can be grouped under the category Scanners.</description>
-    </item>
-    
-    <item>
-      <title>Services</title>
-      <link>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</link>
-      <pubDate>Fri, 13 Aug 2021 13:30:30 +0200</pubDate>
-      
-      <guid>https://bgo-bioimagerie.github.io/platformmanager/modules/module/services/</guid>
-      <description></description>
+name* category* area* brand type display order description full description image Related items definition Category A category contains multiple resources. For example, if you have 3 scanners (scanner1, scanner2, scanner3), they can be grouped under the category Scanners.</description>
     </item>
     
     <item>

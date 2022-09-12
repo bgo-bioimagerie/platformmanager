@@ -10,7 +10,11 @@
 
 
 
-    <meta name="description" content="Platform Manager">
+    <meta name="description" content="Invoices module allows you to create and send invoices related bookings, orders and projects.
+Within this module, you can:
+generate booking invoices generate project invoices generate order invoices generate global invoices define prices Module activation and configuration Within your space, go into Configuration module.
+Then click edit button in invoices line.
+You can now select the minimum role required to access the module. &ldquo;Inactive&rdquo; option stands for &ldquo;the module is not active&rdquo;.">
 
 
 
@@ -482,7 +486,11 @@
             <li>
             
             
-                <span class="flex">Antibodies</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/antibodies/" class="gdoc-nav__entry ">
+                        Antibodies
+                    </a>
+                </span>
             
             
 
@@ -526,7 +534,11 @@
             <li>
             
             
-                <span class="flex">Catalog</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/catalog/" class="gdoc-nav__entry ">
+                        Catalog
+                    </a>
+                </span>
             
             
 
@@ -570,7 +582,11 @@
             <li>
             
             
-                <span class="flex">Com</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/com/" class="gdoc-nav__entry ">
+                        Com
+                    </a>
+                </span>
             
             
 
@@ -638,7 +654,11 @@
             <li>
             
             
-                <span class="flex">Invoices</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/invoices/" class="gdoc-nav__entry is-active">
+                        Invoices
+                    </a>
+                </span>
             
             
 
@@ -658,7 +678,11 @@
             <li>
             
             
-                <span class="flex">Mailer</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/mailer/" class="gdoc-nav__entry ">
+                        Mailer
+                    </a>
+                </span>
             
             
 
@@ -726,7 +750,11 @@
             <li>
             
             
-                <span class="flex">Services</span>
+                <span class="flex">
+                    <a href="/platformmanager/modules/module/services/" class="gdoc-nav__entry ">
+                        Services
+                    </a>
+                </span>
             
             
 
@@ -939,7 +967,130 @@
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
         <h1>Invoices</h1>
-        
+        <p><strong>Invoices module</strong> allows you to create and send invoices related bookings, orders and projects.</p>
+<p><img src="../../../invoices_module_5.png" alt="invoices_module"  /></p>
+<p>Within this module, you can:</p>
+<ul>
+<li><a class="gdoc-markdown__link" href="./#booking-invoices"><em>generate booking invoices</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#project-invoices"><em>generate project invoices</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#order-invoices"><em>generate order invoices</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#global-invoices"><em>generate global invoices</em></a></li>
+<li><a class="gdoc-markdown__link" href="./#defining-prices"><em>define prices</em></a></li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="module-activation-and-configuration">
+        Module activation and configuration
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#module-activation-and-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Module activation and configuration" href="#module-activation-and-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>Within your space, go into <em>Configuration</em> module.</p>
+<p><img src="../../../basic_configuration_1.png" alt="basic configuration"  /></p>
+<p>Then click edit button in <em>invoices</em> line.</p>
+<p>You can now select the minimum role required to access the module. &ldquo;Inactive&rdquo; option stands for &ldquo;the module is not active&rdquo;.</p>
+<p><img src="../../../invoices_module_0.png" alt="invoices_configuration"  /></p>
+<p>Don&rsquo;t forget to save your choice.</p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="html---pdf-template">
+        HTML - PDF Template
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#html---pdf-template" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor HTML - PDF Template" href="#html---pdf-template">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>By default, pdf invoices are generated using an integrated template. You can also upload a template of yours if needed. Templating langage used is Twig.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="generating-invoices">
+        Generating invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#generating-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Generating invoices" href="#generating-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>General informations:</p>
+<ul>
+<li>
+<p>when used, the period concerns reservations start dates: only reservations <em>started</em> between begin period (included) and perdiod end (excluded) will be considered.</p>
+</li>
+<li>
+<p>after having requested invoice generation by clicking <em>save</em>, you will be redirected to the <em>To send invoices</em> page where your invoice should be listed.</p>
+</li>
+<li>
+<p>In some cases (especially if you requested invoice for all clients for an entire year), the invoice generation can take time.
+In this case, the list of invoices in generation process is displayed at the top of the page. You can click <em>refresh</em> button to refresh theirs generation state information.</p>
+</li>
+<li>
+<p>You can then check if an invoice informations are correct by clicking on its <em>Edit</em> button.</p>
+</li>
+<li>
+<p>For more information on invoices edition, see <a class="gdoc-markdown__link" href="./#editing-invoices">Editing invoices</a>.</p>
+</li>
+</ul>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="global-invoices">
+        Global invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#global-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Global invoices" href="#global-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Generates a global invoice (orders + projects + bookings) per client.</p>
+<p>The period has to be defined. You can either choose to selct a unique client.</p>
+<p><img src="../../../invoices_module_7.png" alt="invoices_module"  /></p>
+<p>The content of a global invoice mixes services - from projects and orders - and booked resources:</p>
+<p><img src="../../../invoices_module_8.png" alt="invoices_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="booking-invoices">
+        Booking invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#booking-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Booking invoices" href="#booking-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Under the <em>Services</em> section in the left side menu, go into <em>New invoice</em>.</p>
+<p>You can either invoice all clients or choose a unique client to invoice.</p>
+<p>In both cases, you&rsquo;ll have to define the targeted period.</p>
+<p><img src="../../../invoices_module_1.png" alt="invoices_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="project-invoices">
+        Project invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#project-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Project invoices" href="#project-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Under the <em>SERVICES</em> section in the left side menu, go into <em>Invoice projects</em>.</p>
+<p>You can either invoice all projects for a client and a period or choose a unique project to invoice.</p>
+<p><img src="../../../invoices_module_3.png" alt="invoices_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h3 id="order-invoices">
+        Order invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#order-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Order invoices" href="#order-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div><p>Under the <em>SERVICES</em> section in the left side menu, go into <em>Invoice orders</em>.</p>
+<p>You can invoice all orders for a client and a period.</p>
+<p><img src="../../../invoices_module_4.png" alt="invoices_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="editing-invoices">
+        Editing invoices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#editing-invoices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Editing invoices" href="#editing-invoices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p><img src="../../../invoices_module_5.png" alt="invoices_module"  /></p>
+<p>After having generated an invoice, it is possible to edit it, to see its details and to generate a pdf. For that, go into <em>To send invoices</em>, at the top of the left side menu.</p>
+<p>In some cases (especially if you requested invoice for all clients for an entire year), the invoice generation can take time.
+In this case, the list of invoices in generation process is displayed at the top of the page. You can click <em>refresh</em> button to refresh theirs generation state information.</p>
+<p><img src="../../../invoices_module_2.png" alt="invoices_module"  /></p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="defining-prices">
+        Defining prices
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/invoices/#defining-prices" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Defining prices" href="#defining-prices">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div><p>By default, prices are set to 0€.</p>
+<p>You can edit them in <em>Prices</em> pages, under <em>BOOKING</em> (for resources prices) or <em>SERVICES</em> (for services prices) sections.</p>
+<p><img src="../../../invoices_module_6.png" alt="invoices_module"  /></p>
+<p>For both resources and services, different prices can be defined according to the <a class="gdoc-markdown__link" href="../../module/clients/#pricing">client&rsquo;s pricing</a>.</p>
+
     </article>
 
                 
