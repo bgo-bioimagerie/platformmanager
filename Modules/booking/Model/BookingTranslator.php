@@ -1440,6 +1440,13 @@ class BookingTranslator {
         return "Use recurent booking";
     }
 
+    public static function Set_default_booking_view($lang) {
+        if ($lang == "fr") {
+            return "Utiliser une vue par défaut";
+        }
+        return "Use a default view";
+    }
+
     public static function Single($lang) {
         if ($lang == "fr") {
             return "Simple";

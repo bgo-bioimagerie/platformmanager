@@ -215,7 +215,7 @@ class InInvoice extends Model {
         }
         
         // extract years
-        if (count($data) > 0) {
+        if (!empty($data)) {
             $firstDate = $data[0][0];
             $firstDateInfo = explode("-", $firstDate);
             $firstYear = $firstDateInfo[0];

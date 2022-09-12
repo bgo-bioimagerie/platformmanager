@@ -150,6 +150,18 @@ class ServicesordersController extends ServicesController {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
+
+            if($value['id_resp'] && !in_array($value['id_resp'], $clientSelect['choicesid'])){
+                $modelCl = new ClClient();
+                $clName = $modelCl->getName($id_space, $value['id_resp']);
+                if(!$clName) {
+                    $clName = Constants::UNKNOWN;
+                }
+                array_push($clientSelect['choices'], '[!] '.$clName);
+                array_push($clientSelect['choicesid'], $value['id_resp']);
+            }
+
+
             $clientSelect['value'] = ($value['id_resp'] != 0) ? $value['id_resp'] : $userClients[0]['id'] ?? "";
         } else {
             $value = $modelOrder->defaultEntryValues();
@@ -178,6 +190,13 @@ class ServicesordersController extends ServicesController {
         
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+
+        foreach ($items['services'] as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
 
         $formAddName = "orderEditForm";
         $formAdd = new FormAdd($this->request, $formAddName);
@@ -242,7 +261,7 @@ class ServicesordersController extends ServicesController {
             }
             for ($i = 0; $i < count($servicesQuantities); $i++) {
                 $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = intval($servicesQuantities[$i]) - $qOld;
+                $qDelta = floatval($servicesQuantities[$i]) - floatval($qOld);
                 $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
                 $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
             }

@@ -52,7 +52,7 @@ class ServicesInvoice extends InvoiceModel {
         $sim = new ServicesInvoice();
         $contentAll = $sim->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
 
-        if (empty($contentAll)) {
+        if (empty($contentAll['orders'])) {
             return false;
         }
 
@@ -84,7 +84,13 @@ class ServicesInvoice extends InvoiceModel {
         // select all the opened orders
         $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $id_space);
         if (count($orders) == 0) {
-            return $orders;
+            return [
+                'total_ht' => 0,
+                'content' => '',
+                'details' => '',
+                'orders' => [],
+                'services' => []
+            ];
         }
         $id_orders = [];
         foreach($orders as $order) {
@@ -93,7 +99,8 @@ class ServicesInvoice extends InvoiceModel {
         //$services = $modelOrder->openedItemsForClient($id_space, $id_client);
         $services = $modelOrder->openedOrdersItems($id_space, $id_orders);
         $modelClPricing = new ClPricing();
-        $pricing = $modelClPricing->getPricingByClient($id_space, $id_client)[0];
+        $clpricing = $modelClPricing->getPricingByClient($id_space, $id_client);
+        $pricing = empty($clpricing) ? ['id' => 0, 'name' => Constants::UNKNOWN] : $clpricing[0];
         $contentServices = $this->parseServicesToContent($id_space, $services, $pricing['id']);
         $content = '';
         foreach ($contentServices as $c) {
@@ -275,34 +282,35 @@ class ServicesInvoice extends InvoiceModel {
 
         // orders
         $ordersContent = $this->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
+        if (!empty($ordersContent['orders'])) {
+            $content['total_ht'] += $ordersContent['total_ht'];
+            $orders = $ordersContent['orders'];
+            $ordersServices = $ordersContent['services'];
 
-        $content['total_ht'] += $ordersContent['total_ht'];
-        $orders = $ordersContent['orders'];
-        $ordersServices = $ordersContent['services'];
-
-        $morder = [];
-        foreach($orders as $order){
-            $morder[$order['id']] = $order['no_identification'];
-        }
-        foreach($ordersServices as $orderService) {
-            $name = $ssm->getName($id_space, $orderService['id']);
-            $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
-            $id_orders = explode(',', $orderService['id_order']);
-            $orderInfo['no_identification'] = [];
-            foreach($id_orders as $id_order) {
-                if(isset($morder[$id_order])) {
-                    $orderInfo['no_identification'][] = $morder[$id_order];
-                }
+            $morder = [];
+            foreach($orders as $order){
+                $morder[$order['id']] = $order['no_identification'];
             }
-            $orderInfo['no_identification'] = implode(',', $orderInfo['no_identification']);
-            $content["count"][] = $orderInfo;
-        }
+            foreach($ordersServices as $orderService) {
+                $name = $ssm->getName($id_space, $orderService['id'], true);
+                $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
+                $id_orders = explode(',', $orderService['id_order']);
+                $orderInfo['no_identification'] = [];
+                foreach($id_orders as $id_order) {
+                    if(isset($morder[$id_order])) {
+                        $orderInfo['no_identification'][] = $morder[$id_order];
+                    }
+                }
+                $orderInfo['no_identification'] = implode(',', $orderInfo['no_identification']);
+                $content["count"][] = $orderInfo;
+            }
 
-        // close orders
-        $modelOrder = new SeOrder();
-        foreach ($orders as $order) {
-            $modelOrder->setEntryClosed($id_space, $order["id"]);
-            $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
+            // close orders
+            $modelOrder = new SeOrder();
+            foreach ($orders as $order) {
+                $modelOrder->setEntryClosed($id_space, $order["id"]);
+                $modelOrder->setInvoiceID($id_space ,$order["id"], $id_invoice);
+            }
         }
 
         // projects
@@ -313,7 +321,7 @@ class ServicesInvoice extends InvoiceModel {
         $content['total_ht'] += $projectsContent['total_ht'];
         $projectServices = $projectsContent['services'];
         foreach($projectServices as $projectService){
-            $name = $ssm->getName($id_space, $projectService['id']);
+            $name = $ssm->getName($id_space, $projectService['id'], true);
             $pname = '';
             if(isset($projectService['no_identification'])) {
                 $pname = $modelProject->getName($id_space, $projectService['no_identification']);
@@ -336,13 +344,59 @@ class ServicesInvoice extends InvoiceModel {
 
     public function details($id_space, $invoice_id, $lang) {
 
+        $sql1 = 'SELECT SUM(se_project_service.quantity)  as quantity,se_services.name as label, se_project.name as origin FROM se_project_service
+        INNER JOIN se_project ON se_project.id=se_project_service.id_project
+        INNER JOIN se_services ON se_services.id=se_project_service.id_service
+        WHERE se_project_service.id_invoice=?
+        AND se_project_service.id_space=? AND se_project_service.deleted=0
+        GROUP BY se_services.name, se_project.name
+        ORDER BY se_services.name ASC';
+
+        $sql2 = 'SELECT SUM(se_order_service.quantity) as quantity,se_services.name as label, se_order.no_identification as origin FROM se_order_service
+        INNER JOIN se_order ON se_order.id=se_order_service.id_order
+        INNER JOIN se_services ON se_services.id=se_order_service.id_service
+        WHERE se_order.id_invoice=?
+        AND se_order_service.id_space=? AND se_order_service.deleted=0
+        GROUP BY se_services.name, se_order.no_identification
+        ORDER BY se_services.name ASC';
+
+        $data = array();
+        $data["title"] = ServicesTranslator::Services($lang);
+        $data["header"] = array(
+            "label" => ServicesTranslator::Service($lang),
+            "origin" => ServicesTranslator::Project() . "/" . ServicesTranslator::Orders($lang),
+            "quantity" => ServicesTranslator::Quantity($lang)
+        );
+        $data["content"] = array();
+
+
+        $res = $this->runRequest($sql1, [$invoice_id, $id_space]);
+        $detail = null;
+        while($detail = $res->fetch()) {
+            $data["content"][] = array(
+                "label" => $detail["label"],
+                "origin" => $detail["origin"],
+                "quantity" => $detail["quantity"]
+            );
+        }
+        $res = $this->runRequest($sql2, [$invoice_id, $id_space]);
+        $detail = null;
+        while($detail = $res->fetch()) {
+            $data["content"][] = array(
+                "label" => $detail["label"],
+                "origin" => $detail["origin"],
+                "quantity" => $detail["quantity"]
+            );
+        }
+        return $data;
+
+        /*
+
         // services
-        $sqls = "SELECT * FROM se_services WHERE id_space=? AND deleted=0";
+        $sqls = "SELECT * FROM se_services WHERE id_space=?";
         $services = $this->runRequest($sqls, array($id_space))->fetchAll();
 
-
         $modelProject = new SeProject();
-
         // orders
         $sqlo = "SELECT id, no_identification FROM se_order WHERE id_invoice=? AND id_space=? AND deleted=0";
         $orders = $this->runRequest($sqlo, array($invoice_id, $id_space))->fetchAll();
@@ -396,6 +450,7 @@ class ServicesInvoice extends InvoiceModel {
             }
         }
         return $data;
+        */
     }
 
     public function delete($id_space, $id_invoice) {

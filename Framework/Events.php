@@ -268,8 +268,6 @@ class EventHandler {
 
     public function spaceQuoteEdit($action, $msg) {
         $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
-        $model = new CoreSpace();
-        $space = $model->getSpace($msg['space']['id']);
         $modelQuote = new Quote();
         
         if (array_key_exists('quote', $msg)) {
@@ -785,10 +783,15 @@ class Events {
      */
     public static function Close() {
         if(self::$channel != null) {
-            self::$channel->close();
-            self::$connection->close();
-            self::$channel = null;
+            try {
+                self::$channel->close();
+                self::$connection->close();
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
+            } 
         }
+        self::$channel = null;
+
     }
 
     /**

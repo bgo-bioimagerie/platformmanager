@@ -214,7 +214,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
 
-        $number = $invoice["number"];
+        // $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
@@ -294,7 +294,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
 
         $total = 0;
-        $modules = Configuration::get("modules");
+        // $modules = Configuration::get("modules");
         foreach ($content as $c) {
 
             foreach ($c["data"]["count"] as $d) {
@@ -309,8 +309,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 }
             }
         }
-
-
 
         $discount = floatval($invoice["discount"]);
         if ($discount > 0) {

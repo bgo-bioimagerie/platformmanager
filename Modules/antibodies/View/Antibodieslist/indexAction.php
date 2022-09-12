@@ -318,6 +318,7 @@
                         <th id="temperature" class="text-center" style="color:#337AB7;">St</th>
                         <th id="provider" class="text-center" style="color:#337AB7;">Fournisseur</th>
                         <th id="source" class="text-center" style="color:#337AB7;">Source</th>
+                        <th id="reactivity" class="text-center" style="color:#337AB7;">Réactivité</th>
                         <th id="ref" class="text-center" style="color:#337AB7;">Référence</th>
                         <th id="clone" class="text-center" style="color:#337AB7;">Clone</th>
                         <th id="batch" class="text-center" style="color:#337AB7;">lot</th>
@@ -358,6 +359,7 @@
                             <td headers="antibody temperature"  class="text-left"><?php echo $this->clean($anticorps ['stockage']); ?></td>
                             <td headers="antibody provider"  class="text-left"><?php echo $this->clean($anticorps ['fournisseur']); ?></td>
                             <td headers="antibody source"  class="text-left"><?php echo $this->clean($anticorps ['source']); ?></td>
+                            <td headers="antibody reactivity"  class="text-left"><?php echo $this->clean($anticorps ['reactivity']); ?></td>
                             <td headers="antibody ref"  class="text-left"><?php echo $this->clean($anticorps ['reference']); ?></td>
                             <td headers="antibody clone"  class="text-left"><?php echo $this->clean($anticorps ['clone']); ?></td>
                             <td headers="antibody batch"  class="text-left"><?php echo $this->clean($anticorps ['lot']); ?></td>

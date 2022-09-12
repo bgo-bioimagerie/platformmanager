@@ -1,3 +1,5 @@
+<?php require_once 'Modules/com/Model/ComTranslator.php'; ?>
+
 <div id="compopup_box" class="modal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -25,7 +27,7 @@ $(document).ready(function(){
     newsView.getNewsData();
 })
 
-Vue.createApp({
+let newsView = Vue.createApp({
     data() {
         return {
             newsList: new Array()
@@ -52,8 +54,11 @@ Vue.createApp({
                             });
                         });
                     }
+                    return data;
                 }).
-                then(this.displayPopup());
+                then(data => {
+                    if (data.news.length > 0) {this.displayPopup();}
+                });
         },
         displayPopup() {
             let myModal = new bootstrap.Modal(document.getElementById('compopup_box'))

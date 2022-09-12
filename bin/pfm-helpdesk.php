@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Email.php';
+require_once 'Framework/Model.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -208,7 +209,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($err);
         }
-        exit(1);
+        sleep(120);
+        continue;
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
@@ -216,7 +218,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
         }
-        exit(1);
+        sleep(120);
+        continue;
     } else {
         $info = imap_check($mbox);
         if (FALSE !== $info) {
@@ -260,10 +263,18 @@ while(true) {
                     imap_delete($mbox, $mail->uid);
 
                     $from=$header->from;
-                    $to = $header->to;
+                    $to = $header->to ?? [];
+                    $cc = $header->cc ?? [];
+                    $bcc = $header->bcc ?? [];
+                    $to = array_merge($to, $cc, $bcc);
 
                     if(isAutoReply($mail, $headersDetailed) || ignore($from[0])) {
                         Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip message', ['from' => $from[0]]);
+                        continue;
+                    }
+
+                    if(!$to) {
+                        Configuration::getLogger()->debug('[helpdesk] no destination found skip message', ['from' => $from[0]]);
                         continue;
                     }
 
@@ -373,6 +384,7 @@ while(true) {
             Configuration::getLogger()->debug('Close error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
     }
+    Model::resetDatabase();
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 
     }

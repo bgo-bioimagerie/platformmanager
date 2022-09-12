@@ -8,6 +8,7 @@ require_once 'Modules/clients/Model/ClAddress.php';
 class AddressForm extends FormGenerator{
 
     private $id_space;
+    protected $cancelUrl;
     
     public function setSpace($id_space){
         $this->id_space = $id_space;
@@ -16,16 +17,12 @@ class AddressForm extends FormGenerator{
     /**
      * Constructor
      */
-    public function __construct(Request $request,  $id, $url) {
+    public function __construct(Request $request,  $id, $url, $cancelUrl=null) {
         parent::__construct($request,  $id, $url);
-        
+        $this->cancelUrl = $cancelUrl;
     }
     
-    public function render(){
-        
-        // select data 
-        
-        // Form
+    public function render() {
         $this->form = new Form($this->request, $this->id);
         $this->form->setTitle($this->title, 3);
         $this->form->addHidden("id", $this->getData("id"));
@@ -37,11 +34,9 @@ class AddressForm extends FormGenerator{
         $this->form->addText("zip_code", ClientsTranslator::Zip_code($this->lang), true, $this->getData("zip_code"));
         $this->form->addText("city", ClientsTranslator::City($this->lang), true, $this->getData("city"));
         $this->form->addText("country", ClientsTranslator::Country($this->lang), true, $this->getData("country"));
-        
-        if($this->id == 'formAddressInvoice') {
-            $this->form->setValidationButton(CoreTranslator::Next($this->lang), $this->validationUrl); 
-        } else {
-            $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl); 
+        $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl);
+        if ($this->cancelUrl) {
+            $this->form->setCancelButton(CoreTranslator::Cancel($this->lang), $this->cancelUrl);
         }
     }
    

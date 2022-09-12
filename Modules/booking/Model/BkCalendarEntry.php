@@ -101,6 +101,9 @@ class BkCalendarEntry extends Model {
                 foreach ($darray as $di) {
                     $diarray = explode("=", $di);  // @bug was using d and di was not used, to be tested
                     if ($diarray[0] == $quantities[$i]["id"]) {
+                        if(!is_numeric($diarray[1])){
+                            continue;
+                        }
                         $count += $diarray[1];
                     }
                 }
@@ -943,7 +946,7 @@ class BkCalendarEntry extends Model {
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
         if(!$pricingInfo) {
-            throw new PfmException('no pricing found for client '.$id_client);
+            throw new PfmParamException('no pricing found for client '.$id_client);
         }
 
         $night_begin = $pricingInfo['night_start'];

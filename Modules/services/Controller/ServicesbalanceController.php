@@ -288,7 +288,7 @@ class ServicesbalanceController extends ServicesController {
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }
@@ -430,7 +430,7 @@ class ServicesbalanceController extends ServicesController {
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }

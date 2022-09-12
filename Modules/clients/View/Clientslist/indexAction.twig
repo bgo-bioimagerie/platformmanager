@@ -1,0 +1,10 @@
+{% extends "Modules/clients/View/layout.twig" %}
+    
+{% block content %}
+<div class="container">
+<div class="page-header">
+    <h3>{{ pageTitle }}</h3>
+</div>
+    {{tableHtml | raw}}
+</div>
+{% endblock %}

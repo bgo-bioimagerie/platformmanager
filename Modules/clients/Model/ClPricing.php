@@ -99,6 +99,23 @@ class ClPricing extends Model {
             return $this->runRequest($sql, array($id_space, $id_client))->fetchAll();
     }
 
+    /**
+     * Check if pricing in use
+     * 
+     * @param int|string $id_space
+     * @param int|string $id of pricing
+     * 
+     * @return bool
+     */
+    public function hasClients($id_space, $id) {
+        $sql = "SELECT * FROM cl_clients WHERE pricing=? AND id_space=? AND deleted=0";
+        $res = $this->runRequest($sql, [$id, $id_space]);
+        if ($res->rowCount() > 0) {
+            return true;
+        }
+        return false;
+    }
+
     public function delete($id_space, $id) {
         $sql = "UPDATE cl_pricings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
