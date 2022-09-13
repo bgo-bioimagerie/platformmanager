@@ -73,7 +73,7 @@ class SeTask extends Model {
     }
 
     public function getByProjectAndUser($id_project, $id_user, $id_space) {
-        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? id_user=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? AND id_user=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_project, $id_user));
         return $req->fetchAll();
     }
@@ -85,7 +85,7 @@ class SeTask extends Model {
     }
 
     public function setPrivate($id_space, $id_task, $private) {
-        $sql = "UPDATE se_task SET private=? WHERE id=? AND id_sapce=?;";
+        $sql = "UPDATE se_task SET private=? WHERE id=? AND id_space=?;";
         $this->runRequest($sql, array($private, $id_task, $id_space));
     }
 
