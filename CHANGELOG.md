@@ -6,6 +6,11 @@
 
 * [cli] add maintenance option to command-line admin tool
 
+## 2.8.1
+
+### Fixes
+
+* [helpdesk] error in helpdesk web ui
 
 ## 2.8.0
 
