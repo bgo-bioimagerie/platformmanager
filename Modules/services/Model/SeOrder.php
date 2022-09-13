@@ -411,7 +411,7 @@ class SeOrder extends Model {
      * @param number $id se_order_service
      */
     public function deleteOrderService($id_space, $id_service, $id_order) {
-        $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND $id_order=? AND id_space=?";
+        $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND id_order=? AND id_space=?";
         $this->runRequest($sql, array($id_service, $id_order, $id_space));
     }
 
