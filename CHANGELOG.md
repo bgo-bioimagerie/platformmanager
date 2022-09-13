@@ -1,5 +1,11 @@
 # Changes
 
+## 2.8.1
+
+### Fixes
+
+* [helpdesk] error in helpdesk web ui
+
 ## 2.8.0
 
 ### Docker
