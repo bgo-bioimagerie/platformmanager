@@ -111,6 +111,8 @@ class RatingController extends CoresecureController {
         $from_date_str = '';
         $to_date_str = '';
         $limit_date_str = '';
+        $answers = 0;
+
         if($data['from_date'] ?? '') {
             $from_date_str = date('Y-m-d', $data['from_date']);
         }
@@ -126,7 +128,7 @@ class RatingController extends CoresecureController {
             $form->addDate("to_date", RatingTranslator::To($lang), true, CoreTranslator::dateFromEn($to_date_str, $lang));
             $form->addTextArea("message", 'Message', true, $data["message"] ?? '');
         } else {
-            $answers = count($cm->anwers($id_space, $id_campaign));
+            $answers = count($cm->answers($id_space, $id_campaign));
             $form->addText("from_date", RatingTranslator::From($lang), true, $from_date_str, readonly:true);
             $form->addText("to_date", RatingTranslator::To($lang), true, $to_date_str, readonly:true);
             $form->addText("message", 'Message', false, $data["message"] ?? '', readonly:true);
@@ -140,17 +142,19 @@ class RatingController extends CoresecureController {
 
         if($form->check()){
             if($id_campaign) {
-                $this->request->setParam('from_date', $data['from_date']);
-                $this->request->setParam('to_date', $data['to_date']);
-                $this->request->setParam('message', $data['message']);
+                $from_date = $data['from_date'];
+                $to_date = $data['to_date'];
+                $message = $data['message'];
                 $_SESSION['flash'] = RatingTranslator::CampaignSaved($lang);
 
             } else {
                 $_SESSION['flash'] = RatingTranslator::CampaignStarted($lang);
+                $from_date = strtotime($this->request->getParameter('from_date'));
+                $to_date = strtotime($this->request->getParameter('to_date'));
+                $message = $this->request->getParameter('message');
             }
 
-            $from_date = strtotime($this->request->getParameter('from_date'));
-            $to_date = strtotime($this->request->getParameter('to_date'));
+
             $limit_date = 0;
             if($this->request->getParameterNoException('limit_date')) {
                 $limit_date = strtotime($this->request->getParameter('limit_date'));
@@ -162,7 +166,7 @@ class RatingController extends CoresecureController {
                 $from_date,
                 $to_date,
                 $limit_date,
-                $this->request->getParameter('message'),
+                $message,
             );
             if($id_campaign == 0 && $new_campaign) {
                 Events::send([

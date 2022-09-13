@@ -61,7 +61,7 @@ class RatingCampaign extends Model {
         return null;
     }
 
-    public function anwers(int $id_space, int $id_campaign) {
+    public function answers(int $id_space, int $id_campaign) {
         $sql = 'SELECT DISTINCT id_user FROM rating WHERE id_space=? AND campaign=?';
         $res = $this->runRequest($sql, [$id_space, $id_campaign]);
         return $res->fetchAll();
