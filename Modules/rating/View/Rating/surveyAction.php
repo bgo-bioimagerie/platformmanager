@@ -92,7 +92,7 @@ Vue.createApp({
                     break;
             }
 
-            console.log(rate);
+            // console.log(rate);
             if(!rate) {
                 console.error('rate not found')
                 return
@@ -110,7 +110,7 @@ Vue.createApp({
                 return resp.json()
             }).
             then(data => {
-                console.log(data)
+                // console.log(data)
                 switch (kind) {
                     case 'booking':
                         this.resources[index].id = data.rate.id;
