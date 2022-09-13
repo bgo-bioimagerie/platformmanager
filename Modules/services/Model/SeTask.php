@@ -79,7 +79,7 @@ class SeTask extends Model {
     }
 
     public function getByPeriodForProject($id_project, $id_space, $beginPeriod, $endPeriod) {
-        $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND $id_space=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_project, $beginPeriod, $endPeriod, $id_space));
         return $req->fetchAll();
     }
