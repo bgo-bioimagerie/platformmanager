@@ -5,7 +5,7 @@
 ### Fixes
 
 * [helpdesk] error in helpdesk web ui
-* [services] fix order update which could delete a service from all orders
+* [services] fix order update which could delete a service from all orders, or fail to remove element
 
 ## 2.8.0
 
