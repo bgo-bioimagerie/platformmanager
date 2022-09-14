@@ -5,6 +5,7 @@
 ### Features / enhancements
 
 * [cli] add maintenance option to command-line admin tool
+* [ccoreconnexion] allow to use email for login
 
 ## 2.8.1
 

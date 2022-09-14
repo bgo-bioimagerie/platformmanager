@@ -244,6 +244,13 @@ class CoreTranslator {
         return "Login";
     }
 
+    public static function LoginOrEmail($lang) {
+        if ($lang == "fr") {
+            return "Identifiant ou email";
+        }
+        return "Login or email";
+    }
+
     public static function Password($lang) {
         if ($lang == "fr") {
             return "Mot de passe";
@@ -2110,6 +2117,13 @@ class CoreTranslator {
             return "Ce login n'existe pas.";
         }
         return "This login doesn't exist.";
+    }
+
+    public static function DuplicatedEmail($lang = "") {
+        if ($lang == "fr") {
+            return "Cet email est utilisé par plusieurs profils utilisateurs. Veuillez utiliser votre login pour vous connecter";
+        }
+        return "This email is associated to several user profiles. Try to connect with your login";
     }
 
     public static function ConnectionError($lang = "") {

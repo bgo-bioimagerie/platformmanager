@@ -486,6 +486,22 @@ class CoreUser extends Model {
     }
 
     /**
+     * Check if a local user with a given email exists
+     * @param string $email Local email
+     * @return boolean
+     */
+    public function isLocalUserEmail($email) {
+        $sql = "select id from core_users where email=? AND source=?";
+        $user = $this->runRequest($sql, array(
+            $email, "local"
+        ));
+        if ($user->rowCount() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Verify that a user is in the database
      *
      * @param string $login

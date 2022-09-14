@@ -86,12 +86,18 @@ class CoreconnectionController extends CorecookiesecureController {
      */
     public function loginAction() {
         $lang = $this->getLanguage();
-        if ($this->request->isparameter("login") && $this->request->isParameter("pwd")) {
+        if ($this->request->isParameter("login") && $this->request->isParameter("pwd")) {
+            $loginType = "login";
             $login = $this->request->getParameter("login");
-            $pwd = $this->request->getparameter("pwd", false);
+            $pwd = $this->request->getParameter("pwd", false);
+
+            if ($this->user->isLocalUserEmail($login)) {
+                $loginType = "email";
+                $login = $this->user->getUserByEmail($login)['login'];
+            }
 
             $redirection = '';
-            if($this->request->isparameter('redirection')) {
+            if($this->request->isParameter('redirection')) {
                 $redirection = $this->request->getParameter('redirection');
             }
 
@@ -99,7 +105,7 @@ class CoreconnectionController extends CorecookiesecureController {
             if ($connect === "allowed") {                
                 $loggedUser = $this->initSession($login);
                 // generate the remember me cookie
-                if ($this->request->isparameter("remember")) {
+                if ($this->request->isParameter("remember")) {
                     $key = hash('sha512', $this->generateRandomKey());
                     $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
                     if (!$cookieSet) {
@@ -117,7 +123,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $this->redirectNoRemoveHeader($redirectPath);
             } else {
                 Configuration::getLogger()->info('[login] invalid', ['error' => $connect, 'login' => $login]);
-                $this->loginError($redirection, $connect);
+                $this->loginError($redirection, $loginType, $connect);
             }
         } else {
             throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
@@ -132,7 +138,7 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $connection_error error returned at connection failure
      * 
      */
-    private function loginError($redirection, $connection_error = "") {
+    private function loginError($redirection, $loginType, $connection_error = "") {
         $lang = $this->getLanguage();
         $_SESSION['flashClass'] = "danger";
         switch ($connection_error) {
@@ -143,7 +149,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $msg = CoreTranslator::InvalidPassword($lang);
                 break;
             case "invalid_login":
-                $msg = CoreTranslator::InvalidLogin($lang);
+                $msg = $loginType === "login" ? CoreTranslator::InvalidLogin($lang) : CoreTranslator::DuplicatedEmail($lang);
                 break;
             default:
                 $msg = ($connection_error != "") ? $connection_error : CoreTranslator::ConnectionError($lang);
@@ -193,6 +199,9 @@ class CoreconnectionController extends CorecookiesecureController {
     private function connect($login, $pwd) {
 
         // test if local account
+        if ($this->user->isLocalUserEmail($login)) {
+            $login = $this->user->getUserByEmail($login)['login'];
+        }
         if ($this->user->isLocalUser($login)) {
             $this->logger->debug('[auth] local user', ['user' => $login]);
             return $this->user->connect($login, $pwd);
