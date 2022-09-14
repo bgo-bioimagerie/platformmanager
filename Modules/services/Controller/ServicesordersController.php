@@ -251,7 +251,7 @@ class ServicesordersController extends ServicesController {
         // avoid multiple entries for the same service
         if (count(array_unique($servicesIds)) === count($servicesIds)) { 
             $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
-            $deletedServicesIds = array_diff_key($oldServicesIds, $servicesIds);
+            $deletedServicesIds = array_diff($oldServicesIds, $servicesIds);
 
             if (!empty($deletedServicesIds)) {
                 // delete removed order services
