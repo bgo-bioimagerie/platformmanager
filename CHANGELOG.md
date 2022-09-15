@@ -1,5 +1,12 @@
 # Changes
 
+## 2.8.2
+
+### Fixes
+
+* [services] fix/enhance order services management (add/remove) combining multiple lines
+  or removing empty quantities
+
 ## 2.8.1
 
 ### Fixes

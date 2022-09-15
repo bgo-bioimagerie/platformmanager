@@ -248,30 +248,48 @@ class ServicesordersController extends ServicesController {
         $servicesIds = $this->request->getParameter("services");
         $servicesQuantities = $this->request->getParameter("quantities");
 
-        // avoid multiple entries for the same service
-        if (count(array_unique($servicesIds)) === count($servicesIds)) { 
-            $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
-            $deletedServicesIds = array_diff($oldServicesIds, $servicesIds);
 
-            if (!empty($deletedServicesIds)) {
-                // delete removed order services
-                foreach($deletedServicesIds as $deletedServiceId) {
-                    $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
-                }
+        $filteredServices = [];
+        $newIds = [];
+        // if a service is defined on multiple lines, combine them and add quantities
+        // ignore empty or 0 quantities
+        for ($i = 0; $i < count($servicesIds); $i++) {
+            $sid = $servicesIds[$i];
+            $sq = $servicesQuantities[$i];
+            if($sq == 0 || $sq == '') {
+                continue;
             }
-            for ($i = 0; $i < count($servicesQuantities); $i++) {
-                $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $servicesIds[$i]);
-                $qDelta = floatval($servicesQuantities[$i]) - floatval($qOld);
-                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "subtract");
-                $modelOrder->setService($id_space, $id_order, $servicesIds[$i], $servicesQuantities[$i]);
+            if(! isset($filteredServices[$sid])) {
+                $filteredServices[$sid] = 0;
             }
-
-            return $id_order;
-                
-        } else {
-            $_SESSION['flash'] = "You can't have several lines for the same service";
-            $_SESSION['flashClass'] = 'danger';
-            return null;
+            $filteredServices[$sid] += $sq;
         }
+        foreach ($filteredServices as $key => $value) {
+            if($value > 0) {
+                $newIds[] = $key;
+            }
+        }
+
+        // check for removed services
+        $oldServicesIds = $modelOrder->getOrderServices($id_space ,$id)['services'];
+        $deletedServicesIds = array_diff($oldServicesIds, $newIds);
+        if (!empty($deletedServicesIds)) {
+            Configuration::getLogger()->debug('[services][orders] remove services from order', ['order' => $id, 'services' => $deletedServicesIds]);
+            // delete removed order services
+            foreach($deletedServicesIds as $deletedServiceId) {
+                $modelOrder->deleteOrderService($id_space, $deletedServiceId, $id);
+            }
+        }
+
+        // update service quantities and order service
+        foreach ($filteredServices as $sid => $quantity) {
+            $qOld = !$id ? 0 : $modelOrder->getOrderServiceQuantity($id_space ,$id, $sid);
+            $qDelta = floatval($quantity) - floatval($qOld);
+            $modelServices->editquantity($id_space, $sid, $qDelta, "subtract");
+            Configuration::getLogger()->debug('[services][orders] set service quantities', ['order' => $id, 'service' => $sid, 'quantity' => $quantity]);
+            $modelOrder->setService($id_space, $id_order, $sid, $quantity);
+        }
+
+        return $id_order;
     }
 }
