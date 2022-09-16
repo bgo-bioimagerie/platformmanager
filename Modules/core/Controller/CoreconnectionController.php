@@ -87,7 +87,7 @@ class CoreconnectionController extends CorecookiesecureController {
     public function loginAction() {
         $lang = $this->getLanguage();
         if ($this->request->isParameter("login") && $this->request->isParameter("pwd")) {
-            $loginOrEmail = $this->request->getParameter("login");
+            $login = $this->request->getParameter("login");
             $pwd = $this->request->getParameter("pwd", false);
 
             $redirection = '';
@@ -95,7 +95,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $redirection = $this->request->getParameter('redirection');
             }
             try {
-                $login = $this->userConnection($loginOrEmail, $pwd);
+                $login = $this->userConnection($login, $pwd);
                 $loggedUser = $this->initSession($login);
             } catch (PfmAuthException $e) {
                 return $this->loginError($redirection, $e->getMessage());
@@ -176,21 +176,18 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $pwd User pssword
      * @return string Error message
      */
-    private function userConnection($loginOrEmail, $pwd) {
-        // check if its a known email, then get login, else set $loginOrEmail as login
-        $login = $this->user->isLocalUserEmail($loginOrEmail)
-            ? $this->user->getUserByEmail($loginOrEmail)['login']
-            : $loginOrEmail;
-
-
+    private function userConnection($login, $pwd) {
+        // Check if localUser
+        $localUser = $this->user->isLocalUser($login);
         // test if local account
-        if ($this->user->isLocalUser($login)) {
-            $this->logger->debug('[auth] local user', ['user' => $login]);
+        if ($localUser) {
+            $this->logger->debug('[auth] local user', ['user' => $localUser['login']]);
             try {
-                $this->user->connect($login, $pwd);
+                $connect = $this->user->connect($localUser['login'], $pwd);
             } catch(PfmAuthException $e) {
                 throw new PfmAuthException($e->getMessage());
             }
+            return $localUser['login'];
         } else {
             // search for LDAP account
             $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
@@ -212,11 +209,11 @@ class CoreconnectionController extends CorecookiesecureController {
                     } catch (PfmAuthException $e) {
                         throw new PfmAuthException($e->getMessage());
                     }
+                    return $login;
                 }
             }
             throw new PfmAuthException(CoreUser::$CNX_INVALID_LOGIN);
         }
-        return $login;
     }
 
     public function passwordforgottenAction() {

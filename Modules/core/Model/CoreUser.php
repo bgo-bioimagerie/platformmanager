@@ -475,16 +475,20 @@ class CoreUser extends Model {
     }
 
     /**
-     * Check if a local user with a given login exists
-     * @param string $login Local login
+     * Check if a local user with a given login or Email exists
+     * @param string $loginOrEmail Local login or email
      * @return boolean
      */
-    public function isLocalUser($login) {
-        $sql = "select id from core_users where login=? AND source=?";
+    public function isLocalUser($loginOrEmail) {
+        $sql = "select * from core_users where (login=? OR email=?) AND source=?";
         $user = $this->runRequest($sql, array(
-            $login, "local"
+            $loginOrEmail, $loginOrEmail, "local"
         ));
-        return $user->rowCount() == 1;
+        if ($user->rowCount() == 1) {
+            return $user->fetch();
+        } else {
+            return false;
+        }
     }
 
     /**
