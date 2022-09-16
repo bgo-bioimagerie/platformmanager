@@ -177,7 +177,6 @@ class CoreconnectionController extends CorecookiesecureController {
      * @return string Error message
      */
     private function userConnection($loginOrEmail, $pwd) {
-        $lang = $this->getLanguage();
         // check if its a known email, then get login, else set $loginOrEmail as login
         $login = $this->user->isLocalUserEmail($loginOrEmail)
             ? $this->user->getUserByEmail($loginOrEmail)['login']
@@ -210,7 +209,6 @@ class CoreconnectionController extends CorecookiesecureController {
                     }
                     try {
                         $this->user->isActive($login);
-                        $login = $userInfo['login'];
                     } catch (PfmAuthException $e) {
                         throw new PfmAuthException($e->getMessage());
                     }
