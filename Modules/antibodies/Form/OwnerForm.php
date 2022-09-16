@@ -27,7 +27,7 @@ class OwnerForm extends FormGenerator{
         $this->form->addHidden("owner_id_anticorps");
         
         $modelUser = new CoreUser();
-        $userList = $modelUser->getAcivesForSelect("name");
+        $userList = $modelUser->getActivesForSelect("name");
         $this->form->addSelect('owner_id_user', AntibodiesTranslator::Owner($this->lang), 
                 $userList["names"], $userList["ids"]);
         

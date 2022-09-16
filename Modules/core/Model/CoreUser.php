@@ -10,13 +10,6 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 
-
-class CoreConnectionError {
-    public static $INVALID_LOGIN = "invalid login";
-    public static $WRONG_PWD = "wrong password";
-    public static $INACTIVE = "inactive user";
-}
-
 class CoreUser extends Model {
 
     public static $USER = 1;
@@ -25,6 +18,10 @@ class CoreUser extends Model {
     public static $HASH_MD5 = 0;
     public static $HASH_BCRYPT = 1;
     public static $HASH_DEFAULT = 1;
+
+    public static $CNX_INVALID_LOGIN = 1;
+    public static $CNX_WRONG_PWD = 2;
+    public static $CNX_INACTIVE = 3;
 
     public function __construct() {
         $this->tableName = "core_users";
@@ -515,18 +512,18 @@ class CoreUser extends Model {
         $res = $this->runRequest($sql, [$login]);
         if($res->rowCount() != 1) {
             Configuration::getLogger()->debug('[core][connect] user not found', ['login' => $login]);
-            throw new PfmAuthException(CoreConnectionError::$INVALID_LOGIN);
+            throw new PfmAuthException($this::$CNX_INVALID_LOGIN);
         }
         $user = $res->fetch();
         $hash = $user['hash'];
         $pwdDb = $user['pwd'];
         if(!$this->comparePasswords($pwd, $pwdDb, $hash)) {
             Configuration::getLogger()->debug('[core][connect] invalid password', ['user' => $user]);
-            throw new PfmAuthException(CoreConnectionError::$WRONG_PWD);
+            throw new PfmAuthException($this::$CNX_WRONG_PWD);
         }
         if ($user["is_active"] != 1 || $user["validated"] != 1) {
             Configuration::getLogger()->debug('[core][connect] inactive user', ['user' => $user]);
-            throw new PfmAuthException(CoreConnectionError::$INACTIVE);
+            throw new PfmAuthException($this::$CNX_INACTIVE);
         } else {
             return true;
         }
@@ -545,7 +542,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmAuthException(CoreConnectionError::$INVALID_LOGIN);
+            throw new PfmAuthException($this->INVALID_LOGIN);
         }
     }
 
@@ -956,9 +953,8 @@ class CoreUser extends Model {
         return $this->runRequest($sql, array($active))->fetchAll();
     }
 
-    public function getAcivesForSelect($sortentry) {
-        $modelUser = new CoreUser();
-        $users = $modelUser->getActiveUsers($sortentry);
+    public function getActivesForSelect($sortentry) {
+        $users = $this->getActiveUsers($sortentry);
         $names = array();
         $ids = array();
         $names[] = "";

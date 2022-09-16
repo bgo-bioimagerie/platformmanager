@@ -1053,6 +1053,13 @@ class CoreTranslator {
         return "Base DN";
     }
 
+    public static function ldapConnectionError($lang) {
+        if ($lang == "fr") {
+            return "Connexion à LDAP impossible avec cet identifiant et ce mot de passe.";
+        }
+        return "Cannot connect to LDAP using the given login and password";
+    }
+
     public static function HomeConfig($lang) {
         if ($lang == "fr") {
             return "Informations page de connexion";
@@ -2098,27 +2105,6 @@ class CoreTranslator {
         return "Action not allowed: undefined login or password";
     }
 
-    public static function AccountInactive($lang = "") {
-        if ($lang == "fr") {
-            return "Votre compte n'est pas actif.";
-        }
-        return "Your account is not active";
-    }
-
-    public static function InvalidPassword($lang = "") {
-        if ($lang == "fr") {
-            return "Votre mot de passe est erroné.";
-        }
-        return "Wrong password";
-    }
-
-    public static function InvalidLogin($lang = "") {
-        if ($lang == "fr") {
-            return "Ce login n'existe pas.";
-        }
-        return "This login doesn't exist.";
-    }
-
     public static function DuplicatedEmail($lang = "") {
         if ($lang == "fr") {
             return "Cet email est utilisé par plusieurs profils utilisateurs. Veuillez utiliser votre login pour vous connecter";
@@ -2126,11 +2112,41 @@ class CoreTranslator {
         return "This email is associated to several user profiles. Try to connect with your login";
     }
 
-    public static function ConnectionError($lang = "") {
+    public static function ConnectionError($lang = "", $code=0) {
+        $msg = "";
         if ($lang == "fr") {
-            return "Une erreur est survenue durant la connexion.";
+            switch ($code) {
+                case 1:
+                    $msg = "Identifiant incorrect.";
+                    break;
+                case 2:
+                    $msg = "Mauvais mot de passe.";
+                    break;
+                case 3:
+                    $msg = "Votre compte n'est pas actif.";
+                    break;
+                default:
+                    $msg = "Une erreur est survenue durant la connexion.";
+                    break;
+            }
+                
+        } else {
+            switch ($code) {
+                case 1:
+                    $msg = "Login doesn't exist.";
+                    break;
+                case 2:
+                    $msg = "Wrong password.";
+                    break;
+                case 3:
+                    $msg = "Your account is not active.";
+                    break;
+                default:
+                    $msg = "An error occured during connection.";
+                    break;
+            }
         }
-        return "An error occured during connection.";
+        return $msg;
     }
 
     public static function spaceUserUnjoin($lang = "") {

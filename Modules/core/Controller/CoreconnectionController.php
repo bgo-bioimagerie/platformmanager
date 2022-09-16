@@ -132,9 +132,10 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $connection_error error returned at connection failure
      * 
      */
-    private function loginError($redirection, $connection_error = "connexion error") {
+    private function loginError($redirection, $connection_error = "connection error") {
+        $lang = $this->getLanguage();
         $_SESSION['flashClass'] = "danger";
-        $_SESSION['flash'] = $connection_error;
+        $_SESSION['flash'] = CoreTranslator::ConnectionError($lang, $connection_error);
         return $this->redirect('/coreconnection?redirect_url='.$redirection);
     }
 
@@ -176,8 +177,7 @@ class CoreconnectionController extends CorecookiesecureController {
      * @return string Error message
      */
     private function userConnection($loginOrEmail, $pwd) {
-        $canConnect = false;
-
+        $lang = $this->getLanguage();
         // check if its a known email, then get login, else set $loginOrEmail as login
         $login = $this->user->isLocalUserEmail($loginOrEmail)
             ? $this->user->getUserByEmail($loginOrEmail)['login']
@@ -188,11 +188,10 @@ class CoreconnectionController extends CorecookiesecureController {
         if ($this->user->isLocalUser($login)) {
             $this->logger->debug('[auth] local user', ['user' => $login]);
             try {
-                $canConnect = $this->user->connect($login, $pwd);
+                $this->user->connect($login, $pwd);
             } catch(PfmAuthException $e) {
                 throw new PfmAuthException($e->getMessage());
             }
-            return $login;
         } else {
             // search for LDAP account
             $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
@@ -201,7 +200,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
                 if ($ldapResult == "error") {
-                    return "Cannot connect to ldap using the given login and password";
+                    throw new PfmAuthException(CoreTranslator::ldapConnectionError($lang));
                 } else {
                     // update the user infos
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
@@ -211,11 +210,13 @@ class CoreconnectionController extends CorecookiesecureController {
                     }
                     try {
                         $this->user->isActive($login);
+                        $login = $userInfo['login'];
                     } catch (PfmAuthException $e) {
-                        throw new PfmAuthException("exception in userConnection: " . $e);
+                        throw new PfmAuthException($e->getMessage());
                     }
                 }
             }
+            throw new PfmAuthException(CoreTranslator::ConnectionError($lang, 1));
         }
         return $login;
     }
