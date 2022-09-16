@@ -132,7 +132,7 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $connection_error error returned at connection failure
      * 
      */
-    private function loginError($redirection, $connection_error = "connection error") {
+    private function loginError($redirection, $connection_error = 0) {
         $lang = $this->getLanguage();
         $_SESSION['flashClass'] = "danger";
         $_SESSION['flash'] = CoreTranslator::ConnectionError($lang, $connection_error);
@@ -200,7 +200,7 @@ class CoreconnectionController extends CorecookiesecureController {
                 $modelLdap = new CoreLdap();
                 $ldapResult = $modelLdap->getUser($login, $pwd);
                 if ($ldapResult == "error") {
-                    throw new PfmAuthException(CoreTranslator::ldapConnectionError($lang));
+                    throw new PfmAuthException(CoreUser::$CNX_INVALID_LDAP);
                 } else {
                     // update the user infos
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
@@ -216,7 +216,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     }
                 }
             }
-            throw new PfmAuthException(CoreTranslator::ConnectionError($lang, 1));
+            throw new PfmAuthException(CoreUser::$CNX_INVALID_LOGIN);
         }
         return $login;
     }

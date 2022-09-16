@@ -22,6 +22,7 @@ class CoreUser extends Model {
     public static $CNX_INVALID_LOGIN = 1;
     public static $CNX_WRONG_PWD = 2;
     public static $CNX_INACTIVE = 3;
+    public static $CNX_INVALID_LDAP = 4;
 
     public function __construct() {
         $this->tableName = "core_users";

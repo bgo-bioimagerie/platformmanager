@@ -1053,13 +1053,6 @@ class CoreTranslator {
         return "Base DN";
     }
 
-    public static function ldapConnectionError($lang) {
-        if ($lang == "fr") {
-            return "Connexion à LDAP impossible avec cet identifiant et ce mot de passe.";
-        }
-        return "Cannot connect to LDAP using the given login and password";
-    }
-
     public static function HomeConfig($lang) {
         if ($lang == "fr") {
             return "Informations page de connexion";
@@ -2114,37 +2107,32 @@ class CoreTranslator {
 
     public static function ConnectionError($lang = "", $code=0) {
         $msg = "";
-        if ($lang == "fr") {
-            switch ($code) {
-                case 1:
-                    $msg = "Identifiant incorrect.";
-                    break;
-                case 2:
-                    $msg = "Mauvais mot de passe.";
-                    break;
-                case 3:
-                    $msg = "Votre compte n'est pas actif.";
-                    break;
-                default:
-                    $msg = "Une erreur est survenue durant la connexion.";
-                    break;
-            }
-                
-        } else {
-            switch ($code) {
-                case 1:
-                    $msg = "Login doesn't exist.";
-                    break;
-                case 2:
-                    $msg = "Wrong password.";
-                    break;
-                case 3:
-                    $msg = "Your account is not active.";
-                    break;
-                default:
-                    $msg = "An error occured during connection.";
-                    break;
-            }
+        switch ($code) {
+            case 1:
+                $msg = $lang === "fr"
+                    ? "Identifiant incorrect."
+                    : "Login doesn't exist.";
+                break;
+            case 2:
+                $msg = $lang === "fr"
+                    ? "Mauvais mot de passe."
+                    : "Wrong password.";
+                break;
+            case 3:
+                $msg = $lang === "fr"
+                    ? "Votre compte n'est pas actif."
+                    : "Your account is not active.";
+                break;
+            case 4:
+                $msg = $lang === "fr"
+                    ? "Connexion à LDAP impossible avec cet identifiant et ce mot de passe."
+                    : "Cannot connect to LDAP using the given login and password";
+                break;
+            default:
+                $msg = $lang === "fr"
+                    ? "Une erreur est survenue durant la connexion."
+                    : "An error occured during connection.";
+                break;
         }
         return $msg;
     }
