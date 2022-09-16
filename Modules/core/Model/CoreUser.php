@@ -10,6 +10,13 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 
+
+class CoreConnectionError {
+    public static $INVALID_LOGIN = "invalid login";
+    public static $WRONG_PWD = "wrong password";
+    public static $INACTIVE = "inactive user";
+}
+
 class CoreUser extends Model {
 
     public static $USER = 1;
@@ -479,10 +486,7 @@ class CoreUser extends Model {
         $user = $this->runRequest($sql, array(
             $login, "local"
         ));
-        if ($user->rowCount() == 1) {
-            return true;
-        }
-        return false;
+        return $user->rowCount() == 1;
     }
 
     /**
@@ -495,45 +499,36 @@ class CoreUser extends Model {
         $user = $this->runRequest($sql, array(
             $email, "local"
         ));
-        if ($user->rowCount() >= 1) {
-            return true;
-        }
-        return false;
+        return $user->rowCount() == 1;
     }
 
     /**
      * Verify that a user is in the database
      *
-     * @param string $login
-     *        	the login
-     * @param string $pwd
-     *        	the password
-     * @return string
-     *      "allowed" if login and password match a database entry where is_active == 1
-     *      "inactive" login and password match a database entry where is_active == 0
-     *      "invalid_login" if login doesn't exist
-     *      "invalid_password" if login exists and password does not match
+     * @param string $login login
+     * @param string $pwd password
+     * @return true if connexion allowed
+     * throw PfmAuthException if unauthorised
      */
     public function connect($login, $pwd) {
         $sql = "SELECT * FROM core_users WHERE login=?";
         $res = $this->runRequest($sql, [$login]);
         if($res->rowCount() != 1) {
             Configuration::getLogger()->debug('[core][connect] user not found', ['login' => $login]);
-            return "invalid_login";
+            throw new PfmAuthException(CoreConnectionError::$INVALID_LOGIN);
         }
         $user = $res->fetch();
         $hash = $user['hash'];
         $pwdDb = $user['pwd'];
         if(!$this->comparePasswords($pwd, $pwdDb, $hash)) {
             Configuration::getLogger()->debug('[core][connect] invalid password', ['user' => $user]);
-            return "invalid_password";
+            throw new PfmAuthException(CoreConnectionError::$WRONG_PWD);
         }
-
-        if ($user["is_active"] == 1 && $user["validated"] == 1) {
-            return "allowed";
-        } else {
+        if ($user["is_active"] != 1 || $user["validated"] != 1) {
             Configuration::getLogger()->debug('[core][connect] inactive user', ['user' => $user]);
-            return "inactive";
+            throw new PfmAuthException(CoreConnectionError::$INACTIVE);
+        } else {
+            return true;
         }
     }
 
@@ -550,7 +545,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmParamException("Cannot find the user using the given parameters: ".$login, 404);
+            throw new PfmAuthException(CoreConnectionError::$INVALID_LOGIN);
         }
     }
 
@@ -887,12 +882,12 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             $req = $user->fetch();
             if ($req ["is_active"] == 1) {
-                return "allowed";
+                return true;
             } else {
-                return "Your account is not active";
+                throw new PfmAuthException("user inactive");
             }
         } else {
-            return "Login or password not correct";
+            throw new PfmAuthException("incorrect credentials");
         }
     }
 

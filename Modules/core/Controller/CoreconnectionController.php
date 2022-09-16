@@ -87,44 +87,38 @@ class CoreconnectionController extends CorecookiesecureController {
     public function loginAction() {
         $lang = $this->getLanguage();
         if ($this->request->isParameter("login") && $this->request->isParameter("pwd")) {
-            $loginType = "login";
-            $login = $this->request->getParameter("login");
+            $loginOrEmail = $this->request->getParameter("login");
             $pwd = $this->request->getParameter("pwd", false);
-
-            if ($this->user->isLocalUserEmail($login)) {
-                $loginType = "email";
-                $login = $this->user->getUserByEmail($login)['login'];
-            }
 
             $redirection = '';
             if($this->request->isParameter('redirection')) {
                 $redirection = $this->request->getParameter('redirection');
             }
-
-            $connect = $this->connect($login, $pwd);
-            if ($connect === "allowed") {                
+            try {
+                $login = $this->userConnection($loginOrEmail, $pwd);
                 $loggedUser = $this->initSession($login);
-                // generate the remember me cookie
-                if ($this->request->isParameter("remember")) {
-                    $key = hash('sha512', $this->generateRandomKey());
-                    $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
-                    if (!$cookieSet) {
-                        throw new PfmException("failed to set cookie with key " . $key, 500);
-                    }
-                    $modelUser = new CoreUser();
-                    $modelUser->setRememberKey($loggedUser['idUser'], $key);
-                }
-                if($redirection) {
-                    $this->redirect($redirection);
-                    return;
-                }
-                // redirect
-                $redirectPath = $this->getRedirectPath();
-                $this->redirectNoRemoveHeader($redirectPath);
-            } else {
-                Configuration::getLogger()->info('[login] invalid', ['error' => $connect, 'login' => $login]);
-                $this->loginError($redirection, $loginType, $connect);
+            } catch (PfmAuthException $e) {
+                return $this->loginError($redirection, $e->getMessage());
             }
+            
+            // generate the remember me cookie
+            if ($this->request->isParameter("remember")) {
+                $key = hash('sha512', $this->generateRandomKey());
+                $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
+                if (!$cookieSet) {
+                    throw new PfmException("failed to set cookie with key " . $key, 500);
+                }
+                $modelUser = new CoreUser();
+                $modelUser->setRememberKey($loggedUser['idUser'], $key);
+            }
+            if($redirection) {
+                $this->redirect($redirection);
+                return;
+            }
+            // redirect
+            $redirectPath = $this->getRedirectPath();
+            $this->redirectNoRemoveHeader($redirectPath);
+            
         } else {
             throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
         }
@@ -138,25 +132,10 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $connection_error error returned at connection failure
      * 
      */
-    private function loginError($redirection, $loginType, $connection_error = "") {
-        $lang = $this->getLanguage();
+    private function loginError($redirection, $connection_error = "connexion error") {
         $_SESSION['flashClass'] = "danger";
-        switch ($connection_error) {
-            case "inactive":
-                $msg = CoreTranslator::AccountInactive($lang);
-                break;
-            case "invalid_password":
-                $msg = CoreTranslator::InvalidPassword($lang);
-                break;
-            case "invalid_login":
-                $msg = $loginType === "login" ? CoreTranslator::InvalidLogin($lang) : CoreTranslator::DuplicatedEmail($lang);
-                break;
-            default:
-                $msg = ($connection_error != "") ? $connection_error : CoreTranslator::ConnectionError($lang);
-                break;
-        }
-        $_SESSION['flash'] = $msg;
-        $this->redirect('/coreconnection?redirect_url='.$redirection);
+        $_SESSION['flash'] = $connection_error;
+        return $this->redirect('/coreconnection?redirect_url='.$redirection);
     }
 
     /**
@@ -196,15 +175,24 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $pwd User pssword
      * @return string Error message
      */
-    private function connect($login, $pwd) {
+    private function userConnection($loginOrEmail, $pwd) {
+        $canConnect = false;
+
+        // check if its a known email, then get login, else set $loginOrEmail as login
+        $login = $this->user->isLocalUserEmail($loginOrEmail)
+            ? $this->user->getUserByEmail($loginOrEmail)['login']
+            : $loginOrEmail;
+
 
         // test if local account
-        if ($this->user->isLocalUserEmail($login)) {
-            $login = $this->user->getUserByEmail($login)['login'];
-        }
         if ($this->user->isLocalUser($login)) {
             $this->logger->debug('[auth] local user', ['user' => $login]);
-            return $this->user->connect($login, $pwd);
+            try {
+                $canConnect = $this->user->connect($login, $pwd);
+            } catch(PfmAuthException $e) {
+                throw new PfmAuthException($e->getMessage());
+            }
+            return $login;
         } else {
             // search for LDAP account
             $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
@@ -221,11 +209,15 @@ class CoreconnectionController extends CorecookiesecureController {
                     if(!$userInfo['apikey']) {
                         $this->user->newApiKey($userInfo['idUser']);
                     }
-                    return $this->user->isActive($login);
+                    try {
+                        $this->user->isActive($login);
+                    } catch (PfmAuthException $e) {
+                        throw new PfmAuthException("exception in userConnection: " . $e);
+                    }
                 }
             }
         }
-        return "invalid_login";
+        return $login;
     }
 
     public function passwordforgottenAction() {
