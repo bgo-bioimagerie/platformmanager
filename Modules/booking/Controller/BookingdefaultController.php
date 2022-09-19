@@ -306,7 +306,7 @@ class BookingdefaultController extends BookingabstractController {
 
 
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource, true);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supplementaries = "";
         foreach ($supInfos as $sup) {
             $q = $this->request->getParameterNoException("sup" . $sup["id"]);
