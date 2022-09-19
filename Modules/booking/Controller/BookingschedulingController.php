@@ -44,9 +44,9 @@ class BookingschedulingController extends BookingsettingsController {
         if ($defScheduling == null) {
             throw new PfmException("No default scheduling found", 500);
         }
-        $def = $defScheduling['id'];
+        $def = $defScheduling['id_bkschedule'];
         $bklist = [$def => "default"];
-        $resbklist = [0 => "area"];
+        $resbklist = [0 => "parent area"];
         foreach ($bkcalendars as $cal) {
             $bklist[$cal['id']] = $cal['name'];
             $resbklist[$cal['id']] = $cal['name'];
@@ -79,7 +79,7 @@ class BookingschedulingController extends BookingsettingsController {
             if(isset($resourcesCalendars[$r['id']])) {
                 $resources[$i]['calendar'] = $resourcesCalendars[$r['id']];
             } else {
-                $resources[$i]['calendar'] = $def;
+                $resources[$i]['calendar'] = 0;
             }
             $mareas[$resources[$i]['id_area']]['resources'][] = $resources[$i];
         }

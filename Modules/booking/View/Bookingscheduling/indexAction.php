@@ -34,16 +34,20 @@
                 </select>          
             </th></tr></thead>
             <tbody>
-                <?php foreach($area['resources'] as $res) { ?>
-                    <tr><td><?php echo $res['name'] ?></td>
-                    <td>
-                    <select id="resource<?php echo $area['id']?>" onchange="setResourceCalendar(<?php echo $res['id'] ?>, this.value)" data-cal="<?php echo $res['calendar'] ?>" class="form-select <?php echo "area".$area['id'] ?>">
-                        <?php foreach ($rescalendars as $i => $c) { ?>
-                            <option <?php if($res['calendar']==$i) { echo "selected";} ?> value="<?php echo $i ?>"><?php echo $c ?></option>
-                        <?php } ?>
-                    </select>
-                    </td></tr>
-                <?php } ?>
+                <?php
+                if(isset($area['resources'])) {
+                    foreach($area['resources'] as $res) { ?>
+                        <tr><td><?php echo $res['name'] ?></td>
+                        <td>
+                        <select id="resource<?php echo $area['id']?>" onchange="setResourceCalendar(<?php echo $res['id'] ?>, this.value)" data-cal="<?php echo $res['calendar'] ?>" class="form-select <?php echo "area".$area['id'] ?>">
+                            <?php foreach ($rescalendars as $i => $c) { ?>
+                                <option <?php if($res['calendar']==$i) { echo "selected";} ?> value="<?php echo $i ?>"><?php echo $c ?></option>
+                            <?php } ?>
+                        </select>
+                        </td></tr>
+                    <?php
+                }
+               } ?>
             </tbody>
         </table>
     </div>

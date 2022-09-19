@@ -26,6 +26,11 @@ class CoreUpgradeDB1656573195 extends Model {
       foreach ($scheds as $sched) {
         $ma = new ReArea();
         $areaName = $ma->getName($sched['id_space'], $sched['id_rearea']);
+        if($areaName == 0) {
+          $sql = 'UPDATE bk_schedulings SET deleted=1, deleted_at=NOW() WHERE id=?';
+          $this->runRequest($sql, [$sched['id']]);
+          continue;
+        }
         $sql = 'UPDATE bk_schedulings SET name=? WHERE id=?';
         $this->runRequest($sql, [$areaName, $sched['id']]);
         $bks = new BkResourceSchedule();
