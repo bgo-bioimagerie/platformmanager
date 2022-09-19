@@ -1,5 +1,11 @@
 # Changes
 
+## 2.8.3
+
+### Fixes
+
+* [booking] remove deleted supinfos fetch in reservation edition, closes #712
+
 ## 2.8.2
 
 ### Fixes
