@@ -8,12 +8,14 @@ date: 2021-08-13T13:30:30+02:00
 ![clients_module](../../../quote_module_1.png)
 
 Within this module, you can:
+
 - [Create *quotes*](./#create-a-quote)
 - [Edit *quotes*](./#edit-quote)
 
 ## Item definition
 
 A *quote* is defined by its ("\*" for *mandatory*):
+
 - [Recipient or User*](./#recipient)
 - Recipient Email
 - Client Address
@@ -45,7 +47,7 @@ Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _quote_ line.
+Then click edit button in *quote* line.
 
 You can now select the minimum role required to access the module. *Inactive* option stands for *the module is not active*.
 
@@ -64,7 +66,7 @@ Any *client* to who you want to address a quote must also have been attributed a
 In newest versions of Platform-Manager, a client is necesseraly linked to a pricing.
 
 There are two ways to create quotes: [*Create a new quote*](./#create-a-new-quote) or [*Create a new user quote*](./#create-a-new-user-quote)
- 
+
 ### Create a new quote
 
 If you want to address your quote to an existing user.
@@ -120,6 +122,3 @@ this will add an item line to your quote.
 Once your quote is set up, you can generate a pdf file from it by clicking the *PDF* button.
 
 This file will be generated accordingly to the template you set in your [*invoices*](../invoices) module configuration.
-
-
-

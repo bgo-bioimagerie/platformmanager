@@ -78,7 +78,7 @@ class Source extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the source using the given id:" . $id, 404);
+            throw new PfmParamException("Cannot find the source using the given id:" . $id, 404);
         }
     }
 

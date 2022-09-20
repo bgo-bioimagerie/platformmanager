@@ -8,6 +8,7 @@ date: 2021-08-13T13:30:30+02:00
 ![clients_module](../../../clients_module_8.png)
 
 Within this module, you can:
+
 - [manage *clients*](./#add-a-client)
 - [manage *pricings*](./#add-a-pricing)
 - [link *users* to a *client*](./#link-users-to-a-client)
@@ -17,6 +18,7 @@ Within this module, you can:
 A **client** is the entity which can be invoiced. Users can be attached to a client, so they can book resources or ask for services in name of the *client*. A user can't be invoiced directly.
 
 A *client* is defined by its ("\*" for *mandatory*):
+
 - Identifier*
 - Contact name
 - Phone
@@ -28,8 +30,7 @@ A *client* is defined by its ("\*" for *mandatory*):
 
 ### Pricing
 
-- a **pricing** is used to define a specific group of prices for resources and services tarification. In *Invoices module*, you can define prices for each resource and each service relativly to each pricing. 
-
+- a **pricing** is used to define a specific group of prices for resources and services tarification. In *Invoices module*, you can define prices for each resource and each service relativly to each pricing.
 
 ## Module activation and configuration
 
@@ -37,7 +38,7 @@ Within your space, go into *Configuration* module.
 
 ![basic configuration](../../../basic_configuration_1.png)
 
-Then click edit button in _clients_ line.
+Then click edit button in *clients* line.
 
 You can now select the minimum role required to access the module. *Inactive* option stands for *the module is not active*.
 
@@ -63,7 +64,6 @@ To add a pricing, just click on *Pricings* in the left side menu. Then click *Ne
 Then you can edit your *pricing*.
 
 ![basic configuration](../../../clients_module_3.png)
-
 
 ### Add a client
 

@@ -166,6 +166,10 @@ class ClientspricingsController extends ClientsController {
     public function deleteAction($id_space, $id) {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+
+        if($this->pricingModel->hasClients($id_space, $id)) {
+            throw new PfmParamException("Pricing used by clients");
+        }
         
         // query to delete the provider
         $this->pricingModel->delete($id_space, $id);

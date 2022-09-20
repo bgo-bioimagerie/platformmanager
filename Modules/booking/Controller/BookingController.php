@@ -112,7 +112,7 @@ class BookingController extends BookingabstractController {
             $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
         }
 
-        $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
+        // $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
         $userSettingsModel = new CoreUserSettings();
@@ -136,24 +136,36 @@ class BookingController extends BookingabstractController {
 
         }
 
-        $bk_id_resource = $this->request->getParameterNoException("id_resource");
-        $bk_id_area = $this->request->getParameterNoException("id_area");
+        $bk_id_resource = $this->request->getParameterNoException("id_resource", default: $id_resource);
+        $bk_id_area = $this->request->getParameterNoException("id_area", default: $id_area);
         $id_user = $this->request->getParameterNoException('id_user');
-        $qc = ["bk_curentDate" => $curentDate, "bk_id_resource" => $bk_id_resource, "bk_id_area" => $bk_id_area, "id_user" => $id_user];
+        $qc = [
+            "bk_curentDate" => $curentDate,
+            "bk_id_resource" => $bk_id_resource,
+            "bk_id_area" => $bk_id_area,
+            "id_user" => $id_user,
+            "view" => $this->request->getParameterNoException('view', default: 'simple')
+        ];
 
 
-        $calendarDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
+        $bkUserDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");        
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
             $this->redirect($lastView . "/" . $id_space, $qc);
-        } else if ($calendarDefaultView == "") {
-            $this->redirect("bookingdayarea/" . $id_space, $qc);
+        } else if ($bkUserDefaultView == "") {
+            $modelCoreConfig = new CoreConfig();
+            $bkSpaceDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
+            $this->redirect($bkSpaceDefaultView . "/" . $id_space, $qc);
         } else {
-            $this->redirect($calendarDefaultView . "/" . $id_space, $qc);
+            $this->redirect($bkUserDefaultView . "/" . $id_space, $qc);
         }
     }
 
-    public function book($id_space, $message) {
+
+    /**
+     * @deprecated, unused?
+     */
+    public function book($id_space) {
         $lastView = "";
         if (isset($_SESSION["user_settings"]["calendarDefaultView"])) {
             $lastView = $_SESSION["user_settings"]["calendarDefaultView"];
@@ -163,23 +175,23 @@ class BookingController extends BookingabstractController {
         }
         switch($lastView) {
             case "bookingday":
-                $this->dayAction($id_space, "", $message);
+                $this->dayAction($id_space);
                 break;
             case "bookingweek":
-                $this->weekAction($id_space, "", $message);
+                $this->weekAction($id_space);
                 break;
             case "bookingdayarea":
-                $this->dayareaAction($id_space, "", $message);
+                $this->dayareaAction($id_space);
                 break;
             case "bookingweekarea":
-                $this->weekareaAction($id_space, "", $message);
+                $this->weekareaAction($id_space);
                 break;
             default:
-                $this->dayAction($id_space, "", $message);
+                $this->dayAction($id_space);
         }
     }
 
-    public function dayAction($id_space, $action, $message) {
+    public function dayAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingday";
 
@@ -325,7 +337,6 @@ class BookingController extends BookingabstractController {
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
-            'message' => $message,
             'scheduling' => $schedule,
             'shareCalendar' => true,
             'resourceInfo' => $resourceInfo,
@@ -347,7 +358,7 @@ class BookingController extends BookingabstractController {
         ), "bookday");
     }
 
-    public function dayareaAction($id_space, $action, $message) {
+    public function dayareaAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingdayarea";
         $lang = $this->getLanguage();
@@ -533,7 +544,6 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'message' => $message,
             'agendaStyle' => $agendaStyle,
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
@@ -546,7 +556,7 @@ class BookingController extends BookingabstractController {
         ), "bookdayarea");
     }
 
-    public function weekAction($id_space, $action, $message) {
+    public function weekAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweek";
         $lang = $this->getLanguage();
@@ -716,7 +726,6 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'message' => $message,
             'agendaStyle' => $agendaStyle,
             'scheduling' => $schedule,
             'shareCalendar' => true,
@@ -731,7 +740,7 @@ class BookingController extends BookingabstractController {
         ), "bookweek");
     }
 
-    public function weekareaAction($id_space, $action, $message) {
+    public function weekareaAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweekarea";
         $lang = $this->getLanguage();
@@ -938,7 +947,6 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'message' => $message,
             'agendaStyle' => $agendaStyle,
             'scheduling' => $schedule,
             'shareCalendar' => $shareCalendar,
@@ -953,7 +961,7 @@ class BookingController extends BookingabstractController {
         ), "bookweekarea");
     }
 
-    public function monthAction($id_space, $action, $message) {
+    public function monthAction($id_space) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingmonth";
         $lang = $this->getLanguage();
@@ -1071,7 +1079,6 @@ class BookingController extends BookingabstractController {
             'calEntries' => $calEntries,
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
-            'message' => $message,
             'agendaStyle' => $agendaStyle,
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
@@ -1094,7 +1101,6 @@ class BookingController extends BookingabstractController {
             //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             return $modelDefault->editreservationdefault($id_space, $param);
         } else {
-
             /// todo run plugin
             $modelCache = new FCache();
             $pathInfo = $modelCache->getURLInfos($editResaFunction);

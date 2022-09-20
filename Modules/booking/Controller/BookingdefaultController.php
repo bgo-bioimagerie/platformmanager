@@ -19,6 +19,7 @@ require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
 
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
@@ -178,7 +179,7 @@ class BookingdefaultController extends BookingabstractController {
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
-
+        $reason = intval($this->request->getParameterNoException("reason"));
         $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaEnd = $this->request->getParameterNoException("resa_end");
         $duration = $this->request->getParameterNoException("resa_duration");
@@ -306,11 +307,13 @@ class BookingdefaultController extends BookingabstractController {
 
 
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supplementaries = "";
         foreach ($supInfos as $sup) {
             $q = $this->request->getParameterNoException("sup" . $sup["id"]);
-            $supplementaries .= $sup["id"] . "=" . $q . ";";
+            if (!empty($q)) {
+                $supplementaries .= $sup["id"] . "=" . $q . ";";
+            }
             if($sup['mandatory'] && !$q){
                 Configuration::getLogger()->debug('Missing supp ', ['supp' => $sup]);
                 throw new PfmParamException('Field '.$sup['name'].' mandatory');
@@ -318,11 +321,14 @@ class BookingdefaultController extends BookingabstractController {
         }
 
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource, true);
+
         $quantities = "";
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
-            $quantities .= $q["id"] . "=" . $qt . ";";
+            if (!empty($qt)) {
+                $quantities .= $q["id"] . "=" . $qt . ";";
+            }
         }
 
         $use_package = $this->request->getParameterNoException("use_package");
@@ -330,7 +336,7 @@ class BookingdefaultController extends BookingabstractController {
         if ($use_package == "yes") {
             $package_id = $this->request->getParameter("package_id");
             $modelPackage = new BkPackage();
-            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id);
+            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id, true);
             $end_time = $start_time + 3600 * $pk_duration;
         }
 
@@ -360,7 +366,8 @@ class BookingdefaultController extends BookingabstractController {
                 "quantities" => $quantities,
                 "supplementaries" => $supplementaries,
                 "package_id" => $package_id,
-                "responsible_id" => 0
+                "responsible_id" => 0,
+                "reason" => $reason
             );
             return $this->editReservation($id_space, $resaInfo);
         }
@@ -381,7 +388,7 @@ class BookingdefaultController extends BookingabstractController {
             $_SESSION["flash"] = "Error: Start Time Cannot Be Null";
             $valid = false;
         }
-        if ($start_time == 0) {
+        if ($end_time == 0) {
             $_SESSION["flash"] = "Error: End Time Cannot Be Null";
             $valid = false;
         }
@@ -724,7 +731,6 @@ END:VCALENDAR
                 $email->sendEmailToSpaceMembers($params, $lang);
             }
         }
-
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
@@ -757,7 +763,8 @@ END:VCALENDAR
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
-        if($resaInfo['reason'] > 0) {
+        
+        if($resaInfo['reason'] && $resaInfo['reason'] > 0) {
             $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
         }
 
@@ -770,6 +777,16 @@ END:VCALENDAR
             $form->addHidden("id_resource", $id_resource);
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
+
+        $clName = null;
+        if($resaInfo['responsible_id']) {
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $resaInfo['responsible_id']);
+            if(!$clName) {
+                $clName = Constants::UNKNOWN;
+            }
+        }
+
         // responsible
         if ($canEditReservation) {
             $modelResp = new ClClientUser();
@@ -784,7 +801,12 @@ END:VCALENDAR
                 $choicesid[] = $r["id"];
                 $choices[] = ($r["name"]);
             }
+            if($resaInfo['responsible_id'] && !in_array($resaInfo['responsible_id'], $choicesid)){
+                $choicesid[] = $resaInfo['responsible_id'];
+                $choices[] = '[!] '.$clName;
+            }
             $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+
         } else {
             $modelResp = new ClClientUser();
             $resps = $modelResp->getUserClientAccounts($_SESSION["id_user"], $id_space);
@@ -813,7 +835,7 @@ END:VCALENDAR
 
         // supplemetaries informations
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supData = explode(";", $resaInfo["supplementaries"]);
         $supDataId = array();
         $supDataValue = array();
@@ -822,15 +844,21 @@ END:VCALENDAR
             if (count($sd) == 2) {
                 $supDataId[] = $sd[0];
                 $supDataValue[] = $sd[1];
+                // If used, add deleted supplementary info
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelSupInfo->isDeleted($id_space, $sd[0])) {
+                    array_push($supInfos, $modelSupInfo->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($supInfos as $sup) {
             $key = array_search($sup["id"], $supDataId);
             $value = "";
+            // if deleted, add a [!] warning
+            $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
             if ($key !== false) {
                 $value = $supDataValue[$key];
             }
-            $form->addText("sup" . $sup["id"], $sup["name"], $sup["mandatory"], $value);
+            $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
         }
 
         $modelColors = new BkColorCode();
@@ -854,16 +882,17 @@ END:VCALENDAR
             if (count($sd) == 2) {
                 $qDataId[] = $sd[0];
                 $qDataValue[] = $sd[1];
+                // if resa was saved with a deleted quantity, add it to $quantitiesInfos
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelQuantities->isDeleted($id_space, $sd[0])) {
+                    array_push($quantitiesInfo, $modelQuantities->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($quantitiesInfo as $q) {
-            $name = $q["name"];
-            if ($q["mandatory"] == 1) {
-                $name .= "*";
-            }
+            $qName = $q["deleted"] == 1 ? '[!] ' . $q["name"] : $q["name"];
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
-            $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
+            $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
         }
 
         // booking nav bar
@@ -880,10 +909,17 @@ END:VCALENDAR
         // conditionnal on package
         $modelPackage = new BkPackage();
         $packages = $modelPackage->getByResource($id_space, $id_resource);
+
+        // if resa was saved with a deleted package, add it to $packages
+        if ($resaInfo["package_id"] > 0 && $modelPackage->isDeleted($id_space, $resaInfo["package_id"])) {
+            array_push($packages, $modelPackage->getById($id_space, $resaInfo["package_id"]));
+        }
+
         $pNames = array();
         $pIds = array();
         foreach ($packages as $p) {
-            $pNames[] = $p["name"];
+            $pName = $p["deleted"] == 1 ? '[!] ' . $p["name"] : $p["name"];
+            $pNames[] = $pName;
             $pIds[] = $p["id"];
         }
 
@@ -1026,7 +1062,7 @@ END:VCALENDAR
 
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        $sendEmail = intval($this->request->getParameter("sendmail"));
+        $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {

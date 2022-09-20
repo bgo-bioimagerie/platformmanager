@@ -143,6 +143,15 @@ class QuotelistController extends QuoteController {
                 array_push($clientSelect['choices'], $client['name']);
                 array_push($clientSelect['choicesid'], $client['id']);
             }
+            if($info['id_client'] && !in_array($info['id_client'], $clientSelect['choicesid'])){
+                $modelCl = new ClClient();
+                $clName = $modelCl->getName($id_space, $info['id_client']);
+                if(!$clName) {
+                    $clName = Constants::UNKNOWN;
+                }
+                array_push($clientSelect['choices'], '[!] '.$clName);
+                array_push($clientSelect['choicesid'], $info['id_client']);
+            }
             $clientSelect['value'] = ($info['id_client'] != 0) ? $info['id_client'] : $userClients[0]['id'] ?? "";
         } else {
             $form->addHidden('date_open', date('Y-m-d'));
@@ -223,7 +232,7 @@ class QuotelistController extends QuoteController {
                 $items[$i]["name"] = $modelResource->getName($id_space, $items[$i]["id_content"]);
             }
             if ($items[$i]["module"] == "services") {
-                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]);
+                $items[$i]["name"] = $modelServices->getItemName($id_space, $items[$i]["id_content"]) ?? Constants::UNKNOWN;
             }
         }
         $headers = array(
@@ -269,6 +278,18 @@ class QuotelistController extends QuoteController {
             array_push($clientIds, $client['id']);
             array_push($clientNames, $client['name']);
         }
+
+        if($info['id_client'] && !in_array($info['id_client'], $clientIds)){
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $info['id_client']);
+            if(!$clName) {
+                $clName = Constants::UNKNOWN;
+            }
+            array_push($clientNames, '[!] '.$clName);
+            array_push($clientIds, $info['id_client']);
+        }
+
+
         // set selected client by default
         $selectedClientId = $info['id_client'] ?? $clientIds[0];
         $addressToDisplay = "";
@@ -390,7 +411,7 @@ class QuotelistController extends QuoteController {
                 $unitprice = $modelBookingPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);
             } else if ($item['module'] == "services") {
-                $name = $modelServices->getItemName($id_space, $item['id_content']);
+                $name = $modelServices->getItemName($id_space, $item['id_content']) ?? Constants::UNKNOWN;
                 $quantity = $item['quantity'];
                 $unitprice = $modelServicesPrices->getPrice($id_space, $item['id_content'], $info['id_pricing']);
                 $itemtotal = floatval($quantity) * floatval($unitprice);

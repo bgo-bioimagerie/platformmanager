@@ -13,10 +13,13 @@ require_once 'Modules/booking/Controller/BookingController.php';
 require_once 'Modules/booking/Controller/BookingnightweController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
+require_once 'Modules/booking/Controller/BookingquantitiesController.php';
 require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
+require_once 'Modules/booking/Model/BkCalQuantities.php';
+require_once 'Modules/booking/Model/BkPrice.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 
@@ -207,9 +210,8 @@ class BookingBaseTest extends BaseTest {
      * 
      * option duration in hours
      */
-    protected function book($space, $user, $client, $resource, $time=9, $day='monday', $duration=0):mixed {
+    protected function book($space, $user, $client, $resource, $time=9, $day='monday', $duration=0, $quantities=[]):mixed {
         Configuration::getLogger()->debug('book', ['for' => $user, 'space' => $space, 'resource' => $resource]);
-        
         $date = new DateTime();
         $date->modify('next '.$day);
         $date->setTime($time, 0, 0);
@@ -226,7 +228,7 @@ class BookingBaseTest extends BaseTest {
 
         Configuration::getLogger()->debug('[book] info', ['resa_start' => $bookDate, 'hour_startH' => $time, 'resa_end' => $bookEnd, 'hour_endH' => $hour_endH]);
 
-        $req = $this->request([
+        $requestData = [
             "path" => "bookingeditreservationquery/".$space['id'],
             "formid" => "editReservationDefault",
             "id" => 0,
@@ -240,8 +242,19 @@ class BookingBaseTest extends BaseTest {
             "hour_startm" => 0,
             "resa_end" => $bookEnd,
             "hour_endH" => $hour_endH,
-            "hour_endm" => 0 
-        ]);
+            "hour_endm" => 0,
+            "reason" => 0
+        ];
+
+        // add quantities to request
+        if (!empty($quantities)) {
+            foreach ($quantities as $qte) {
+                $requestData['q' . $qte['id']] = $qte['nb'] ;
+            }
+        }
+
+        $req = $this->request($requestData);
+
         $c = new BookingdefaultController($req, $space);
         $data = $c->runAction('booking', 'editreservationquery', ['id_space' => $space['id']]);
         $this->assertTrue($data !== null);
@@ -277,6 +290,114 @@ class BookingBaseTest extends BaseTest {
         $c = new BookingauthorisationsController($req, $space);
         $data = $c->runAction('booking', 'index', ['id_space' => $space['id'], 'id_user' => $user['id']]);
         $this->assertTrue(!empty($data['bkauthorizations']));
+    }
+
+    protected function addBkQuantity($space, $user, $resource, $isInvoicingUnit=false, $isDeleted=false) {
+        Configuration::getLogger()->debug('add bk cal quantity', ['for' => $user, 'space' => $space, 'resource' => $resource]);
+        $qteName = "quantity1";
+        $req = $this->request([
+            "path" => "bookingquantities/".$space['id'],
+            "formid" => "supsForm",
+            "id_sups" => [0],
+            "id_resources" => [$resource['id']],
+            "names" => [$qteName],
+            "mandatory" => [true],
+            "is_invoicing_unit" => [$isInvoicingUnit]
+        ]);
+        $c = new BookingquantitiesController($req, $space);
+        $data = $c->runAction('bookingsettings', 'index', ['id_space' => $space['id']]);
+        $this->assertTrue($data !== null);
+        $this->assertTrue(array_key_exists('bksupids', $data));
+        $id = $data['bksupids'][count($data['bksupids']) - 1];
+        $modelCalQte = new BkCalQuantities();
+        if ($isDeleted) {
+            $modelCalQte->delete($space['id'], $id);
+        }
+        $bkCalQuantity = $modelCalQte->getById($space['id'], $id);
+        $this->assertTrue($bkCalQuantity['name'] === $qteName);
+        $this->assertTrue($id > 0);
+        return $id;
+    }
+
+    protected function deleteBkQuantitiesForResource($space, $resource) {
+        $modelCalQte = new BkCalQuantities();
+        $bkQtes = $modelCalQte->getByResource($space['id'], $resource['id']);
+        foreach ($bkQtes as $bkQte) {
+            $modelCalQte->delete($space['id'], $bkQte['id']);
+        }
+    }
+
+    public function setReservationWithInvoicingUnits($space, $user, $client, $resource, $scenario) {
+        $bkPriceModel = new BkPrice();
+
+        // delete all bkcalquantities for resource space
+        $this->deleteBkQuantitiesForResource($space, $resource);
+
+        $quantitiesToBook = [];
+        switch ($scenario) {
+            case 1:
+                // Scenario = 1 => test with non deleted invoicable bkquantity
+                $bkPrice = 4;
+                $bkQteNb = 6;
+                // add invoicable bkquantity
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true);
+                // set unit price
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                array_push($quantitiesToBook, ["id" => $bkQteId, "nb" => $bkQteNb]);
+                break;
+            case 2:
+                // Scenario = 2 => test with deleted invoicable bkquantity
+                $bkPrice = 5;
+                $bkQteNb = 7;
+                // add invoicable bkquantity
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:true);
+                // set unit price
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                array_push($quantitiesToBook, ["id" => $bkQteId, "nb" => $bkQteNb]);
+                break;
+            case 3:
+                // Scenario = 3 => test with used deleted invoicable bkquantity and not used invoicable bkquantity
+                $bkPrice = 6;
+                $bkQteNb = 8;
+                // add invoicable bkquantity, not used in reservation
+                $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:false);
+                // add invoicable deleted quantity, use it in reservation
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:true);
+                // set unit price
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                array_push($quantitiesToBook, ["id" => $bkQteId, "nb" => $bkQteNb]);
+                break;
+            case 4:
+                // Scenario = 4 => test with used deleted invoicable bkquantity and used not deleted invoicable bkquantity
+                $bkPrice = 7;
+                $bkQteNb = 9;
+                $bkQteDeletedNb = 5;
+                // add deleted invoicable bkquantity, used in reservation
+                $bkDeletedQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:true);
+                // add invoicable quantity, used in reservation
+                $bkQteId = $this->addBkQuantity($space, $user, $resource, isInvoicingUnit:true, isDeleted:false);
+                // set unit price
+                $bkPriceModel->setPriceDay($space['id'], $resource['id'], $client['pricing'], $bkPrice);
+                array_push($quantitiesToBook, ["id" => $bkQteId, "nb" => $bkQteNb]);
+                array_push($quantitiesToBook, ["id" => $bkDeletedQteId, "nb" => $bkQteDeletedNb]);
+                break;
+            default:
+                $this->assertTrue(false);
+                break;
+        }
+
+        $this->assertTrue($bkQteId && $bkPrice && $bkQteNb);
+        $expectedCost = $bkQteNb * $bkPrice;
+        // add authorization to book
+        $this->addAuthorization($space, $user, $resource);
+        $this->asUser($user['login']);
+        $bkCalEntryId = $this->book($space, $user, $client, $resource, 10, "thursday", quantities:$quantitiesToBook);
+        $this->assertTrue($bkCalEntryId > 0);
+        // get bookDate
+        $bkCalEntryModel = new BkCalendarEntry();
+        $bkCalEntry = $bkCalEntryModel->getEntry($space['id'], $bkCalEntryId);
+        
+        return ["bkCalEntry" => $bkCalEntry, "bkPrice" => $bkPrice, "expectedCost" => $expectedCost];
     }
 
 }

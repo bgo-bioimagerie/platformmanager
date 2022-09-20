@@ -27,7 +27,8 @@ class SeTask extends Model {
 		    `end_date` DATE,
             `done` int(1) NOT NULL DEFAULT 0,
             `private` int(1) NOT NULL DEFAULT 0,
-            `file` varchar(250) NOT NULL DEFAULT '',
+            /* `file` varchar(250) NOT NULL DEFAULT '',
+            `file_name` varchar(250) NOT NULL DEFAULT '', */
             PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
@@ -42,9 +43,9 @@ class SeTask extends Model {
 
         $this->runRequest($sql2);
 
-        if (!file_exists('data/services/projecttasks/')) {
+        /* if (!file_exists('data/services/projecttasks/')) {
             mkdir('data/services/projecttasks/', 0755, true);
-        }
+        } */
     }
 
     public function getForSpace($id_space) {
@@ -54,7 +55,7 @@ class SeTask extends Model {
     }
 
     public function getById($id_space, $id_task) {
-        $sql = "SELECT * FROM se_task WHERE id=? id_space=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id=? AND id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_task, $id_space));
         return $req->fetch();
     }
@@ -72,19 +73,19 @@ class SeTask extends Model {
     }
 
     public function getByProjectAndUser($id_project, $id_user, $id_space) {
-        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? id_user=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id_space=? AND id_project=? AND id_user=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space, $id_project, $id_user));
         return $req->fetchAll();
     }
 
     public function getByPeriodForProject($id_project, $id_space, $beginPeriod, $endPeriod) {
-        $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND $id_space=? AND deleted=0;";
+        $sql = "SELECT * FROM se_task WHERE id_project=? AND start_date>=? AND end_date<? AND id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_project, $beginPeriod, $endPeriod, $id_space));
         return $req->fetchAll();
     }
 
     public function setPrivate($id_space, $id_task, $private) {
-        $sql = "UPDATE se_task SET private=? WHERE id=? AND id_sapce=?;";
+        $sql = "UPDATE se_task SET private=? WHERE id=? AND id_space=?;";
         $this->runRequest($sql, array($private, $id_task, $id_space));
     }
 
@@ -96,6 +97,12 @@ class SeTask extends Model {
     }
     
     public function set($id, $id_space, $id_project, $state, $name, $content, $start_date, $end_date, $services, $id_user, $id_owner, $done, $private) {
+         if ($start_date == "")  {
+            $start_date = null;
+         }
+         if ($end_date == "")  {
+            $end_date = null;
+         }
         if ($this->isTask($id_space, $id)) {
             $sql = "UPDATE se_task SET id_project=?, state=?, name=?, content=?, start_date=?, end_date=?, id_user=?, id_owner=?, done=?, private=? WHERE id=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($id_project, $state, $name, $content, $start_date, $end_date, $id_user, $id_owner, $done, $private, $id, $id_space));
@@ -113,16 +120,18 @@ class SeTask extends Model {
         return $id;
     }
 
-    public function setFile($id_space, $id_task, $url) {
-        $sql = "UPDATE se_task SET file=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($url, $id_task, $id_space));
+    // task files related methods => to be used in next release
+
+    /* public function setFile($id_space, $id_task, $url, $fileName) {
+        $sql = "UPDATE se_task SET file=?, file_name=? WHERE id=? AND id_space=?";
+        $this->runRequest($sql, array($url, $fileName, $id_task, $id_space));
     }
 
     public function getFile($id_space, $id_task) {
-        $sql = "SELECT file FROM se_task WHERE id=? AND id_space=?";
+        $sql = "SELECT file, file_name FROM se_task WHERE id=? AND id_space=?";
         $req = $this->runRequest($sql, array($id_task, $id_space));
         return $req->fetch();
-    }
+    } */
     
     public function isTask($id_space, $id) {
         $sql = "SELECT * FROM se_task WHERE id=? AND id_space=? AND deleted=0";
@@ -159,10 +168,7 @@ class SeTask extends Model {
     }
 
     public function setTaskService($id_space, $id_task, $id_service) {
-        if ($this->isTaskService($id_space, $id_task, $id_service)) {
-            $sql = "UPDATE se_task_service (id_space, id_task, id_service) VALUES (?, ?, ?)";
-                $this->runRequest($sql, array($id_space, $id_task, $id_service));
-        } else {
+        if (!$this->isTaskService($id_space, $id_task, $id_service)) {
             $sql = "INSERT INTO se_task_service (id_space, id_task, id_service) VALUES (?, ?, ?)";
             $this->runRequest($sql, array($id_space, $id_task, $id_service));
             return $this->getDatabase()->lastInsertId();

@@ -18,6 +18,7 @@ class BookingRouting extends Routing{
 
         $router->map('POST', '/bookingscheduling/assign/[i:kind]/[i:id_space]/[i:id]/[i:id_calendar]', 'booking/bookingscheduling/assign', 'booking_scheduling_assign');
         $router->map('GET', '/bookingscheduling/delete/[i:id_space]/[i:id]', 'booking/bookingscheduling/delete', 'booking_scheduling_delete');
+        $router->map('GET', '/bookingauthorisationsdelete/[i:id_space]/[i:id_user]/[i:id]', 'booking/bookingauthorisations/delete', 'booking_bookingauthorisations_delete');
     }
 
     
@@ -58,11 +59,11 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingrestrictions", "bookingrestrictions", "bookingrestrictions", "index", array("id_space"), array(""));
         $this->addRoute("bookingrestrictionedit", "bookingrestrictionedit", "bookingrestrictions", "edit", array("id_space", "id"), array("", ""));
         
-        $this->addRoute("bookingday", "bookingday", "booking", "day", array("id_space", "action", "message"), array("", "", ""));
-        $this->addRoute("bookingdayarea", "bookingdayarea", "booking", "dayarea", array("id_space","action", "message"), array("", "", ""));
-        $this->addRoute("bookingweek", "bookingweek", "booking", "week", array("id_space", "action", "message"), array("", "", ""));
-        $this->addRoute("bookingweekarea", "bookingweekarea", "booking", "weekarea", array("id_space","action", "message"), array("", "", ""));
-        $this->addRoute("bookingmonth", "bookingmonth", "booking", "month", array("id_space", "action", "message"), array("", "", ""));
+        $this->addRoute("bookingday", "bookingday", "booking", "day", array("id_space"), array(""));
+        $this->addRoute("bookingdayarea", "bookingdayarea", "booking", "dayarea", array("id_space"), array(""));
+        $this->addRoute("bookingweek", "bookingweek", "booking", "week", array("id_space"), array(""));
+        $this->addRoute("bookingweekarea", "bookingweekarea", "booking", "weekarea", array("id_space"), array(""));
+        $this->addRoute("bookingmonth", "bookingmonth", "booking", "month", array("id_space"), array(""));
         $this->addRoute("bookingeditreservation", "bookingeditreservation", "booking", "editreservation", array("id_space", "param"), array("", ""));
         
         $this->addRoute("bookingeditreservationquery", "bookingeditreservationquery", "bookingdefault", "editreservationquery", array("id_space"), array(""));
@@ -74,6 +75,7 @@ class BookingRouting extends Routing{
         $this->addRoute("bookingauthorisationshist", "bookingauthorisationshist", "bookingauthorisations", "history", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsadd", "bookingauthorisationsadd", "bookingauthorisations", "add", array("id_space", "id"), array("", ""));
         $this->addRoute("bookingauthorisationsedit", "bookingauthorisationsedit", "bookingauthorisations", "edit", array("id_space", "id"), array("", ""));
+        
         
         
         $this->addRoute("bookingprices", "bookingprices", "bookingprices", "index", array("id_space"), array(""));

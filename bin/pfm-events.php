@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once 'Framework/Events.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Model.php';
 require_once 'Framework/Statistics.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
@@ -34,6 +35,7 @@ while(true) {
 					\Sentry\captureException($e);
 				}
 			}
+			Model::resetDatabase();
 			$msg->ack();
 		};
 
@@ -44,16 +46,15 @@ while(true) {
 			$channel->wait();
 		}
 
-		$channel->close();
-		$connection->close();
-
 	} catch(Throwable $e) {
 		Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage()]);
 		if(Configuration::get('sentry_dsn', '')) {
 			\Sentry\captureException($e);
 		}
-		Configuration::getLogger()->debug('sleep for 1 minute');
-		sleep(1 * 60);
 	}
+
+	Events::Close();
+	Configuration::getLogger()->debug('sleep for 1 minute');
+	sleep(1 * 60);
 
 }

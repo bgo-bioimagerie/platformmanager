@@ -37,9 +37,8 @@ class BookingquantitiesController extends BookingsupsabstractController {
         $form = $this->getSupForm($id_space, BookingTranslator::Quantities($lang));
         
         if ($form->check()) {
-            $this->supsFormCheck($id_space);
-            $this->redirect($this->formUrl."/".$id_space);
-            return;
+            $bkSupIds = $this->supsFormCheck($id_space);
+            return $this->redirect($this->formUrl."/".$id_space, data:$bkSupIds);
         }
         // view
         $formHtml = $form->getHtml($lang);

@@ -5,11 +5,13 @@ weight: 1
 ---
 
 ## Use case
+
 - you have one equipment for which users need a specific authorization
 - with this equipment, users can perform more than one activity
 - eventually, these activities have different prices
 
 ## Problem
+
 Using one [category](../../modules/module/resources/#category) (on which users authorizations can be set) representing the equipment and several [resources](../../modules/module/resources), each of them representing one activity linked to this equipment, do not avoid a user to make a booking for one of these activities whereas some other user already did book another activity for this equipment.
 Consequently, two (or more) users can book the same equipment at the same time, resulting in schedule conflicts.
 

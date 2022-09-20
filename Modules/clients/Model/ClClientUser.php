@@ -57,4 +57,9 @@ class ClClientUser extends Model {
         $sql = "DELETE FROM cl_j_client_user WHERE id_client=? AND id_user=? AND id_space=?";
         $this->runRequest($sql, array($id_client, $id_user, $id_space));
     }
+
+    public function deleteClientUsers($id_space, $id_client) {
+        $sql = "DELETE FROM cl_j_client_user WHERE id_client=?AND id_space=?";
+        $this->runRequest($sql, array($id_client, $id_space));
+    }
 }

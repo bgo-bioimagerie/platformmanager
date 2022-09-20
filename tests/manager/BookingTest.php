@@ -266,7 +266,7 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'day', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $data = $c->runAction('booking', 'day', ['id_space' => $space['id']]);
         $this->assertTrue(!empty($data['bookings']));
 
         $req = $this->request([
@@ -276,7 +276,7 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'dayarea', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $data = $c->runAction('booking', 'dayarea', ['id_space' => $space['id']]);
         $this->assertTrue(!empty($data['bookings']));
 
         $req = $this->request([
@@ -286,7 +286,7 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'week', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $data = $c->runAction('booking', 'week', ['id_space' => $space['id']]);
         $this->assertTrue(!empty($data['bookings']));
 
         $req = $this->request([
@@ -296,7 +296,7 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'weekarea', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $data = $c->runAction('booking', 'weekarea', ['id_space' => $space['id']]);
         $this->assertTrue(!empty($data['bookings']));
 
         $req = $this->request([
@@ -306,7 +306,7 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'month', ['id_space' => $space['id'], 'action' => '', 'message' => '']);
+        $data = $c->runAction('booking', 'month', ['id_space' => $space['id']]);
         $this->assertTrue(!empty($data['bookings']));
 
 

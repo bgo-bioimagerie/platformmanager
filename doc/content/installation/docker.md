@@ -89,6 +89,7 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
 * PFM_TIMEZONE: server timezone (Europe/Paris, ..., defaults to UTC)
+* PFM_MEMORY: sets php memory_limit (PFM_MEMORY: 1024M for example, else use default php settings) for pfm-events, pfm-helpdesk
 
 And .env file should define (according to variables used):
 

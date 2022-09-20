@@ -182,7 +182,7 @@ class EventHandler {
     private function isSpaceOwner($id_space, $id_user) {
         $sum = new CoreSpaceUser();
         $link = $sum->getUserSpaceInfo2($id_space, $id_user);
-        if($link['status'] >= CoreSpace::$MANAGER) {
+        if($link && $link['status'] >= CoreSpace::$MANAGER) {
             return true;
         }
         return false;
@@ -275,8 +275,6 @@ class EventHandler {
 
     public function spaceQuoteEdit($action, $msg) {
         $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
-        $model = new CoreSpace();
-        $space = $model->getSpace($msg['space']['id']);
         $modelQuote = new Quote();
         
         if (array_key_exists('quote', $msg)) {
@@ -356,7 +354,9 @@ class EventHandler {
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+        // User is already removed, check if role set in message
+        // if user is at least manager, remove from grafana
+        if(isset($msg['role']) && $msg['role'] >= CoreSpace::$MANAGER ) {
             $g->delUser($space['shortname'], $user['login']);
         }
 
@@ -790,10 +790,15 @@ class Events {
      */
     public static function Close() {
         if(self::$channel != null) {
-            self::$channel->close();
-            self::$connection->close();
-            self::$channel = null;
+            try {
+                self::$channel->close();
+                self::$connection->close();
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
+            } 
         }
+        self::$channel = null;
+
     }
 
     /**

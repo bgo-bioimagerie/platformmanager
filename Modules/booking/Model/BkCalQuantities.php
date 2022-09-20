@@ -44,9 +44,29 @@ class BkCalQuantities extends Model {
         return $data->fetchAll();
     }
 
-    public function getByResource($id_space, $id_resource) {
-        $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
+    public function getByResource($id_space, $id_resource, $include_deleted=false, $sort=false) {
+        $sql = "SELECT * from bk_calquantities WHERE id_resource=? AND id_space=?";
+        if (!$include_deleted) {
+            $sql .= " AND deleted=0";
+        }
+        if ($sort) {
+            $sql .= " ORDER BY deleted ASC, id DESC";
+        }
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
+    }
+
+    public function getById($id_space, $id_qte) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id=? AND id_space=?";
+        return $this->runRequest($sql, array($id_qte, $id_space))->fetch();
+    }
+
+    /**
+     * check if a quantity is deleted
+     */
+    public function isDeleted($id_space, $id_qte) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id=? AND id_space=? AND deleted=1";
+        $req = $this->runRequest($sql, array($id_qte, $id_space));
+        return $req->rowCount() > 0;
     }
 
     public function getAll($id_space) {
@@ -168,7 +188,7 @@ class BkCalQuantities extends Model {
      * @param unknown $id
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW(), mandatory=0 WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
