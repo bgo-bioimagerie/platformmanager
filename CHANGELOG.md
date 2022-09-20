@@ -6,6 +6,12 @@
 
 * [cli] add maintenance option to command-line admin tool
 
+### Fixes
+
+* [booking] on shred calendars, some booking link to id 0 and cannot be edited
+  now bookings from same calendar but different resource are displayed but have no link
+  Closes #714
+
 ## 2.8.3
 
 ### Fixes
