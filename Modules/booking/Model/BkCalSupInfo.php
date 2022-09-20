@@ -229,10 +229,11 @@ class BkCalSupInfo extends Model {
     public function getSupInfoData($id_space, $id) {
         $sql = "SELECT supplementaries FROM bk_calendar_entry WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
-        if(!$req) {
+        $tmp = $req->fetch();
+
+        if(!$tmp) {
             return array();
         }
-        $tmp = $req->fetch();
         $sups = explode(";", $tmp[0]);
         // removes last element (systematically empty)
         array_pop($sups);

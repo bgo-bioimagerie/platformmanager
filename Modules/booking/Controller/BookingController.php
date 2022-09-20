@@ -263,12 +263,24 @@ class BookingController extends BookingabstractController {
 
         if($schedule['shared']) {
             $modelRes = new ResourceInfo();
+            $resourceList = $modelRes->getForSpace($id_space);
+            $resIds = [];
+            foreach ($resourceList as $r) {
+                $rcal = $mschedule->getByResource($id_space, $r['id']);
+                if($rcal['id'] != $schedule['id']) {
+                    continue;
+                }
+                $resIds[] = $r['id'];
+            }
+
+            /*
             $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
             $resIds = [];
             for ($r = 0; $r < count($resourcesBase); $r++) {
                 $resIds[] = $resourcesBase[$r]["id"];
             }
+            */
             $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
             $calmap = [];
             $calEntries = [];
