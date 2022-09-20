@@ -380,7 +380,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['dilution']
+                                            . ($tissus[$i]['dilution'] ? $tissus[$i]['dilution'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
