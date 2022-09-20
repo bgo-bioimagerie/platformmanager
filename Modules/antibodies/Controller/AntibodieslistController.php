@@ -44,7 +44,7 @@ class AntibodieslistController extends AntibodiesController {
             $s = $_SESSION["ac_advSearch"];
             if( $s['searchName'] == "" &&  $s['searchNoH2P2'] == "" 
                     && $s['searchSource'] == "" && $s['searchCible'] == "" 
-                    && $s['searchValide'] == 0 && $s['searchResp'] == ""){
+                    && (!$s['searchValide']) && $s['searchResp'] == ""){
                 return false;
             }
             return true;
@@ -73,6 +73,7 @@ class AntibodieslistController extends AntibodiesController {
 
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, $sortentry);
+
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);
 
@@ -643,7 +644,6 @@ class AntibodieslistController extends AntibodiesController {
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->searchAdv($id_space, $searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp);
         //$anticorpsArray = $anticorpsModel->getAnticorpsInfo("id");
-
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);

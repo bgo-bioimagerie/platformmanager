@@ -260,22 +260,13 @@
                             <label for="inputEmail" class="form-label col-1">Statut:</label>
                             <div class="col-2">
                                 <select class="form-select" id="searchValide" name="searchValide">
-                                    <OPTION value="0" <?php
+                                    <option value="0" <?php
                                     if ($searchColumn == "0") {
                                         echo $selected;
-                                    }?> >  </OPTION>
-                                    <OPTION value="1" <?php
-                                    if ($searchValide == "1") {
-                                        echo $selected;
-                                    }?> > Validé </OPTION>
-                                    <OPTION value="2" <?php
-                                    if ($searchValide == "2") {
-                                        echo $selected;
-                                    }?> > Non validé </OPTION>
-                                    <OPTION value="3" <?php
-                                    if ($searchValide == "3") {
-                                        echo $selected;
-                                    }?> > Non testé </OPTION>
+                                    }?> >  </option>
+                                    <?php foreach ($status as $s) { ?>
+                                    <option value="<?php echo $s['id'] ?>"  <?php if ($searchValide == $s['id']) { echo "selected"; } ?> ><?php echo $s['nom'] ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
@@ -306,7 +297,7 @@
             <table aria-label="list of antibodies" id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;">
                 <thead>	 
                     <tr>
-                        <th id="antibody" class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
+                        <th id="antibody" class="text-center" colspan="10" style="color:#337AB7;">Anticorps</th>
                         <th id="protocol" class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
                         <th id="tissues" class="text-center" colspan="7" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
                         <th id="owner" class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
@@ -413,10 +404,12 @@
                                         ?>
                                             <img onclick="viewImage('<?php echo $tissus['id'] ?>','<?php echo $imageFile ?>')" id="imgview_<?php echo $tissus["id"] ?>" src="<?php echo $imageFile ?>" class="img-fluid" alt="photo" />
 
-            <?php
-        }
-    }
-    ?>
+                                        <?php
+                                    } else {
+                                        echo "<p> --- </p>";
+                                    }
+                                }
+                                ?>
                             </td>
                             
                             <td headers="tissues comment"  class="text-left" style="background-color: #eeffee;"><?php
@@ -424,7 +417,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['comment']
+                                            . ($tissus[$i]['comment'] ? $tissus[$i]['comment'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -434,7 +427,7 @@
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>" . $tissus[$i]['espece']
+                                    $val = $val . "<p>" . ($tissus[$i]['espece'] ? $tissus[$i]['espece'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -445,7 +438,7 @@
                             $val = "";
                             for ($i = 0; $i < count($tissus); ++$i) {
                                 $val = $val . "<p>"
-                                        . $tissus[$i]['organe']
+                                        . ($tissus[$i]['organe'] ? $tissus[$i]['organe'] : ' --- ')
                                         . "</p>";
                             }
                             echo $val;
@@ -465,7 +458,7 @@
                                         }
                                     }
                                     $val = $val . "<p style=\"background-color: #" . $background . "\">"
-                                            . $statusTxt
+                                            . ($statusTxt ? $statusTxt : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -477,7 +470,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['ref_bloc']
+                                            . ($tissus[$i]['ref_bloc'] ? $tissus[$i]['ref_bloc'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -488,7 +481,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['prelevement']
+                                            . ($tissus[$i]['prelevement'] ? $tissus[$i]['prelevement'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
