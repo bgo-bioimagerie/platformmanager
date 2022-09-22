@@ -105,9 +105,16 @@ Following, the different items of *Booking settings*, divided into 3 categories 
 
 **Warning**: in order to edit schedulings, you need to create [*color codes*](./#color-codes) first.
 
+A default calendar is defined per space. This is the calendar used by default
+for a resource if no specific one is defined.
+
+When using a resource, system will search for the resource calendar.
+If none, it will search for the resource's area calendar.
+If none again, the default calendar will be used.
+
 ![booking_settings](../../../booking_settings_module_2.png)
 
-Set, for each [*area*](../resources/#area):
+Each calendar define:
 
 - week days available for booking
 - daily time slot available for booking
