@@ -582,7 +582,7 @@ class Anticorps extends Model {
             $anticorps = array();
             foreach ($acs as $as) {
                 foreach ($as["tissus"] as $tissus) {
-                    if ($this->compare($tissus["organe"], $searchCible)) {
+                    if ($this->compare($tissus["espece"], $searchCible)) {
                         $anticorps[] = $as;
                     }
                 }

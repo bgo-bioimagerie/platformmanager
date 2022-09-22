@@ -255,7 +255,7 @@
                         </div>
 
                         <div class="row mb-2">	
-                            <label for="inputEmail" class="form-label col-1">Tissu cible:</label>
+                            <label for="inputEmail" class="form-label col-1">Espèce:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
                                         />
