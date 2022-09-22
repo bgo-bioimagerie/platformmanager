@@ -41,7 +41,11 @@
             </div>
 
             <div class="col-2">
-                <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+                
+                <form action="anticorpscsv/<?php echo $id_space?>" method="post">
+                    <textarea style="display:none;" name="anticorpsArray"><?php echo json_encode($anticorpsArray)?></textarea>
+                    <button type="submit" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+                </form> 
             </div>
         </div>
     </div>
@@ -634,6 +638,7 @@
         let myModal = new bootstrap.Modal(document.getElementById('imagepopup_box'))
         myModal.show();
     }
+
 </script>
 
 <?php endblock(); ?>

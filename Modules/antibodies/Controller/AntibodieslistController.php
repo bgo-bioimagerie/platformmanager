@@ -85,17 +85,15 @@ class AntibodieslistController extends AntibodiesController {
 
     public function anticorpscsvAction($id_space) {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
-        // database query
-        $anticorpsModel = new Anticorps();
-        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, "");
+        $lang = $this->getLanguage();
+
+        $anticorpsArray = json_decode($this->request->params()['anticorpsArray'], true);
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);
 
-        $lang = $this->getLanguage();
-
         // make csv file
-        $data = " Anticorps; ; ; ; ; ; ; ; ; Protocole; ; Tissus; ; ; ; ; ; Propriétaire; ; ;  \r\n";
+        $data = " Anticorps; ; ; ; ; ; ; ; ; ; Protocole; ; Tissus; ; ; ; ; ; Propriétaire; ; ;  \r\n";
         $data .= " No; Nom; St; Fournisseur; Source; Réactivité; Référence; Clone; lot; Isotype; proto; Acl dil; commentaire; espèce; organe; statut; ref. bloc; prélèvement; Nom; disponibilité; Date réception;  No Dossier \r\n";
 
         foreach ($anticorpsArray as $anticorps) {
