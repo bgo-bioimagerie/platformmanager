@@ -242,12 +242,12 @@
                                 <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
                                         />
                             </div>
-                            <label for="inputEmail" class="form-label col-1">No H2P2:</label>
+                            <label for="searchNoH2P2" class="form-label col-1">No H2P2:</label>
                             <div class="col-2">
                                 <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
                                         />
                             </div>
-                            <label for="inputEmail" class="form-label col-1">Source:</label>
+                            <label for="searchSource" class="form-label col-1">Source:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
                                         />
@@ -255,13 +255,13 @@
                         </div>
 
                         <div class="row mb-2">	
-                            <label for="inputEmail" class="form-label col-1">Espèce:</label>
+                            <label for="searchCible" class="form-label col-1">Espèce:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
                                         />
                             </div>
 
-                            <label for="inputEmail" class="form-label col-1">Statut:</label>
+                            <label for="searchValide" class="form-label col-1">Statut:</label>
                             <div class="col-2">
                                 <select class="form-select" id="searchValide" name="searchValide">
                                     <option value="0" <?php
@@ -274,14 +274,14 @@
                                 </select>
                             </div>
 
-                            <label for="inputEmail" class="form-label col-1">Propriétaire:</label>
+                            <label for="searchResp" class="form-label col-1">Propriétaire:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
                                         />
                             </div>
                         </div>
                         <div class="row mb-2">
-                            <label class="form-label col-2">Commentaire:</label>
+                            <label for="searchCom" class="form-label col-2">Commentaire:</label>
                             <div class="col-4">
                                 <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
                                         />
