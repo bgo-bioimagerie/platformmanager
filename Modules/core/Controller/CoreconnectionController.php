@@ -178,41 +178,40 @@ class CoreconnectionController extends CorecookiesecureController {
      */
     private function userConnection($login, $pwd) {
         // Check if localUser
-        $localUser = $this->user->isLocalUser($login);
-        // test if local account
-        if ($localUser) {
-            $this->logger->debug('[auth] local user', ['user' => $localUser['login']]);
-            try {
-                $connect = $this->user->connect($localUser['login'], $pwd);
-            } catch(PfmAuthException $e) {
-                throw new PfmAuthException($e->getMessage());
-            }
-            return $localUser['login'];
-        } else {
-            // search for LDAP account
-            $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
-            if (CoreLdapConfiguration::get('ldap_use', 0)) {
-                $this->logger->debug('[auth] ldap user', ['user' => $login]);
-                $modelLdap = new CoreLdap();
-                $ldapResult = $modelLdap->getUser($login, $pwd);
-                if ($ldapResult == "error") {
-                    throw new PfmAuthException(CoreUser::$CNX_INVALID_LDAP);
-                } else {
-                    // update the user infos
-                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                    $userInfo = $this->user->getUserByLogin($login);
-                    if(!$userInfo['apikey']) {
-                        $this->user->newApiKey($userInfo['idUser']);
+        try {
+            $localUser = $this->user->isLocalUser($login);
+            if ($localUser) {
+                $this->logger->debug('[auth] local user', ['user' => $localUser['login']]);
+                $this->user->connect($localUser['login'], $pwd);
+                return $localUser['login'];
+            } else {
+                // search for LDAP account
+                $this->logger->debug('[auth] check ldap', ['ldap' => CoreLdapConfiguration::get('ldap_use', 0)]);
+                if (CoreLdapConfiguration::get('ldap_use', 0)) {
+                    $this->logger->debug('[auth] ldap user', ['user' => $login]);
+                    $modelLdap = new CoreLdap();
+                    $ldapResult = $modelLdap->getUser($login, $pwd);
+                    if ($ldapResult == "error") {
+                        throw new PfmAuthException(CoreUser::$CNX_INVALID_LDAP);
+                    } else {
+                        // update the user infos
+                        $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
+                        $userInfo = $this->user->getUserByLogin($login);
+                        if(!$userInfo['apikey']) {
+                            $this->user->newApiKey($userInfo['idUser']);
+                        }
+                        try {
+                            $this->user->isActive($login);
+                        } catch (PfmAuthException $e) {
+                            throw new PfmAuthException($e->getMessage());
+                        }
+                        return $login;
                     }
-                    try {
-                        $this->user->isActive($login);
-                    } catch (PfmAuthException $e) {
-                        throw new PfmAuthException($e->getMessage());
-                    }
-                    return $login;
                 }
+                throw new PfmAuthException(CoreUser::$CNX_INVALID_LOGIN);
             }
-            throw new PfmAuthException(CoreUser::$CNX_INVALID_LOGIN);
+        } catch(PfmAuthException $e) {
+            throw new PfmAuthException($e->getMessage());
         }
     }
 

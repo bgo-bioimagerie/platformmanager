@@ -23,6 +23,7 @@ class CoreUser extends Model {
     public static $CNX_WRONG_PWD = 2;
     public static $CNX_INACTIVE = 3;
     public static $CNX_INVALID_LDAP = 4;
+    public static $CNX_DUPLICATED_LOGIN = 5;
 
     public function __construct() {
         $this->tableName = "core_users";
@@ -484,11 +485,13 @@ class CoreUser extends Model {
         $user = $this->runRequest($sql, array(
             $loginOrEmail, $loginOrEmail, "local"
         ));
-        if ($user->rowCount() == 1) {
+        $nbElements = $user->rowCount();
+        if ($nbElements == 1) {
             return $user->fetch();
-        } else {
-            return false;
+        } else if ($nbElements > 1) {
+            throw new PfmAuthException($this::$CNX_DUPLICATED_LOGIN);
         }
+        return false;
     }
 
     /**

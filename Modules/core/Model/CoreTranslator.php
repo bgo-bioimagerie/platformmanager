@@ -2128,6 +2128,11 @@ class CoreTranslator {
                     ? "Connexion à LDAP impossible avec cet identifiant et ce mot de passe."
                     : "Cannot connect to LDAP using the given login and password";
                 break;
+            case 5:
+                $msg = $lang === "fr"
+                    ? "L'identifiant ou email saisi existe en doublon. S'il vous est impossible de vous connecter, merci de contacter le support."
+                    : "More than one account uses this login or email. If you can't connect, please contact support.";
+                break;
             default:
                 $msg = $lang === "fr"
                     ? "Une erreur est survenue durant la connexion."
