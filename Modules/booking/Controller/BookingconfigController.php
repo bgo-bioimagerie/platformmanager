@@ -310,6 +310,12 @@ class BookingconfigController extends CoresecureController {
         $tag_font_rname = $this->request->getParameterNoException("tag_font_rname");
         $modelBookingSetting->setEntry("User", $tag_visible_rname, $tag_title_visible_rname, $tag_position_rname, $tag_font_rname, $id_space);
 
+        $tag_visible_cname = $this->request->getParameterNoException("tag_visible_cname");
+        $tag_title_visible_cname = $this->request->getParameterNoException("tag_title_visible_cname");
+        $tag_position_cname = $this->request->getParameterNoException("tag_position_cname");
+        $tag_font_cname = $this->request->getParameterNoException("tag_font_cname");
+        $modelBookingSetting->setEntry("Client", $tag_visible_cname, $tag_title_visible_cname, $tag_position_cname, $tag_font_cname, $id_space);
+
         $tag_visible_rphone = $this->request->getParameterNoException("tag_visible_rphone");
         $tag_title_visible_rphone = $this->request->getParameterNoException("tag_title_visible_rphone");
         $tag_position_rphone = $this->request->getParameterNoException("tag_position_rphone");
