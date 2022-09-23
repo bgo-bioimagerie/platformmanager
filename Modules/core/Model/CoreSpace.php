@@ -23,6 +23,7 @@ class CorePlan {
     // flag to add space managers as grafana org members
     const FLAGS_GRAFANA = 'grafana';
     const FLAGS_DOCUMENTS = 'documents';
+    const FLAGS_SATISFACTION = 'rating';
     const FLAGS_CALDAV = 'caldav';
 
     private ?array $plan = null;
@@ -686,12 +687,21 @@ class CoreSpace extends Model {
      * @deprecated , duplicate function, should use delete in CoreSpaceUser
      */
     public function deleteUser($id_space, $id_user) {
+        $sql = "SELECT status FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+        $res = $this->runRequest($sql, array($id_user, $id_space));
+        $role = 0;
+        if($res->rowCount() == 1) {
+            $obj = $res->fetch();
+            $role = $obj['status'];
+        }
+
         $sql = "DELETE FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
         $this->runRequest($sql, array($id_space, $id_user));
         Events::send([
             "action" => Events::ACTION_SPACE_USER_UNJOIN,
             "space" => ["id" => intval($id_space)],
-            "user" => ["id" => intval($id_user)]
+            "user" => ["id" => intval($id_user)],
+            "role" => $role
         ]);
     }
 

@@ -37,11 +37,11 @@ class SeProject extends Model {
             `id_origin` int(11) NOT NULL DEFAULT 0,
             `closed_by` int(11) NOT NULL DEFAULT 0,
             `in_charge` int(11) NOT NULL DEFAULT 0,
-            `samplereturn` text NOT NULL DEFAULT '',
+            `samplereturn` text,
             `samplereturndate` DATE,
             `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
             `samplestocked` int(1) NOT NULL DEFAULT 0,
-            `samplescomment` text NOT NULL DEFAULT '',
+            `samplescomment` text,
             PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
@@ -570,7 +570,7 @@ class SeProject extends Model {
         return $entry;
     }
 
-    public function setEntryCloded($id_space, $id, $date_close) {
+    public function setEntryClosed($id_space, $id, $date_close) {
         if($date_close == "") {
             $date_close = null;
         }
@@ -821,6 +821,23 @@ class SeProject extends Model {
         return [];
     }
 
+    public function closedProjectsByPeriod($id_space, $id_user, $date_from, $date_end) {
+        $sql = 'SELECT * FROM se_project WHERE deleted=0 AND date_close is not null AND (date_close>=? AND date_close<=?) AND id_space=? AND id_user=?';
+        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space, $id_user]);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
+    }
+
+    public function getEmailsForClosedProjectsByPeriod($id_space, $date_from, $date_end) {
+        $sql = 'SELECT DISTINCT core_users.email AS email FROM core_users INNER JOIN se_project on se_project.id_user=core_users.id WHERE se_project.deleted=0 AND se_project.date_close is not null AND (se_project.date_close>=? AND se_project.date_close<=?) AND se_project.id_space=?';
+        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space]);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
+    }
     ///// SE_PROJECT_USER METHODS /////
 
     public function getProjectUsers($id_space, $id_project) {
@@ -836,20 +853,19 @@ class SeProject extends Model {
     }
 
     public function setProjectUser($id_space, $id_user, $id_project) {
-        if ($this->isProjectUser($id_space, $id_user, $id_project)) {
-            $sql = "UPDATE se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
-                $this->runRequest($sql, array($id_space, $id_user, $id_project));
-        } else {
+        if (!$this->isProjectUser($id_space, $id_user, $id_project)) {
             $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
             $this->runRequest($sql, array($id_space, $id_user, $id_project));
             return $this->getDatabase()->lastInsertId();
+        } else {
+            return null;
         }
     }
 
     public function isProjectUser($id_space, $id_user, $id_project) {
         $sql = "SELECT * FROM se_project_user WHERE id_user=? AND id_project=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_user, $id_project, $id_space));
-        if ($req->rowCount() == 1) {
+        if ($req->rowCount() >= 1) {
             return true;
         }
         return false;

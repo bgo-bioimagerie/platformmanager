@@ -159,6 +159,8 @@ class CoreaccountController extends Controller {
         $form->addText("firstname", CoreTranslator::Firstname($lang), true);
         $form->addText("login", CoreTranslator::Login($lang), true, checkUnicity: true, suggestLogin: true);
         $form->addEmail("email", CoreTranslator::email($lang), true, checkUnicity: true);
+        // $name have to be like "confirm_[fieldname]" to compare the 2 values
+        $form->addEmail("confirm_email", CoreTranslator::Confirm_email($lang), true);
         $form->addText("phone", CoreTranslator::Phone($lang), false);
         $form->addText("organization", CoreTranslator::Organization($lang), false);
         $form->addText("unit", CoreTranslator::Unit($lang), false);

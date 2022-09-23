@@ -1,8 +1,86 @@
 # Changes
 
+## 2.9.0
+
+### Features / enhancements
+
+* [cli] add maintenance option to command-line admin tool
+* [core] add support for custom plans
+
+### Fixes
+
+* [booking] on shred calendars, some booking link to id 0 and cannot be edited
+  now bookings from same calendar but different resource are displayed but have no link
+  Closes #714
+
+## 2.8.3
+
+### Fixes
+
+* [booking] remove deleted supinfos fetch in reservation edition, closes #712
+
+## 2.8.2
+
+### Fixes
+
+* [services] fix/enhance order services management (add/remove) combining multiple lines
+  or removing empty quantities
+
+## 2.8.1
+
+### Fixes
+
+* [helpdesk] error in helpdesk web ui
+* [services] fix order update which could delete a service from all orders, or fail to remove element
+
 ## 2.8.0
 
-* [core] add support for custom plans
+### Docker
+
+* Add specific rabbitmq config in docker-compose to increase max background process duration;
+  sets consumer_timeout to 2h in /etc/rabbitmq/conf.d/pfm.conf
+
+### Features / enhancements
+
+* [booking] add calendar default view option in booking config
+* [booking] allow to delete bookingAuthorisations
+* [antibodies] add reactivity attribute
+* [doc] general update, add missing modules documentation
+* [coreconnexion] add email confirmation at account creation
+* [booking] add month to default booking views in user's settings
+* [invoice] for global invoice, fix discount display
+* [invoice] speedup pdf generation with details (sql refactoring)
+* [clients] make address forms facultative
+
+### Fixes
+
+* [core] fix invalid check on core pending accounts
+* [com] fix news popup display on space welcome page
+* [invoices] fix global invoice if no order is to be charged (Closes #688)
+* [bin/] close database connexion after each message/run
+* [clients] on client removal, remove user/client link
+* [quotes] show old client account used for a quote, in quote edition in case user switched to new client
+* [services] show old client account used for a order/project, in order/project edition in case user switched to new client
+* [services/clients] prevent pricing removal if used by a client
+* [booking] keep deleted packages/supplementaries/quantities infos in existing reservations
+* [invoices] allow to invoice existing reservations with deleted packages or invoicable quantities
+* [invoice] manage invoicing/display in case of deleted service
+* [services] fix orders edition form
+* [com] avoid displaying news popup if no news
+* [catalog] fix catalog public page header file upload
+* [booking] fix booking delete sendemail
+* [invoices] in global invoices, some service names prevented invoice edit or discount update
+* [events] fix disconnection from rabbitmq
+
+## 2.7.1
+
+### Fixes
+
+* [services] add missing base columns on se_project_user_table on upgrade
+* [core] fix role checks on user unjoin (test was failing and email not sent)
+* [helpdesk] handle some error cases
+* [booking] show old client account used for a booking, in booking edition in case user switched to new client
+>>>>>>> develop
 
 ## 2.7.0
 
@@ -16,6 +94,23 @@
 * [booking] calendar display updates for supplementaries, left align on detailed view (minor)
 * [core] use ckeditor5 and allow to use multiple textareas with editor
 * [invoices] get invoice by id (no longer by number) for generating pdf
+* [com] allow private and public messages on welcome space message
+* [invoices] for global invoices, in invoice details, show order identification number
+* [services][sql] speed up orders list
+
+### Fixes
+
+* [services][orders] fix import of old pfm version for orders,
+  fix order reopen on invoice deletion,
+
+### Setup
+
+* add support for env variable PFM_MEMORY which overrides default PHP memory limit for pfm-x processes,
+  example: PFM_MEMORY: 1024M
+
+## 2.6.4
+
+* [core][cli] fix base columns settings (issue for old upgrades)
 
 ## 2.6.3
 

@@ -71,9 +71,8 @@ class InvoiceslistController extends InvoicesController {
         $invoiceperiodend = $modelConfig->getParamSpace("invoiceperiodend", $id_space);
 
         $years = $modelInvoices->allPeriodYears($id_space, $invoiceperiodbegin, $invoiceperiodend);
-        //$years = $modelInvoices->allYears($id_space);
         if ($year == "") {
-            if(count($years) == 0){
+            if(empty($years)){
                 $year = date('Y');
             }
             else if (count($years) == 1) {
@@ -179,8 +178,6 @@ class InvoiceslistController extends InvoicesController {
 
     protected function infoForm($id_space, $id){
         $lang = $this->getLanguage();
-        //$modelClient = new ClClient();
-        $modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelInvoice = new InInvoice();
         $invoice = $modelInvoice->get($id_space, $id);
@@ -217,7 +214,7 @@ class InvoiceslistController extends InvoicesController {
                 $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
                 $_SESSION['flash'] = $message;
                 $this->redirect("invoiceinfo/".$id_space."/".$id);
-                return;
+                return "";
             }
             
             $datePaid = CoreTranslator::dateToEn($this->request->getParameter("date_paid"), $lang);

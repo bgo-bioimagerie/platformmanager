@@ -145,6 +145,16 @@ abstract class Model {
         self::$bdd->exec("SET CHARACTER SET utf8");
     }
 
+    public function checkColumn($tableName, $columnName) {
+        $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
+        $pdo = $this->runRequest($sql, array($columnName));
+        $isColumn = $pdo->fetch();
+        if ($isColumn === false) {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * 
      * @param string $tableName

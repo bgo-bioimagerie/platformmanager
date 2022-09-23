@@ -62,8 +62,8 @@ class ClClient extends Model {
         return $tmp ? $tmp[0] : null;
     }
 
-    public function getAll($id_space) {
-        $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0";
+    public function getAll($id_space, $sort='name') {
+        $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 ORDER BY ".$sort." ASC";
         $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         $modelPricing = new ClPricing();

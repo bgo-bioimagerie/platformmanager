@@ -167,12 +167,17 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 }
             } else {
                 foreach($detail['data']['count'] as $d) {
-                    $others[] = [
+                    $oinfo = [
                         'module' => $module,
                         'id' => $d['id'] ?? '',
                         'quantity' => $d['quantity'],
-                        'resource' => $d['label']
+                        'resource' => $d['label'],
+                        'info' => ''
                     ];
+                    if (isset($d['no_identification'])) {
+                        $oinfo['info'] = $d['no_identification'];
+                    }
+                    $others[] = $oinfo;
                 }
 
             }
@@ -189,7 +194,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $table2 = new TableView('otherDetails');
         $table2->setTitle("Others - " . $invoice['number'], 3);
-        $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity");
+        $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity", "info" => "Info");
         $tableHtml2 = $table2->view($others, $headers2);
 
         $this->render(['lang' => $lang, 'id_space' => $id_space, 'table' => $tableHtml, 'table2' => $tableHtml2, 'invoice' => $invoice, 'data' => ['invoicedetails' => $details]]);
@@ -209,7 +214,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
 
-        $number = $invoice["number"];
+        // $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
@@ -289,7 +294,7 @@ class InvoiceglobalController extends InvoiceAbstractController {
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
 
         $total = 0;
-        $modules = Configuration::get("modules");
+        // $modules = Configuration::get("modules");
         foreach ($content as $c) {
 
             foreach ($c["data"]["count"] as $d) {
@@ -304,8 +309,6 @@ class InvoiceglobalController extends InvoiceAbstractController {
                 }
             }
         }
-
-
 
         $discount = floatval($invoice["discount"]);
         if ($discount > 0) {

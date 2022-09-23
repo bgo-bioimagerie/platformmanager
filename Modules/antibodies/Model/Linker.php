@@ -68,7 +68,7 @@ class Linker extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the linker using the given id", 404);
+            throw new PfmParamException("Cannot find the linker using the given id", 404);
         }
     }
 

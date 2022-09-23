@@ -12,9 +12,8 @@ require_once 'Modules/catalog/Model/CatalogTranslator.php';
 require_once 'Modules/antibodies/Model/Status.php';
 require_once 'Modules/antibodies/Model/Anticorps.php';
 /**
- * @deprecated ??? see no related usage
  * @author sprigent
- * Controller for the home page
+ * Controller for the public catalog
  */
 class CatalogpublicController extends Controller {
 

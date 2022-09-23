@@ -10,8 +10,6 @@ date: 2021-08-13T13:30:30+02:00
 Unlike other modules, Booking module has the particularity to be divided into two modules: [**Booking**](#booking-module) and [**Booking settings**](#booking-settings-module).
 You will need to activate both in order set your resources reservation environment.
 
-**Module descritpion**
-
 ## Item definition
 
 A reservation is defined by its:

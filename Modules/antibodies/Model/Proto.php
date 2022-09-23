@@ -79,7 +79,7 @@ class Proto extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the proto using the given id", 404);
+            throw new PfmParamException("Cannot find the proto using the given id", 404);
         }
     }
 

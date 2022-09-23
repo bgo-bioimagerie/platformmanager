@@ -32,7 +32,12 @@ class Router {
     public function listRoutes() {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        $loaded = [];
         foreach ($modulesNames as $moduleName) {
+            if(isset($loaded[$moduleName])){
+                continue;
+            }
+            $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {
@@ -40,7 +45,7 @@ class Router {
                 $className = ucfirst($moduleName) . "Routing";
                 $routingClass = new $className ();
                 if(method_exists($routingClass, "routes")){
-                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
+                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
                     $routingClass->routes($this->router);
                 }
             }
@@ -79,7 +84,12 @@ class Router {
     private function route($request) {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        $loaded = [];
         foreach ($modulesNames as $moduleName) {
+            if(isset($loaded[$moduleName])){
+                continue;
+            }
+            $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {

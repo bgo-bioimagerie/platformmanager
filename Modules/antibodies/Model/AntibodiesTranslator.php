@@ -94,6 +94,13 @@ class AntibodiesTranslator {
         return "Reference";
     }
 
+    public static function Reactivity($lang) {
+        if ($lang == "fr") {
+            return "Réactivité";
+        }
+        return "Reactivity";
+    }
+
     public static function AcClone($lang) {
         if ($lang == "fr") {
             return "Clone";

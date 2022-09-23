@@ -1,7 +1,5 @@
 <?php
 
-use function Sentry\configureScope;
-
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';

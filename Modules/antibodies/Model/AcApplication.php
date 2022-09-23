@@ -76,7 +76,7 @@ class AcApplication extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the staining using the given id", 404);
+            throw new PfmParamException("Cannot find the staining using the given id", 404);
         }
     }
 

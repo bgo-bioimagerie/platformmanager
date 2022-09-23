@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -50,7 +51,7 @@ class ServicesprojectsController extends ServicesController {
         }
         $m = new SeProject();
         $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
-        $this->render(['data' => ['projects' => $projects]]);
+        return $this->render(['data' => ['projects' => $projects]]);
     }
 
     /**
@@ -422,7 +423,23 @@ class ServicesprojectsController extends ServicesController {
         $modelClient = new ClClient();
         $modelVisa = new SeVisa();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
+        // remove users first entry if == ""
+        if (!empty($users) && $users["ids"][0] == "") {
+            array_shift($users["ids"]);
+            array_shift($users["names"]);
+        }
         $clients = $modelClient->getForList($id_space);
+
+        if($value['id_resp'] && !in_array($value['id_resp'], $clients["ids"])){
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $value['id_resp']);
+            if(!$clName) {
+                $clName = Constants::UNKNOWN;
+            }
+            array_push($clients["names"], '[!] '.$clName);
+            array_push($clients["ids"], $value['id_resp']);
+        }
+
         $inChargeList = $modelVisa->getForList($id_space);
 
         $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
@@ -472,9 +489,13 @@ class ServicesprojectsController extends ServicesController {
 
         if ($form->check()) {
             $id = $this->updateProject($id, $id_space, $lang);
-
-            $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
+            
+            if (!isset($_SESSION['flash'])) {
+                $_SESSION['flash'] = "";
+            }
+            $_SESSION['flash'] = $_SESSION['flash'] . " " . ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
+
             $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
             return;
         }
@@ -516,7 +537,11 @@ class ServicesprojectsController extends ServicesController {
         $modelInvoice = new InInvoice();
         $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $items[$i]["description"] = $items[$i]["quantity"] . " " . $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            $name = $modelServices->getItemName($id_space, $items[$i]["id_service"]);
+            if($name == null){
+                $name = '[!] '.($modelServices->getItemName($id_space, $items[$i]["id_service"], true) ?? Constants::UNKNOWN);
+            }
+            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $name;
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
             $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
@@ -546,6 +571,7 @@ class ServicesprojectsController extends ServicesController {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
+        $isManager = $this->role >= CORESPACE::$MANAGER;
         $id_task = $this->request->params()["task"] ?? 0;
         $taskModel= new SeTask();
         $tasks = $taskModel->getByProject($id_project, $id_space);
@@ -578,10 +604,24 @@ class ServicesprojectsController extends ServicesController {
         $seProjectUsers = $projectModel->getProjectUsersIds($id_space, $id_project);
         $projectMainUser = $project['id_user'];
 
+
         $modelUser = new CoreUser();
         $projectUsers = array();
+        array_push($projectUsers, ['id' => 0, 'name' => '---', 'firstname' => '---']);
+
+        $ids = [];
         foreach($seProjectUsers as $seProjectUser) {
+            $ids[] = $seProjectUser['id_user'];
             array_push($projectUsers, $modelUser->getUser($seProjectUser['id_user']));
+        }
+
+        $csu = new CoreSpaceUser();
+        $managers = $csu->managersOrAdmin($id_space);
+        foreach ($managers as $manager) {
+            if(in_array($manager['id_user'], $ids)) {
+                continue;
+            }
+            array_push($projectUsers, $modelUser->getUser($manager['id_user']));
         }
 
         $textContent = [
@@ -600,7 +640,15 @@ class ServicesprojectsController extends ServicesController {
             "visibility" => ServicesTranslator::Visibility($lang),
             "private" => ServicesTranslator::Private($lang),
             "addFile" => ServicesTranslator::AddFile($lang),
+            "replaceFile" => ServicesTranslator::ReplaceFile($lang),
             "download" => ServicesTranslator::downloadAttachedFile($lang),
+            "close" => CoreTranslator::Close($lang),
+            "save" => CoreTranslator::Save($lang),
+            "edit" => CoreTranslator::Edit($lang),
+            "name" => CoreTranslator::Name($lang),
+            "currentFile" => CoreTranslator::CurrentFile($lang),
+            "downloadError" => CoreTranslator::DownloadError($lang),
+            "uploadError" => CoreTranslator::UploadError($lang),
         ];
 
         $headerInfo["projectId"] = $id_project;
@@ -623,7 +671,8 @@ class ServicesprojectsController extends ServicesController {
             "projectServices" => json_encode($services),
             "projectUsers" => json_encode($projectUsers),
             "mainUser" => $projectMainUser,
-            "personInCharge" => $project['in_charge']
+            "personInCharge" => $project['in_charge'],
+            "userIsManager" => json_encode($isManager),
         ));
     }
 
@@ -642,6 +691,7 @@ class ServicesprojectsController extends ServicesController {
             }
         }
 
+        // add/update task
         $id = $taskModel->set(
             $taskData['id'],
             $id_space,
@@ -654,20 +704,31 @@ class ServicesprojectsController extends ServicesController {
             $taskData['services'],
             $taskData['id_user'],
             $taskData['id_owner'],
-            $taskData['done'],
-            // cast string to boolean
-            ($taskData['private'] === 'true')
+            // cast bool to int
+            $taskData['done'] ? 1 : 0,
+            $taskData['private'] ? 1 : 0
         );
         $this->render(['data' => ['id' => $id]]);
     }
 
-    public function uploadTaskFileAction($id_space, $id_task) {
+    // task files related methods => to be used in next release
+    
+    /* public function uploadTaskFileAction($id_space, $id_task) {
         $taskModel = new SeTask();
-        $target_dir = "data/services/projecttasks/";        
+        $target_dir = "data/services/projecttasks/" . $id_space . "/";
         if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
-            $ext = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
-            FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $ext);
-            $taskModel->setFile($id_space, $id_task, $target_dir . $id_task . "_" . $ext);
+            $fileName = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
+            $url = $target_dir . $id_task . "_" . $fileName;
+
+            // If target directory doesn't exist, creates it
+            if(!file_exists($target_dir)) {
+                mkdir($target_dir, 0755, true);
+            }
+            
+            $uploaded = FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $fileName);
+            if ($uploaded) {
+                $taskModel->setFile($id_space, $id_task, $url, $fileName);
+            }
         }
     }
 
@@ -676,6 +737,33 @@ class ServicesprojectsController extends ServicesController {
         $file = $taskModel->getFile($id_space, $id_task);
         $this->render(['data' => $file]);
     }
+
+    public function openFileAction($id_space, $id_task) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $taskModel = new SeTask();
+        $task = $taskModel->getById($id_space, $id_task);
+
+        // If private task, check if user is the owner of the task or if user is at least manager
+        if ($task['private'] == 1
+            && (!$this->role >= CoreSpace::$MANAGER && $task['id_owner'] != $_SESSION["id_user"])) {
+                throw new PfmAuthException('private document');
+        }
+
+        $file = $taskModel->getFile($id_space, $id_task)['file'];
+        if (file_exists($file)) {
+            $mime = mime_content_type($file);
+            header('Content-Description: File Transfer');
+            header('Content-Type: '.$mime);
+            header('Content-Disposition: attachment; filename="'.basename($file).'"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($file));
+            readfile($file);
+        } else {
+            throw new PfmFileException("File not found", 404);
+        }
+    } */
 
     public function getTasksAction($id_space, $id_project) {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);        
@@ -806,14 +894,22 @@ class ServicesprojectsController extends ServicesController {
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
             $formProjectUserIds = $this->request->getParameter("users");
         }
-        array_push($formProjectUserIds, $id_user);
+        if (!in_array($id_user, $formProjectUserIds)) {
+            array_push($formProjectUserIds, $id_user);
+            // if main project user not in users list, display warning
+            $_SESSION['flash'] = ServicesTranslator::MainUserNotInList($lang);
+        }
         
         if($id>0) {
             // remove deleted users
-            $dbProjectUserIds = $modelProject->getProjectUsersIds($id_space, $id);
+            $dbProjectUserIds = [];
+            $dbProjectUsers = $modelProject->getProjectUsersIds($id_space, $id);
+            foreach ($dbProjectUsers as $dbProjectUser) {
+                array_push($dbProjectUserIds, $dbProjectUser["id_user"]);
+            }
             $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
             foreach($toDeleteList as $toDelete) {
-                $modelProject->deleteProjectUser($id_space, $toDelete['id_user'], $id);
+                $modelProject->deleteProjectUser($id_space, $toDelete, $id);
             }
         }
             
@@ -844,7 +940,7 @@ class ServicesprojectsController extends ServicesController {
 
             $content .= $entry["date"] . ";";
             $content .= str_replace(";", ",", $entry["comment"]) . ";";
-            $content .= $modelItem->getItemName($id_space, $entry["id_service"]) . ";";
+            $content .= ($modelItem->getItemName($id_space, $entry["id_service"]) ?? Constants::UNKNOWN) . ";";
             if ($modelItem->getItemType($id_space, $entry["id_service"]) == 4) {
 
                 $content .= 1 . ";";

@@ -137,6 +137,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         // If package in db is not listed in provided package list, delete them
         $this->modelSups->removeUnlisted($id_space, $id_sups, false);
         $this->handleMessages($coupleSupResourceExists, $lang);
+        return ['bksupids' => $id_sups];
     }
 
     protected function coupleSupResourceExists($id_sup, $id_resource, $id_space) {

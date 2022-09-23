@@ -128,7 +128,7 @@ class HelpdeskController extends CoresecureController {
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if(!$ticket) {
-            throw new PfmException('ticket not found', 404);
+            throw new PfmParamException('ticket not found', 404);
         }
         if($ticket['id_space'] != $id_space) {
             throw new PfmAuthException('not authorized', 403);

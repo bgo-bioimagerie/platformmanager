@@ -101,6 +101,9 @@ class BkCalendarEntry extends Model {
                 foreach ($darray as $di) {
                     $diarray = explode("=", $di);  // @bug was using d and di was not used, to be tested
                     if ($diarray[0] == $quantities[$i]["id"]) {
+                        if(!is_numeric($diarray[1])){
+                            continue;
+                        }
                         $count += $diarray[1];
                     }
                 }
@@ -943,7 +946,7 @@ class BkCalendarEntry extends Model {
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
         if(!$pricingInfo) {
-            throw new PfmException('no pricing found for client '.$id_client);
+            throw new PfmParamException('no pricing found for client '.$id_client);
         }
 
         $night_begin = $pricingInfo['night_start'];
@@ -1086,6 +1089,39 @@ class BkCalendarEntry extends Model {
         Configuration::getLogger()->debug('[booking] compute_duration', $result);
         return $result;
     }
+
+    public function getEntriesForPeriod($id_space, $id_user, $date_from, $date_end){
+            $q = array('start' => $date_from, 'end' => $date_end, 'id_space' => $id_space, 'id_user' => $id_user);
+    
+            $sql = 'SELECT bk_calendar_entry.resource_id , core_users.id as user_id, core_users.login as user_login, core_users.email as user_email, re_info.name as resource_name FROM bk_calendar_entry
+                    INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                    INNER JOIN re_info ON re_info.id=bk_calendar_entry.resource_id
+                    WHERE
+                    (bk_calendar_entry.end_time <=:end AND bk_calendar_entry.end_time >= :start)
+                    AND bk_calendar_entry.deleted=0
+                    AND core_users.id=:id_user
+                    AND bk_calendar_entry.id_space=:id_space';
+    
+            $req = $this->runRequest($sql, $q);
+            return $req->fetchAll();
+    }
+
+    public function getEmailsWithEntriesForPeriod($id_space, $date_from, $date_end, $maxStatus) {
+        $sql = "SELECT DISTINCT user.email AS email 
+                FROM core_users AS user
+                INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
+                INNER JOIN core_j_spaces_user AS core_j_spaces_user ON user.id = core_j_spaces_user.id_user
+                WHERE  bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=?
+                AND user.is_active = 1
+                AND core_j_spaces_user.status>?
+                AND core_j_spaces_user.status<=?
+                AND bk_calendar_entry.end_time >= ? AND bk_calendar_entry.end_time <= ?;";
+        $params = [$id_space, CoreSpace::$VISITOR, $maxStatus, $date_from, $date_end];
+        $req = $this->runRequest($sql, $params);
+        return $req->fetchAll();
+    }
+
 
     function lastUser($id_space, $id){
         $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete, max(start_time) as last_start FROM bk_calendar_entry WHERE id_space=? AND recipient_id=?';

@@ -88,5 +88,3 @@ You can then directly create accounts (or ask users to do so). Accounts credenti
 You will then have to give them a role in pending accounts > Activate
 
 ![join space](../../join_space_9.png)
-
-

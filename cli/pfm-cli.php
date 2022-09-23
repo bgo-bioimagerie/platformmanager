@@ -55,12 +55,29 @@ $cli = Cli::create()
     ->command('config')
     ->opt('yaml:y', 'Yaml output', false, 'boolean')
     ->command('repair')
-    ->opt('bug', 'Bug number', 0, 'integer');
+    ->opt('bug', 'Bug number', 0, 'integer')
+    ->command('maintenance')
+    ->opt('on', 'start maintenance mode', false, 'boolean')
+    ->opt('off', 'stop maintenance mode', false, 'boolean')
+    ->opt('message:m', 'maintenance message', false, 'string');
 
 $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'maintenance':
+            $modelCoreConfig = new CoreConfig();
+            if ($args->getOpt('on')) {
+                $modelCoreConfig->setParam("is_maintenance", 1);
+                Configuration::getLogger()->info("Starting maintenance");
+            } else if ($args->getOpt('off')) {
+                $modelCoreConfig->setParam("is_maintenance", 0);
+                Configuration::getLogger()->info("Stopping maintenance");
+            }
+            if ($args->getOpt('message')) {
+                $modelCoreConfig->setParam("maintenance_message", $args->getOpt('message'));
+            }
+            break;
         case 'upgrade':
             $ts = time();
             if(!file_exists('db/upgrade')){
@@ -314,6 +331,7 @@ function cliInstall($from=-1) {
 
         $modelCreateDatabase = new CoreInstall();
         $modelCreateDatabase->createDatabase();
+
         $logger->info("Database installed");
         
 
@@ -350,16 +368,16 @@ function cliInstall($from=-1) {
         } catch (Exception $e) {
                 $logger->error("Error", ["error" => $e->getMessage()]);
         }
-
+        $cdb->base();
         // update db release and launch upgrade
         $cdb->upgrade($from);
     } else {
         $logger->info("Db already at release ".$cdb->getVersion());
+        $cdb->base();
     }
 
     $logger->info("Check for upgrades");
-    $cdb->scanUpgrades();
-    $cdb->base();
+    $cdb->scanUpgrades($from);
 
 
     
