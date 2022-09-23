@@ -6,6 +6,8 @@
 
 * [cli] add maintenance option to command-line admin tool
 * [core] add support for custom plans
+* [rating] add new feature satisfaction campaigns #616
+
 
 ### Fixes
 
