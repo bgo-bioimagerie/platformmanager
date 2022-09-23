@@ -24,6 +24,20 @@ class BkNightWE extends Model {
         $this->primaryKey = "id";
     }
 
+    public function getDefault() {
+        return array(
+            "id" => "",
+            "id_belonging" => 0,
+            "tarif_unique" => 1,
+            "tarif_night" => 0,
+            "night_start" => 19,
+            "night_end" => 8,
+            "tarif_we" => 0,
+            "choice_we" => "0,0,0,0,0,1,1",
+            "id_space" => 0,
+        );
+    }
+
     public function isNight($id_space, $id) {
         $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_night=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, 1, $id_space));
@@ -66,19 +80,19 @@ class BkNightWE extends Model {
         if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
         } else {
-            return array();
+            return $this->getDefault();
         }
     }
 
     /**
      * add a unique pricing
      * @param int $id
-     * @return PDOStatement
+     * @return int|bool
      */
     public function addUnique($id, $id_space) {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space) VALUES(?,?)";
-        $pdo = $this->runRequest($sql, array($id, $id_space));
-        return $pdo;
+        $this->runRequest($sql, array($id, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
     
     public function addBelongingIfNotExists($id_space, $belongings){
@@ -158,7 +172,6 @@ class BkNightWE extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE bk_nightwe SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM bk_nightwe WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

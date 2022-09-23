@@ -29,7 +29,7 @@ class ServicesbalanceController extends ServicesController {
         $form->addDate("period_end", ServicesTranslator::End_period($lang), true);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesbalance");
-        $form->setButtonsWidth(2, 9);
+
         
         if ($form->check()){
             $date_start = CoreTranslator::dateToEn($form->getParameter("period_begin"), $lang);
@@ -208,7 +208,6 @@ class ServicesbalanceController extends ServicesController {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
             $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
-            //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -289,7 +288,7 @@ class ServicesbalanceController extends ServicesController {
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }
@@ -431,7 +430,7 @@ class ServicesbalanceController extends ServicesController {
         
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($id_space, $item);
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
             
         }
@@ -486,20 +485,12 @@ class ServicesbalanceController extends ServicesController {
                 $idx++;
                 $pos = $this->findItemPos($items, $entry["id"]);
                 if ($pos > 0 && $entry["pos"] > 0) {
-                    //print_r($entry);
                     $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
                     $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
-                    //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
                 
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
-        
-            //if($projItemCount == 0){
-            //    $spreadsheet->getActiveSheet()->removeRow($curentLine);
-            //    $curentLine--;
-            //}
         }
         
         // total services sum

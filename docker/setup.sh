@@ -1,11 +1,13 @@
 #!/bin/bash
 set -e
 
-cp /etc/platformmanager/conf.ini.sample /var/www/platformmanager/Config/conf.ini
-sed -i "s/MYSQL_URL/${MYSQL_HOST}/g" /var/www/platformmanager/Config/conf.ini
-sed -i "s/MYSQL_DBNAME/${MYSQL_DBNAME}/g" /var/www/platformmanager/Config/conf.ini
-sed -i "s/MYSQL_USER/${MYSQL_USER}/g" /var/www/platformmanager/Config/conf.ini
-sed -i "s/MYSQL_PASS/${MYSQL_PASS}/g" /var/www/platformmanager/Config/conf.ini
+if [ ! -e /var/www/platformmanager/Config/conf.ini ]; then
+  cp /etc/platformmanager/conf.ini.sample /var/www/platformmanager/Config/conf.ini
+  sed -i "s/MYSQL_URL/${MYSQL_HOST}/g" /var/www/platformmanager/Config/conf.ini
+  sed -i "s/MYSQL_DBNAME/${MYSQL_DBNAME}/g" /var/www/platformmanager/Config/conf.ini
+  sed -i "s/MYSQL_USER/${MYSQL_USER}/g" /var/www/platformmanager/Config/conf.ini
+  sed -i "s/MYSQL_PASS/${MYSQL_PASS}/g" /var/www/platformmanager/Config/conf.ini
+fi
 
 if [ "a${PFM_MODE}" = "adev" ]; then
    sed -i "s/ini_set('display_errors', 0);/ini_set('display_errors', 1);/g" /var/www/platformmanager/index.php

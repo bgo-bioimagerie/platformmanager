@@ -2,12 +2,15 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Email.php';
+require_once 'Framework/Form.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorenavbarController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/core/Model/CoreMainMenuItem.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
+require_once 'Modules/core/Model/CoreHistory.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
@@ -207,6 +210,14 @@ class CoretilesController extends CorecookiesecureController {
             $title = $modelSubMenu->getName($id);
         }
 
+        // filter out items with no space
+        $filteredItems = array();
+        for ($i=0; $i<count($items); $i++) {
+            if ($items[$i]) {
+                array_push($filteredItems, $items[$i]);
+            }
+        }
+
         $starModel = new CoreStar();
         $starList = [];
         if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
@@ -223,7 +234,7 @@ class CoretilesController extends CorecookiesecureController {
             'submenu' => $id,
             'iconType' => $modelCoreConfig->getParam("space_icon_type"),
             'showSubBar' => $showSubBar,
-            'items' => $items,
+            'items' => $filteredItems,
             'mainSubMenus' => $mainSubMenus,
             'title' => $title,
             'userSpaces' => $userSpaces['userSpaceIds'],
@@ -310,7 +321,11 @@ class CoretilesController extends CorecookiesecureController {
     public function selfJoinSpaceAction($id_space) {
         $modelSpaceUser = new CoreSpaceUser();
         $id_user = $_SESSION["id_user"];
+        if(!$id_user || $id_user<=0){
+            throw new PfmAuthException('need to be logged', 401);
+        }
         $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
+        $lang = $this->getLanguage();
 
         if ($isMemberOfSpace) {
             // User is already member of space
@@ -318,14 +333,34 @@ class CoretilesController extends CorecookiesecureController {
             // remove user from space members
             $modelSpaceUser->delete($id_space, $id_user);
         } else {
+            $cum = new CoreUser();
+            $login_user = $cum->getUserLogin($id_user);
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
             $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
-
             if (!$isPending) {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
                 $spaceName = $spaceModel->getSpaceName($id_space);
+
+                $comment = '';
+                if($this->role < CoreSpace::$MANAGER) {
+                    $comment = $this->request->getParameterNoException('comment');
+                    $agree = $this->request->getParameterNoException('agree');
+                    $formid = $this->request->getParameterNoException('formid');
+                    if($formid == 'coretilesselfjoinspace') {
+                        if($this->currentSpace['termsofuse'] && !$agree) {
+                            $_SESSION['flash'] = 'You must agree with the usage policy!!';
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
+                        }
+                        if(!$comment) {
+                                $_SESSION['flash'] = 'Comment needed!!';
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
+                        }
+                    } else if(!$comment || ($this->currentSpace['termsofuse'] && !$agree)){
+                        return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
+                    }
+                }
 
                 if ($modelSpacePending->exists($id_space, $id_user)) {
                     // This user is already associated to this space in core_pending_account 
@@ -335,12 +370,18 @@ class CoretilesController extends CorecookiesecureController {
                     if (intval($pendingObject["validated"]) === 1 && intval($pendingObject["validated_by"]) === 0) {
                         // user has unjoin or has been rejected by space admin
                         $modelSpacePending->updateWhenRejoin($id_user, $id_space);
+                        $m = new CoreHistory();
+                        $m->add($id_space, $login_user, 'User join request');
                     } else {
-                        $modelSpacePending->invalidate($pendingId, NULL);
+                        $modelSpacePending->invalidate($pendingId, 0);
+                        $m = new CoreHistory();
+                        $m->add($id_space, $login_user, 'User cancelled join request');
                     }
                 } else {
                     // This user is not associated to this space in database
                     $modelSpacePending->add($id_user, $id_space);
+                    $m = new CoreHistory();
+                    $m->add($id_space, $login_user, 'User join request');
                 }
 
                 $modelUser = new CoreUser();
@@ -351,10 +392,11 @@ class CoretilesController extends CorecookiesecureController {
                     "id_space" => $id_space,
                     "space_name" => $spaceName,
                     "email" => $userEmail,
-                    "fullName" => $userFullName
+                    "fullName" => $userFullName,
+                    "comment" => $comment
                 ];
                 $email = new Email();
-                $email->notifyAdminsByEmail($mailParams, "new_join_request", $this->getLanguage());
+                $email->notifyAdminsByEmail($mailParams, "new_join_request", $lang);
             }
         } 
         $this->redirect("coretiles");

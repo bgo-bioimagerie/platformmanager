@@ -132,9 +132,15 @@ class ResourcesinfoController extends ResourcesBaseController {
         $form->addText("description", ResourcesTranslator::Description($lang), false, $data["description"], true);
         $form->addTextArea("long_description", ResourcesTranslator::DescriptionFull($lang), false, $data["long_description"], true);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "resourcesedit/" . $id_space . "/" . $id);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "resourcesedit/".$id_space."/".$id;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "resources/" . $id_space);
-        $form->setButtonsWidth(3, 9);
+
         $form->setColumnsWidth(2, 10);
 
         if ($form->check()) {
@@ -176,8 +182,15 @@ class ResourcesinfoController extends ResourcesBaseController {
 
                 $modelResource->setImage($id_space, $id, $target_dir . $url);
             }
-            
-            return $this->redirect("resources/" . $id_space, [], ['resource' => ['id' => $id]]);
+
+            $_SESSION["flash"] = ResourcesTranslator::Item_created("resource", $lang);
+            $_SESSION["flashClass"] = "success";
+
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                return $this->redirect("resources/".$id_space, [], ['resource' => ['id' => $id]]);
+            }
         }
 
         $headerInfo["curentTab"] = "info";
@@ -513,7 +526,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $form->setFormAdd($formAdd, "");
         $form->setValidationButton(CoreTranslator::Save($lang), "resourcesresp/" . $id_space . "/" . $id_resource);
 
-        $form->setButtonsWidth(2, 9);
+
 
         if ($form->check()) {
 

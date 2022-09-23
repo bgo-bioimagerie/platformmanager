@@ -33,8 +33,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
-        parent::__construct($request);
+    public function __construct(Request $request, ?array $space=null) {
+        parent::__construct($request, $space);
         $_SESSION["openedNav"] = "invoices";
     }
 
@@ -62,7 +62,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
     }
 
     public function editAction($id_space, $id_invoice, $pdf = 0) {
-
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
@@ -129,7 +128,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         // re-open orders and remove invoice number
         foreach ($details as $detail) {
             $modelOrder->reopenEntry($id_space, $detail[0]);
-            $modelOrder->setInvoiceID($id_space, $detail[0], 0);
+            $modelOrder->setInvoiceIDByNum($id_space, $detail[0], 0);
         }
     }
 
@@ -154,7 +153,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->addDate("date_begin", ServicesTranslator::Date_begin($lang), true, $dateBegin);
         $form->addDate("date_end", ServicesTranslator::Date_end($lang), true, $dateEnd);
         $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clientsNames, $clientsIds, $clientId, false);
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "servicesinvoiceorder/" . $id_space);
 
         return $form;
@@ -186,7 +185,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -223,6 +222,12 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         }
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+        foreach ($itemServices as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
 
         $formAdd = new FormAdd($this->request, "editinvoiceorderformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
@@ -232,7 +237,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         //$formAdd->addHidden("id_item", $itemIds);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
-        $form->setButtonsWidth(2, 9);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceorderedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
@@ -308,7 +313,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
+        $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 
 }

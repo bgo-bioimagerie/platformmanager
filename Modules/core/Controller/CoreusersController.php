@@ -8,6 +8,7 @@ require_once 'Framework/Constants.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
@@ -77,7 +78,7 @@ class CoreusersController extends CoresecureController {
 
         }
 
-        $tableHtml = $table->view($data, $header);
+        $tableHtml = $table->view($data, $header, true);
         return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 
@@ -127,9 +128,10 @@ class CoreusersController extends CoresecureController {
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coreusers");
-        $form->setButtonsWidth(3, 8);
 
 
+
+        $rolesTableHtml  = '';
         if ($id > 0) {
             $formPwd = new Form($this->request, "coreuseretidpwd");
             $formPwd->addHidden("id", $user["id"]);
@@ -137,7 +139,25 @@ class CoreusersController extends CoresecureController {
             $formPwd->addPassword("pwd", CoreTranslator::New_password($lang));
             $formPwd->addPassword("pwdconfirm", CoreTranslator::New_password($lang));
             $formPwd->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
-            $formPwd->setButtonsWidth(3, 8);
+
+
+
+            $csm = new CoreSpace();
+            $roles = $csm->getUserSpacesRoles(0, $user['id']);
+            $pum = new CorePendingAccount();
+            $pendings = $pum->getSpaceIdsForPending($user['id']);
+            foreach ($pendings as $p) {
+                $roles[] = ['space_name' => $p['space_name'], 'role_name' => CoreTranslator::PendingUserAccount($lang)];
+            }
+            $rolesTable = new TableView('spaces');
+            $rolesTable->setTitle(CoreTranslator::Spaces($lang));
+            $headers = array(
+                "space_name" => CoreTranslator::Space($lang),
+                "role_name" => CoreTranslator::Role($lang),
+            );
+            $rolesTableHtml = $rolesTable->view($roles, $headers);
+
+
         }
         $script = "";
         if ($form->check()) {
@@ -196,6 +216,7 @@ class CoreusersController extends CoresecureController {
         return $this->render(array(
             "formHtml" => $form->getHtml($lang),
             "formPwdHtml" => $formPwdHtml,
+            "rolesTableHtml" => $rolesTableHtml,
             "script" => $script,
             "data" => ['user' => $user]
         ));
@@ -311,11 +332,11 @@ class CoreusersController extends CoresecureController {
         $formPwd = new Form($this->request, "coremyaccount");
         $formPwd->addHidden("id", $id);
         $formPwd->setTitle(CoreTranslator::Change_password($lang));
-        $formPwd->addPassword("curentpwd", CoreTranslator::Curent_password($lang));
+        $formPwd->addPassword("currentpwd", CoreTranslator::Curent_password($lang));
         $formPwd->addPassword("pwd", CoreTranslator::New_password($lang));
         $formPwd->addPassword("confirm", CoreTranslator::Confirm($lang));
         $formPwd->setValidationButton(CoreTranslator::Save($lang), "coremyaccount");
-        $formPwd->setButtonsWidth(3, 8);
+
 
         if ($formPwd->check()) {
 
@@ -331,10 +352,12 @@ class CoreusersController extends CoresecureController {
     }
 
     protected function myaccountquery($modelUser, $formPwd, $id, $lang) {
-        $previouspwddb = $modelUser->getpwd($id);
-        $previouspwd = $formPwd->getParameter("curentpwd");
+        $u = $modelUser->getInfo($id);
+        $previouspwddb = $u['pwd'];
+        $hash = $u['hash'];
+        $previouspwd = $formPwd->getParameter("currentpwd");
 
-        if ($previouspwddb['pwd'] == md5($previouspwd)) {
+        if ($modelUser->comparePasswords($previouspwd, $previouspwddb, $hash)) {
 
             $pwd = $formPwd->getParameter("pwd");
             $pwdc = $formPwd->getParameter("confirm");
@@ -373,7 +396,7 @@ class CoreusersController extends CoresecureController {
             $choicesidview,
             $lang
         );
-        $form->setButtonsWidth(4, 8);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "coreuserslanguageedit");
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
 

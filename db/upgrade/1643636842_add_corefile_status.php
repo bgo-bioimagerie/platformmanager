@@ -7,6 +7,7 @@ class CoreUpgradeDB1643636842 extends Model {
 	  Configuration::getLogger()->info("[db][upgrade] Apply add corefile status");
 	  $this->addColumn('core_files', 'status', 'int', 0);
 	  $this->addColumn('core_files', 'msg', 'varchar(255)', '');
+	  Configuration::getLogger()->info("[db][upgrade] Apply add corefile status, done!");
   }
 }
 $db = new CoreUpgradeDB1643636842();

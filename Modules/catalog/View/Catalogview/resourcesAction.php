@@ -9,12 +9,12 @@
     <?php foreach ($entries as $entry) {
         ?>
 
-        <div class="col-xs-12 col-md-6">
-            <div class="panel panel-default" style="min-height: 200px; text-align: center;">
-                <div class="panel-heading"><?php echo $entry["name"] ?> [<em><?php echo $entry["category"] ?></em>]</div>
-                <div class="panel-body">
+        <div class="col-12 col-md-6">
+            <div class="card" style="min-height: 200px; text-align: center;">
+                <div class="card-header"><?php echo $entry["name"] ?> [<em><?php echo $entry["category"] ?></em>]</div>
+                <div class="card-body">
                     <div class="row">
-                        <div class="col-xs-12 col-md-2">
+                        <div class="col-12 col-md-2">
                         <?php
                         $imageFile = $entry["image"];
                         if (!file_exists($imageFile) || is_dir($imageFile)) {
@@ -26,13 +26,13 @@
                             list($width, $height, $type, $attr) = getimagesize($imageFile);
                             ?>
                             <a href="<?php echo $imageFile ?>">
-                                <img src="<?php echo $imageFile ?>" width="100%" />
+                                <img alt="resource photo" src="<?php echo $imageFile ?>" width="100%" />
                             </a>
                         <?php 
                         }
                         ?>
                         </div>
-                        <div class="col-xs-12 col-md-4">
+                        <div class="col-12 col-md-4">
                             <div> <?php echo $entry["description"] ?></div>
                         </div>
                     </div>

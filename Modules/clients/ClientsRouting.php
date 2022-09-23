@@ -6,6 +6,7 @@ class ClientsRouting extends Routing{
 
     public function routes($router) {
         $router->map('GET|POST', '/clientusers/getclients/[i:id_space]/[i:id_user]', 'clients/clientsusers/getuserclients', 'clients_getuserclients');
+        $router->map('GET|POST', '/clientusers/getusers/[i:id_space]/[i:id_client]', 'clients/clientsusers/getclientusers', 'clients_getclientusers');
         $router->map('GET|POST', '/clientspricings/getpricing/[i:id_space]/[i:id_client]', 'clients/clientspricings/getclientpricing', 'clients_getclientpricing');
         $router->map('GET|POST', '/clientslist/getaddress/[i:id_space]/[i:id_client]', 'clients/clientslist/getaddress', 'clients_getaddress');
     }
@@ -20,8 +21,6 @@ class ClientsRouting extends Routing{
         
         $this->addRoute("clclients", "clclients", "clientslist", "index", array("id_space"), array(""));
         $this->addRoute("clclientedit", "clclientedit", "clientslist", "edit", array("id_space", "id"), array("", ""));
-        $this->addRoute("clclienteditdelivery", "clclienteditdelivery", "clientslist", "editdeliveryaddress", array("id_space", "id"), array("", ""));
-        $this->addRoute("clclienteditinvoice", "clclienteditinvoice", "clientslist", "editinvoiceaddress", array("id_space", "id"), array("", ""));
         $this->addRoute("clclientedit", "clclientedit", "clientslist", "edit", array("id_space", "id"), array("", ""));
         
         $this->addRoute("clclientdelete", "clclientdelete", "clientslist", "delete", array("id_space", "id"), array("", ""));

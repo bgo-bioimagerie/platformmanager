@@ -16,6 +16,10 @@ require_once 'Modules/antibodies/Model/AcApplication.php';
  */
 class Anticorps extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_anticorps";
+    }
+
     /**
      * Create the unit table
      * 
@@ -29,6 +33,7 @@ class Anticorps extends Model {
   				`no_h2p2` int(11) NOT NULL DEFAULT '0',
 				`fournisseur` varchar(30) NOT NULL DEFAULT '',
 				`id_source` int(11) NOT NULL DEFAULT '0',
+                `reactivity` varchar(30) NOT NULL DEFAULT '',
 				`reference` varchar(30) NOT NULL DEFAULT '',
 				`clone` varchar(30) NOT NULL DEFAULT '',
  				`lot` varchar(30) NOT NULL DEFAULT '',
@@ -153,6 +158,7 @@ class Anticorps extends Model {
      * @param unknown $no_h2p2
      * @param unknown $fournisseur
      * @param unknown $id_source
+     * * @param unknown $reactivity
      * @param unknown $reference
      * @param unknown $clone
      * @param unknown $lot
@@ -162,7 +168,7 @@ class Anticorps extends Model {
      * @param unknown $date_recept
      * @return string
      */
-    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage) {
+    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
         //$cvm = new CoreVirtual();
         $new_no_h2p2 = $no_h2p2;
         if(!$no_h2p2) {
@@ -173,42 +179,42 @@ class Anticorps extends Model {
             //$new_no_h2p2 = $cvm->new('anticorps');
         }
 
-        $sql = "insert into ac_anticorps(id_space, nom, no_h2p2, fournisseur, id_source, reference, 
+        $sql = "insert into ac_anticorps(id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference, 
 										 clone, lot, id_isotype, stockage)"
-                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?,?)";
-        $this->runRequest($sql, array($id_space, $nom, $new_no_h2p2, $fournisseur, $id_source, $reference, $clone,
+                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $this->runRequest($sql, array($id_space, $nom, $new_no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage));
 
         return $this->getDatabase()->lastInsertId();
     }
     
-    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage){
+    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage){
         if($this->isAnticorpsID($id_space ,$id)){
-            $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+            $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
             return $id;
         }
         else{
-            return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage);
+            return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
         }
     }
 
-    public function importAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage) {
+    public function importAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
 
 
-        $sql = "insert into ac_anticorps(id, id_space, nom, no_h2p2, fournisseur, id_source, reference,
+        $sql = "insert into ac_anticorps(id, id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference,
 										 clone, lot, id_isotype, stockage)"
-                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->runRequest($sql, array($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone,
+                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $this->runRequest($sql, array($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage));
 
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone, $lot, $id_isotype, $stockage) {
-        $sql = "UPDATE ac_anticorps SET nom=?, no_h2p2=?, fournisseur=?, id_source=?, reference=?, 
+    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
+        $sql = "UPDATE ac_anticorps SET nom=?, no_h2p2=?, fournisseur=?, id_source=?, reactivity=?, reference=?, 
 										 clone=?, lot=?, id_isotype=?, stockage=?
 									WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($nom, $no_h2p2, $fournisseur, $id_source, $reference, $clone,
+        $this->runRequest($sql, array($nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage, $id, $id_space));
     }
 
@@ -468,6 +474,7 @@ class Anticorps extends Model {
         $anticorps["no_h2p2"] = 0;
         $anticorps["fournisseur"] = "";
         $anticorps["id_source"] = "";
+        $anticorps["reactivity"] = "";
         $anticorps["reference"] = "";
         $anticorps["clone"] = "";
         $anticorps["lot"] = "";

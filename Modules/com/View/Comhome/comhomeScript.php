@@ -1,37 +1,37 @@
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
+<?php require_once 'Modules/com/Model/ComTranslator.php'; ?>
 
-<div id="hider" class="col-xs-12"></div> 
-<div id="popup_box" class="pm_popup_box" style="display: none;">    
-    <div class="row">
-        <div id="content_section" class="col-md-12" style="text-align:center;">
-            <div id="news">
-                <div class="col-md-1 col-md-offset-11" style="text-align: right;">
-                    <a id="close"
-                        v-on:click="closePopup"
-                        class="glyphicon glyphicon-remove"
-                        style="cursor:pointer;">
-                    </a>
-                </div>
-                <div v-for="news in newsList">
-                    <img :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
-                    <h3> {{ news.title }} </h3>
-                    <div v-html="news.content" style="margin:25px">
-                    </div>
-                </div>
+<div id="compopup_box" class="modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><?php echo ComTranslator::News($lang) ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="news" class="modal-body">
+        <div v-for="news in newsList">
+            <img v-if="news.media" :src="news.media" alt="news image" style="max-width:320px; margin:5px"/>
+            <h3> {{ news.title }} </h3>
+            <div v-html="news.content" style="margin:25px">
             </div>
         </div>
     </div>
+    </div>
+  </div>
 </div>
+
+
 
 <script>
 
-let popup_box = document.getElementById('popup_box');
-let hider = document.getElementById('hider');
+$(document).ready(function(){
+    newsView.getNewsData();
+})
 
-var newsView = new Vue({
-    el: '#news',
-    data: {
-        newsList: new Array(),
+let newsView = Vue.createApp({
+    data() {
+        return {
+            newsList: new Array()
+        }
     },
     methods: {
         getNewsData() {
@@ -45,31 +45,28 @@ var newsView = new Vue({
             fetch(`getnews/<?php echo $id_space ?>`, cfg).
                 then((response) => response.json()).
                 then(data => {
-                    data.news.forEach((elem) => {
-                        this.newsList.push({
-                            "title": elem.title,
-                            "content": elem.content,
-                            "media": elem.media
+                    if (data.news) {
+                        data.news.forEach((elem) => {
+                            this.newsList.push({
+                                "title": elem.title,
+                                "content": elem.content,
+                                "media": elem.media
+                            });
                         });
-                    });
+                    }
+                    return data;
                 }).
-                then(this.displayPopup());
+                then(data => {
+                    if (data.news.length > 0) {this.displayPopup();}
+                });
         },
         displayPopup() {
-            popup_box.style.display = "block";
-            popup_box.style.opacity = 1;  
-        },
-        closePopup(event) {
-            // hider.hide();
-            // popup_box.hide();
-            hider.style.opacity = 0;
-            popup_box.style.opacity = 0;
-            popup_box.style.display = "none";
-            hider.style.display = "none";
+            let myModal = new bootstrap.Modal(document.getElementById('compopup_box'))
+            myModal.show();
         }
     },
     beforeMount() {
-        this.getNewsData();
+        
     }
-})
+}).mount('#news')
 </script>

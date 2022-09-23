@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcOption extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_options";
+    }
+
     /**
      * Create the espece table
      * 
@@ -64,7 +68,7 @@ class AcOption extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the option using the given id", 404);
+            throw new PfmParamException("Cannot find the option using the given id", 404);
         }
     }
 

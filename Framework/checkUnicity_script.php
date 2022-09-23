@@ -14,6 +14,15 @@ form = document.getElementById("editForm")
     
 saveBtn = document.getElementById("editFormsubmit");
 inputs = form ? form.getElementsByTagName("input") : [];
+
+
+emails = getEmailInputs();
+
+if (emails.confirmEmail && emails.email) {
+    createErrorDiv(emails.confirmEmail);
+    emails.confirmEmail.setAttribute("onblur", "doEmailsMatch()");
+}
+
 isPwd = [...inputs].filter(input => input.id === "pwd").length > 0;
 pwdInput = "";
 pwdConfirmInput = "";
@@ -74,6 +83,7 @@ function createErrorDiv(element) {
 function validateUserForm(origin) {
     let unicity = true;
     let pwdIdentical = true;
+    let emailsMatch = true;
     let msg;
     let submissionRequest = !(!origin.target);
     let elemsToCheck = [...uniqueElems];
@@ -85,6 +95,8 @@ function validateUserForm(origin) {
         origin.preventDefault();
         // check if passwords match
         pwdIdentical = isPwd ? validatePasswords() : true;
+        // check if emails match
+        emailsMatch = doEmailsMatch();
     }
 
     const headers = new Headers();
@@ -117,7 +129,6 @@ function validateUserForm(origin) {
                     // Data is not valid
                     unicity = false;
                     if (!data.isUnique) {
-                        // TODO: find a way to get values from CoreTranslator !!!
                         msg = "this " + type + " already exists";
                         displayError(errors, elemHTML, msg);
                     }
@@ -132,7 +143,7 @@ function validateUserForm(origin) {
                     if (errorDisplayed) {
                         hideErrors(errors, elemHTML)
                     }
-                    if ((index === (elemsToCheck.length - 1)) && submissionRequest && (unicity && pwdIdentical)) {
+                    if ((index === (elemsToCheck.length - 1)) && submissionRequest && (unicity && pwdIdentical && emailsMatch)) {
                         /* submission has been requested
                         AND all unique inputs have been tested and have returned true
                         AND, if password input, passwords match */
@@ -173,6 +184,30 @@ function validateEmail(email) {
     // Also checked backend at form submission
     const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*))@((([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
+}
+
+function getEmailInputs() {
+    let result = {email: null, confirmEmail: null};
+    [...inputs].forEach( input => {
+        if (input.type.toLowerCase() == "email") {
+            input.id.toLowerCase().includes("confirm") ? result.confirmEmail = input : result.email = input;
+        }
+    });
+    return result;
+}
+
+function doEmailsMatch() {
+    let result = true;
+    if (emails.confirmEmail && emails.email) {
+        let errors = emails.confirmEmail.parentElement.getElementsByClassName("errorMessage");
+        if (emails.email.value != emails.confirmEmail.value) {
+            displayError(errors, emails.confirmEmail, "emails do not match");
+            result = false;
+        } else {
+            hideErrors(errors, emails.confirmEmail);
+        }
+    }
+    return result;
 }
 
 /**

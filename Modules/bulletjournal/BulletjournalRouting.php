@@ -3,11 +3,15 @@
 require_once 'Framework/Routing.php';
 
 class BulletjournalRouting extends Routing{
+
+    public function routes($router) {
+        $router->map('DELETE', '/bjnotes/[i:id_space]/[i:id]', 'bulletjournal/bjnotes/deletenote', 'bulletjournal_delete_note');
+    }
+
     
     public function listRoutes(){
         
         // config
-        // $this->addRoute("bulletjournalconfigadmin", "bulletjournalconfigadmin", "bulletjournalconfigadmin", "index");
         $this->addRoute("bulletjournalconfig", "bulletjournalconfig", "bulletjournalconfig", "index", array("id_space"), array(""));
 
         

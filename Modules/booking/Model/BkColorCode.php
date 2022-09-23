@@ -11,6 +11,10 @@ require_once 'Framework/Constants.php';
  */
 class BkColorCode extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_color_codes";
+    }
+
     /**
      * Create the SyColorCode table
      * 
@@ -293,7 +297,7 @@ class BkColorCode extends Model {
             $tmp = $colorCode->fetch();
             return $tmp[0];  // get the first line of the result
         } else {
-            throw new PfmException("Cannot find the colorCode using the given name", 404);
+            throw new PfmParamException("Cannot find the colorCode using the given name", 404);
         }
     }
 

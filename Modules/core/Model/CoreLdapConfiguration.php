@@ -201,7 +201,7 @@ class CoreLdapConfiguration
         if(getenv('PFM_LDAP_MAIL_ATTR')) {
             self::$parameters['ldap_mail_attr'] = getenv('PFM_LDAP_MAIL_ATTR');
         }
-        if(getenv('PFM_LDAP_USE')) {
+        if(getenv('PFM_LDAP_USE') !== false) {
             self::$parameters['ldap_use'] = intval(getenv('PFM_LDAP_USE'));
         }
 

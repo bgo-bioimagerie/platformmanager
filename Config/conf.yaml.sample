@@ -24,9 +24,13 @@ plans:
     features:
       - Grafana statistics interactive dashboards
       - Document visibility scopes
+      - Caldav calendar integration
+      - Satisfaction surveys
     flags:
       - grafana
       - documents
+      - caldav
+      - rating
     limits:
       resources: 10
   - name: silver
@@ -41,3 +45,10 @@ plans:
     id: 3
     features: []
     flags: []
+  - name: custom1
+    custom: for customer 1
+    id: 4
+    features: []
+    flags:
+      - documents
+

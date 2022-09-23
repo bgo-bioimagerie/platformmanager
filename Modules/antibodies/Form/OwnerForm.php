@@ -38,7 +38,6 @@ class OwnerForm extends FormGenerator{
         $this->form->addText("owner_no_dossier", AntibodiesTranslator::No_dossier($this->lang));
         
         $this->form->setValidationButton(CoreTranslator::Save($this->lang), $this->validationUrl); 
-        $this->form->setButtonsWidth(2, 10);
     }
    
     

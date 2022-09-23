@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Aciinc extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_aciincs";
+    }
+
     /**
      * Create the espece table
      * 
@@ -65,7 +69,7 @@ class Aciinc extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the aciinc using the given id", 404);
+            throw new PfmParamException("Cannot find the aciinc using the given id", 404);
         }
     }
 

@@ -19,6 +19,7 @@ require_once 'Modules/booking/Model/BkPackage.php';
 require_once 'Modules/booking/Model/BkCalendarPeriod.php';
 require_once 'Modules/booking/Model/BkRestrictions.php';
 
+require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
@@ -43,7 +44,6 @@ class BookingdefaultController extends BookingabstractController {
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
         $this->module = "booking";
-        //$this->checkAuthorizationMenu("booking");
     }
 
 
@@ -55,8 +55,6 @@ class BookingdefaultController extends BookingabstractController {
     }
 
     public function editreservationdefault($id_space, $param) {
-
-        //echo 'start editreservationdefault <br/>';
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
         if ($this->isNew($param)) {
@@ -136,21 +134,24 @@ class BookingdefaultController extends BookingabstractController {
             return true;
         }
 
-        // $modelConfig = new CoreConfig();
         $modelRestrictions = new BkRestrictions();
         $limitHours = $modelRestrictions->getBookingDelayUserCanEdit($id_space, $id_resource);
-        //$limitHours = $modelConfig->getParamSpace("BkbookingDelayUserCanEdit", $id_space);
 
         if ($id_recipient == $id_user) {
 
             if ($limitHours >= 0 && ($start_date - 3600*$limitHours > time())) {
                 return true;
             }
+            if ($limitHours == -1) {
+                return true;
+            }
+            /* deprecated, unused and never set
             $modelConfig = new CoreConfig();
             $canEdit = intval($modelConfig->getParamSpace("BkCanUserEditStartedResa", $id_space));
             if($canEdit == 1){
                 return true;
             }
+            */
         }
         return false;
     }
@@ -160,7 +161,6 @@ class BookingdefaultController extends BookingabstractController {
         $lang = $this->getLanguage();
 
         $modelUser = new CoreUser();
-        //$userStatus = $modelUser->getStatus($_SESSION["id_user"]);
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
         $modelBkAccess = new BkAccess();
@@ -178,7 +178,7 @@ class BookingdefaultController extends BookingabstractController {
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));
-
+        $reason = intval($this->request->getParameterNoException("reason"));
         $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaEnd = $this->request->getParameterNoException("resa_end");
         $duration = $this->request->getParameterNoException("resa_duration");
@@ -203,7 +203,7 @@ class BookingdefaultController extends BookingabstractController {
         if($redir) {
             $redirInfo = explode(':', $redir);
             $redirPage = $redirInfo[0];
-            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4]];
+            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
         }
 
         if (!$canValidateBooking) {
@@ -266,7 +266,7 @@ class BookingdefaultController extends BookingabstractController {
 
         $dateResaEndArray = explode("-", $dateResaEnd);
         if($dateResaEnd == "" || $hour_endH == "" || $hour_endM == "") {
-            throw new PfmParamException("invalid end date");
+            throw new PfmParamException("invalid end date, missing end date or time");
         }
 
         if($all_day_long == 1){
@@ -306,19 +306,28 @@ class BookingdefaultController extends BookingabstractController {
 
 
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supplementaries = "";
         foreach ($supInfos as $sup) {
             $q = $this->request->getParameterNoException("sup" . $sup["id"]);
-            $supplementaries .= $sup["id"] . "=" . $q . ";";
+            if (!empty($q)) {
+                $supplementaries .= $sup["id"] . "=" . $q . ";";
+            }
+            if($sup['mandatory'] && !$q){
+                Configuration::getLogger()->debug('Missing supp ', ['supp' => $sup]);
+                throw new PfmParamException('Field '.$sup['name'].' mandatory');
+            }
         }
 
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource, true);
+
         $quantities = "";
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
-            $quantities .= $q["id"] . "=" . $qt . ";";
+            if (!empty($qt)) {
+                $quantities .= $q["id"] . "=" . $qt . ";";
+            }
         }
 
         $use_package = $this->request->getParameterNoException("use_package");
@@ -326,7 +335,7 @@ class BookingdefaultController extends BookingabstractController {
         if ($use_package == "yes") {
             $package_id = $this->request->getParameter("package_id");
             $modelPackage = new BkPackage();
-            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id);
+            $pk_duration = $modelPackage->getPackageDuration($id_space ,$package_id, true);
             $end_time = $start_time + 3600 * $pk_duration;
         }
 
@@ -356,7 +365,8 @@ class BookingdefaultController extends BookingabstractController {
                 "quantities" => $quantities,
                 "supplementaries" => $supplementaries,
                 "package_id" => $package_id,
-                "responsible_id" => 0
+                "responsible_id" => 0,
+                "reason" => $reason
             );
             return $this->editReservation($id_space, $resaInfo);
         }
@@ -377,7 +387,7 @@ class BookingdefaultController extends BookingabstractController {
             $_SESSION["flash"] = "Error: Start Time Cannot Be Null";
             $valid = false;
         }
-        if ($start_time == 0) {
+        if ($end_time == 0) {
             $_SESSION["flash"] = "Error: End Time Cannot Be Null";
             $valid = false;
         }
@@ -395,9 +405,21 @@ class BookingdefaultController extends BookingabstractController {
             $oldEntry = $modelCalEntry->getEntry($id_space, $id);
         }
 
+        $ical = null;
+        $id_entry = $id;
+
         if (!$BkUseRecurentBooking || $periodic_option == 1) {
             // test if a resa already exists on this periode
-            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $id_resource, $id);
+            $resources_id = [$id_resource];
+            if($schedule['shared']) {
+                $rem = new ResourceInfo();
+                $areaResources = $rem->resourceIDNameForArea($id_space, $ri['id_area']);
+                $resources_id = [];
+                foreach ($areaResources as $r) {
+                    $resources_id[] = $r['id'];
+                }
+            }
+            $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, $resources_id, $id);
             if ($conflict) {
                 $_SESSION["flash"] = BookingTranslator::reservationError($lang);
                 $error = 'reservationError';
@@ -422,6 +444,18 @@ class BookingdefaultController extends BookingabstractController {
                 $modelCalEntry->setAllDayLong($id_space, $id_entry, $all_day_long);
                 $_SESSION["flash"] = BookingTranslator::reservationSuccess($lang);
                 $_SESSION["flashClass"] = 'success';
+                $ical = sprintf('BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//pfm/pfm//NONSGML v1.0//EN
+BEGIN:VEVENT
+UID:%s
+DTSTAMP:%s
+DTSTART:%s
+DTEND:%s
+SUMMARY:%s
+END:VEVENT
+END:VCALENDAR
+', $id_entry, $start_time, $start_time, $end_time, $resource['name'].' '.$short_description);
 
             }
         } else {
@@ -445,7 +479,7 @@ class BookingdefaultController extends BookingabstractController {
                 $pass = -86400;
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=86400) {
                     $pass += 86400;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictPeriod($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -468,7 +502,7 @@ class BookingdefaultController extends BookingabstractController {
             // every week
             else if ($periodic_option == 3) {
 
-                $periodic_week = $this->request->getParameter("periodic_week");
+                $periodic_week = intval($this->request->getParameter("periodic_week"));
                 $modelPeriodic->setPeriod($id_space ,$id_period, $periodic_option, $periodic_week);
                 $step = $periodic_week * 7 * 24 * 3600;
                 $pass = -$step;
@@ -477,7 +511,7 @@ class BookingdefaultController extends BookingabstractController {
                 for ($btime = $start_time; $btime <= $last_start_time; $btime+=$step) {
 
                     $pass += $step;
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$btime, $end_time + $pass, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictPeriod($id_space ,$btime, $end_time + $pass, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -563,7 +597,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space ,$start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictPeriod($id_space ,$start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -615,7 +649,7 @@ class BookingdefaultController extends BookingabstractController {
                     $start_m_time = mktime($hour_startH, $hour_startM, 0, $month, $day, $year);
                     $end_m_time = mktime($hour_endH, $hour_endM, 0, $month, $day, $year);
 
-                    $conflict = $modelCalEntry->isConflictP($id_space, $start_m_time, $end_m_time, $id_resource, $id_period);
+                    $conflict = $modelCalEntry->isConflictPeriod($id_space, $start_m_time, $end_m_time, [$id_resource], $id_period);
 
                     $valid = true;
                     if ($conflict) {
@@ -641,6 +675,33 @@ class BookingdefaultController extends BookingabstractController {
         if($valid) {
             // do not send email if not valid
             $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
+
+            $modelResource = new ResourceInfo();
+            $resourceName = $modelResource->getName($id_space, $id_resource);
+            $modelUser = new CoreUser();
+            $userInfo = $modelUser->getInfo($recipient_id);
+            $userName = $userInfo["name"] . " " . $userInfo["firstname"];
+            $userEmail = $userInfo["email"];
+            if ($ical){
+                try {
+                    $subject = $resourceName . " has been booked";
+                    $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
+                    if($id > 0 && $oldEntry) {
+                        $subject = "[$id] $resourceName booking has been modified";
+                        $content = "The " . $resourceName . " booking $id  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time);
+                    }
+                    $email = new Email();
+                    $icalFile = sprintf('/tmp/%d.ics', $id_entry);
+                    $handle = fopen($icalFile, 'w');
+                    fwrite($handle, $ical);
+                    fclose($handle);
+                    $email->sendEmail($email->getFromEmail($this->currentSpace['shortname']), $this->currentSpace['name'], $userEmail, $subject, $content, files: [$icalFile]);
+                    unlink($icalFile);
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error('failed to send booking email to user', ['id' => $id_entry]);
+                }
+            }
+
             if($emailSpaceAdmins == 2){
                 // get resource name
                 $modelResource = new ResourceInfo();
@@ -651,10 +712,10 @@ class BookingdefaultController extends BookingabstractController {
                 $modelResoucesResp = new ReResps();
                 $toAdress = $modelResoucesResp->getResourcesManagersEmails($id_space, $id_resource);
                 $subject = $resourceName . " has been booked";
-                $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time) . " by " . $userName;
+                $content = "The " . $resourceName . " has been booked from " . date(Constants::DATETIME_FORMAT, $start_time) . " to " . date(Constants::DATETIME_FORMAT, $end_time) . " by " . $userName;
                 if($id > 0 && $oldEntry) {
                     $subject = "[$id] $resourceName booking has been modified";
-                    $content = "The " . $resourceName . " booking $i  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time) . " by " . $userName;
+                    $content = "The " . $resourceName . " booking $id  has been moved from " . date(Constants::DATETIME_FORMAT, $oldEntry['start_time'])." / ".date(Constants::DATETIME_FORMAT, $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time) . " by " . $userName;
                 }
                 if( $BkUseRecurentBooking && $periodic_option > 1 ){
                     $content .= " with periodicity";
@@ -669,7 +730,6 @@ class BookingdefaultController extends BookingabstractController {
                 $email->sendEmailToSpaceMembers($params, $lang);
             }
         }
-
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
@@ -698,10 +758,14 @@ class BookingdefaultController extends BookingabstractController {
         $formTitle = $this->isNew($param) ? BookingTranslator::Add_Reservation($lang) : BookingTranslator::Edit_Reservation($lang);
 
         $form = new Form($this->request, "editReservationDefault");
-        $form->addHidden("id", $resaInfo["id"]);
+        $form->addText("id", "Id", false, $resaInfo['id'], false, true);
         $form->setValisationUrl("bookingeditreservationquery/" . $id_space);
         $form->setTitle($formTitle);
         $form->addHidden("from", $this->request->getParameterNoException('from'));
+        
+        if($resaInfo['reason'] && $resaInfo['reason'] > 0) {
+            $form->addText("reason", BookingTranslator::Reason($lang), false, BookingTranslator::BlockReason($resaInfo['reason'], $lang), false, true);
+        }
 
         $resourceName = $modelResource->get($id_space, $id_resource)['name'];
         if ($this->canBookForOthers($id_space, $_SESSION["id_user"])) {
@@ -712,6 +776,16 @@ class BookingdefaultController extends BookingabstractController {
             $form->addHidden("id_resource", $id_resource);
             $form->addHidden("recipient_id", $resaInfo["recipient_id"]);
         }
+
+        $clName = null;
+        if($resaInfo['responsible_id']) {
+            $modelCl = new ClClient();
+            $clName = $modelCl->getName($id_space, $resaInfo['responsible_id']);
+            if(!$clName) {
+                $clName = Constants::UNKNOWN;
+            }
+        }
+
         // responsible
         if ($canEditReservation) {
             $modelResp = new ClClientUser();
@@ -726,7 +800,12 @@ class BookingdefaultController extends BookingabstractController {
                 $choicesid[] = $r["id"];
                 $choices[] = ($r["name"]);
             }
+            if($resaInfo['responsible_id'] && !in_array($resaInfo['responsible_id'], $choicesid)){
+                $choicesid[] = $resaInfo['responsible_id'];
+                $choices[] = '[!] '.$clName;
+            }
             $form->addSelect("responsible_id", ClientsTranslator::ClientAccount($lang), $choices, $choicesid, $resaInfo["responsible_id"]);
+
         } else {
             $modelResp = new ClClientUser();
             $resps = $modelResp->getUserClientAccounts($_SESSION["id_user"], $id_space);
@@ -755,7 +834,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // supplemetaries informations
         $modelSupInfo = new BkCalSupInfo();
-        $supInfos = $modelSupInfo->getForResource($id_space, $id_resource);
+        $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supData = explode(";", $resaInfo["supplementaries"]);
         $supDataId = array();
         $supDataValue = array();
@@ -764,19 +843,21 @@ class BookingdefaultController extends BookingabstractController {
             if (count($sd) == 2) {
                 $supDataId[] = $sd[0];
                 $supDataValue[] = $sd[1];
+                // If used, add deleted supplementary info
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelSupInfo->isDeleted($id_space, $sd[0])) {
+                    array_push($supInfos, $modelSupInfo->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($supInfos as $sup) {
-            $name = $sup["name"];
-            if ($sup["mandatory"] == 1) {
-                $name .= "*";
-            }
             $key = array_search($sup["id"], $supDataId);
             $value = "";
+            // if deleted, add a [!] warning
+            $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
             if ($key !== false) {
                 $value = $supDataValue[$key];
             }
-            $form->addText("sup" . $sup["id"], $sup["name"], $sup["mandatory"], $value);
+            $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
         }
 
         $modelColors = new BkColorCode();
@@ -791,7 +872,7 @@ class BookingdefaultController extends BookingabstractController {
 
         // quantities
         $modelQuantities = new BkCalQuantities();
-        $quantitiesInfo = $modelQuantities->calQuantitiesByResource($id_space ,$id_resource);
+        $quantitiesInfo = $modelQuantities->getByResource($id_space ,$id_resource);
         $qData = explode(";", $resaInfo["quantities"]);
         $qDataId = array();
         $qDataValue = array();
@@ -800,16 +881,17 @@ class BookingdefaultController extends BookingabstractController {
             if (count($sd) == 2) {
                 $qDataId[] = $sd[0];
                 $qDataValue[] = $sd[1];
+                // if resa was saved with a deleted quantity, add it to $quantitiesInfos
+                if ($sd[0] > 0 && $sd[1] > 0 && $modelQuantities->isDeleted($id_space, $sd[0])) {
+                    array_push($quantitiesInfo, $modelQuantities->getById($id_space, $sd[0]));
+                }
             }
         }
         foreach ($quantitiesInfo as $q) {
-            $name = $q["name"];
-            if ($q["mandatory"] == 1) {
-                $name .= "*";
-            }
+            $qName = $q["deleted"] == 1 ? '[!] ' . $q["name"] : $q["name"];
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
-            $form->addNumber("q" . $q["id"], $q["name"], $q["mandatory"], $value);
+            $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
         }
 
         // booking nav bar
@@ -817,13 +899,6 @@ class BookingdefaultController extends BookingabstractController {
         $curentDate = date("Y-m-d", $resaInfo["start_time"]);
         $_SESSION['bk_curentDate'] = $curentDate;
         $menuData = $this->calendarMenuData($id_space, $bk_id_area, $id_resource, $curentDate);
-        /*
-        $curentResource = $_SESSION['bk_id_resource'];
-        $curentAreaId = $_SESSION['bk_id_area'];
-        $curentDate = date("Y-m-d", $resaInfo["start_time"]);
-        $_SESSION['bk_curentDate'] = $curentDate;
-        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
-        */
 
         // date time
         $form->addSelect("all_day_long", BookingTranslator::AllDay($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $resaInfo["all_day_long"] ?? 0);
@@ -833,10 +908,17 @@ class BookingdefaultController extends BookingabstractController {
         // conditionnal on package
         $modelPackage = new BkPackage();
         $packages = $modelPackage->getByResource($id_space, $id_resource);
+
+        // if resa was saved with a deleted package, add it to $packages
+        if ($resaInfo["package_id"] > 0 && $modelPackage->isDeleted($id_space, $resaInfo["package_id"])) {
+            array_push($packages, $modelPackage->getById($id_space, $resaInfo["package_id"]));
+        }
+
         $pNames = array();
         $pIds = array();
         foreach ($packages as $p) {
-            $pNames[] = $p["name"];
+            $pName = $p["deleted"] == 1 ? '[!] ' . $p["name"] : $p["name"];
+            $pNames[] = $pName;
             $pIds[] = $p["id"];
         }
 
@@ -872,8 +954,6 @@ class BookingdefaultController extends BookingabstractController {
             $formDelete->addHidden("sendmail", 0);
         }
         $formDelete->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationdefaultdelete/' . $id_space . "/" . $resaInfo["id"]);
-        $formDelete->setButtonsWidth(2, 10);
-
 
         $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
         // periodicity information
@@ -891,7 +971,23 @@ class BookingdefaultController extends BookingabstractController {
         $formDeletePeriod = new Form($this->request, "bookingeditreservationdefaultdeleteform");
         $formDeletePeriod->addComment(BookingTranslator::RemoveReservationPeriodic($lang));
         $formDeletePeriod->setValidationButton(CoreTranslator::Ok($lang), 'bookingeditreservationperiodicdelete/' . $id_space . "/" . $id_period);
-        $formDeletePeriod->setButtonsWidth(2, 10);
+
+        $details = ['steps' => []];
+        if($resaInfo["id"] > 0 && $resaInfo['responsible_id']) {
+            try {
+                $details = $modelCalEntry->computeDuration($id_space, $resaInfo);
+            } catch(Exception $e) {
+                Configuration::getLogger()->debug('[booking] failed to compute duration for entry', ['error' => $e->getMessage()]);
+            }
+        }
+
+        $modelResource = new ResourceInfo();
+        $modelScheduling = new BkScheduling();
+        $schedul = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $forcePackages = $schedul['force_packages'] ?? 0;
+        if($forcePackages) {
+            $packageChecked = true;
+        }
 
 
         return $this->render(array(
@@ -901,6 +997,7 @@ class BookingdefaultController extends BookingabstractController {
             "data" => ["booking" => $resaInfo],
             "form" => $form,
             "use_packages" => $use_packages,
+            "forcePackages" => $forcePackages,
             "packageChecked" => $packageChecked,
             "userCanEdit" => $userCanEdit,
             "id_reservation" => $resaInfo["id"],
@@ -913,7 +1010,8 @@ class BookingdefaultController extends BookingabstractController {
             "id_period" => $id_period,
             "formDelete" => $formDelete->getHtml($lang),
             "formDeletePeriod" => $formDeletePeriod->getHtml($lang),
-            'from' => $this->request->getParameterNoException('from')
+            'from' => $this->request->getParameterNoException('from'),
+            'details' => $details
         ),
             "addreservationAction"
         );
@@ -961,7 +1059,7 @@ class BookingdefaultController extends BookingabstractController {
 
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        $sendEmail = intval($this->request->getParameter("sendmail"));
+        $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
@@ -972,12 +1070,12 @@ class BookingdefaultController extends BookingabstractController {
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
         }
-        if ($sendEmail == 1) {
+        if ($sendEmail == 1 && $entryInfo["start_time"] > time()) {
             $resourceModel = new ResourceInfo();
             $resourceName = $resourceModel->getName($id_space, $id_resource);
-            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource);
+            $toAddress = $modelCalEntry->getEmailsBookerResource($id_space, $id_resource, time());
             $subject = $resourceName . " has been freed";
-            $content = "The " . $resourceName . " has been freed from " . date("Y-m-d H:i", $entryInfo["start_time"]) . " to " . date("Y-m-d H:i", $entryInfo["end_time"]);
+            $content = "The " . $resourceName . " has been freed from " . date(Constants::DATETIME_FORMAT, $entryInfo["start_time"]) . " to " . date(Constants::DATETIME_FORMAT, $entryInfo["end_time"]);
 
             // NEW MAIL SENDER
             $params = [

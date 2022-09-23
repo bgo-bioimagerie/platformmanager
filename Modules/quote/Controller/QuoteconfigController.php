@@ -3,19 +3,24 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/Errors.php';
+require_once 'Framework/TableView.php';
+require_once 'Framework/FileUpload.php';
 
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/quote/Model/QuoteInstall.php';
 require_once 'Modules/quote/Model/QuoteTranslator.php';
+require_once 'Modules/quote/Controller/QuotelistController.php';
+
 require_once 'Modules/core/Controller/CorespaceController.php';
+require_once 'Modules/core/Controller/CoreabstractpdftemplateController.php';
 
 /**
  * 
  * @author sprigent
  * Controller for the home page
  */
-class QuoteconfigController extends CoresecureController {
+class QuoteconfigController extends PfmTemplateController {
 
     /**
      * Constructor
@@ -37,8 +42,6 @@ class QuoteconfigController extends CoresecureController {
 
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-
-        $modelSpace = new CoreSpace();
         
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang);
@@ -51,6 +54,14 @@ class QuoteconfigController extends CoresecureController {
         $forms = array($formMenusactivation->getHtml($lang));
         
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+    }
+
+    public function pdftemplateAction($id_space) {
+        return $this->pdftemplate($id_space, 'quote', new QuoteTranslator());    
+    }
+
+    public function pdftemplatedeleteAction($id_space, $name) {
+        return $this->pdftemplatedelete($id_space, 'quote', $name);
     }
 
 }

@@ -3,9 +3,9 @@
     
 <?php startblock('content') ?>
 
-<div class="pm-table">
+<div class="container pm-table">
     
-    <div class="col-md-10">
+    <div class="col-10">
         <div id="invoice-message-div" class="alert alert-success">
             
         </div>
@@ -13,8 +13,10 @@
     
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) ?> : <?php echo $invoice["number"] ?> </h3>
 
+    <h4><a href="invoices/<?php echo $id_space ?>/<?php echo $invoice['id'] ?>/details">Details</a></h4>
+
     <form class="form-horizontal">
-        <div id="invoiceform" class="col-md-12">
+        <div id="invoiceform" class="col-12">
 
             <table class="table" aria-label="list of products">
                 <thead>
@@ -29,22 +31,22 @@
                 </tbody>
             </table>
         </div>
-        <div class="col-md-12">
+        <div class="col-12">
             <div class="form-group">
-                <label class="control-label col-xs-8 text-right"> <?php echo InvoicesTranslator::Discount($lang) ?> </label>
-                <div class="col-xs-4">
+                <label class="control-label col-8 text-right"> <?php echo InvoicesTranslator::Discount($lang) ?> </label>
+                <div class="col-4">
                     <input id="invoicediscount" class="form-control" type="text" name="" value="<?php echo $invoice["discount"] ?>" />
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-xs-8 text-right"> <?php echo InvoicesTranslator::Total_HT($lang) ?> </label>
-                <div class="col-xs-4">
+                <label class="control-label col-8 text-right"> <?php echo InvoicesTranslator::Total_HT($lang) ?> </label>
+                <div class="col-4">
                     <input id="invoicetotalht" class="form-control" type="text" name="" value="<?php echo $invoice["total_ht"] ?>" />
                 </div>
             </div>
         </div>
-        <div class="col-md-12">
-            <div class="col-md-12 text-right">
+        <div class="col-12">
+            <div class="col-12 text-right">
                 <button id="invoicevalidate" class="btn btn-primary"><?php echo CoreTranslator::Save($lang) ?></button>
                 <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/0" class="btn btn-danger"><?php echo InvoicesTranslator::PDF($lang) ?></a>
                 <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/1" class="btn btn-danger"><?php echo InvoicesTranslator::PDFDetails($lang) ?></a>
@@ -64,33 +66,32 @@
         });
 
         // print the data
-        var data = JSON.parse('<?php echo $invoiceitem["content"] ?>');
-
-        var html = "";
-        var total_ht = 0;
-        var datalength = data.length;
-        for (var i = 0; i < datalength; i++) {
-
-            module = data[i]["module"];
-            content = data[i]["data"]["count"];
-            var contentlength = content.length;
-            for (var j = 0; j < contentlength; j++) {
-
-                html += '<tr>';
-                html += '   <td class="invoicelabel" data-module="' + module + '">' + content[j]["label"] + '</td>';
-                html += '   <td><input class="form-control invoicequantity" id="quantity_' + content[j]["label"].split(' ').join('_') + '" type="text" value="' + content[j]["quantity"] + '"/></td>';
-                html += '   <td><input class="form-control invoiceprice" id="price_' + content[j]["label"].split(' ').join('_') + '" type="text" value="' + content[j]["unitprice"] + '"/></td>';
-                html += '</tr>';
-
-                total_ht += parseFloat(content[j]["quantity"]) * parseFloat(content[j]["unitprice"]);
-
+        let data = JSON.parse('<?php echo $invoiceitem["content"] ?>');
+        let html = "";
+        let total_ht = 0;
+        
+        // get an array of all items
+        let items = [];
+        for (let moduleData of data) {
+            for (let elem of moduleData.data.count) {
+                items.push({"module": moduleData.module, "data": elem});
             }
         }
-        total_ht -= $('#invoicediscount').val();
+
+        for (let i=0; i<items.length; i++) {
+            html += '<tr>';
+            html += '   <td class="invoicelabel" data-module="' + items[i].module + '">' + items[i].data.label + '</td>';
+            html += '   <td><input class="form-control invoicequantity" id="quantity_' + i + '" type="text" value="' + items[i].data.quantity + '"/></td>';
+            html += '   <td><input class="form-control invoiceprice" id="price_' + i + '" type="text" value="' + items[i].data.unitprice + '"/></td>';
+            html += '</tr>';
+            total_ht += parseFloat(items[i].data.quantity) * parseFloat(items[i].data.unitprice);
+        }
+
+        discount = $('#invoicediscount').val();
+        total_ht = (1-(discount/100))*total_ht;
+
         $('#invoicetablebody').html(html);
         $('#invoicetotalht').attr("value", total_ht.toFixed(2));
-
-
 
         $('.invoicequantity').on('change', function () {
             updateprice();
@@ -102,22 +103,12 @@
             updateprice();
         });
         $('#invoicevalidate').click(function () {
-
-            for (var i = 0; i < datalength; i++) {
-
-                content = data[i]["data"]["count"];
-                var contentlength = content.length;
-                for (var j = 0; j < contentlength; j++) {
-
-                    quantity = $('#quantity_' + content[j]["label"].split(' ').join('_')).val();
-                    price = $('#price_' + content[j]["label"].split(' ').join('_')).val();
-
-                    data[i]["data"]["count"][j]["quantity"] = quantity;
-                    data[i]["data"]["count"][j]["unitprice"] = price;
-                }
+            for (let i=0; i<items.length; i++) {
+                quantity = $('#quantity_' + i).val();
+                price = $('#price_' + i).val();
+                items[i].data.quantity = quantity;
+                items[i].data.unitprice = price;
             }
-
-            //alert("content = " + JSON.stringify(data) );
 
             data0 = {discount: $('#invoicediscount').val(), total_ht: $('#invoicetotalht').val(), content: JSON.stringify(data)};
 
@@ -144,7 +135,9 @@
         lines.each(function () {
             total_ht += parseFloat($(this).find('.invoicequantity').val()) * parseFloat($(this).find('.invoiceprice').val());
         });
-        total_ht -= $('#invoicediscount').val();
+
+        discount = $('#invoicediscount').val();
+        total_ht = (1-(discount/100))*total_ht;
         $('#invoicetotalht').attr("value", total_ht.toFixed(2));
     }
 

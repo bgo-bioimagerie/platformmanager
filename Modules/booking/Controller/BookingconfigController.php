@@ -42,12 +42,12 @@ class BookingconfigController extends CoresecureController {
         // menu activation form
         $formMenusactivation = $this->menusactivationForm($id_space, 'booking', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'booking', 'calendar');
+            $this->menusactivation($id_space, 'booking', 'calendar3');
             return $this->redirect("bookingconfig/".$id_space);
         }
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'bookingsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'bookingsettings', 'calendar', 'booking');                   
+            $this->menusactivation($id_space, 'bookingsettings', 'calendar3', 'booking');                   
             
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "bookingauthorisations";
@@ -96,6 +96,14 @@ class BookingconfigController extends CoresecureController {
         if ($formbookingUseRecurentBooking->check()){
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("BkUseRecurentBooking", $this->request->getParameter("BkUseRecurentBooking"), $id_space);
+        
+            return $this->redirect("bookingconfig/".$id_space);
+        }
+
+        $formbookingSetDefaultView = $this->bookingSetDefaultView($id_space, $lang);
+        if ($formbookingSetDefaultView->check()){
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam("BkSetDefaultView", $this->request->getParameter("BkSetDefaultView"), $id_space);
         
             return $this->redirect("bookingconfig/".$id_space);
         }
@@ -149,6 +157,7 @@ class BookingconfigController extends CoresecureController {
             $formSettingsMenusactivation->getHtml($lang), 
             $formSettingsMenuName->getHtml($lang),
             $formbookingUseRecurentBooking->getHtml($lang),
+            $formbookingSetDefaultView->getHtml($lang),
             //$formBookingCanUserEditStartedResa->getHtml($lang),
             //$bookingRestrictionForm->getHtml($lang),
             $formBookingOption->getHtml($lang), 
@@ -169,7 +178,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkAuthorisationUseVisa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkAuthorisationUseVisa);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }
@@ -187,7 +195,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkCanUserEditStartedResa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkCanUserEditStartedResa);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
         
         return $form;
     }
@@ -202,7 +209,35 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkUseRecurentBooking", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkUseRecurentBooking);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
+
+        return $form;
+    }
+
+    protected function bookingSetDefaultView($id_space, $lang){
+        $modelCoreConfig = new CoreConfig();
+        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
+        
+        $form = new Form($this->request, "BkSetdefaultViewForm");
+        $form->addSeparator(BookingTranslator::Set_default_booking_view($lang));
+
+        $optionsNames = array(
+            BookingTranslator::Day($lang),
+            BookingTranslator::Day_Area($lang),
+            BookingTranslator::Week($lang),
+            BookingTranslator::Week_Area($lang),
+            BookingTranslator::Month($lang)
+        );
+        $optionsValues = array(
+            "bookingday",
+            "bookingdayarea",
+            "bookingweek",
+            "bookingweekarea",
+            "bookingmonth"
+        );
+        
+        $form->addSelect("BkSetDefaultView", "", $optionsNames, $optionsValues, $BkSetDefaultView);
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
 
         return $form;
     }
@@ -223,7 +258,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(0,1,2,3), $BkDescriptionFields);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }
@@ -236,7 +270,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSeparator(BookingTranslator::EditReservationPlugin($lang));
         $form->addText("bkReservationPlugin", BookingTranslator::Url($lang), false, $bkReservationPlugin);
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
         
         return $form;
     } 
@@ -260,7 +293,6 @@ class BookingconfigController extends CoresecureController {
         $form->addSelect('BkBookingMailingDelete', BookingTranslator::EmailWhenResaDelete($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkBookingMailingDelete);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
-        $form->setButtonsWidth(2, 9);
 
         return $form;
     }

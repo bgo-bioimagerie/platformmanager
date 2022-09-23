@@ -36,7 +36,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
      */
     public function __construct(Request $request, ?array $space=null) {
         parent::__construct($request, $space);
-        //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
 
     }
@@ -90,8 +89,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         // generate pdf
         if ($pdf == 1) {
-            $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
-            return;
+            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
         }
 
         //print_r($id_items);
@@ -138,8 +136,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
                 "space" => ["id" => intval($id_space)],
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
-            $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
-            return;
+            return $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
         }
         
 
@@ -166,10 +163,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]), $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
             }
             if (count($data) > 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0]) . " " . $data[3], $data[1], $data[2]);
+                $contentList[] = array(($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN) . " " . $data[3], $data[1], $data[2]);
             }
         }
         return $contentList;
@@ -226,6 +223,13 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         }
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
+        foreach ($itemServices as $s) {
+            if( ! in_array($s, $services["ids"])) {
+                $services["ids"][] = $s;
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
+            }
+        }
+
 
         $formAdd = new FormAdd($this->request, "editinvoiceprojectformadd");
         $formAdd->addSelect("id_service", ServicesTranslator::service($lang), $services["names"], $services["ids"], $itemServices);
@@ -235,7 +239,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formAdd->addText("comment", ServicesTranslator::Comment($lang), $itemComments);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceprojectform");
-        $form->setButtonsWidth(2, 9);
+
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/0");
         $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
@@ -249,7 +253,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $total = (1-floatval($discount)/100)*$total;
         $form->addNumber("total", InvoicesTranslator::Total_HT($lang), false, $total);
         $form->setColumnsWidth(9, 2);
-        $form->setButtonsWidth(4, 8);
+
         return $form;
     }
 
@@ -265,7 +269,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;
@@ -283,7 +287,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
         $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
-        $form->setButtonsWidth(2, 9);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;
@@ -383,10 +387,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController {
 
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]); //$modelUnit->getAdress($invoice["id_unit"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["number"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos);
+        return $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 
 }

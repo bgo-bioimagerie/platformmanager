@@ -20,6 +20,10 @@ require_once 'Modules/antibodies/Model/Acii.php';
  */
 class AcProtocol extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_protocol";
+    }
+
     /**
      * Create the protocols table
      * 
@@ -217,7 +221,7 @@ class AcProtocol extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the protocol using the given id", 404);
+            throw new PfmParamException("Cannot find the protocol using the given id", 404);
         }
     }
 
@@ -227,9 +231,6 @@ class AcProtocol extends Model {
      * 
      */
     public function addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "") {
-
-        //, `no_proto`, proto, fixative, option, enzyme, dem, `acl_inc`, linker, inc, acll
-        // ,?,?,?,?,?,?,?,?,?,?,?
         $sql = "insert into ac_protocol(id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -237,9 +238,6 @@ class AcProtocol extends Model {
     }
 
     public function importProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "") {
-
-        //, `no_proto`, proto, fixative, option, enzyme, dem, `acl_inc`, linker, inc, acll
-        // ,?,?,?,?,?,?,?,?,?,?,?
         $sql = "insert into ac_protocol(id, id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 

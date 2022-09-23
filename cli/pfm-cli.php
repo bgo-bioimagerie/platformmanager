@@ -23,6 +23,8 @@ function version()
     }
 
 $cli = Cli::create()
+    ->command('config')
+    ->description('show configuration')
     ->command('upgrade')
     ->description('create a new upgrade file')
     ->opt('desc', 'description', '', 'string')
@@ -53,12 +55,29 @@ $cli = Cli::create()
     ->command('config')
     ->opt('yaml:y', 'Yaml output', false, 'boolean')
     ->command('repair')
-    ->opt('bug', 'Bug number', 0, 'integer');
+    ->opt('bug', 'Bug number', 0, 'integer')
+    ->command('maintenance')
+    ->opt('on', 'start maintenance mode', false, 'boolean')
+    ->opt('off', 'stop maintenance mode', false, 'boolean')
+    ->opt('message:m', 'maintenance message', false, 'string');
 
 $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'maintenance':
+            $modelCoreConfig = new CoreConfig();
+            if ($args->getOpt('on')) {
+                $modelCoreConfig->setParam("is_maintenance", 1);
+                Configuration::getLogger()->info("Starting maintenance");
+            } else if ($args->getOpt('off')) {
+                $modelCoreConfig->setParam("is_maintenance", 0);
+                Configuration::getLogger()->info("Stopping maintenance");
+            }
+            if ($args->getOpt('message')) {
+                $modelCoreConfig->setParam("maintenance_message", $args->getOpt('message'));
+            }
+            break;
         case 'upgrade':
             $ts = time();
             if(!file_exists('db/upgrade')){
@@ -104,12 +123,14 @@ try {
                 }
                 $installFile = "Modules/" . $module . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
-                    $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
+                    Configuration::getLogger()->info('Update database for module ' . $moduleName . " => ". $installFile);
                     require_once $installFile;
                     $className = $moduleName . "Install";
                     $object = new $className();
                     $object->createDatabase();
-                    $logger->info('update database for module ' .$modules[$i]  . "done");
+                    Configuration::getLogger()->info('update database for module ' .$modules[$i]  . "done");
+                    $cdb = new CoreDB();
+                    $cdb->base();
                 }
                 break;
             }
@@ -127,20 +148,16 @@ try {
                 $routes = [];
                 foreach ($rl as $rll) {
                     $routes[] = ['methods' => $rll[0], 'url' => $rll[1], 'action' => $rll[2]];
-                    //echo "* $rll[0] - $rll[1] - $rll[2]\n";
                 }
                 $fc = new FCache();
                 $rl = $fc->listAll();
                 foreach ($rl as $rll) {
                     $route = ['methods' => 'GET|POST', 'action' => $rll[1]];
-                    // $url = "* GET|POST - $rll[0] /$rll[0]";
                     $u = '/'.$rll[0];
                     for($i=2;$i<count($rll);$i++) {
-                        // $url .= "/[i:".$rll[$i]."]";
                         $u .= "/[i:".$rll[$i]."]";
                     }
                     $route['url'] = $u;
-                    // $url .= " - ".$rll[1];
                     $routes[] = $route;
                 }
                 if($args->getOpt('yaml')) {
@@ -314,6 +331,7 @@ function cliInstall($from=-1) {
 
         $modelCreateDatabase = new CoreInstall();
         $modelCreateDatabase->createDatabase();
+
         $logger->info("Database installed");
         
 
@@ -350,16 +368,16 @@ function cliInstall($from=-1) {
         } catch (Exception $e) {
                 $logger->error("Error", ["error" => $e->getMessage()]);
         }
-
+        $cdb->base();
         // update db release and launch upgrade
         $cdb->upgrade($from);
     } else {
         $logger->info("Db already at release ".$cdb->getVersion());
+        $cdb->base();
     }
 
     $logger->info("Check for upgrades");
-    $cdb->scanUpgrades();
-    $cdb->base();
+    $cdb->scanUpgrades($from);
 
 
     

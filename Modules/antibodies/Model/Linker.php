@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Linker extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_linkers";
+    }
+
     /**
      * Create the espece table
      * 
@@ -64,7 +68,7 @@ class Linker extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the linker using the given id", 404);
+            throw new PfmParamException("Cannot find the linker using the given id", 404);
         }
     }
 

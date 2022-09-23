@@ -8,10 +8,12 @@
             <button
                 id="todo_btn"
                 class="tab btn btn-primary"
-                style="margin:5px; font-weight:bold">
-                Show Todo
+                style="margin:5px; font-weight:bold"
+                onclick="showAction()">
+                Hide Todo
             </button>
         </div>
+        
         <div id="sections">
             <div id="spaceedit_todo">
                 <div class="page-header">
@@ -19,7 +21,7 @@
                 </div>
                 
                 {% for module in todolist %}
-                    <div>
+                    <div style="margin-bottom:10px">
                         <h4> {{ module.title }} </h4>
                         <p>
                             <a href="{{module.docurl}}" style="font-style:italic">
@@ -37,15 +39,15 @@
                                     disabled
                                     {{checked}} >
                                 <label for="{{task.id}}" style="font-weight:normal">
-                                    <a id="{{task.id}}_link" href="{{task.url}}">
+                                    <div id="{{task.id}}_link" onclick="goto('{{task.id}}', '{{task.url}}')">
                                         {{task.title}}
-                                    </a>
+                                    </div>
                                 </label>
                                 {% if task.options %}
                                     <select id="{{task.id}}_select" class="customSelector">
                                         <option value="" selected="selected" disabled>{{task.options.defaultText}}</option>
                                         {% for item in task.options.list %}
-                                            <option value={{item.id}}>{{item.login}}</option>
+                                            <option value={{item[0]}}>{{item[1]}}</option>
                                         {% endfor %}
                                     </select>
                                 {% endif %}
@@ -64,46 +66,36 @@
 {% if todolist %}
 
     <script>
-        setLinks();
-        setShowAction();
+        // setLinks();
 
-        function setShowAction() {
-            const todoBtn = document.getElementById("todo_btn");
+        const todoBtn = document.getElementById("todo_btn");
+        '{{showTodo}}' ? showAction() : todoBtn.innerHTML = "Show Todo";
+        
+        function showAction() {
             const section = document.getElementById("spaceedit_todo");
-            todoBtn.addEventListener("click", () => {
-                section.classList.toggle("expanded");
-                const expanded = section.classList.contains("expanded");
-                if (expanded) {
-                    todoBtn.innerHTML = "Hide Todo";
-                } else {
-                    todoBtn.innerHTML = "Show Todo";
-                }
-            });
+            section.classList.toggle("expanded");
+            const expanded = section.classList.contains("expanded");
+            if (expanded) {
+                todoBtn.innerHTML = "Hide Todo";
+            } else {
+                todoBtn.innerHTML = "Show Todo";
+            }
         }
 
-        function setLinks() {
-            const customSelectors = document.getElementsByClassName('customSelector');
-            const taskNames = Array.from(customSelectors).map(item => item.id.split("_")[0]);
-            taskNames.forEach(taskName => {
-                let element = document.getElementById(taskName + '_link') ?? false;
-                let url = element.href;
-                let selector = document.getElementById(taskName + '_select') ?? false;
-
-                element.addEventListener("click", (event) => {
-                    event.preventDefault();
-                    if (selector.options[selector.selectedIndex].value != "") {
-                        let targetUrl = event.target.href;
-                        targetUrl += "?origin=" + taskName;
-                        window.location = targetUrl;
-                    }
-                });
-
-                selector.addEventListener("change", (event) => {
-                    let selectedValue = event.target.options[event.target.selectedIndex].value;
-                    element.href = url + "/" + selectedValue;
-                });
-            });
+        function goto(taskId, taskUrl) {
+            let select = document.getElementById(taskId + "_select") ?? null;
+            let targetUrl = taskUrl;
+            if (select) {
+                let selValue = select.options[select.selectedIndex].value;
+                targetUrl += "/" + selValue;
+                targetUrl += "?origin=" + taskId;
+                targetUrl += "&redirect=todo";
+            } else {
+                targetUrl += "?redirect=todo";
+            }
+            window.location = targetUrl;
         }
+
     </script>
 
     <style type="text/css">

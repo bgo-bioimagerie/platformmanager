@@ -30,11 +30,11 @@ class BookingusersettingsController extends CoresecureController {
         $form = new Form($this->request, "bokkingusersettingsform");
         $form->setTitle(BookingTranslator::Calendar_Default_view($lang));
         
-        $choicesview = array(BookingTranslator::Day($lang), BookingTranslator::Day_Area($lang), BookingTranslator::Week($lang), BookingTranslator::Week_Area($lang));
-        $choicesidview = array("bookingday", "bookingdayarea", "bookingweek", "bookingweekarea");
+        $choicesview = array(BookingTranslator::Day($lang), BookingTranslator::Day_Area($lang), BookingTranslator::Week($lang), BookingTranslator::Week_Area($lang), BookingTranslator::Month($lang));
+        $choicesidview = array("bookingday", "bookingdayarea", "bookingweek", "bookingweekarea", "bookingmonth");
         $form->addSelect("calendarDefaultView", BookingTranslator::Default_view($lang), $choicesview, $choicesidview, $calendarDefaultView);
         
-        $form->setButtonsWidth(4, 8);
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingusersettings");
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
         

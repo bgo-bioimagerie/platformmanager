@@ -94,8 +94,16 @@ class Configuration {
                         if(!isset($yamlData['plans'][$i]['flags'])) {
                             $yamlData['plans'][$i]['flags'] = [];
                         }
+
                         if(!isset($yamlData['plans'][$i]['limits'])) {
                             $yamlData['plans'][$i]['limits'] = [];
+                        }
+
+                        if(isset($yamlData['plans'][$i]['custom'])) {
+                            // custom plans should be set after standard plans
+                            // which inherates from previous plans
+                            // custom plans must define all flags
+                            break;
                         }
                         $yamlData['plans'][$i]['flags'] = array_merge($yamlData['plans'][$i]['flags'], $yamlData['plans'][$i-1]['flags']);
                         $new_limits = $yamlData['plans'][$i-1]['limits'] ;
@@ -142,7 +150,7 @@ class Configuration {
         if(getenv('MYSQL_DSN')) {
             self::$parameters['dsn'] = getenv('MYSQL_DSN');
         }
-        if(!isset(self::$parameters['dsn'])) {
+        if(!isset(self::$parameters['dsn']) || !self::$parameters['dsn']) {
             try {
                 if(!isset(self::$parameters['mysql_host']) || !isset(self::$parameters['mysql_dbname'])) {
                     throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
@@ -200,6 +208,10 @@ class Configuration {
         }
         if(getenv('SMTP_PORT')) {
             self::$parameters['smtp_port']= intval(getenv('SMTP_PORT'));
+        }
+        self::$parameters['smtp_tls']= false;
+        if(getenv('SMTP_TLS')) {
+            self::$parameters['smtp_tls']= boolval(getenv('SMTP_TLS'));
         }
         if(getenv('DEBUG')) {
             self::$parameters['debug'] = boolval(getenv('DEBUG'));
@@ -376,7 +388,11 @@ class Configuration {
      */
     public static function write(array $config) {
         $configd = var_export($config, true);
-        file_put_contents(self::getConfigFile(), "<?php return $configd ;");
+        try {
+            file_put_contents(self::getConfigFile(), "<?php return $configd ;");
+        } catch(Throwable $e) {
+            self::getLogger()->error('Failed to overwrite '.self::getConfigFile(), ['err' => $e]);
+        }
     }
 
 }

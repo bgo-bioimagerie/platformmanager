@@ -7,6 +7,8 @@
     <?php echo $formHtml ?>
     
     <?php echo $formPwdHtml ?>
+
+    <?php echo $rolesTableHtml ?>
 </div> <!-- /container -->
 <?php echo $script ?>
 <?php endblock(); ?>

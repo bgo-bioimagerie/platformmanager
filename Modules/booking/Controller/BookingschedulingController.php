@@ -87,8 +87,14 @@ class BookingschedulingController extends BookingsettingsController {
         $form->addSelect("day_end", BookingTranslator::Day_end($lang), $dc, $dcid, $bkScheduling["day_end"]);
         $form->addSelect("size_bloc_resa", BookingTranslator::Booking_size_bloc($lang), array("15min", "30min", "1h"), array(900, 1800, 3600), $bkScheduling["size_bloc_resa"]);
         $form->addSelect("booking_time_scale", BookingTranslator::Booking_time_scale($lang), array(BookingTranslator::Minutes($lang), BookingTranslator::Hours($lang), BookingTranslator::Days($lang)), array(1, 2, 3), $bkScheduling["booking_time_scale"]);
-        $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $bkScheduling["resa_time_setting"]);
-        
+        if($bkScheduling["force_packages"] ?? 0) {
+            $form->addHidden("resa_time_setting", $bkScheduling["resa_time_setting"]);
+        } else {
+            $form->addSelect("resa_time_setting", BookingTranslator::The_user_specify($lang), array(BookingTranslator::the_booking_duration($lang), BookingTranslator::the_date_time_when_reservation_ends($lang)), array(1, 2), $bkScheduling["resa_time_setting"]);
+        }
+        $form->addSelect("force_packages", BookingTranslator::Force_packages($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $bkScheduling["force_packages"] ?? 0);
+        $form->addSelect("shared", "Share between resources", [CoreTranslator::yes($lang), CoreTranslator::no($lang)], [1,0], $bkScheduling['shared']);
+
         $modelColor = new BkColorCode();
         $colors = $modelColor->getForSpace($id_space);
 
@@ -105,9 +111,25 @@ class BookingschedulingController extends BookingsettingsController {
         }
         $form->addSelectMandatory("default_color_id", BookingTranslator::Default_color($lang), $cc, $ccid, $bkScheduling["default_color_id"]);
         
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingschedulingedit/".$id_space."/".$id_rearea);
+        $todo = $this->request->getParameterNoException('redirect');
+        $validationUrl = "bookingschedulingedit/".$id_space."/".$id_rearea;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        }
+
+        $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setColumnsWidth(3, 9);
-        $form->setButtonsWidth(3, 9);
+
+
+
+        if($bkScheduling["force_packages"] ?? 0) {
+            $modelPackage = new BkPackage();
+            $packages = $modelPackage->getAll($id_space, 'id');
+            if(empty($packages)) {
+                $_SESSION['flash'] = BookingTranslator::MissingPackages($lang);
+            }
+        }
+
 
         if ($form->check()) {
             $id_bkScheduling = $modelScheduling->edit($id_space, $bkScheduling['id_rearea'],
@@ -123,9 +145,20 @@ class BookingschedulingController extends BookingsettingsController {
                     $this->request->getParameter("size_bloc_resa"), 
                     $this->request->getParameter("booking_time_scale"), 
                     $this->request->getParameter("resa_time_setting"), 
-                    $this->request->getParameter("default_color_id"));
-               
-            return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+                    $this->request->getParameter("default_color_id"),
+                    $this->request->getParameterNoException("force_packages"),
+                    $this->request->getParameter("shared")
+            );
+
+            $_SESSION["flash"] = BookingTranslator::Item_created("schedule", $lang);
+            $_SESSION["flashClass"] = "success";
+                
+            if ($todo) {
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+            } else {
+                return $this->redirect("bookingschedulingedit/".$id_space."/".$id_rearea, [], ['bkScheduling' => ['id' => $id_bkScheduling]]);
+            }
+            
         }
          
         return $this->render(array(

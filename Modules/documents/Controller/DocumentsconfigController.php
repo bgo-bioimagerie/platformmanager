@@ -40,7 +40,7 @@ class DocumentsconfigController extends CoresecureController {
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'documents', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'documents', 'folder-open');
+            $this->menusactivation($id_space, 'documents', 'folder2-open');
             return $this->redirect("documentsconfig/".$id_space);
         }
 
@@ -56,7 +56,7 @@ class DocumentsconfigController extends CoresecureController {
         $formEdit->addSeparator(CoreTranslator::EditionAccess($lang));
         $formEdit->addSelect("documentsEdit", "Edit", array(CoreTranslator::Manager($lang), CoreTranslator::Admin($lang)), array(CoreSpace::$MANAGER, CoreSpace::$ADMIN), $documentsEdit);
         $formEdit->setValidationButton(CoreTranslator::Save($lang), "documentsconfig/".$id_space);
-        $formEdit->setButtonsWidth(2, 9);
+
 
 
         $forms = array($formMenusactivation->getHtml($lang), $formEdit->getHtml($lang));

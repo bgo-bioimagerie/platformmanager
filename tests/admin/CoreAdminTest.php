@@ -13,6 +13,7 @@ require_once 'Modules/core/Controller/CoreusersController.php';
 
 
 require_once 'Modules/core/Model/CoreUser.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreMainSubMenu.php';
@@ -52,7 +53,9 @@ class CoreTest extends BaseTest {
                 "support" => "",
                 "description" => "",
                 "user_desactivate" => 1,
-                "admins" => []
+                "on_user_deactivate" => CoreConfig::$ONEXPIRE_INACTIVATE,
+                "admins" => [],
+                "plan" => $data["plan"]
             ]);
             $c = new CorespaceadminController($req);
             $data = $c->runAction('core', 'edit', ['id_space' => 0]);

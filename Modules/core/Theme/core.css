@@ -1,7 +1,5 @@
 body{
     height: 100%;
-    background-color: #e7ecf0;
-    padding-top: 60px;
 }
 
 footer {
@@ -13,12 +11,13 @@ footer {
     min-height: 300px;
 }
 
-#sideMenu {
-    padding-left: 5px;
-}
 
 #mainMenu {
     
+}
+
+.pm-inline-div a {
+    text-decoration: none !important;
 }
 
 
@@ -45,26 +44,17 @@ footer {
 }
 
 .pm-form{
-    background-color: #ffffff; 
-    border: 7px solid #e7ecf0;
 }
 
 .pm-form-short{
-    background-color: #ffffff; 
-    border: 7px solid #e7ecf0;
     padding-bottom: 7px;
 }
 
 .pm-table{
-    background-color: #ffffff; 
-    border: 7px solid #e7ecf0;
     padding-top: 7px;
-    
 }
 
 .pm-table-short{
-    background-color: #ffffff; 
-    border: 7px solid #e7ecf0;
     padding-top: 7px;
 }
 

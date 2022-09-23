@@ -174,22 +174,20 @@ class FormAdd {
 
     /**
      * 
-     * @param type $lang Interface language
      * @param type $label Form label
      * @param type $labelWidth Bootstrap columns number for the label
      * @param type $inputWidth Bootstrap columns number for the fields
      * @return string The formAdd HTML code
      */
-    public function getHtml($lang = "en", $label = "", $labelWidth = 2, $inputWidth = 9) {
-        //print_r($this->types);
+    public function getHtml($label = "", $labelWidth = 2, $inputWidth = 9) {
         $html = "";
         if ($label != "") {
-            $html = "<div class=\"form-group\">";
-            $html .= "<label class=\"control-label col-xs-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "	<div class=\"col-xs-" . $inputWidth . "\">";
+            $html = "<div class=\"form-group row mb-3\">";
+            $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
+            $html .= "	<div class=\"col-12 col-md-" . $inputWidth . " table-responsive\" >";
         } else {
-            $html .= "<div class=\"form-group\">";
-            $html .= "	<div class=\"col-xs-12\">";
+            $html .= "<div class=\"form-group row mb-3\">";
+            $html .= "	<div class=\"col-12 table-responsive\">";
         }
 
         $tableID = $this->id . "table";
@@ -203,7 +201,7 @@ class FormAdd {
             if ($this->types[$l] == "hidden") {
                 $html .= "<th style=\"width:0em;\"> </th>";
             } else {
-                $html .= "<th style=\"min-width:10em;\">" . $this->labels[$l] . "</th>";
+                $html .= "<th>" . $this->labels[$l] . "</th>";
             }
         }
 
@@ -225,7 +223,7 @@ class FormAdd {
                     } else if ($this->types[$j] == "text") {
                         $html .= $formHtml->inlineText($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "textdate") {
-                        $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true, $lang);
+                        $html .= $formHtml->inlineDate($this->names[$j], $this->values[$j][$i], true);
                     } else if ($this->types[$j] == "number") {
                         $html .= $formHtml->inlineNumber($this->names[$j], $this->values[$j][$i], false, true);
                     } else if ($this->types[$j] == "float") {
@@ -235,7 +233,7 @@ class FormAdd {
                     } else if ($this->types[$j] == "label"){
                         $html .= $formHtml->inlineLabel($this->names[$j], $this->values[$j][$i], true);
                     } else {
-                        $html .= "error undefine form input type " . $this->types[$j];
+                        $html .= "error undefined form input type " . $this->types[$j];
                     }
                     $html .= "</td>";
                 }
@@ -253,7 +251,7 @@ class FormAdd {
                 } else if ($this->types[$j] == "text") {
                     $html .= $formHtml->inlineText($this->names[$j], "", false, true);
                 } else if ($this->types[$j] == "textdate") {
-                    $html .= $formHtml->inlineDate($this->names[$j], "", true, $lang);
+                    $html .= $formHtml->inlineDate($this->names[$j], "", true);
                 } else if ($this->types[$j] == "number") {
                     $html .= $formHtml->inlineNumber($this->names[$j], "", false, true);
                 } else if ($this->types[$j] == "float") {
@@ -272,9 +270,9 @@ class FormAdd {
         $html .= "</table>";
         
         if($this->buttonsVisible){
-            $html .= "<div class=\"col-md-6\">";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"btn btn-xs btn-default\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
-            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"btn btn-xs btn-default\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
+            $html .= "<div class=\"col-6\">";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_add" . "\" class=\"m-1 btn btn-sm btn-outline-dark\" value=\" " . $this->addButtonName . " \" onclick=\"addRow('".$tableID."')\"/>";
+            $html .= "<input type=\"button\" id=\"" . $this->id . "_delete" . "\"  class=\"m-1 btn btn-sm btn-outline-dark\" value=\"" . $this->removeButtonName . "\" onclick=\"deleteRow('".$tableID."')\"/>";
             $html .= "<br>";
             $html .= "</div>";
         }

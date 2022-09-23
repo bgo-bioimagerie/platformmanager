@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Dem extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_dems";
+    }
+
     /**
      * Create the espece table
      * 
@@ -66,7 +70,7 @@ class Dem extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the dem using the given id", 404);
+            throw new PfmParamException("Cannot find the dem using the given id", 404);
         }
     }
 

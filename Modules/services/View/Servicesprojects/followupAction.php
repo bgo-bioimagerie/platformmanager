@@ -5,19 +5,19 @@
 
 <div class="pm-form">
 
-    <div class="col-md-12">
+    <div class="col-12">
     <h3> <?php echo $projectName ?> </h3>
     </div>
     
-    <div class="col-md-12">
+    <div class="col-12">
         <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
     </div>
 
-    <button class="btn btn-primary" id="addentrybutton"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
+    <button class="btn btn-primary mb-3" id="addentrybutton" onclick="addEntryForm()"><?php echo ServicesTranslator::NewEntry($lang) ?></button>
     
     <?php echo $tableHtml ?>
     
-    <div class="col-md-12 text-right">
+    <div class="col-12 text-right">
         <a class="btn btn-primary" href="servicesprojectexport/<?php echo $id_space ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::ExportCsv($lang) ?> </a>
         <a class="btn btn-primary" href="servicesinvoiceprojectquery/<?php echo $id_space ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::InvoiceIt($lang) ?> </a>
     </div>
@@ -27,11 +27,17 @@
 <!--  *************  -->
 <!--  Popup windows  -->
 <!--  *************  -->
-<link rel="stylesheet" type="text/css" href="Framework/pm_popup.css">
-<div id="hider" class="col-xs-12"></div> 
-<div id="entriespopup_box" class="pm_popup_box" style="display: none;">
-    <div class="col-md-1 col-md-offset-11" style="text-align: right;"><a id="entriesbuttonclose" class="glyphicon glyphicon-remove" style="cursor:pointer;"></a></div>
-        <?php echo $formedit ?>
+
+
+<div id="entriespopup_box" class="modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><?php echo ServicesTranslator::service($lang) ?></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      <?php echo $formedit ?>
         <script type="module">
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
@@ -46,9 +52,48 @@
             ];
             dynamicForms.dynamicFields(sourceId, targets, spaceId, true);
         </script>
-</div> 
+      </div>
+    </div>
+  </div>
+</div>
 
+<script>
 
-<?php include 'Modules/services/View/Servicesprojects/editscript.php';  ?>
+    function editentry(id) {
+        var arrayid = id.split("_");
+        showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
+    }
+
+    function showEditEntryForm(id_space, id) {
+        $.post(
+            'servicesgetprojectentry/' + id_space + '/' + id,
+            {},
+            function (data) {
+                $('#formprojectentryprojectid').val(data.id_project);
+                $('#formprojectentrydate').val(data.date);
+                $('#formprojectentryid').val(data.id);
+                $('#formserviceid').val(data.id_service);
+                $('#formservicequantity').val(data.quantity);
+                $('#formservicecomment').val(data.comment);
+
+                let myModal = new bootstrap.Modal(document.getElementById('entriespopup_box'))
+                myModal.show();
+            },
+            'json'
+        );
+    }
+
+    function addEntryForm() {
+        $('#formprojectentryprojectid').val(<?php echo $id_project ?>);
+        $('#formprojectentrydate').val("");
+        $('#formprojectentryid').val(0);
+        $('#formserviceid').val(0);
+        $('#formservicequantity').val("");
+        $('#formservicecomment').val("");
+        let myModal = new bootstrap.Modal(document.getElementById('entriespopup_box'))
+        myModal.show();
+    }
+</script>
+
 
 <?php endblock(); ?>

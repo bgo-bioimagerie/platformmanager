@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class AcStaining extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_stainings";
+    }
+
     /**
      * Create the espece table
      * 
@@ -75,7 +79,7 @@ class AcStaining extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the staining using the given id", 404);
+            throw new PfmParamException("Cannot find the staining using the given id", 404);
         }
     }
 

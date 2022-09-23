@@ -51,8 +51,10 @@ class ClientsuseraccountsController extends ClientsController {
         $modelUser = new CoreUser();
         $userFullName = $modelUser->getUserFUllName($id_user);
         $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
+        $modelClient = new ClClient();
+        $clients = $modelClient->getForList($id_space);
 
-        if (empty($accounts)) {
+        if (empty($clients['ids'])) {
             $_SESSION['flash'] = ClientsTranslator::Client_needed($lang);
             $_SESSION['flashClass'] = 'warning';
         }
@@ -67,7 +69,7 @@ class ClientsuseraccountsController extends ClientsController {
     /**
      * Returns a form in which user is given and we can select clients to link them to
      */
-    public function generateClientsUserForm($id_space, $id_user) {
+    public function generateClientsUserForm($id_space, $id_user, $todo=false) {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUser = new CoreUser();
@@ -78,8 +80,14 @@ class ClientsuseraccountsController extends ClientsController {
         $form = new Form($this->request, "clientsusersform");
         $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
         $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"]);
-        $form->setValidationButton(CoreTranslator::Add($lang), "corespaceuseredit" . "/" . $id_space . "/" . $id_user);
-        $form->setButtonsWidth(4, 8);
+
+        $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
+        if ($todo) {
+            $validationUrl .= "?redirect=todo";
+        } 
+
+        $form->setValidationButton(CoreTranslator::Add($lang), $validationUrl);
+
         return $form;
     }
 

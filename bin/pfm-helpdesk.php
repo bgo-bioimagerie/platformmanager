@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Email.php';
+require_once 'Framework/Model.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -14,10 +15,6 @@ function isReply($mail, $headersDetailed) {
     $isReply = array_key_exists("X-PFM-ID", $headersDetailed);
     if(!$isReply) {
         $isReply = array_key_exists("X-PFM", $headersDetailed);
-    }
-    if(!$isReply) {
-        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) &&
-            $headersDetailed["Auto-Submitted"] != "no";
     }
     if(!$isReply) {
         try {
@@ -36,12 +33,7 @@ function isReply($mail, $headersDetailed) {
             // not in header, that's fine
         }
     }
-    if(!$isReply) {
-        $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? $headersDetailed["X-GND-Status"] == "BOUNCE" : false;
-        if($isReply) {
-            Configuration::getLogger()->debug('[helpdesk] bounce');
-        }
-    }
+
     Configuration::getLogger()->debug('[helpdesk] is reply?', [
         'headers' => $headersDetailed,
         'subject' => $mail->subject,
@@ -50,6 +42,26 @@ function isReply($mail, $headersDetailed) {
     return $isReply;
 }
 
+function isAutoReply($mail, $headersDetailed) {
+    $isReply = array_key_exists("X-GND-Status", $headersDetailed) ? str_starts_with($headersDetailed["X-GND-Status"][0], "BOUNCE") : false;
+    if($isReply) {
+        Configuration::getLogger()->debug('[helpdesk] bounce');
+    }
+
+    if(!$isReply) {
+        $isReply = array_key_exists("Auto-Submitted", $headersDetailed) ? str_starts_with($headersDetailed["Auto-Submitted"][0], "auto-replied") : false;
+        if($isReply) {
+            Configuration::getLogger()->debug('[helpdesk] auto-reply');
+        }
+    }
+
+    Configuration::getLogger()->debug('[helpdesk] is auto reply?', [
+        'headers' => $headersDetailed,
+        'subject' => $mail->subject,
+        'reply' => $isReply
+    ]);
+    return $isReply;
+}
 
 function ignore($from) {
     if ($from->mailbox == "MAILER-DAEMON") {
@@ -77,7 +89,12 @@ function parse_rfc822_all_headers(string $header_string): array {
 function _get_body_attach($mbox, $mid) {
     $struct = imap_fetchstructure($mbox, $mid);
 
-    $parts = $struct->parts;
+    $parts = false;
+    try {
+        $parts = $struct->parts;
+    }  catch(Throwable $err) {
+        Configuration::getLogger()->debug('no parts', ['err' => $err, 'struct' => $struct]);
+    }
     $i = 0;
     if (!$parts) { /* Simple message, only 1 piece */
         $attachment = array(); /* No attachments */
@@ -170,15 +187,20 @@ $originDomain = $originInfo[1];
 
 
 if(!$inbox) {
+    Configuration::getLogger()->error('No imap configuration, exiting...');
     exit(0);
 }
 
 if(!$origin) {
-    Configuration::getLogger()->error('No helpdesk_email defined');
+    Configuration::getLogger()->error('No helpdesk_email defined, exiting...');
     exit(1);
 }
 
 Configuration::getLogger()->debug('Connecting...', ['url' => $inbox.':'.$port.'/pop3'.$tls, 'login' => $login, 'tls' => $tls]);
+
+if(Configuration::get('sentry_dsn', '')) {
+    \Sentry\init(['dsn' => Configuration::get('sentry_dsn')]);
+}
 
 while(true) {
     try {
@@ -188,7 +210,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($err);
         }
-        exit(1);
+        sleep(120);
+        continue;
     }
     $mails = FALSE;
     if (FALSE === $mbox) {
@@ -196,7 +219,8 @@ while(true) {
         if(Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException(new PfmException('helpdesk email connection failed, exiting', 500));
         }
-        exit(1);
+        sleep(120);
+        continue;
     } else {
         $info = imap_check($mbox);
         if (FALSE !== $info) {
@@ -231,94 +255,116 @@ while(true) {
             }
 
             foreach ($mails as $mail) {
-                $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
-                $header = imap_rfc822_parse_headers($headerText);
-                $headersDetailed = parse_rfc822_all_headers($headerText);
-                
-                $mailContent = _get_body_attach($mbox, $mail->uid);
-                imap_delete($mbox, $mail->uid);
+                try {
+                    $headerText = imap_fetchHeader($mbox, $mail->uid, FT_UID);
+                    $header = imap_rfc822_parse_headers($headerText);
+                    $headersDetailed = parse_rfc822_all_headers($headerText);
 
-                $from=$header->from;
-                $to = $header->to;
+                    $mailContent = _get_body_attach($mbox, $mail->uid);
+                    imap_delete($mbox, $mail->uid);
 
-                if(isReply($mail, $headersDetailed) || ignore($from[0])) {
-                    Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
-                    continue;
-                }
+                    $from=$header->from;
+                    $to = $header->to ?? [];
+                    $cc = $header->cc ?? [];
+                    $bcc = $header->bcc ?? [];
+                    $to = array_merge($to, $cc, $bcc);
 
-                $id_space = 0;
-                $toSpace = null;
-                $otherDests = [];
-                $spaceName = null;
-                foreach($to as $dest) {
-                    if($dest->host == $originDomain) {
-                        $recipient = explode('+', $dest->mailbox);
-                        if (count($recipient) == 1 || $recipient[1] == '') {
-                            continue;
-                        }
-                        $spaceName = $recipient[1];
-                        if($spaceName == 'donotreply') {
-                            Configuration::getLogger()->debug("[helpdesk] reply to a donotreply!", ['dest' => $dest->host, 'from' => $from]);
-                            continue;
-                        }
-                        if(!isset($spaceNames[$spaceName])) {
-                            $otherDests[] = $dest->mailbox."@".$dest->host;
-                            continue;
-                        }
-                        $id_space = $spaceNames[$spaceName];
-                        $toSpace = $dest->mailbox."@".$dest->host;
-                    } else {
-                        $otherDests[] = $dest->mailbox."@".$dest->host;
-                    }
-                }
-                if($id_space == 0) {
-                    Configuration::getLogger()->info("Message not related to a space", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
-                    continue;
-                }
-
-                Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
-                $um = new CoreUser();
-                $userEmail = $from[0]->mailbox."@".$from[0]->host;
-                $user = $um->getUserByEmail($userEmail);
-                $id_user = 0;
-                if($user != null) {
-                    $id_user = $user['id'];
-                }
-                $hm = new Helpdesk();
-                $converter = new HtmlConverter(array('strip_tags' => true));
-                $md = $converter->convert($mailContent['body']);
-                $otherDestList = implode(',', $otherDests);
-                $newTicket = $hm->createTicket($id_space, $userEmail, $otherDestList, $mail->subject, $md, $id_user);
-                Configuration::getLogger()->debug('new ticket', ['ticket' => $newTicket]);
-                $id_ticket = $newTicket['ticket'];
-                $id_message = $newTicket['message'];
-                foreach ($mailContent['attachment'] as $attachment) {
-                    $c = new CoreFiles();
-                    $role = CoreSpace::$MANAGER;
-                    $module = "helpdesk";
-                    $name = $attachment['filename'];
-                    $attachId = $c->set(0, $id_space, $name, $role, $module, $id_user);
-                    $file = $c->get($attachId);
-                    $c->copyData($file, $attachment['filedata']);
-                    $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
-                    Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
-                }
-                if($newTicket['is_new']) {
-                    if(isReply($mail, $headersDetailed) || ignore($from[0])) {
-                        Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip response', ['from' => $from[0]]);
+                    if(isAutoReply($mail, $headersDetailed) || ignore($from[0])) {
+                        Configuration::getLogger()->debug('[helpdesk] this is an auto-reply, skip message', ['from' => $from[0]]);
                         continue;
                     }
-                    Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
-                    $from = Configuration::get('helpdesk_email');
-                    $fromInfo = explode('@', $from);
-                    $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
-                    $fromName = $fromInfo[0]. '+' . $spaceName;
-                    $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
-                    $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
-                    $e = new Email();
-                    $e->sendEmail($from, $fromName, $userEmail, $subject, $content);
+
+                    if(!$to) {
+                        Configuration::getLogger()->debug('[helpdesk] no destination found skip message', ['from' => $from[0]]);
+                        continue;
+                    }
+
+                    $id_space = 0;
+                    $toSpace = null;
+                    $otherDests = [];
+                    $spaceName = null;
+                    foreach($to as $dest) {
+                        if($dest->host == $originDomain) {
+                            $recipient = explode('+', $dest->mailbox);
+                            if (count($recipient) == 1 || $recipient[1] == '') {
+                                continue;
+                            }
+                            $spaceName = $recipient[1];
+                            if($spaceName == 'donotreply') {
+                                Configuration::getLogger()->debug("[helpdesk] reply to a donotreply!", ['dest' => $dest->host, 'from' => $from]);
+                                continue;
+                            }
+                            if(!isset($spaceNames[$spaceName])) {
+                                $otherDests[] = $dest->mailbox."@".$dest->host;
+                                continue;
+                            }
+                            $id_space = $spaceNames[$spaceName];
+                            $toSpace = $dest->mailbox."@".$dest->host;
+                        } else {
+                            $otherDests[] = $dest->mailbox."@".$dest->host;
+                        }
+                    }
+                    if($id_space == 0) {
+                        Configuration::getLogger()->info("Message not related to a space", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
+                        continue;
+                    }
+
+                    $helpdesk_active = $sp->getSpaceMenusRole($id_space, 'helpdesk');
+                    if($helpdesk_active == CoreSpace::$INACTIF) {
+                        Configuration::getLogger()->info("helpdesk module inactive, skipping", ["to" => $to, "from" => $from, "subject" => $mail->subject]);
+                        continue;
+                    }
+
+                    Configuration::getLogger()->debug("New ticket", ["from" => $from[0]->personal." [".$from[0]->mailbox."@".$from[0]->host."]"]);
+                    $um = new CoreUser();
+                    $userEmail = $from[0]->mailbox."@".$from[0]->host;
+                    $user = $um->getUserByEmail($userEmail);
+                    $id_user = 0;
+                    if($user != null) {
+                        $id_user = $user['id'];
+                    }
+                    $hm = new Helpdesk();
+                    $converter = new HtmlConverter(array('strip_tags' => true));
+                    $md = $converter->convert($mailContent['body']);
+                    $otherDestList = implode(',', $otherDests);
+                    $newTicket = $hm->createTicket($id_space, $userEmail, $otherDestList, $mail->subject, $md, $id_user);
+                    Configuration::getLogger()->debug('new ticket', ['ticket' => $newTicket]);
+                    $id_ticket = $newTicket['ticket'];
+                    $id_message = $newTicket['message'];
+                    foreach ($mailContent['attachment'] as $attachment) {
+                        $c = new CoreFiles();
+                        $role = CoreSpace::$MANAGER;
+                        $module = "helpdesk";
+                        $name = $attachment['filename'];
+                        $attachId = $c->set(0, $id_space, $name, $role, $module, $id_user);
+                        $file = $c->get($attachId);
+                        $c->copyData($file, $attachment['filedata']);
+                        $attachIds = $hm->attach($id_ticket, $id_message, [['id' => $attachId, 'name' => $name]]);
+                        Configuration::getLogger()->debug('Attachements', ['ids' => $attachIds]);
+                    }
+
+                    $fromMyself = ($toSpace == $userEmail);
+                    if(!$fromMyself) {
+                        if($newTicket['is_new']) {
+                            Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+                            $from = Configuration::get('helpdesk_email');
+                            $fromInfo = explode('@', $from);
+                            $from = $fromInfo[0]. '+' . $spaceName . '@' . $fromInfo[1];
+                            $fromName = $fromInfo[0]. '+' . $spaceName;
+                            $subject = '[Ticket #' . $id_ticket . '] '.$mail->subject;
+                            $content = 'A new ticket has been created for '.$spaceName.' and will be managed soon.';
+                            $e = new Email();
+                            $headers = ["Auto-Submitted" => "auto-replied"];
+                            $e->sendEmail($from, $fromName, $userEmail, $subject, $content, $headers);
+                        }
+                        $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
+                    }
+
+                } catch(Throwable $e) {
+                    Configuration::getLogger()->error('[helpdesk] mail parsing error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+                    imap_delete($mbox, $mail->uid);
                 }
-                $hm->notify($id_space, $id_ticket, "en", $newTicket['is_new']);
+
             }
             imap_close($mbox, CL_EXPUNGE);
             $isClosed = true;
@@ -339,6 +385,7 @@ while(true) {
             Configuration::getLogger()->debug('Close error', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
     }
+    Model::resetDatabase();
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 
     }

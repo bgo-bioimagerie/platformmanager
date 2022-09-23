@@ -32,7 +32,12 @@ class Router {
     public function listRoutes() {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        $loaded = [];
         foreach ($modulesNames as $moduleName) {
+            if(isset($loaded[$moduleName])){
+                continue;
+            }
+            $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {
@@ -40,7 +45,7 @@ class Router {
                 $className = ucfirst($moduleName) . "Routing";
                 $routingClass = new $className ();
                 if(method_exists($routingClass, "routes")){
-                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
+                    Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
                     $routingClass->routes($this->router);
                 }
             }
@@ -79,7 +84,12 @@ class Router {
     private function route($request) {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
+        $loaded = [];
         foreach ($modulesNames as $moduleName) {
+            if(isset($loaded[$moduleName])){
+                continue;
+            }
+            $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {
@@ -94,7 +104,7 @@ class Router {
         }
 
         $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
-        //Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
+        // Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
         if(!$match) {
             Configuration::getLogger()->debug('No route match, check old way');
@@ -177,7 +187,11 @@ class Router {
             $this->runAction($controller, $urlInfo, $action, $args);
             $reqEnd = microtime(true);
         } catch (Throwable $e) {
-            Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            if ($e instanceOf PfmException && !$e->sendReports) {
+                Configuration::getLogger()->debug('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            } else {
+                Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
+            }
             $reqEnd = microtime(true);
             $this->manageError($e);
         }
@@ -189,7 +203,7 @@ class Router {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['route' => $reqRoute]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['route' => $reqRoute]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -294,11 +308,15 @@ class Router {
      */
     private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
 
-        $id_space = isset($args['id_space']) ? $args['id_space'] : null;
+        $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
+
         $space = null;
         if ($id_space) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
+            if(!$space) {
+                throw new PfmUserException('space not found', 404);
+            }
         }
 
 
@@ -314,7 +332,7 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require ($fileController);
+            require_once ($fileController);
             $controller = new $classController ($request, $space);
             $this->useRouterController = false;
             return $controller;
@@ -396,19 +414,26 @@ class Router {
 
         $view = new View('error');
         $view->setFile('Modules/error.php');
-        $view->generate(array(
-            'context' => [
-                    "mainMenu" =>null,
-                    "sideMenu" => null,
-                    "spaceMenu" => null,
-                    "rootWeb" => Configuration::get("rootWeb", "/"),
-                    "lang" => 'en',
-                    "currentSpace" => null,  // current space if any
-                    "role" => -1   // user role in space if any
-            ],
-            'type' => $type,
-            'message' => $exception->getMessage()
-        ));
+        try {
+            $view->generate(array(
+                'context' => [
+                        "mainMenu" =>null,
+                        "sideMenu" => null,
+                        "spaceMenu" => null,
+                        "rootWeb" => Configuration::get("rootWeb", "/"),
+                        "lang" => 'en',
+                        "currentSpace" => null,  // current space if any
+                        "role" => -1 ,  // user role in space if any,
+                        "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "dev" => false
+                ],
+                'type' => $type,
+                'message' => $exception->getMessage()
+            ));
+        } catch(Throwable $e) {
+            echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
+            echo '<br>'.$exception->getMessage();
+        }
     }
 
 }

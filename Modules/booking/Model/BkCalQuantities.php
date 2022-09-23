@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class BkCalQuantities extends Model {
 
+    public function __construct() {
+        $this->tableName = "bk_calquantities";
+    }
+
     /**
      * Create the calsupplementaries table
      *
@@ -40,9 +44,29 @@ class BkCalQuantities extends Model {
         return $data->fetchAll();
     }
 
-    public function calQuantitiesByResource($id_space, $id_resource) {
-        $sql = "select * from bk_calquantities WHERE id_resource=? AND deleted=0 AND id_space=?";
+    public function getByResource($id_space, $id_resource, $include_deleted=false, $sort=false) {
+        $sql = "SELECT * from bk_calquantities WHERE id_resource=? AND id_space=?";
+        if (!$include_deleted) {
+            $sql .= " AND deleted=0";
+        }
+        if ($sort) {
+            $sql .= " ORDER BY deleted ASC, id DESC";
+        }
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
+    }
+
+    public function getById($id_space, $id_qte) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id=? AND id_space=?";
+        return $this->runRequest($sql, array($id_qte, $id_space))->fetch();
+    }
+
+    /**
+     * check if a quantity is deleted
+     */
+    public function isDeleted($id_space, $id_qte) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id=? AND id_space=? AND deleted=1";
+        $req = $this->runRequest($sql, array($id_qte, $id_space));
+        return $req->rowCount() > 0;
     }
 
     public function getAll($id_space) {
@@ -100,6 +124,16 @@ class BkCalQuantities extends Model {
         }
     }
 
+    public function getBySupID($id_space, $id_quantity, $id_resource) {
+        $sql = "SELECT * FROM bk_calquantities WHERE id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $req = $this->runRequest($sql, array($id_quantity, $id_resource, $id_space));
+        if ($req->rowCount() == 1) {
+            return $req->fetch();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Add a supplementary
      * @param unknown $name
@@ -117,7 +151,7 @@ class BkCalQuantities extends Model {
      * @param unknown $name
      * @param unknown $mandatory
      */
-    public function setCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit = 0) {
+    public function setSupplementary($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit, $duration) {
 
         if ($this->isCalQuantityId($id_space, $id_quantity, $id_resource)) {
             $this->updateCalQuantity($id_space, $id_quantity, $id_resource, $name, $mandatory, $is_invoicing_unit);
@@ -154,8 +188,7 @@ class BkCalQuantities extends Model {
      * @param unknown $id
      */
     public function delete($id_space, $id) {
-        $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM bk_calquantities WHERE id = ? AND id_space=?";
+        $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW(), mandatory=0 WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
@@ -215,21 +248,22 @@ class BkCalQuantities extends Model {
         return $supData;
     }
 
-    public function removeUnlistedQuantities($id_space, $packageID) {
-
-        $sql = "select id, id_quantity from bk_calquantities WHERE id_space=?";
+    public function removeUnlisted($id_space, $ids, $idIsSup=false) {
+        $id_column = $idIsSup ? "id_quantity" : "id";
+        $sql = "SELECT id, id_quantity FROM bk_calquantities WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
-        $databasePackages = $req->fetchAll();
-        foreach ($databasePackages as $dbPackage) {
+        $databaseQuantities = $req->fetchAll();
+
+        foreach ($databaseQuantities as $dbQte) {
             $found = false;
-            foreach ($packageID as $pid) {
-                if ($dbPackage["id_quantity"] == $pid) {
+            foreach ($ids as $id) {
+                if ($dbQte[$id_column] == $id) {
                     $found = true;
                     break;
                 }
             }
             if (!$found) {
-                $this->delete($id_space, $dbPackage["id"]);
+                $this->delete($id_space, $dbQte["id"]);
             }
         }
     }

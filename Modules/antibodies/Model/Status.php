@@ -10,6 +10,10 @@ require_once 'Framework/Constants.php';
  */
 class Status extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_status";
+    }
+
     /**
      * Create the Status table
      * 
@@ -77,7 +81,7 @@ class Status extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the Status using the given id", 404);
+            throw new PfmParamException("Cannot find the Status using the given id", 404);
         }
     }
 

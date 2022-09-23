@@ -44,13 +44,13 @@ class CatalogconfigController extends CoresecureController {
         $formMenusactivation = $this->menusactivationForm($id_space, 'catalog', $lang);
         
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'catalog', 'th-list');
+            $this->menusactivation($id_space, 'catalog', 'list');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
         $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'catalogsettings', 'th-list', 'catalog');
+            $this->menusactivation($id_space, 'catalogsettings', 'list', 'catalog');
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
@@ -117,7 +117,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_antibodies);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -132,7 +132,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addSelect("ca_use_resources", CatalogTranslator::Resources_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_resources);
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }
@@ -149,7 +149,7 @@ class CatalogconfigController extends CoresecureController {
         $form->addUpload("CaPublicPageLogo", CatalogTranslator::Logo($lang));
 
         $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
-        $form->setButtonsWidth(2, 9);
+
 
         return $form;
     }

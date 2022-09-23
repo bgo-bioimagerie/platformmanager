@@ -3,14 +3,14 @@
     
 <?php startblock('content') ?>
 <div id="logs" class="row container">
-    <div class="col-sm-12">
+    <div class="col-12">
        <input :value="dateToYYYYMMDD(fromFilter)"
                    @input="fromFilter = $event.target.valueAsDate" type="date"/>
        <input :value="dateToYYYYMMDD(toFilter)"
                    @input="toFilter = $event.target.valueAsDate" type="date"/>
         <button v-on:click="refresh" type="button" class="btn btn-primary">Refresh</button>
     </div>
-    <div class="col-sm-12">
+    <div class="col-12">
       <table class="table" aria-label="list of logs">
       <thead><tr><th scope="date">Date</th><th scope="author">Author</th><th scope="message">Message</th></tr></thead>
       <tbody>
@@ -30,12 +30,13 @@
 let today = new Date();
 let yesterday = new Date();
 yesterday.setDate( today.getDate() - 1);
-var app = new Vue({
-  el: '#logs',
-  data: {
-    logs: <?php echo json_encode($logs);?>,
-    fromFilter: yesterday,
-    toFilter: today
+Vue.createApp({
+  data() {
+    return {
+      logs: <?php echo json_encode($logs);?>,
+      fromFilter: yesterday,
+      toFilter: today
+    }
   },
   mounted() {
     this.refresh()
@@ -63,6 +64,6 @@ var app = new Vue({
             })
     }
   }
-})
+}).mount('#logs')
 </script>
 <?php endblock(); ?>

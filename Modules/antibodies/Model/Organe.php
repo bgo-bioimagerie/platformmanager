@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Organe extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_organes";
+    }
+
     /**
      * Create the organe table
      * 
@@ -75,7 +79,7 @@ class Organe extends Model {
             return $unit->fetch();
         }
         else{
-            throw new PfmException("Cannot find the source using the given id", 404);
+            throw new PfmParamException("Cannot find the source using the given id", 404);
         }
     }
 

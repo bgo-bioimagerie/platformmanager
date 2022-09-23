@@ -45,7 +45,7 @@ class InvoicesBaseTest extends BaseTest {
         }
         $this->assertTrue($invoicesEnabled);
 
-        $template = __DIR__."/../externals/pfm/templates/invoice_template.twig";
+        $template = __DIR__."/../externals/pfm/templates/invoices_template.twig";
         copy($template, "/tmp/test.twig");
         $_FILES = ["template" => ["error" => 0, "name" => "test.twig", "tmp_name" => "/tmp/test.twig", "size" => filesize($template)]];
         $req = $this->request([
@@ -57,7 +57,7 @@ class InvoicesBaseTest extends BaseTest {
             $c->runAction('invoices', 'pdftemplate', ['id_space' => $space['id']]);
         } catch(Throwable) {
             if(!file_exists(__DIR__."/../data/invoices/".$space["id"])){
-                mkdir(__DIR__."/../data/invoices/".$space["id"]);
+                mkdir(__DIR__."/../data/invoices/".$space["id"], 0755, true);
             }
             copy($template, __DIR__."/../data/invoices/".$space["id"]."/template.twig");
         }
@@ -203,7 +203,6 @@ class InvoicesBaseTest extends BaseTest {
         ]);
         $c = new ServicesinvoiceprojectController($req, $space);
         $c->runAction('services', 'edit', ['id_space' => $space['id'], 'id_invoice' => $service_invoice_id, 'pdf' => 1]);
-        
     }
 
     protected function listInvoices($space) {

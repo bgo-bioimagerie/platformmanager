@@ -15,11 +15,16 @@ class CoreUser extends Model {
     public static $USER = 1;
     public static $ADMIN = 5;
 
+    public static $HASH_MD5 = 0;
+    public static $HASH_BCRYPT = 1;
+    public static $HASH_DEFAULT = 1;
+
     public function __construct() {
         $this->tableName = "core_users";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("login", "varchar(100)", "");
         $this->setColumnsInfo("pwd", "varchar(100)", "");
+        $this->setColumnsInfo("hash", "int", "0");
         $this->setColumnsInfo("name", "varchar(100)", "");
         $this->setColumnsInfo("firstname", "varchar(100)", "");
         $this->setColumnsInfo("email", "varchar(255)", "");
@@ -78,9 +83,11 @@ class CoreUser extends Model {
     public function createAccount($login, $pwd, $name, $firstname, $email) {
         $bytes = random_bytes(10);
         $apikey = bin2hex($bytes);
+
+        $encodedPwd = $this->passwordEncode($pwd);
         
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, validated, date_created, status_id, apikey) VALUES (?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, md5($pwd), $name, $firstname, $email, 0, date("Y-m-d"), CoreStatus::$USER, $apikey));
+        $sql = "INSERT INTO core_users (login, pwd, hash, name, firstname, email, validated, date_created, status_id, apikey) VALUES (?,?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, $encodedPwd, self::$HASH_DEFAULT, $name, $firstname, $email, 0, date("Y-m-d"), CoreStatus::$USER, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -218,15 +225,25 @@ class CoreUser extends Model {
                 continue;
             }
 
-            $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
             if($remove) {
+                $sql = "SELECT status FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                $res = $this->runRequest($sql, array($r['id'], $r['space']));
+                $role = 0;
+                if($res->rowCount() == 1) {
+                    $obj = $res->fetch();
+                    $role = $obj['status'];
+                }
                 $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_UNJOIN,
                     "space" => ["id" => $r['space']],
                     "user" => ["id" => intval($r['id'])],
+                    "role" => $role
                 ]); 
             } else {
+                $sql = "UPDATE core_j_spaces_user SET status=0 WHERE id_user=? AND id_space=?";
+                $this->runRequest($sql, array($r['id'], $r['space']));
                 Events::send([
                     "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
                     "space" => ["id" =>  $r['space']],
@@ -234,8 +251,6 @@ class CoreUser extends Model {
                     "role" => 0
                 ]); 
             }
-            $this->runRequest($sql, array($r['id'], $r['space']));
-            
 
             if($expireContract || $remove) {
                 Configuration::getLogger()->debug('[user][disable] disable bk_authorization', ['user' => $r]);
@@ -315,7 +330,7 @@ class CoreUser extends Model {
             $tmp = $req->fetch();
             return $tmp[0];
         }
-        return 0;
+        return null;
     }
 
     /**
@@ -332,7 +347,6 @@ class CoreUser extends Model {
         $pwd = Configuration::get('admin_password', 'admin');
 
         $bytes = random_bytes(10);
-        // $apikey = bin2hex($bytes);
         $apikey = Configuration::get('admin_apikey', bin2hex($bytes));
 
         try {
@@ -340,8 +354,9 @@ class CoreUser extends Model {
             Configuration::getLogger()->info('Admin user already exists, skipping creation');
         } catch (Exception $e) {
             Configuration::getLogger()->info('Create admin user', ['admin' => $admin_user]);
-            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($admin_user, md5($pwd), "admin", "admin", $email, CoreStatus::$ADMIN, "local", date("Y-m-d"), $apikey));
+            $encodedPwd = $this->passwordEncode($pwd);
+            $sql = "INSERT INTO core_users (login, pwd, hash, name, firstname, email, status_id, source, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($admin_user, $encodedPwd, self::$HASH_DEFAULT, "admin", "admin", $email, CoreStatus::$ADMIN, "local", date("Y-m-d"), $apikey));
         }
     }
 
@@ -358,7 +373,7 @@ class CoreUser extends Model {
 
         $pwde = $pwd;
         if ($encrypte) {
-            $pwde = md5($pwd);
+            $pwde = $this->passwordEncode($pwd);
         }
 
         $bytes = random_bytes(10);
@@ -369,8 +384,8 @@ class CoreUser extends Model {
             $date_end_contract = null;
         }
 
-        $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($login, $pwde, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
+        $sql = "INSERT INTO core_users (login, pwd, hash, name, firstname, email, status_id, date_end_contract, is_active, date_created, apikey) VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($login, $pwde, self::$HASH_DEFAULT, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $datecreated, $apikey));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -391,12 +406,16 @@ class CoreUser extends Model {
         return false;
     }
 
+    /**
+     * Import users from old instances, using md5 for pwd
+     */
+
     public function importUser($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source) {
         $sql = "SELECT id FROM core_users WHERE login=?";
         $req = $this->runRequest($sql, array($login));
         if ($req->rowCount() == 0) {
-            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, source) VALUES(?,?,?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($login, $pwd, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source));
+            $sql = "INSERT INTO core_users (login, pwd, name, firstname, email, status_id, date_end_contract, is_active, source) VALUES(?,?,?,?,?,?,?,?,?,?)";
+            $this->runRequest($sql, array($login, $pwd, self::$HASH_MD5, $name, $firstname, $email, $status_id, $date_end_contract, $is_active, $source));
             return $this->getDatabase()->lastInsertId();
         } else {
             $u = $req->fetch();
@@ -480,20 +499,25 @@ class CoreUser extends Model {
      *      "invalid_password" if login exists and password does not match
      */
     public function connect($login, $pwd) {
-        $sql = "select id, is_active, validated from core_users where login=? and pwd=?";
-        $user = $this->runRequest($sql, array(
-            $login,
-            md5($pwd)
-        ));
-        if ($user->rowCount() == 1) {
-            $req = $user->fetch();
-            if ($req ["is_active"] == 1 && $req ["validated"] == 1) {
-                return "allowed";
-            } else {
-                return "inactive";
-            }
+        $sql = "SELECT * FROM core_users WHERE login=?";
+        $res = $this->runRequest($sql, [$login]);
+        if($res->rowCount() != 1) {
+            Configuration::getLogger()->debug('[core][connect] user not found', ['login' => $login]);
+            return "invalid_login";
+        }
+        $user = $res->fetch();
+        $hash = $user['hash'];
+        $pwdDb = $user['pwd'];
+        if(!$this->comparePasswords($pwd, $pwdDb, $hash)) {
+            Configuration::getLogger()->debug('[core][connect] invalid password', ['user' => $user]);
+            return "invalid_password";
+        }
+
+        if ($user["is_active"] == 1 && $user["validated"] == 1) {
+            return "allowed";
         } else {
-            return $this->isUser($login) ? "invalid_password" : "invalid_login";
+            Configuration::getLogger()->debug('[core][connect] inactive user', ['user' => $user]);
+            return "inactive";
         }
     }
 
@@ -506,9 +530,7 @@ class CoreUser extends Model {
     public function getUserByLogin($login) {
         $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
             from core_users where login=?";
-        $user = $this->runRequest($sql, array(
-            $login
-        ));
+        $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
@@ -518,9 +540,7 @@ class CoreUser extends Model {
 
     public function getUserIDByLogin($login) {
         $sql = "select id from core_users where login=?";
-        $user = $this->runRequest($sql, array(
-            $login
-        ));
+        $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() > 0) {
             $tmp = $user->fetch();
             return $tmp[0]; // get the first line of the result
@@ -653,14 +673,11 @@ class CoreUser extends Model {
             $contractDate = $user ["date_end_contract"];
             $today = date("Y-m-d", time());
 
-            if ($contractDate != null) {
-                if ($contractDate < $today) {
-                    $this->setactive($user["id"], 0);
-
-                    // desactivate authorizations
-                    $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
-                    $this->runRequest($sql, array($user ['id'], date("Y-m-s")));
-                }
+            if ($contractDate != null && $contractDate < $today) {
+                $this->setactive($user["id"], 0);
+                // desactivate authorizations
+                $sql = "UPDATE bk_authorization SET is_active=0, date_desactivation=? WHERE user_id=?";
+                $this->runRequest($sql, array($user ['id'], date("Y-m-s")));
             }
         }
     }
@@ -696,12 +713,9 @@ class CoreUser extends Model {
                 $timec = date("Y-m-d", $timec + $numberYear * 31556926);
 
                 $changedUsers = array();
-                if ($timec <= $today) {
-                    if ($timell <= $today) {
-                        //echo "desactivate " . $user ['id'] . " with logindate <br>";
-                        $this->setactive($user ['id'], 0);
-                        $changedUsers [] = $user ['id'];
-                    }
+                if ($timec <= $today && $timell <= $today) {
+                    $this->setactive($user ['id'], 0);
+                    $changedUsers [] = $user ['id'];
                 }
             }
         }
@@ -716,9 +730,10 @@ class CoreUser extends Model {
      *        	new password
      */
     public function changePwd($id, $pwd) {
-        $sql = "update core_users set pwd=? where id=?";
+        $sql = "update core_users set pwd=?, hash=? where id=?";
         $this->runRequest($sql, array(
-            md5($pwd),
+            $this->passwordEncode($pwd),
+            self::$HASH_DEFAULT,
             $id
         ));
     }
@@ -778,7 +793,6 @@ class CoreUser extends Model {
      * @return bool
      */
     public function isEmailFormat($email) {
-        $regexp = Configuration::get('email_regexp');
         return preg_match(Configuration::get('email_regexp'), $email); 
     }
 
@@ -888,8 +902,6 @@ class CoreUser extends Model {
 
         // search for LDAP account
         else {
-            //echo "into LDap <br/>";
-            $modelCoreConfig = new CoreConfig();
             if (CoreLdapConfiguration::get('ldap_use', 0)) {
 
                 $modelLdap = new CoreLdap();
@@ -898,18 +910,11 @@ class CoreUser extends Model {
                     return "Cannot connect to ldap using the given login and password";
                 } else {
                     // update the user infos
-                    $status = CoreLdapConfiguration::get('ldap_default_status', 1);
                     $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-
                     $userInfo = $this->user->getUserByLogin($login);
-                    //print_r($userInfo);
-
-                    $modelSpace = new CoreSpace();
-                    $spacesToActivate = $modelSpace->getSpaces('id');
-                    foreach ($spacesToActivate as $spa) {
-                        $modelSpace->setUserIfNotExist($userInfo['idUser'], $spa['id'], $status);
+                    if(!$userInfo['apikey']) {
+                        $this->user->newApiKey($userInfo['idUser']);
                     }
-
                     return $this->user->isActive($login);
                 }
             }
@@ -923,7 +928,7 @@ class CoreUser extends Model {
         $pass = array(); //remember to declare $pass as an array
         $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
         for ($i = 0; $i < 8; $i++) {
-            $n = rand(0, $alphaLength);
+            $n = random_int(0, $alphaLength);
             $pass[] = $alphabet[$n];
         }
         return implode($pass); //turn the array into a string
@@ -981,7 +986,17 @@ class CoreUser extends Model {
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
-}
+    }
+
+    public function countSpaceActiveUsers($id_space) {
+        $sql = "SELECT count(core_users.id) AS total "
+                . "FROM core_j_spaces_user "
+                . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
+                . "WHERE core_j_spaces_user.id_space=?";
+        $req = $this->runRequest($sql, array($id_space));
+        $total = $req->fetch();
+        return $total['total'];
+    }
 
     /**
      * get the informations of a user from it's id
@@ -1001,9 +1016,9 @@ class CoreUser extends Model {
             return $req->fetch();
         } else {
             return array("id" => 0,
-                "login" => 'unknown',
-                "firstname" => 'unknown',
-                "name" => 'unknown',
+                "login" => Constants::UNKNOWN,
+                "firstname" => Constants::UNKNOWN,
+                "name" => Constants::UNKNOWN,
                 "email" => '',
                 "pwd" => '',
                 "id_status" => 1,
@@ -1014,6 +1029,28 @@ class CoreUser extends Model {
                 "date_end_contract" => null,
                 "is_active" => 1,
                 "source" => 'local');
+        }
+    }
+
+    public function passwordEncode(string $pwd, int $hash=1):string {
+        switch ($hash) {
+            case self::$HASH_MD5:
+                // backward compat for old accounts
+                return md5($pwd);
+            case self::$HASH_BCRYPT:
+                return password_hash($pwd, PASSWORD_BCRYPT);
+            default:
+                return md5($pwd);
+        }
+    }
+
+    public function comparePasswords(string $pwd, string $encodedPwd, int $hash):bool {
+        switch ($hash) {
+            case self::$HASH_MD5:
+                return $this->passwordEncode($pwd, $hash) == $encodedPwd;
+            case self::$HASH_BCRYPT:
+            default:
+                return password_verify($pwd, $encodedPwd);
         }
     }
 }

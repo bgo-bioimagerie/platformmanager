@@ -53,6 +53,7 @@ Following env variables can be used to override Config/conf.ini:
 * SMTP_HOST: mailhog  # smtp host name
 * SMTP_PORT: 25  # smtp port
 * SMTP_FROM: support@genouest.org  # mail *from* address
+* SMTP_TLS: 0 # activate tls support for smtp, false by default
 * PFM_MODE: prod  # optional [dev|*prod*|test], dev mode adds a console in browser with sql info
 * PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)
 * PFM_ADMIN_EMAIL: admin@pfm.org  # superadmin email
@@ -88,6 +89,7 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
 * PFM_TIMEZONE: server timezone (Europe/Paris, ..., defaults to UTC)
+* PFM_MEMORY: sets php memory_limit (PFM_MEMORY: 1024M for example, else use default php settings) for pfm-events, pfm-helpdesk
 
 And .env file should define (according to variables used):
 
@@ -124,3 +126,7 @@ And .env file should define (according to variables used):
   * PFM_LDAP_FIRSTNAME_ATTR: "givenname" ldap firstname attribute
   * PFM_LDAP_MAIL_ATTR: "mail" ldap email attribute
   * PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set
+
+### Install
+
+See [install](./upgrade)

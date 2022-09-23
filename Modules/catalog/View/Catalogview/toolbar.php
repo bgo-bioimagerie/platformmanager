@@ -49,7 +49,7 @@
 
 </style>
 <div class="row" style="background-color:#ffffff;">
-    <div class="col-xs-12" style="text-align: center;">
+    <div class="col-12" style="text-align: center;">
         <h2> <?php echo CatalogTranslator::Catalog($lang) ?></h2>
     </div>
     <br/>
@@ -59,10 +59,10 @@
             $selectedStyle = "background-color: #337ab7; color: #ffffff";
         }
     ?>
-        <div class="col-xs-4 col-md-2">
-            <div class="panel panel-default" style="text-align: center; <?php echo $selectedStyle; ?>">
-                <div class="panel-heading"></div>
-                <div class="panel-body">
+        <div class="col-4 col-md-2">
+            <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
+                <div class="card-header"></div>
+                <div class="card-body">
                     <a style="text-align: center; <?php echo $selectedStyle; ?>" href="catalog/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
                 </div>
             </div>

@@ -3,6 +3,8 @@
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 
 require_once 'Modules/services/Controller/ServicesstatisticsprojectController.php';
@@ -75,7 +77,7 @@ class StatisticsglobalController extends StatisticsController {
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
         $form->setValidationButton(CoreTranslator::Ok($lang), 'statisticsglobal/' . $id_space);
-        $form->setButtonsWidth(2, 8);
+
 
         if ($form->check()) {
             $dateBegin = CoreTranslator::dateToEn($form->getParameter("date_begin"), $lang);
@@ -90,38 +92,31 @@ class StatisticsglobalController extends StatisticsController {
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
 
-            $f  = $this->generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space);
-            return ['data' => ['file' => $f]];
+            $c = new CoreFiles();
+            $cs = new CoreSpace();
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $name = 'stats_'.GlobalStats::STATS_GLOBAL.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
+            
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+
+            Events::send([
+                "action" => Events::ACTION_STATISTICS_REQUEST,
+                "stat" => GlobalStats::STATS_GLOBAL,
+                "excludeColorCode" => $excludeColorCode,
+                "dateBegin" => $dateBegin,
+                "dateEnd" => $dateEnd,
+                "generateclientstats" => $generateclientstats,
+                "user" => ["id" => $_SESSION['id_user']],
+                "lang" => $lang,
+                "file" => ["id" => $fid],
+                "space" => ["id" => $id_space]
+            ]);
+
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
-    }
-
-    protected function generateStats($dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space) {
-
-        $controllerServices = new ServicesstatisticsprojectController($this->request, $this->currentSpace);
-        $spreadsheet = $controllerServices->getBalance($dateBegin, $dateEnd, $id_space, true);
-
-        $controllerBooking = new BookingstatisticsController($this->request, $this->currentSpace);
-        $spreadsheet = $controllerBooking->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet);
-        $spreadsheet->setActiveSheetIndex(1);
-
-        // write excel file
-        $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
-
-        // record modifications and download file
-
-        if(getenv('PFM_MODE') == 'test') {
-            $tempName = tempnam('/tmp', 'statistics').'.xlsx';
-            Configuration::getLogger()->debug('[statistics] generate stats file', ['file' => $tempName]);
-            $objWriter->save($tempName);
-            return $tempName;
-        }
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="platorm-manager-bilan.xlsx"');
-        header('Cache-Control: max-age=0');
-        $objWriter->save('php://output');
-        return null;
     }
 
 }

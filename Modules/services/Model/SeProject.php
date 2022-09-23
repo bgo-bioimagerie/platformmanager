@@ -18,24 +18,34 @@ require_once 'Modules/services/Model/StockShelf.php';
  */
 class SeProject extends Model {
 
+    public function __construct() {
+        $this->tableName = "se_project";
+    }
+
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_project` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-        `id_space` int(11) NOT NULL,
-		`name` varchar(150) NOT NULL DEFAULT '',
-		`id_resp` int(11) NOT NULL,					
-        `id_user` int(11) NOT NULL,
-		`date_open` DATE,
-		`date_close` DATE,
-		`new_team` int(4) NOT NULL DEFAULT 1,
-		`new_project` int(4) NOT NULL DEFAULT 1,
-		`time_limit` varchar(100) NOT NULL DEFAULT '', 
-        `id_origin` int(11) NOT NULL DEFAULT 0,
-        `closed_by` int(11) NOT NULL DEFAULT 0,
-        `in_charge` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_space` int(11) NOT NULL,
+            `name` varchar(150) NOT NULL DEFAULT '',
+            `id_resp` int(11) NOT NULL,
+            `id_user` int(11) NOT NULL,
+            `date_open` DATE,
+            `date_close` DATE,
+            `new_team` int(4) NOT NULL DEFAULT 1,
+            `new_project` int(4) NOT NULL DEFAULT 1,
+            `time_limit` varchar(100) NOT NULL DEFAULT '', 
+            `id_origin` int(11) NOT NULL DEFAULT 0,
+            `closed_by` int(11) NOT NULL DEFAULT 0,
+            `in_charge` int(11) NOT NULL DEFAULT 0,
+            `samplereturn` text,
+            `samplereturndate` DATE,
+            `id_sample_cabinet` int(11) NOT NULL DEFAULT 0,
+            `samplestocked` int(1) NOT NULL DEFAULT 0,
+            `samplescomment` text,
+            PRIMARY KEY (`id`)
 		);";
         $this->runRequest($sql);
+
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
         $this->addColumn('se_project', 'closed_by', 'int(11)', 0);
         $this->addColumn('se_project', 'in_charge', 'int(11)', 0);
@@ -45,7 +55,6 @@ class SeProject extends Model {
         $this->addColumn('se_project', 'samplestocked', 'int(1)', 0);
         $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
 
-
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
 		    `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_project` int(11) NOT NULL,
@@ -54,10 +63,20 @@ class SeProject extends Model {
             `quantity` varchar(255) NOT NULL,
             `comment` varchar(255) NOT NULL,
             `id_invoice` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
+            PRIMARY KEY (`id`)
 		);";
 
         $this->runRequest($sql2);
+
+        $sql3 = "CREATE TABLE IF NOT EXISTS `se_project_user` (
+            `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id_user` int(11) NOT NULL,
+            `id_project` int(11) NOT NULL,
+            `id_space` int(11) NOT NULL,
+            PRIMARY KEY (`id`)
+        );";
+
+        $this->runRequest($sql3);
     }
 
     public function setSampleStock($id_space, $id, $samplestocked, $id_cabinet, $cabinetcomment){
@@ -551,7 +570,7 @@ class SeProject extends Model {
         return $entry;
     }
 
-    public function setEntryCloded($id_space, $id, $date_close) {
+    public function setEntryClosed($id_space, $id, $date_close) {
         if($date_close == "") {
             $date_close = null;
         }
@@ -779,7 +798,6 @@ class SeProject extends Model {
      */
     public function delete($id_space, $id) {
         $sql = "UPDATE se_project SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        // $sql = "DELETE FROM se_project WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
@@ -801,6 +819,70 @@ class SeProject extends Model {
             return $req->fetchAll();
         }
         return [];
+    }
+
+    public function closedProjectsByPeriod($id_space, $id_user, $date_from, $date_end) {
+        $sql = 'SELECT * FROM se_project WHERE deleted=0 AND date_close is not null AND (date_close>=? AND date_close<=?) AND id_space=? AND id_user=?';
+        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space, $id_user]);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
+    }
+
+    public function getEmailsForClosedProjectsByPeriod($id_space, $date_from, $date_end) {
+        $sql = 'SELECT DISTINCT core_users.email AS email FROM core_users INNER JOIN se_project on se_project.id_user=core_users.id WHERE se_project.deleted=0 AND se_project.date_close is not null AND (se_project.date_close>=? AND se_project.date_close<=?) AND se_project.id_space=?';
+        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space]);
+        if($req->rowCount() > 0) {
+            return $req->fetchAll();
+        }
+        return [];
+    }
+    ///// SE_PROJECT_USER METHODS /////
+
+    public function getProjectUsers($id_space, $id_project) {
+        $sql = "SELECT * FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        return $req->fetchAll();
+    }
+
+    public function getProjectUsersIds($id_space, $id_project) {
+        $sql = "SELECT id_user FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space, $id_project));
+        return $req->fetchAll();
+    }
+
+    public function setProjectUser($id_space, $id_user, $id_project) {
+        if (!$this->isProjectUser($id_space, $id_user, $id_project)) {
+            $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
+            $this->runRequest($sql, array($id_space, $id_user, $id_project));
+            return $this->getDatabase()->lastInsertId();
+        } else {
+            return null;
+        }
+    }
+
+    public function isProjectUser($id_space, $id_user, $id_project) {
+        $sql = "SELECT * FROM se_project_user WHERE id_user=? AND id_project=? AND id_space=? AND deleted=0";
+        $req = $this->runRequest($sql, array($id_user, $id_project, $id_space));
+        if ($req->rowCount() >= 1) {
+            return true;
+        }
+        return false;
+    }
+
+    public function deleteProjectUser($id_space, $id_user, $id_project) {
+        $sql = "UPDATE se_project_user SET deleted=1,deleted_at=NOW() WHERE id_user=? AND id_project=? AND id_space=?";
+        $this->runRequest($sql, array($id_user, $id_project, $id_space));
+    }
+
+    public function deleteAllProjectUsers($id_space, $id_user) {
+        $project_users = $this->getProjectUsers($id_space, $id_user);
+        if (!empty($project_users)) {
+            foreach($project_users as $project_user) {
+                $this->deleteProjectUser($id_space, $id_user, $project_user['id']);
+            }
+        }
     }
 
 }

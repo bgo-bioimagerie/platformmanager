@@ -10,11 +10,16 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreSpaceUser.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
+require_once 'Modules/core/Model/CoreFiles.php';
+
 require_once 'Modules/core/Model/CoreVirtual.php';
 
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
+require_once 'Modules/booking/Model/BkStats.php';
+require_once 'Modules/booking/Model/BkStatsUser.php';
+
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Model/InInvoice.php';
@@ -24,11 +29,17 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/quote/Model/Quote.php';
 require_once 'Modules/services/Model/SeService.php';
+require_once 'Modules/services/Model/SeStats.php';
+
+require_once 'Modules/statistics/Model/GlobalStats.php';
 
 require_once 'Modules/invoices/Model/GlobalInvoice.php';
 
 require_once 'Modules/booking/Model/BookingInvoice.php';
 require_once 'Modules/services/Model/ServicesInvoice.php';
+
+require_once 'Modules/rating/Model/Rating.php';
+require_once 'Modules/rating/Model/RatingTranslator.php';
 
 
 
@@ -66,7 +77,7 @@ class EventHandler {
         if(!Configuration::get('redis_host')) {
             return;
         }
-        Configuration::getLogger()->info('[prometheus] stat', ['action' => $action]);
+        Configuration::getLogger()->debug('[prometheus] stat', ['action' => $action]);
         try {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
@@ -167,7 +178,7 @@ class EventHandler {
     private function isSpaceOwner($id_space, $id_user) {
         $sum = new CoreSpaceUser();
         $link = $sum->getUserSpaceInfo2($id_space, $id_user);
-        if($link['status'] >= CoreSpace::$MANAGER) {
+        if($link && $link['status'] >= CoreSpace::$MANAGER) {
             return true;
         }
         return false;
@@ -200,7 +211,6 @@ class EventHandler {
 
     public function userApiKey($msg) {
         $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
-        // TODO do nothing if not a space manager/admin
         $gm = new Grafana();
         $u = new CoreUser();
         $id_user = $msg['user']['id'];
@@ -214,7 +224,7 @@ class EventHandler {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelResource = new ResourceInfo();
-        $nbResources = $modelResource->admCount('re_info', $msg['space']['id']);
+        $nbResources = $modelResource->admCount($msg['space']['id']);
         
         $stat = ['name' => 'resources', 'fields' => ['value' => $nbResources['total']]];
         $statHandler = new Statistics();
@@ -239,7 +249,7 @@ class EventHandler {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelService = new SeService();
-        $nbServices = $modelService->admCount('se_services', $msg['space']['id']);
+        $nbServices = $modelService->admCount($msg['space']['id']);
         
         $stat = ['name' => 'services', 'fields' => ['value' => $nbServices['total']]];
         $statHandler = new Statistics();
@@ -261,8 +271,6 @@ class EventHandler {
 
     public function spaceQuoteEdit($action, $msg) {
         $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
-        $model = new CoreSpace();
-        $space = $model->getSpace($msg['space']['id']);
         $modelQuote = new Quote();
         
         if (array_key_exists('quote', $msg)) {
@@ -342,7 +350,9 @@ class EventHandler {
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
+        // User is already removed, check if role set in message
+        // if user is at least manager, remove from grafana
+        if(isset($msg['role']) && $msg['role'] >= CoreSpace::$MANAGER ) {
             $g->delUser($space['shortname'], $user['login']);
         }
 
@@ -469,6 +479,81 @@ class EventHandler {
         $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
     }
 
+    public function statRequest($msg) {
+        Configuration::getLogger()->debug('[statRequest] '.$msg['stat'].' statistics');
+        $c = new CoreFiles();
+        $f = $c->get($msg['file']['id']);
+        $file = $c->path($f);
+        $id_space = $msg['space']['id'];
+        $lang = $msg['lang'] ?? 'en';
+        $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$IN_PROGRESS, '');
+        try {
+            switch ($msg["stat"]) {
+                case GlobalStats::STATS_GLOBAL:
+                    $gs = new GlobalStats();
+                    $gs->generateStats($file, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], $msg['space']['id'], $lang);
+                    break;
+                case BkStats::STATS_AUTH_STAT:
+                    $bs = new BkStats();
+                    $bs->generateStats($file, $msg['space']['id'],  $msg['dateBegin'], $msg['dateEnd']);
+                    break;
+                case BkStats::STATS_AUTH_LIST:
+                    $statUserModel = new BkStatsUser();
+                    $resource_id = $msg['resource_id'];
+                    if ($msg['email'] != "") {
+                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $id_space);
+                    } else {
+                        $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
+                    }
+                    break;
+                case BkStats::STATS_BK_USERS:
+                    $model = new BkStatsUser();
+                    $users = $model->bookingUsers($id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $bs = new BkStats();
+                    $bs->exportstatbookingusersCSV($file, $users);
+                    break;
+                case BkStats::STATS_BK:
+                    $bs = new BkStats();
+                    $bs->getBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], null, $lang);
+                    break;
+                case BkStats::STATS_QUANTITIES:
+                    $bs = new BkStats();
+                    $bs->getQuantitiesReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case BkStats::STATS_BK_TIME:
+                    $bs = new BkStats();
+                    $bs->getReservationsRespReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_PROJECTS:
+                    $ss = new SeStats();
+                    $ss->generateBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_PROJECT_SAMPLES:
+                    $ss = new SeStats();
+                    $ss->samplesReport($file, $id_space, $lang);
+                    break;
+                case SeStats::STATS_MAIL_RESPS:
+                    $ss = new SeStats();
+                    $ss->emailRespsReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    break;
+                case SeStats::STATS_ORDERS:
+                    $ss = new SeOrderStats();
+                    $ss->generateBalance($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], null, $lang);
+                    break;
+                default:
+                    Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
+                    break;
+            }
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('[statRequest][error] '.$msg['stat'].' statistics', ['error' => $e->getMessage()]);
+            $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
+            throw $e;
+        }
+        $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$READY, '');
+        Configuration::getLogger()->debug('[statRequest] '.$msg['stat'].' statistics done!');
+    }
+
+
     public function closeRequest($id_space, $rid, $found){
         $cv = new CoreVirtual();
         if(!$found) {
@@ -476,6 +561,66 @@ class EventHandler {
         } else {
             $cv->deleteRequest($id_space, 'invoices', $rid);
         }
+    }
+
+    public function campaignRequest($msg) {
+        Configuration::getLogger()->debug('[campaignRequest] ', ['campaign' => $msg['campaign']['id']]);
+        $id_space = $msg['space']['id'];
+        $c = new CoreSpace();
+        $space = $c->getSpace($id_space);
+        $campaign_id = $msg['campaign']['id'];
+        $cm = new RatingCampaign();
+        $campaign = $cm->get($id_space, $campaign_id);
+        if(!$campaign) {
+            Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
+            return;
+        }
+        $b = new BkCalendarEntry();
+        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date'], CoreSpace::$USER);
+        $p = new SeProject();
+        $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        foreach ($pemails as $email) {
+            if(!in_array($email, $emails)) {
+                $emails[] = $email;
+            }
+        }
+        $cm->set($campaign['id_space'], $campaign['id'], $campaign['from_date'], $campaign['to_date'], $campaign['limit_date'], $campaign['message'], count($emails));
+
+        $me = new Email();
+        $from = Configuration::get('smtp_from');
+        if($c->getSpaceMenusRole($id_space, "helpdesk")) {
+            $from = $me->getFromEmail($space['shortname']);
+        }
+        $fromName = "Platform-Manager";
+
+        $cus = new CoreUserSettings();
+        $cu = new CoreUser();
+        $from_date_str = '';
+        $to_date_str = '';
+        $limit_date_str = '';
+        if($campaign['from_date'] ?? '') {
+            $from_date_str = date('Y-m-d', $campaign['from_date']);
+        }
+        if($campaign['to_date'] ?? '') {
+            $to_date_str = date('Y-m-d', $campaign['to_date']);
+        }
+        if($campaign['limit_date'] ?? '') {
+            $limit_date_str = date('Y-m-d', $campaign['limit_date']);
+        }
+
+        foreach ($emails as $email) {
+            $user = $cu->getUserByEmail($email['email']);
+            $lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
+            $message = RatingTranslator::NewCampaign($lang).'<br/>'.$campaign['message'];
+            $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
+            $message .= '<br/><a href="'.$link.'">'.$link.'</a>';
+            if($limit_date_str) {
+                $message .= '<br/><p>'.RatingTranslator::Deadline($lang).': '.$limit_date_str.'</p>';
+            }
+            $period = CoreTranslator::dateFromEn($from_date_str, $lang).' - '.CoreTranslator::dateFromEn($to_date_str, $lang);
+            $me->sendEmail($from, $fromName, $email['email'], RatingTranslator::Survey($lang).': '.$period, $message, bcc:false, mailing:'campaign@rating');
+        }
+        Configuration::getLogger()->debug('[campaignRequest] '.$msg['campaign']['id'].' done!');
     }
 
     public function invoiceRequest($msg) {
@@ -621,6 +766,12 @@ class EventHandler {
                 case Events::ACTION_PLAN_EDIT:
                     $this->spacePlanEdit($data);
                     break;
+                case Events::ACTION_STATISTICS_REQUEST:
+                    $this->statRequest($data);
+                    break;
+                case Events::ACTION_RATING_CAMPAIGN_NEW:
+                    $this->campaignRequest($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -669,6 +820,10 @@ class Events {
     public const ACTION_SERVICE_PROJECT_EDIT = 710;
     public const ACTION_SERVICE_PROJECT_DELETE = 711;
 
+    public const ACTION_STATISTICS_REQUEST = 800;
+
+    public const ACTION_RATING_CAMPAIGN_NEW = 900;
+
     private static $connection;
     private static $channel;
 
@@ -696,10 +851,15 @@ class Events {
      */
     public static function Close() {
         if(self::$channel != null) {
-            self::$channel->close();
-            self::$connection->close();
-            self::$channel = null;
+            try {
+                self::$channel->close();
+                self::$connection->close();
+            } catch(Throwable $e) {
+                Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
+            } 
         }
+        self::$channel = null;
+
     }
 
     /**
@@ -726,7 +886,7 @@ class Events {
             $amqpMsg = new AMQPMessage(json_encode($message));
             $channel->basic_publish($amqpMsg, 'pfm_events', '');
         } catch (Exception $e) {
-            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage()]);
+            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             return;
         }
     }

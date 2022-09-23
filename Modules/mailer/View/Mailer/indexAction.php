@@ -3,12 +3,15 @@
  require_once 'Modules/core/Model/CoreTranslator.php';
  ?>
 
+<?php startblock('meta') ?>
+	<meta name="robots" content="noindex" />
+<?php endblock() ?>
+
 <?php startblock('stylesheet') ?>
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/dataTables.bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="externals/dataTables/fixedColumns.bootstrap.min.css">
-    <script src="externals/dataTables/jquery.dataTables.min.js"></script>
-    <script src="externals/dataTables/dataTables.bootstrap.min.js"></script>
-    <script src="externals/dataTables/dataTables.fixedColumns.min.js"></script>
+<link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+
+<script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
 <?php endblock() ?>
 
 <!-- body -->     
@@ -16,7 +19,7 @@
 
 <div class="container">
     <?php if($role >= $editRole) { ?>
-    <div class="row"><div class="col-sm-12">
+    <div class="row"><div class="col-12">
     <div >
         <form role="form" action="mailersend/<?php echo $id_space ?>" method="post">
             <div class="page-header"> 
@@ -26,17 +29,17 @@
                 </h1> 
             </div> 
             <br><br/>
-            <div class="form-group">
-                <label class="control-label col-xs-2"><?php echo MailerTranslator::From($lang) ?></label>
-                <div class="col-xs-10">
+            <div class="form-group row">
+                <label class="control-label col-12 col-md-2"><?php echo MailerTranslator::From($lang) ?></label>
+                <div class="col-12 col-md-10">
                     <input class="form-control" id="from" type="text" name="from" value="<?php echo $from ?>" readonly
                         />
                 </div>
             </div>
             <br><br/>
-            <div class="form-group">
-                <label for="to" class="control-label col-xs-2"><?php echo MailerTranslator::To($lang) ?></label>
-                <div class="col-xs-10">
+            <div class="form-group row">
+                <label for="to" class="control-label col-12 col-md-2"><?php echo MailerTranslator::To($lang) ?></label>
+                <div class="col-12 col-md-10">
                     <select class="form-control" id="to" name="to">
                         <OPTION value="all" > all </OPTION>
                         <OPTION value="managers" > <?php echo CoreTranslator::Managers($lang) ?> </OPTION>
@@ -62,25 +65,25 @@
                 </div>
             </div>
             <br><br />
-            <div class="form-group">
-                <label for="subject" class="control-label col-xs-2"><?php echo MailerTranslator::Subject($lang) ?></label>
-                <div class="col-xs-10">
+            <div class="form-group row">
+                <label for="subject" class="control-label col-12 col-md-2"><?php echo MailerTranslator::Subject($lang) ?></label>
+                <div class="col-12 col-md-10">
                     <input class="form-control" id="subject" type="text" name="subject"
                         />
                 </div>
             </div>
             <br><br />
-            <div class="form-group">
-                <label for="content" class="control-label col-xs-2"><?php echo MailerTranslator::Content($lang) ?></label>
-                <div class="col-xs-10">
+            <div class="form-group row">
+                <label for="content" class="control-label col-12 col-md-2"><?php echo MailerTranslator::Content($lang) ?></label>
+                <div class="col-12 col-md-10">
                     <textarea class="form-control" id="content" name="content">
                     </textarea>
                 </div>
             </div>
             <br><br/>
-            <div class="form-group">
+            <div class="form-group row">
                 <br><br/>
-                <div class="col-xs-2 col-xs-offset-10" id="button-div">
+                <div class="col-12" id="button-div">
                     <input type="submit" class="btn btn-primary" value="<?php echo MailerTranslator::Send($lang) ?>" />
                 </div>
             </div>
@@ -90,7 +93,7 @@
 
     </div></div>
     <?php } ?>
-    <div class="row"><div class="col-sm-12">
+    <div class="row mt-3"><div class="col-12">
         <h3>Mails</h3>
         <table id="mails" aria-label="list of mails" class="table">
         <thead>
@@ -119,8 +122,8 @@
         <?php } ?>
         </tbody></table>
     </div></div>
-    <div class="row">
-        <div class="col-xs-12" style="min-height: 50px; border: solid" >
+    <div class="row mt-3">
+        <div class="col-12" style="min-height: 50px; border: solid" >
             <div><strong>Message: <span id="msg_subject"></span></strong></div>
             <div><span id="msg"></span></div>
         </div>

@@ -9,6 +9,10 @@ require_once 'Framework/Model.php';
  */
 class Isotype extends Model {
 
+    public function __construct() {
+        $this->tableName = "ac_isotypes";
+    }
+
     /**
      * Create the isotype table
      * 
@@ -74,7 +78,7 @@ class Isotype extends Model {
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
-            throw new PfmException("Cannot find the isotype using the given id", 404);
+            throw new PfmParamException("Cannot find the isotype using the given id", 404);
         }
     }
 

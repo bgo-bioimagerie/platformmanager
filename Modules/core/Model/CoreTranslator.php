@@ -265,6 +265,13 @@ class CoreTranslator {
         return "Email";
     }
 
+    public static function Confirm_email($lang) {
+        if ($lang == "fr") {
+            return "Confirmez votre Courriel";
+        }
+        return "Confirm your email";
+    }
+
     public static function Phone($lang) {
         if ($lang == "fr") {
             return "Téléphone";
@@ -274,9 +281,9 @@ class CoreTranslator {
 
     public static function Organization($lang) {
         if ($lang == "fr") {
-            return "Organisation/entreprise";
+            return "Organisation / entreprise";
         }
-        return "Organization/Company";
+        return "Organization / Company";
     }
 
     public static function Responsible($lang) {
@@ -590,9 +597,16 @@ class CoreTranslator {
 
     public static function Close($lang = "") {
         if ($lang == "fr") {
-            return "Fermé";
+            return "Fermer";
         }
         return "Close";
+    }
+
+    public static function Closed($lang = "") {
+        if ($lang == "fr") {
+            return "Fermé";
+        }
+        return "Closed";
     }
 
     public static function Modules_configuration($lang = "") {
@@ -1242,25 +1256,11 @@ class CoreTranslator {
         return "Connection page data";
     }
 
-    public static function Carousel($lang) {
-        if ($lang == "fr") {
-            return "Carousel";
-        }
-        return "Carousel";
-    }
-
     public static function Image_Url($lang) {
         if ($lang == "fr") {
             return "Image url";
         }
         return "Image url";
-    }
-
-    public static function ViewCarousel($lang) {
-        if ($lang == "fr") {
-            return "Afficher le carousel";
-        }
-        return "View carousel";
     }
 
     public static function TheTwoPasswordAreDifferent($lang) {
@@ -1820,6 +1820,13 @@ class CoreTranslator {
         return "Add existing account";
     }
 
+    public static function UserAccountAdded($userLogin, $lang) {
+        if ($lang == "fr") {
+            return "le compte " . $userLogin . " à été ajouté à votre espace";
+        }
+        return "User account " . $userLogin . " has been added to your space";
+    }
+
     public static function AccessTo($lang){
         if ($lang == "fr") {
             return "Demande accès à";
@@ -1946,7 +1953,14 @@ class CoreTranslator {
         return "Join requested..."; 
     }
 
-    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null) {
+    public static function JoinWhy($lang){
+        if ($lang == "fr") {
+            return "Qui êtes vous, de quoi avez vous besoin?";
+        }
+        return "Who are you, and what do you need?"; 
+    }
+
+    public static function JoinRequestEmail($login, $spaceName, $userEmail, $userFullName, $lang, $organization = null, $team = null, $comment='') {
         if ($lang == "fr") {
             $message = "Bonjour, <br><br>" . $userFullName . " demande à rejoindre votre espace " . $spaceName. " sur Platform-Manager";
             $message .= ("<br>Login : " . $login);
@@ -1957,6 +1971,7 @@ class CoreTranslator {
             if ($team) {
                 $message .= ("<br>Equipe : " . $team);
             }
+            $message .= ('<br><br>Commentaire: ' . $comment);
             return $message;
         }
         $message = "Hi, <br><br>" . $userFullName . " requests to join your space " . $spaceName. " on Platform-Manager";
@@ -1968,6 +1983,7 @@ class CoreTranslator {
         if ($team) {
             $message .= ("<br>Team: " . $team);
         }
+        $message .= ('<br><br>Comment: '.$comment);
         return $message;
     }
 
@@ -2013,6 +2029,13 @@ class CoreTranslator {
             return "Email de support";
         }
         return "Support email";
+    }
+
+    public static function Policy($lang = "") {
+        if ($lang == "fr") {
+            return "Charte d'utilisation";
+        }
+        return "Usage policy";
     }
 
     public static function MailSubjectPrefix($spaceName = "") {
@@ -2136,6 +2159,126 @@ class CoreTranslator {
             return "optionnel";
         }
         return "optional";
+    }
+
+    public static function NotFound($lang){
+        if($lang == "fr") {
+            return "non trouvé(e)";
+        }
+        return "not found";
+    }
+
+    public static function Disable_Inactivate($lang) {
+        if($lang=="fr") {
+            return "Rendre inactif";
+        }
+        return "Inactivate";
+    }
+
+    public static function Disable_Remove($lang) {
+        if($lang=="fr") {
+            return "Retirer de l'espace";
+        }
+        return "Remove from space";
+    }
+
+    public static function Disable_user_account_on($lang) {
+        if($lang=="fr") {
+            return "Lors de l'expiration";
+        }
+        return "On account expiration";
+    }
+
+    public static function currentTemplate($lang) {
+        if ($lang == "fr") {
+            return "Modèle actuel";
+        }
+        return "Current template";
+    }
+
+    public static function DownloadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Télécharger template";
+        }
+        return "Download template";
+    }
+
+    public static function TheTemplateHasBeenUploaded($lang) {
+        if ($lang == "fr") {
+            return "Le modèle à bien été téléversé";
+        }
+        return "The template has been uploaded";
+    }
+
+    public static function uploadTemplate($lang) {
+        if ($lang == "fr") {
+            return "Téléverser modèle (format Twig)";
+        }
+        return "Upload template (Twig format)";
+    }
+
+    public static function Upload($lang) {
+        if ($lang == "fr") {
+            return "Téléverser";
+        }
+        return "Upload";
+    }
+
+    public static function UploadImages($lang) {
+        if ($lang == "fr") {
+            return "Téléverser images";
+        }
+        return "Upload images";
+    }
+
+    public static function Images($lang) {
+        if ($lang == "fr") {
+            return "Images";
+        }
+        return "Images";
+    }
+
+    public static function PDFTemplate($lang = "") {
+        if ($lang == "fr") {
+            return "Modèle de facture HTML - PDF";
+        }
+        return "HTML - PDF Template";
+    }
+
+    public static function NotConnectedMode($lang) {
+        if($lang == "fr") {
+            return "Vous êtes en mode visiteur, il faut vous <a href=\"/coreconnection\">connecter</a> pour accéder à l'ensemble des fonctionnalités de cet espace";
+
+        }
+        return "You are in visitor mode, you should <a href=\"/coreconnection\">login</a> to access full space features";
+    }
+
+    public static function File($lang) {
+        if($lang == "fr") {
+            return "Fichier";
+        }
+        return "File";
+    }
+
+    public static function CurrentFile($lang) {
+        if($lang == "fr") {
+            return "Fichier actuel";
+        }
+        return "Current file";
+    }
+
+    public static function DownloadError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le téléchargement du fichier.";
+        }
+        return "An error occured during file download.";
+    }
+
+    public static function UploadError($lang = "") {
+        if ($lang == "fr") {
+            return "Une erreur est survenue durant le téléversement du fichier.";
+        }
+        return "An error occured during file upload.";
     }
     
 }
