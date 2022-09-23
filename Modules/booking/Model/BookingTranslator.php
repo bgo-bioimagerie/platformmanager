@@ -1321,6 +1321,13 @@ class BookingTranslator {
         return "Ask to send email when cancel a booking";
     }
 
+    public static function ConfirmationEmail($lang) {
+        if ($lang == "fr") {
+            return "Recevoir un email de confirmation";
+        }
+        return "Send me a confirmation email";
+    }
+
     public static function Reservation_counting($lang) {
         if ($lang == "fr") {
             return "Nombre de réservations";

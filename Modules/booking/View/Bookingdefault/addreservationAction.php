@@ -96,6 +96,13 @@
                 </div>
             <?php } ?>
             <!-- End periodicity -->
+            <div class="row mb-3">
+                <div class="checkbox col-8 mb-3">
+                    <label>
+                        <input id="confirmation_email" class="form-checkbox" type="checkbox" name="confirmation_email" value="no"> <?php echo BookingTranslator::ConfirmationEmail($lang) ?>
+                    </label>
+                </div>
+            </div>
         </div>  
 
         <div class="col-12">
