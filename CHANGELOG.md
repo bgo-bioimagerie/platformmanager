@@ -5,7 +5,28 @@
 ### Features / enhancements
 
 * [cli] add maintenance option to command-line admin tool
-* [ccoreconnexion] allow to use email for login
+* [core] add support for custom plans
+* [rating] add new feature satisfaction campaigns #616
+* [coreconnexion] allow to use email for login
+
+### Fixes
+
+* [booking] on shred calendars, some booking link to id 0 and cannot be edited
+  now bookings from same calendar but different resource are displayed but have no link
+  Closes #714
+
+## 2.8.3
+
+### Fixes
+
+* [booking] remove deleted supinfos fetch in reservation edition, closes #712
+
+## 2.8.2
+
+### Fixes
+
+* [services] fix/enhance order services management (add/remove) combining multiple lines
+  or removing empty quantities
 
 ## 2.8.1
 
@@ -61,6 +82,7 @@
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
 * [booking] show old client account used for a booking, in booking edition in case user switched to new client
+>>>>>>> develop
 
 ## 2.7.0
 

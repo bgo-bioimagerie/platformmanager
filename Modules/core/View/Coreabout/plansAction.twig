@@ -28,6 +28,11 @@
                     {% for feature in plan["features"] %}
                     <li><small>{{feature}}</small></li>
                     {% endfor %}
+                    {% if plan.limits is defined %}
+                    {% for limit,value in plan.limits %}
+                    <li><small>{{limit}} limits: {{value}}</small></li>
+                    {% endfor %}
+                    {% endif %}
                     </ul>
                 </div>
             </div>

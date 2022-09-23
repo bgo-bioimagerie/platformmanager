@@ -70,22 +70,25 @@ class SeOrder extends Model {
     }
 
     public function setService($id_space, $id_order, $id_service, $quantity) {
-        if ($this->isOrderService($id_space, $id_order, $id_service)) {
+        $orderHasService = $this->isOrderService($id_space, $id_order, $id_service);
+        if ($orderHasService == 1) {
             $sql = "UPDATE se_order_service SET quantity=? WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($quantity, $id_order, $id_service, $id_space));
         } else {
+            // if multiple instance of service were registered (backward fix), remove them before setting new service quantity
+            if($orderHasService > 1) {
+                $sql = 'UPDATE se_order_service SET deleted=1,deleted_at=NOW() WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0';
+                $this->runRequest($sql, array($id_order, $id_service, $id_space));
+            }
             $sql = "INSERT INTO se_order_service (id_order, id_service, quantity, id_space) VALUES (?,?,?,?)";
             $this->runRequest($sql, array($id_order, $id_service, $quantity, $id_space));
         }
     }
 
-    public function isOrderService($id_space, $id_order, $id_service) {
+    public function isOrderService($id_space, $id_order, $id_service):int {
         $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_order, $id_service, $id_space));
-        if ($req->rowCount() == 1) {
-            return true;
-        }
-        return false;
+        return $req->rowCount();
     }
 
     public function getOrderServices($id_space, $id_order) {
@@ -107,11 +110,11 @@ class SeOrder extends Model {
     }
 
     public function getOrderServiceQuantity($id_space, $id_order, $id_service){
-        $sql = "SELECT quantity FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
+        $sql = "SELECT sum(quantity) as total FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
 
         $req =  $this->runRequest($sql, array($id_order, $id_service, $id_space));
         if ($req->rowCount() == 1){
-            return $req->fetch()['quantity'];
+            return $req->fetch()['total'];
         }
         return 0;
     }
@@ -411,7 +414,7 @@ class SeOrder extends Model {
      * @param number $id se_order_service
      */
     public function deleteOrderService($id_space, $id_service, $id_order) {
-        $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND id_order=? AND id_space=?";
+        $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND id_order=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_service, $id_order, $id_space));
     }
 
