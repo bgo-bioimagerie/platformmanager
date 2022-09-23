@@ -24,7 +24,8 @@ plans:
       - User satisfaction/rating
     flags:
       - grafana
-      - satisfaction
+      - document
+      - rating
   - name: silver
     color: silver
     id: 2

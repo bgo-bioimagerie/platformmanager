@@ -23,10 +23,12 @@ plans:
       - Grafana statistics interactive dashboards
       - Document visibility scopes
       - Caldav calendar integration
+      - Satisfaction surveys
     flags:
       - grafana
       - documents
       - caldav
+      - rating
   - name: silver
     color: silver
     id: 2

@@ -9,10 +9,13 @@ $logger = Configuration::getLogger();
 $logger->info("Installing database from ". Configuration::getConfigFile());
 
 $doInstall = getenv("INSTALL");
+$doDrop = getenv("SKIP_DROP");
 
 // drop all content if exists
 $cdb = new CoreDB();
-$cdb->dropAll(drop: $doInstall !== "0");
+if($doDrop !== "1") {
+    $cdb->dropAll(drop: $doInstall !== "0");
+}
 
 
 if($doInstall !== false && $doInstall === "0") {

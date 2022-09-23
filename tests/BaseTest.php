@@ -17,10 +17,10 @@ abstract class BaseTest extends TestCase {
         'users' => ['admin1', 'manager1', 'user1', 'admin2', 'manager2', 'user2'],
         'spaces' => [
             'space1' => [
-                "admins" => ["admin1"], "managers" => ["manager1"], "users" => ["user1", "user11"]
+                "plan" => 1, "admins" => ["admin1"], "managers" => ["manager1"], "users" => ["user1", "user11"]
             ],
             'space2' => [
-                "admins" => ["admin2"], "managers" => ["manager2"], "users" => ["user2"]
+                "plan" => 0, "admins" => ["admin2"], "managers" => ["manager2"], "users" => ["user2"]
             ]
         ]
     ];
