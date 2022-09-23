@@ -88,8 +88,14 @@ class Configuration {
                         $yamlData['plans'][0]['flags'] = [];
                     }
                     for($i=1;$i<count($plans);$i++) {
-                            if(!isset($yamlData['plans'][$i]['flags'])) {
+                        if(!isset($yamlData['plans'][$i]['flags'])) {
                             $yamlData['plans'][$i]['flags'] = [];
+                        }
+                        if(isset($yamlData['plans'][$i]['custom'])) {
+                            // custom plans should be set after standard plans
+                            // which inherates from previous plans
+                            // custom plans must define all flags
+                            break;
                         }
                         $yamlData['plans'][$i]['flags'] = array_merge($yamlData['plans'][$i]['flags'], $yamlData['plans'][$i-1]['flags']);
                     }
