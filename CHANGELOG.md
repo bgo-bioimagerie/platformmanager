@@ -7,7 +7,7 @@
 * [cli] add maintenance option to command-line admin tool
 * [core] add support for custom plans
 * [rating] add new feature satisfaction campaigns #616
-
+* [booking] add client name in booking infos
 
 ### Fixes
 

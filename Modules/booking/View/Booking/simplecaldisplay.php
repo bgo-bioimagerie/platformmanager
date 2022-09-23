@@ -4,6 +4,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
 
 $modelBookingSetting = new BkBookingSettings();
+$modelClient = new ClClient();
 $modelBookingSupplemetary = new BkCalSupInfo();
 
 $day_begin = $this->clean($scheduling['day_begin']);
@@ -122,7 +123,7 @@ th {
 					$last_end_time = mktime($day_begin,0,0,$temp[1], $temp[2], $temp[0]);
 					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-						
+						$hcalEntry['client_name'] = ($hcalEntry['responsible_id'] > 0) ? $modelClient->getName($id_space, $hcalEntry['responsible_id']) : "";
 						if($hcalEntry['start_time'] <= $last_end_time){
 							$last_end_time = $hcalEntry['end_time'];
 						}
@@ -130,7 +131,7 @@ th {
 							if($hcalEntry['id'] == 0) {
 								$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
 							}
-							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['client_name'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra && $context['role'] >= CoreSpace::$USER) {
 								$text .= '<br/>'.$extra;

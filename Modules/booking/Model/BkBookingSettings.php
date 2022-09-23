@@ -155,7 +155,7 @@ class BkBookingSettings extends Model {
      * @param boolean $displayHorizontal
      * @return string Summmary in HTML
      */
-    public function getSummary($id_space, $user, $phone, $short_desc, $desc, $displayHorizontal = true, $role=0) {
+    public function getSummary($id_space, $user, $phone, $client, $short_desc, $desc, $displayHorizontal = true, $role=0) {
         $lang = "En";
         if (isset($_SESSION["user_settings"]["language"])) {
             $lang = $_SESSION["user_settings"]["language"];
@@ -181,6 +181,8 @@ class BkBookingSettings extends Model {
                 $summary .= $this->summaryEntry($i, $entryList, $user, $displayHorizontal, BookingTranslator::User($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Phone") {
                 $summary .= $this->summaryEntry($i, $entryList, $phone, $displayHorizontal, BookingTranslator::Phone($lang), $last);
+            } elseif ($entryList[$i]['tag_name'] == "Client") {
+                $summary .= $this->summaryEntry($i, $entryList, $client, $displayHorizontal, ClientsTranslator::Client($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Short desc") {
                 $summary .= $this->summaryEntry($i, $entryList, $short_desc, $displayHorizontal, BookingTranslator::Short_desc($lang), $last);
             } elseif ($entryList[$i]['tag_name'] == "Desc") {
