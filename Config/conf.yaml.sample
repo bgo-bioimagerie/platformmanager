@@ -15,6 +15,8 @@ plans:
       - basic documentation
       - basic helpdesk
       - statistic reports (excel)
+    limits:
+      resources: 4
   - name: bronze
     price: 'tbd...'
     color: sienna
@@ -23,17 +25,30 @@ plans:
       - Grafana statistics interactive dashboards
       - Document visibility scopes
       - Caldav calendar integration
+      - Satisfaction surveys
     flags:
       - grafana
       - documents
       - caldav
+      - rating
+    limits:
+      resources: 10
   - name: silver
     color: silver
     id: 2
     features: []
     flags: []
+    limits:
+      resources: 0
   - name: gold
     color: gold
     id: 3
     features: []
     flags: []
+  - name: custom1
+    custom: for customer 1
+    id: 4
+    features: []
+    flags:
+      - documents
+

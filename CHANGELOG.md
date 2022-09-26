@@ -6,6 +6,15 @@
 
 * [cli] add maintenance option to command-line admin tool
 * [booking] support multiple calendars
+* [core] add support for custom plans
+* [rating] add new feature satisfaction campaigns #616
+* [booking] make confirmation email optional at booking
+
+### Fixes
+
+* [booking] on shred calendars, some booking link to id 0 and cannot be edited
+  now bookings from same calendar but different resource are displayed but have no link
+  Closes #714
 
 ## 2.8.3
 
@@ -74,6 +83,7 @@
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
 * [booking] show old client account used for a booking, in booking edition in case user switched to new client
+>>>>>>> develop
 
 ## 2.7.0
 

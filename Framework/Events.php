@@ -39,6 +39,9 @@ require_once 'Modules/invoices/Model/GlobalInvoice.php';
 require_once 'Modules/booking/Model/BookingInvoice.php';
 require_once 'Modules/services/Model/ServicesInvoice.php';
 
+require_once 'Modules/rating/Model/Rating.php';
+require_once 'Modules/rating/Model/RatingTranslator.php';
+
 
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
@@ -567,6 +570,66 @@ class EventHandler {
         }
     }
 
+    public function campaignRequest($msg) {
+        Configuration::getLogger()->debug('[campaignRequest] ', ['campaign' => $msg['campaign']['id']]);
+        $id_space = $msg['space']['id'];
+        $c = new CoreSpace();
+        $space = $c->getSpace($id_space);
+        $campaign_id = $msg['campaign']['id'];
+        $cm = new RatingCampaign();
+        $campaign = $cm->get($id_space, $campaign_id);
+        if(!$campaign) {
+            Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
+            return;
+        }
+        $b = new BkCalendarEntry();
+        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date'], CoreSpace::$USER);
+        $p = new SeProject();
+        $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        foreach ($pemails as $email) {
+            if(!in_array($email, $emails)) {
+                $emails[] = $email;
+            }
+        }
+        $cm->set($campaign['id_space'], $campaign['id'], $campaign['from_date'], $campaign['to_date'], $campaign['limit_date'], $campaign['message'], count($emails));
+
+        $me = new Email();
+        $from = Configuration::get('smtp_from');
+        if($c->getSpaceMenusRole($id_space, "helpdesk")) {
+            $from = $me->getFromEmail($space['shortname']);
+        }
+        $fromName = "Platform-Manager";
+
+        $cus = new CoreUserSettings();
+        $cu = new CoreUser();
+        $from_date_str = '';
+        $to_date_str = '';
+        $limit_date_str = '';
+        if($campaign['from_date'] ?? '') {
+            $from_date_str = date('Y-m-d', $campaign['from_date']);
+        }
+        if($campaign['to_date'] ?? '') {
+            $to_date_str = date('Y-m-d', $campaign['to_date']);
+        }
+        if($campaign['limit_date'] ?? '') {
+            $limit_date_str = date('Y-m-d', $campaign['limit_date']);
+        }
+
+        foreach ($emails as $email) {
+            $user = $cu->getUserByEmail($email['email']);
+            $lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
+            $message = RatingTranslator::NewCampaign($lang).'<br/>'.$campaign['message'];
+            $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
+            $message .= '<br/><a href="'.$link.'">'.$link.'</a>';
+            if($limit_date_str) {
+                $message .= '<br/><p>'.RatingTranslator::Deadline($lang).': '.$limit_date_str.'</p>';
+            }
+            $period = CoreTranslator::dateFromEn($from_date_str, $lang).' - '.CoreTranslator::dateFromEn($to_date_str, $lang);
+            $me->sendEmail($from, $fromName, $email['email'], RatingTranslator::Survey($lang).': '.$period, $message, bcc:false, mailing:'campaign@rating');
+        }
+        Configuration::getLogger()->debug('[campaignRequest] '.$msg['campaign']['id'].' done!');
+    }
+
     public function invoiceRequest($msg) {
         $id_space = $msg['space']['id'];
         $id_user = $msg['user']['id'];
@@ -713,6 +776,9 @@ class EventHandler {
                 case Events::ACTION_STATISTICS_REQUEST:
                     $this->statRequest($data);
                     break;
+                case Events::ACTION_RATING_CAMPAIGN_NEW:
+                    $this->campaignRequest($data);
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -762,6 +828,8 @@ class Events {
     public const ACTION_SERVICE_PROJECT_DELETE = 711;
 
     public const ACTION_STATISTICS_REQUEST = 800;
+
+    public const ACTION_RATING_CAMPAIGN_NEW = 900;
 
     private static $connection;
     private static $channel;
@@ -825,7 +893,7 @@ class Events {
             $amqpMsg = new AMQPMessage(json_encode($message));
             $channel->basic_publish($amqpMsg, 'pfm_events', '');
         } catch (Exception $e) {
-            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage()]);
+            Configuration::getLogger()->error('[event] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             return;
         }
     }
