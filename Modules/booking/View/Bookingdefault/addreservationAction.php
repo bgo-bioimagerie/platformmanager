@@ -35,6 +35,9 @@
                         <label>
                             <input id="use_package" <?php if($forcePackages) { echo "disabled";}  ?> class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                         </label>
+                        <?php if($forcePackages) { ?>
+                            <input type="hidden" name="use_package" value="yes">
+                        <?php } ?>
                     </div>
 
                     <div class="mb-3" id="package_div">

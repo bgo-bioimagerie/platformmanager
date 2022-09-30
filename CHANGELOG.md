@@ -21,6 +21,7 @@
 ### Fixes
 
 * [booking] remove deleted supinfos fetch in reservation edition, closes #712
+* [booking] fix package selection when booking settings sets "force package"
 
 ## 2.8.2
 
