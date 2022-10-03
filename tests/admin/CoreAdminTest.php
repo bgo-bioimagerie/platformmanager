@@ -54,7 +54,8 @@ class CoreTest extends BaseTest {
                 "description" => "",
                 "user_desactivate" => 1,
                 "on_user_deactivate" => CoreConfig::$ONEXPIRE_INACTIVATE,
-                "admins" => []
+                "admins" => [],
+                "plan" => $data["plan"]
             ]);
             $c = new CorespaceadminController($req);
             $data = $c->runAction('core', 'edit', ['id_space' => 0]);

@@ -1,12 +1,29 @@
 # Changes
 
+## 2.9.0
+
+### Features / enhancements
+
+* [cli] add maintenance option to command-line admin tool
+* [core] add support for custom plans
+* [rating] add new feature satisfaction campaigns #616
+* [booking] make confirmation email optional at booking
+* [services] in project followup, show quantities if not null, and display after service name
+* [booking] add in user pref and booking config choice to view simple or detailed view by default Closes #720
+
+### Fixes
+
+* [booking] on shred calendars, some booking link to id 0 and cannot be edited
+  now bookings from same calendar but different resource are displayed but have no link
+  Closes #714
+
 ## 2.8.3
 
 ### Fixes
 
 * [booking] remove deleted supinfos fetch in reservation edition, closes #712
 * [booking] fix package selection when booking settings sets "force package"
-* [booking] add in user pref and booking config choice to view simple or detailed view by default Closes #720
+* [booking] fix package selection when booking settings sets "force package" closes #719
 
 ## 2.8.2
 
@@ -69,6 +86,7 @@
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
 * [booking] show old client account used for a booking, in booking edition in case user switched to new client
+>>>>>>> develop
 
 ## 2.7.0
 

@@ -30,3 +30,4 @@ Some module has an admin configuration panel.
 * [quote](./module/quote) create quotes for your customers
 * [com](./module/com) manage space communication
 * [helpdesk](./module/helpdesk) lightweight helpdesk system
+* [rating](./module/rating) Rating/satisfaction campaigns
