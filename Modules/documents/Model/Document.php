@@ -48,7 +48,7 @@ class Document extends Model {
     }
     
     public function add($id_space, $title, $id_user){
-        $sql = "INSERT INTO dc_documents (id_space, title, id_user) VALUES (?,?,?)";
+        $sql = "INSERT INTO dc_documents (id_space, title, id_user, url) VALUES (?,?,?, '')";
         $this->runRequest($sql,array($id_space, $title, $id_user));
         return $this->getDatabase()->lastInsertId();
     }
