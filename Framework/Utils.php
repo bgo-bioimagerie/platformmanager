@@ -62,7 +62,7 @@ class Utils {
 
         //if the number is greater than 26, calculate to get the next letters
         if ($num >= 26) {
-            return self::get_col_letter($num/26 - 1) . $letters[$num%26]; 
+            return self::_get_col_letter($num/26 - 1) . $letters[$num%26];
         } else {
             //return the letter
             return $letters[$num];
