@@ -2,9 +2,9 @@
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 $modelBookingSetting = new BkBookingSettings();
-$modelClient = new ClClient();
 $modelBookingSupplemetary = new BkCalSupInfo();
 
 $day_begin = $this->clean($scheduling['day_begin']);
