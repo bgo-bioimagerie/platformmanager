@@ -25,6 +25,7 @@ class PfmFileException extends PfmException {
 }
 
 class PfmParamException extends PfmException {
+    public $sendReports = false;
 
     public function __construct($msg, $code=422) {
         parent::__construct($msg, $code);

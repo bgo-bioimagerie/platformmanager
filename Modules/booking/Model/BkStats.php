@@ -222,7 +222,7 @@ class BkStats {
         $objWriter->save($file);
     }
 
-    function get_col_letter($num) {
+    private function get_col_letter($num) {
         $comp = 0;
         $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
 
