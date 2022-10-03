@@ -124,7 +124,7 @@ th {
 					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
 						if (!$hcalEntry['client_name']) {
-							!$hcalEntry['client_name'] = ClientsTranslator::NoCLientDefined($lang);
+							$hcalEntry['client_name'] = ClientsTranslator::NoCLientDefined($lang);
 						}
 						if($hcalEntry['start_time'] <= $last_end_time){
 							$last_end_time = $hcalEntry['end_time'];
