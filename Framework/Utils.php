@@ -75,7 +75,7 @@ class Utils {
      * @param int $num  index of column, starting at value 1=A, 2=B etc.
      * @return string name of the column
      */
-    public static function get_col_letter($num):string {
+    public static function get_col_letter($num) {
         if($num<=0) {
             throw new PfmException("[utils][get_col_letter] invalid value ".$num);
         }
@@ -85,7 +85,4 @@ class Utils {
 
 }
 
-
 ?>
-
-
