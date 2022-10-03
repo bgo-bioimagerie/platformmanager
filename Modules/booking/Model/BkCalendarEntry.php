@@ -556,7 +556,7 @@ class BkCalendarEntry extends Model {
                 $data[$i]["color_text"] = "#000000";
             }
             if(!$data[$i]["client_name"]) {
-                $data[$i]["client_name"] = "no client defined";
+                $data[$i]["client_name"] = null;
             }
         }
 
