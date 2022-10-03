@@ -123,7 +123,6 @@ th {
 					$last_end_time = mktime($day_begin,0,0,$temp[1], $temp[2], $temp[0]);
 					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-						$hcalEntry['client_name'] = ($hcalEntry['responsible_id'] > 0) ? $modelClient->getName($id_space, $hcalEntry['responsible_id']) : "";
 						if($hcalEntry['start_time'] <= $last_end_time){
 							$last_end_time = $hcalEntry['end_time'];
 						}

@@ -122,7 +122,7 @@
                     } ?>> Tag Visible </OPTION>
                     <OPTION value="0" <?php if ($tag_title_visible == 0) {
                         echo "selected=\"selected\"";
-                    } ?>> Tag Hiden </OPTION>
+                    } ?>> Tag Hidden </OPTION>
                     </select></div>
                 <div class="col-2"><select class="form-control" name="tag_position_rphone">
             <?php
@@ -248,7 +248,7 @@
                     } ?>> Tag Visible </OPTION>
                     <OPTION value="0" <?php if ($tag_title_visible == 0) {
                         echo "selected=\"selected\"";
-                    } ?>> Tag Hiden </OPTION>
+                    } ?>> Tag Hidden </OPTION>
                     </select></div>
     <div class="col-2"><select class="form-control" name="tag_position_sdesc">
     <?php
@@ -298,7 +298,7 @@
                     } ?>> Visible </OPTION>
                     <OPTION value="0" <?php if ($tag_visible == 0) {
                         echo "selected=\"selected\"";
-                    } ?>> Hiden </OPTION>
+                    } ?>> Hidden </OPTION>
                     <OPTION value="2" <?php if ($tag_visible == 2) {
                         echo "selected=\"selected\"";
                     } ?>> Managers </OPTION>
@@ -309,7 +309,7 @@
                     } ?>> Tag Visible </OPTION>
                     <OPTION value="0" <?php if ($tag_title_visible == 0) {
                         echo "selected=\"selected\"";
-                    } ?>> Tag Hiden </OPTION>
+                    } ?>> Tag Hidden </OPTION>
                     </select></div>
                 <div class="col-2"><select class="form-control" name="tag_position_desc">
     <?php
