@@ -39,21 +39,50 @@ class Utils {
             if($now) {
                 return $defaultTs;
             }
-            throw new PfmParamException("invalide date ".$date);
+            throw new PfmParamException("invalid date ".$date);
         }
         $date_en = self::dateToEn($date, $lang);
         if($date_en === false) {
             if($now) {
                 return $defaultTs;
             }
-            throw new PfmParamException("invalide date ".$date);
+            throw new PfmParamException("invalid date ".$date);
         } 
         return strtotime(sprintf("%s %d:%d:%d", $date_en, $hour, $min, $sec));
     }
 
+    /**
+     * Get column name (excel like eg A..Z AA...AZ BA..BZ etc.) from column index
+     * 
+     * @param int $num  index of column, starting at value 0=A, 1=B etc.
+     * @return string name of the column
+     */
+    private static function _get_col_letter($num) {
+        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
+
+        //if the number is greater than 26, calculate to get the next letters
+        if ($num >= 26) {
+            return self::_get_col_letter($num/26 - 1) . $letters[$num%26];
+        } else {
+            //return the letter
+            return $letters[$num];
+        }
+    }
+
+    /**
+     * Get column name (excel like eg A..Z AA...AZ BA..BZ etc.) from column index
+     * 
+     * @param int $num  index of column, starting at value 1=A, 2=B etc.
+     * @return string name of the column
+     */
+    public static function get_col_letter($num) {
+        if($num<=0) {
+            throw new PfmException("[utils][get_col_letter] invalid value ".$num);
+        }
+        return self::_get_col_letter($num-1);
+    }
+
+
 }
 
-
 ?>
-
-
