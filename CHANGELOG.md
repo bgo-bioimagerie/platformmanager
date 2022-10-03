@@ -6,6 +6,7 @@
 
 * [booking] remove deleted supinfos fetch in reservation edition, closes #712
 * [booking] fix package selection when booking settings sets "force package"
+* [booking] add in user pref and booking config choice to view simple or detailed view by default Closes #720
 
 ## 2.8.2
 

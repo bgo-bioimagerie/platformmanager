@@ -139,12 +139,25 @@ class BookingController extends BookingabstractController {
         $bk_id_resource = $this->request->getParameterNoException("id_resource", default: $id_resource);
         $bk_id_area = $this->request->getParameterNoException("id_area", default: $id_area);
         $id_user = $this->request->getParameterNoException('id_user');
+
+
+        $modelCoreConfig = new CoreConfig();
+
+
+        $bkUserDefaultViewType = $this->request->getParameterNoException('view');
+        if(!$bkUserDefaultViewType) {
+            $bkUserDefaultViewType = $userSettingsModel->getUserSetting($_SESSION["id_user"], "BkDefaultViewType");
+        }
+        if(!$bkUserDefaultViewType) {
+            $bkUserDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $id_space, "simple");
+        }
+
         $qc = [
             "bk_curentDate" => $curentDate,
             "bk_id_resource" => $bk_id_resource,
             "bk_id_area" => $bk_id_area,
             "id_user" => $id_user,
-            "view" => $this->request->getParameterNoException('view', default: 'simple')
+            "view" => $bkUserDefaultViewType
         ];
 
 
@@ -153,7 +166,6 @@ class BookingController extends BookingabstractController {
             $lastView = $_SESSION['lastbookview'];
             $this->redirect($lastView . "/" . $id_space, $qc);
         } else if ($bkUserDefaultView == "") {
-            $modelCoreConfig = new CoreConfig();
             $bkSpaceDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
             $this->redirect($bkSpaceDefaultView . "/" . $id_space, $qc);
         } else {

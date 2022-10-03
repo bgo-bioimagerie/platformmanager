@@ -104,7 +104,7 @@ class BookingconfigController extends CoresecureController {
         if ($formbookingSetDefaultView->check()){
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("BkSetDefaultView", $this->request->getParameter("BkSetDefaultView"), $id_space);
-        
+            $modelConfig->setParam("BkDefaultViewType", $this->request->getParameter("BkDefaultViewType"), $id_space);
             return $this->redirect("bookingconfig/".$id_space);
         }
         
@@ -216,6 +216,7 @@ class BookingconfigController extends CoresecureController {
     protected function bookingSetDefaultView($id_space, $lang){
         $modelCoreConfig = new CoreConfig();
         $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
+        $BkDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $id_space, "simple");
         
         $form = new Form($this->request, "BkSetdefaultViewForm");
         $form->addSeparator(BookingTranslator::Set_default_booking_view($lang));
@@ -236,6 +237,13 @@ class BookingconfigController extends CoresecureController {
         );
         
         $form->addSelect("BkSetDefaultView", "", $optionsNames, $optionsValues, $BkSetDefaultView);
+        $form->addSelect(
+            "BkDefaultViewType",
+            "",
+            [BookingTranslator::SimpleView($lang), BookingTranslator::DetailedView($lang)],
+            ['simple', 'detailed'],
+            $BkDefaultViewType
+        );
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
 
