@@ -35,6 +35,9 @@
                         <label>
                             <input id="use_package" <?php if($forcePackages) { echo "disabled";}  ?> class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                         </label>
+                        <?php if($forcePackages) { ?>
+                            <input type="hidden" name="use_package" value="yes">
+                        <?php } ?>
                     </div>
 
                     <div class="mb-3" id="package_div">
@@ -96,6 +99,13 @@
                 </div>
             <?php } ?>
             <!-- End periodicity -->
+            <div class="row mb-3">
+                <div class="checkbox col-8 mb-3">
+                    <label>
+                        <input id="confirmation_email" class="form-checkbox" type="checkbox" name="confirmation_email" value="no"> <?php echo BookingTranslator::ConfirmationEmail($lang) ?>
+                    </label>
+                </div>
+            </div>
         </div>  
 
         <div class="col-12">

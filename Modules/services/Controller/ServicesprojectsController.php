@@ -541,7 +541,7 @@ class ServicesprojectsController extends ServicesController {
             if($name == null){
                 $name = '[!] '.($modelServices->getItemName($id_space, $items[$i]["id_service"], true) ?? Constants::UNKNOWN);
             }
-            $items[$i]["description"] = 'q='.$items[$i]["quantity"] . " " . $name;
+            $items[$i]["description"] = $name. ($items[$i]["quantity"] ? " [q=".$items[$i]["quantity"]."]" : "");
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
             $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }

@@ -7,6 +7,8 @@
 * [cli] add maintenance option to command-line admin tool
 * [core] add support for custom plans
 * [rating] add new feature satisfaction campaigns #616
+* [booking] make confirmation email optional at booking
+* [services] in project followup, show quantities if not null, and display after service name
 * [booking] add client name in booking infos
 
 ### Fixes
@@ -20,6 +22,7 @@
 ### Fixes
 
 * [booking] remove deleted supinfos fetch in reservation edition, closes #712
+* [booking] fix package selection when booking settings sets "force package" closes #719
 
 ## 2.8.2
 
