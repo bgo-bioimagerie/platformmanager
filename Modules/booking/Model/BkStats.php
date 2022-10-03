@@ -1,5 +1,5 @@
 <?php
-
+require_once 'Framework/Utils.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 
@@ -89,12 +89,12 @@ class BkStats {
         $num = 1;
         foreach ($resources as $resource) {
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $resource["name"]);
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
         $num++;
-        $letter = $this->get_col_letter($num);
+        $letter = Utils::get_col_letter($num);
         $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, "Total");
         $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
@@ -103,7 +103,7 @@ class BkStats {
         $instructorsStartLine = $curentLine + 1;
         foreach ($instructors as $instructor) {
             $curentLine++;
-            $letter = $this->get_col_letter(1);
+            $letter = Utils::get_col_letter(1);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $modelUser->getUserFUllName($instructor["id_instructor"]));
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
@@ -111,7 +111,7 @@ class BkStats {
             $num = 1;
             foreach ($resources as $resource) {
                 $num++;
-                $letter = $this->get_col_letter($num);
+                $letter = Utils::get_col_letter($num);
                 $val = $countResourcesInstructor[$resource["id"]][$instructor["id_instructor"]];
                 if ($val == 0) {
                     $val = "";
@@ -121,18 +121,18 @@ class BkStats {
                 $total += intval($val);
             }
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
         $curentLine++;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
         for ($i = 0; $i < count($resources); $i++) {
-            $letter = $this->get_col_letter($i + 2);
+            $letter = Utils::get_col_letter($i + 2);
             $sumEnd = $curentLine - 1;
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $instructorsStartLine . ':' . $letter . $sumEnd . ')');
         }
-        $letter = $this->get_col_letter(count($resources) + 2);
+        $letter = Utils::get_col_letter(count($resources) + 2);
         $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $instructorsStartLine . ':' . $letter . $sumEnd . ')');
 
         // by unit
@@ -146,19 +146,19 @@ class BkStats {
         $num = 1;
         foreach ($resources as $resource) {
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $resource["name"]);
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
         $num++;
-        $letter = $this->get_col_letter($num);
+        $letter = Utils::get_col_letter($num);
         $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, "Total");
         $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
         $unitsStartLine = $curentLine;
         foreach ($units as $unit) {
             $curentLine++;
-            $letter = $this->get_col_letter(1);
+            $letter = Utils::get_col_letter(1);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $unit["name"]);
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
@@ -166,25 +166,25 @@ class BkStats {
             $num = 1;
             foreach ($resources as $resource) {
                 $num++;
-                $letter = $this->get_col_letter($num);
+                $letter = Utils::get_col_letter($num);
                 $val = $countResourcesUnit[$resource["id"]][$unit["id"]];
                 $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $val);
                 $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
                 $total += intval($val);
             }
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $total);
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
         }
         $curentLine++;
         $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, 'Total');
         for ($i = 0; $i < count($resources); $i++) {
-            $letter = $this->get_col_letter($i + 2);
+            $letter = Utils::get_col_letter($i + 2);
             $sumEnd = $curentLine - 1;
             $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $unitsStartLine . ':' . $letter . $sumEnd . ')');
         }
-        $letter = $this->get_col_letter(count($resources) + 2);
+        $letter = Utils::get_col_letter(count($resources) + 2);
         $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, '=SUM(' . $letter . $unitsStartLine . ':' . $letter . $sumEnd . ')');
 
         // print summary
@@ -220,28 +220,6 @@ class BkStats {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($file);
-    }
-
-    private function get_col_letter($num) {
-        $comp = 0;
-        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-
-        //if the number is greater than 26, calculate to get the next letters
-        if ($num > 26) {
-            //divide the number by 26 and get rid of the decimal
-            $comp = floor($num / 26);
-
-            //add the letter to the end of the result and return it
-            if ($comp != 0) {
-                // don't subtract 1 if the comparative variable is greater than 0
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26)];
-            } else {
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26) - 1];
-            }
-        } else {
-            //return the letter
-            return $letters[($num - 1)];
-        }
     }
 
     /**
@@ -387,18 +365,18 @@ class BkStats {
         $num = 3;
         foreach ($colorCodes as $c) {
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $objWorkSheet->SetCellValue($letter . $curentLine, $c["name"]);
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
         }
         $num++;
-        $letter = $this->get_col_letter($num);
+        $letter = Utils::get_col_letter($num);
         $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_number($lang));
         $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
         $num++;
-        $letter = $this->get_col_letter($num);
+        $letter = Utils::get_col_letter($num);
         $objWorkSheet->SetCellValue($letter . $curentLine, BookingTranslator::ReservationCancelled_time($lang));
         $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
         $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
@@ -419,16 +397,16 @@ class BkStats {
                 $num++;
                 $timeColor = $modelGraph->getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $resourcesids[$i], $c['id']);
 
-                $letter = $this->get_col_letter($num);
+                $letter = Utils::get_col_letter($num);
                 $objWorkSheet->SetCellValue($letter . $curentLine, $timeColor);
                 $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             }
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $objWorkSheet->SetCellValue($letter . $curentLine, $data['countCancelled'][$i]);
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $num++;
-            $letter = $this->get_col_letter($num);
+            $letter = Utils::get_col_letter($num);
             $objWorkSheet->SetCellValue($letter . $curentLine, $data['timeCancelled'][$i]);
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
 
@@ -467,7 +445,7 @@ class BkStats {
             $style = $this->getStylesheet();
             foreach ($clients as $client) {
                 $curentCol++;
-                $colLetter = $this->get_col_letter($curentCol);
+                $colLetter = Utils::get_col_letter($curentCol);
                 $objWorkSheet->SetCellValue($colLetter . $curentLine, $client['name']);
                 $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
             }
@@ -482,7 +460,7 @@ class BkStats {
                 $curentCol = 1;
                 foreach ($clients as $client) {
                     $curentCol++;
-                    $colLetter = $this->get_col_letter($curentCol);
+                    $colLetter = Utils::get_col_letter($curentCol);
                     $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["client_" . $client['id']][$catstat]);
                     $objWorkSheet->getStyle($colLetter . $curentLine)->applyFromArray($style['styleBorderedCell']);
                 }
