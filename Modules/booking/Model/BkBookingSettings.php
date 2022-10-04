@@ -11,6 +11,14 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class BkBookingSettings extends Model {
 
+    public const DEFAULT_TAG_NAMES = [
+        "User",
+        "Phone",
+        "Short desc",
+        "Desc",
+        "Client"
+    ];
+    
     public function __construct() {
         $this->tableName = "bk_booking_settings";
     }
@@ -42,20 +50,41 @@ class BkBookingSettings extends Model {
      * @return array List of the entries
      */
     public function entries($id_space, $sortEntry) {
-
         try {
             $sql = "select * from bk_booking_settings WHERE id_space=? AND deleted=0 order by " . $sortEntry;
             $req = $this->runRequest($sql, array($id_space));
-            if($req->rowCount() > 0){
+            if ($req->rowCount() > 0) {
                 return $req->fetchAll();
-            }
-            else{
+            } else {
                 return array();
             }
-        } 
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return "";
         }
+    }
+
+    public function getDefaultBkSettings() {
+        $bookingSettings = [];
+        for($i=0;$i<count(self::DEFAULT_TAG_NAMES);$i++) {
+            $bookingSettings[] = [
+                'tag_name' => self::DEFAULT_TAG_NAMES[$i],
+                'is_visible' => 0,
+                'is_tag_visible' => 0,
+                'display_order' => $i+1,
+                'font' => 'normal'
+            ];
+        }
+        return $bookingSettings;
+    }
+
+    public function getTagNames($id_space) {
+        $sql = "SELECT tag_name FROM bk_booking_settings WHERE id_space=? AND deleted=0;";
+        $req = $this->runRequest($sql, array($id_space));
+        $result = $req->fetchAll(PDO::FETCH_COLUMN);
+        if (!empty($result)) {
+            return $result;
+        } 
+        return null;
     }
 
     /**
