@@ -2,8 +2,12 @@
 
 require_once 'Framework/Routing.php';
 
-class AntibodiesRouting extends Routing{
+class AntibodiesRouting extends Routing {
     
+    public function routes($router) {
+        $router->map('POST', '/anticorpscsv/[i:id_space]' , 'antibodies/antibodieslist/anticorpscsv', 'antibodies_csv');
+    }
+
     public function listRoutes(){
         
         // config
