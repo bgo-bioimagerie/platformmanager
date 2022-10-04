@@ -39,7 +39,7 @@ require_once 'Modules/booking/View/Booking/agendafunction.php';
 
 <div class="row">
     <div class="col-12" style="background-color: #ffffff;">
-    <?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+    <?php include_once "Modules/booking/View/colorcodenavbar.php"; ?>
     </div>
 </div>
 

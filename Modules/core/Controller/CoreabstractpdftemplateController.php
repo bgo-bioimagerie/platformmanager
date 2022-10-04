@@ -45,7 +45,7 @@ abstract class PfmTemplateController extends CoresecureController {
         if(!file_exists("data/$module/$id_space/template.twig") && file_exists("data/$module/$id_space/template.php")) {
             // backwark, templates were in PHP and no twig template available use old template
             ob_start();
-            include("data/$module/$id_space/template.php");
+            include_once("data/$module/$id_space/template.php");
             $content = ob_get_clean();
         } else {
             $template = "data/$module/$id_space/template.twig";
@@ -98,7 +98,7 @@ abstract class PfmTemplateController extends CoresecureController {
     }
 
 
-    function checkTemplate(int $id_space, string $module, object $translator) {
+    private function checkTemplate(int $id_space, string $module, object $translator) {
         $client = (new ClClient())->get($id_space, 0);
         $client["name"] = "my client";
         $client["address_delivery"] = "in britany of course";

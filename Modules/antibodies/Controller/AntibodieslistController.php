@@ -512,7 +512,7 @@ class AntibodieslistController extends AntibodiesController {
             $fileName = $id_space."_".$_FILES["image_url"]["name"];
             $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $fileName, $matches);
             if(! $fileNameOK) {
-                throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+                throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
             }
 
             $target_file = $target_dir . $fileName;

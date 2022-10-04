@@ -9,6 +9,7 @@
 * [rating] add new feature satisfaction campaigns #616
 * [booking] make confirmation email optional at booking
 * [services] in project followup, show quantities if not null, and display after service name
+* [documents] fix default url on new document upload (for strict sql support)
 * [booking] add client name in booking infos
 
 ### Fixes

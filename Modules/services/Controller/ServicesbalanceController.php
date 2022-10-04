@@ -2,6 +2,7 @@
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
+require_once 'Framework/Utils.php';
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/services/Model/SeProject.php';
@@ -289,11 +290,11 @@ class ServicesbalanceController extends ServicesController {
         foreach ($items as $item) {
             $itemIdx++;
             $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
-            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
+            $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
             
         }
         $itemIdx++;
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBilledBalance["projects"];
         //$modelClient = new ClClient();
@@ -321,14 +322,14 @@ class ServicesbalanceController extends ServicesController {
                 $pos = $this->findItemPos($items, $entry["id"]);
                 if ($pos > 0 && $entry["pos"] > 0) {
                     //print_r($entry);
-                    $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + 5) . $curentLine, $entry["sum"]);
-                    $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + 5) . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($pos + 5) . $curentLine, $entry["sum"]);
+                    $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($pos + 5) . $curentLine)->applyFromArray($styleBorderedCell);
                 
                     //$itemsTotal[$idx] += floatval($entry["sum"]);
                 }
                 
             }
-            //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $proj["total"]);
+            //$spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $proj["total"]);
         }
         
         // total services sum
@@ -337,16 +338,16 @@ class ServicesbalanceController extends ServicesController {
         $curentLine++;
         foreach ($items as $itemsT) {
             $itemIdx++;
-            $colLetter = $this->get_col_letter($itemIdx);
+            $colLetter = Utils::get_col_letter($itemIdx);
             $spreadsheet->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(".$colLetter."3:".$colLetter.$lastLine.")");
         }
         
         for($r=1 ; $r <= $curentLine ; $r++){
             for($c=1 ; $c <= $itemIdx ; $c++){
-                $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($c).$r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($c).$r)->applyFromArray($styleBorderedCell);
             }
         }
-        for($col = 'A'; $col !== $this->get_col_letter($itemIdx+1); $col++) {
+        for($col = 'A'; $col !== Utils::get_col_letter($itemIdx+1); $col++) {
             $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
         
@@ -431,22 +432,22 @@ class ServicesbalanceController extends ServicesController {
         foreach ($items as $item) {
             $itemIdx++;
             $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
-            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, $name);
+            $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
             
         }
         $itemIdx++;
         
         $lastItemIdx = $itemIdx-1;
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+1) . $curentLine, ServicesTranslator::Opened_date($lang));
-        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+1) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+1) . $curentLine, ServicesTranslator::Opened_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+1) . $curentLine)->applyFromArray($styleBorderedCell);
         
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+2) . $curentLine, ServicesTranslator::Time_limite($lang));
-        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+2) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+2) . $curentLine, ServicesTranslator::Time_limite($lang));
+        $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+2) . $curentLine)->applyFromArray($styleBorderedCell);
 
-        $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+3) . $curentLine, ServicesTranslator::Closed_date($lang));
-        $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+3) . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+3) . $curentLine, ServicesTranslator::Closed_date($lang));
+        $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+3) . $curentLine)->applyFromArray($styleBorderedCell);
         
-        //$spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
+        //$spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, ServicesTranslator::TotalPrice($lang));
 
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
@@ -469,12 +470,12 @@ class ServicesbalanceController extends ServicesController {
             if ($proj["date_close"] && $proj["date_close"] != "0000-00-00"){
                 $dateClosed = CoreTranslator::dateFromEn($proj["date_close"], $lang);
             }
-            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
-            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+2) . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
-            $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($lastItemIdx+3) . $curentLine, $dateClosed);
-            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+1) . $curentLine)->applyFromArray($styleBorderedCell);
-            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+2) . $curentLine)->applyFromArray($styleBorderedCell);
-            $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($lastItemIdx+3) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+1) . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+2) . $curentLine, CoreTranslator::dateFromEn($proj["time_limit"], $lang));
+            $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($lastItemIdx+3) . $curentLine, $dateClosed);
+            $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+1) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+2) . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($lastItemIdx+3) . $curentLine)->applyFromArray($styleBorderedCell);
             
             // "entries"
             $idx = -1;
@@ -485,8 +486,8 @@ class ServicesbalanceController extends ServicesController {
                 $idx++;
                 $pos = $this->findItemPos($items, $entry["id"]);
                 if ($pos > 0 && $entry["pos"] > 0) {
-                    $spreadsheet->getActiveSheet()->SetCellValue($this->get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
-                    $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
+                    $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($pos + $offset) . $curentLine, $entry["sum"]);
+                    $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($pos + $offset) . $curentLine)->applyFromArray($styleBorderedCell);
                     $projItemCount += $entry["sum"];
                 }
                 
@@ -499,16 +500,16 @@ class ServicesbalanceController extends ServicesController {
         $curentLine++;
         foreach ($items as $itemsT) {
             $itemIdx++;
-            $colLetter = $this->get_col_letter($itemIdx);
+            $colLetter = Utils::get_col_letter($itemIdx);
             $spreadsheet->getActiveSheet()->SetCellValue($colLetter . $curentLine, "=SUM(".$colLetter."3:".$colLetter.$lastLine.")");
         }
         
         for($r=1 ; $r <= $curentLine ; $r++){
             for($c=1 ; $c <= $itemIdx ; $c++){
-                $spreadsheet->getActiveSheet()->getStyle($this->get_col_letter($c).$r)->applyFromArray($styleBorderedCell);
+                $spreadsheet->getActiveSheet()->getStyle(Utils::get_col_letter($c).$r)->applyFromArray($styleBorderedCell);
             }
         }
-        for($col = 'A'; $col !== $this->get_col_letter($itemIdx+1); $col++) {
+        for($col = 'A'; $col !== Utils::get_col_letter($itemIdx+1); $col++) {
             $spreadsheet->getActiveSheet()->getColumnDimension($col)->setAutoSize(true);
         }
         
@@ -541,26 +542,5 @@ class ServicesbalanceController extends ServicesController {
         return 0;
     }
 
-    function get_col_letter($num) {
-        $comp = 0;
-        $letters = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');
-
-        //if the number is greater than 26, calculate to get the next letters
-        if ($num > 26) {
-            //divide the number by 26 and get rid of the decimal
-            $comp = floor($num / 26);
-
-            //add the letter to the end of the result and return it
-            if ($comp != 0) {
-                // don't subtract 1 if the comparative variable is greater than 0
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26)];
-            } else {
-                return $this->get_col_letter($comp) . $letters[($num - $comp * 26) - 1];
-            }
-        } else {
-            //return the letter
-            return $letters[($num - 1)];
-        }
-    }
 
 }

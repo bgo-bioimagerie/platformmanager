@@ -1066,7 +1066,7 @@ END:VCALENDAR
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
-            throw new PfmDbException("reservation not found", 404);
+            throw new PfmParamException("reservation not found", 404);
         }
         $id_resource = $entryInfo["resource_id"];
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
