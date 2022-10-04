@@ -6,7 +6,7 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 class BookingcaldavController extends CorecookiesecureController {
 
-    function discoveryAction($id_space=0) {
+    public function discoveryAction($id_space=0) {
         if($id_space) {
             $sm = new CoreSpace();
             $space = $sm->getSpace($id_space);
@@ -21,7 +21,7 @@ class BookingcaldavController extends CorecookiesecureController {
 
 
 
-    function propfindAction($id_space, $id_cal=0) {
+    public function propfindAction($id_space, $id_cal=0) {
         $allowed = true;
         $id_user = $this->auth();
 
@@ -211,7 +211,7 @@ class BookingcaldavController extends CorecookiesecureController {
         echo $data;
     }
 
-    function auth(){
+    protected function auth(){
         $um  = new CoreUser();
         if(!isset($_SERVER['PHP_AUTH_USER'])) {
             return 0;
@@ -243,7 +243,7 @@ class BookingcaldavController extends CorecookiesecureController {
         return $user ? $user['idUser'] : 0;
     }
 
-    function reportAction($id_space) {
+    public function reportAction($id_space) {
         $id_user = $this->auth();
 
         try {

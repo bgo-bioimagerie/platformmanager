@@ -25,7 +25,7 @@ class FileUpload {
 
         $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $targetName, $matches);
         if(! $fileNameOK) {
-            throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+            throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
         }
 
         if ($_FILES[$uploadFile_id]["size"] > FILE_MAX_SIZE) {

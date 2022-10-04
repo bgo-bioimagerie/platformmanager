@@ -676,29 +676,31 @@ END:VCALENDAR
             // do not send email if not valid
             $emailSpaceAdmins = intval($modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space));
 
-            $modelResource = new ResourceInfo();
-            $resourceName = $modelResource->getName($id_space, $id_resource);
-            $modelUser = new CoreUser();
-            $userInfo = $modelUser->getInfo($recipient_id);
-            $userName = $userInfo["name"] . " " . $userInfo["firstname"];
-            $userEmail = $userInfo["email"];
-            if ($ical){
-                try {
-                    $subject = $resourceName . " has been booked";
-                    $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
-                    if($id > 0 && $oldEntry) {
-                        $subject = "[$id] $resourceName booking has been modified";
-                        $content = "The " . $resourceName . " booking $id  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time);
+            if ($this->request->getParameterNoException('confirmation_email')) {
+                $modelResource = new ResourceInfo();
+                $resourceName = $modelResource->getName($id_space, $id_resource);
+                $modelUser = new CoreUser();
+                $userInfo = $modelUser->getInfo($recipient_id);
+                $userName = $userInfo["name"] . " " . $userInfo["firstname"];
+                $userEmail = $userInfo["email"];
+                if ($ical){
+                    try {
+                        $subject = $resourceName . " has been booked";
+                        $content = "The " . $resourceName . " has been booked from " . date("Y-m-d H:i", $start_time) . " to " . date("Y-m-d H:i", $end_time);
+                        if($id > 0 && $oldEntry) {
+                            $subject = "[$id] $resourceName booking has been modified";
+                            $content = "The " . $resourceName . " booking $id  has been moved from " . date("Y-m-d H:i", $oldEntry['start_time'])." / ".date("Y-m-d H:i", $oldEntry['end_time']). " to " . date("Y-m-d H:i", $start_time)." / ".date("Y-m-d H:i", $end_time);
+                        }
+                        $email = new Email();
+                        $icalFile = sprintf('/tmp/%d.ics', $id_entry);
+                        $handle = fopen($icalFile, 'w');
+                        fwrite($handle, $ical);
+                        fclose($handle);
+                        $email->sendEmail($email->getFromEmail($this->currentSpace['shortname']), $this->currentSpace['name'], $userEmail, $subject, $content, files: [$icalFile]);
+                        unlink($icalFile);
+                    } catch(Throwable $e) {
+                        Configuration::getLogger()->error('failed to send booking email to user', ['id' => $id_entry]);
                     }
-                    $email = new Email();
-                    $icalFile = sprintf('/tmp/%d.ics', $id_entry);
-                    $handle = fopen($icalFile, 'w');
-                    fwrite($handle, $ical);
-                    fclose($handle);
-                    $email->sendEmail($email->getFromEmail($this->currentSpace['shortname']), $this->currentSpace['name'], $userEmail, $subject, $content, files: [$icalFile]);
-                    unlink($icalFile);
-                } catch(Throwable $e) {
-                    Configuration::getLogger()->error('failed to send booking email to user', ['id' => $id_entry]);
                 }
             }
 
@@ -726,8 +728,9 @@ END:VCALENDAR
                     "to" => $toAdress,
                     "content" => $content
                 ];
-                $email = new Email();
-                $email->sendEmailToSpaceMembers($params, $lang);
+                    $email = new Email();
+                    $email->sendEmailToSpaceMembers($params, $lang);
+                
             }
         }
         return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
@@ -1063,7 +1066,7 @@ END:VCALENDAR
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
-            throw new PfmDbException("reservation not found", 404);
+            throw new PfmParamException("reservation not found", 404);
         }
         $id_resource = $entryInfo["resource_id"];
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
