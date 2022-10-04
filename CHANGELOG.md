@@ -10,6 +10,7 @@
 * [booking] make confirmation email optional at booking
 * [services] in project followup, show quantities if not null, and display after service name
 * [booking] add in user pref and booking config choice to view simple or detailed view by default Closes #720
+* [documents] fix default url on new document upload (for strict sql support)
 
 ### Fixes
 

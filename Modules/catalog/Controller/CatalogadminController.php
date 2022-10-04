@@ -167,7 +167,7 @@ class CatalogadminController extends CatalogController {
 
         $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $_FILES["illustration"]["name"], $matches);
         if(! $fileNameOK) {
-            throw new PfmFileException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
+            throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
         }
 
         // Check file size

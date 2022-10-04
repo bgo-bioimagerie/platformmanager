@@ -28,16 +28,16 @@ echo drawNavigation('day', $id_space, $startDate, $toDate, $beforeDate, $afterDa
 <div class="container">
 <?php
 if($detailedView) {
-    include 'Modules/booking/View/Booking/caldisplay.php';
+    include_once 'Modules/booking/View/Booking/caldisplay.php';
 } else {
-    include 'Modules/booking/View/Booking/simplecaldisplay.php';
+    include_once 'Modules/booking/View/Booking/simplecaldisplay.php';
 }
 ?>
 </div>
 
 <div class="row" style="background-color: #ffffff;">
 	<div class="col-12">
-		<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+		<?php include_once "Modules/booking/View/colorcodenavbar.php"; ?>
 	</div>
 </div>
 
