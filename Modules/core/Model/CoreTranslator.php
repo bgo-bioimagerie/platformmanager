@@ -244,6 +244,13 @@ class CoreTranslator {
         return "Login";
     }
 
+    public static function LoginOrEmail($lang) {
+        if ($lang == "fr") {
+            return "Identifiant ou email";
+        }
+        return "Login or email";
+    }
+
     public static function Password($lang) {
         if ($lang == "fr") {
             return "Mot de passe";
@@ -2091,32 +2098,48 @@ class CoreTranslator {
         return "Action not allowed: undefined login or password";
     }
 
-    public static function AccountInactive($lang = "") {
+    public static function DuplicatedEmail($lang = "") {
         if ($lang == "fr") {
-            return "Votre compte n'est pas actif.";
+            return "Cet email est utilisé par plusieurs profils utilisateurs. Veuillez utiliser votre login pour vous connecter";
         }
-        return "Your account is not active";
+        return "This email is associated to several user profiles. Try to connect with your login";
     }
 
-    public static function InvalidPassword($lang = "") {
-        if ($lang == "fr") {
-            return "Votre mot de passe est erroné.";
+    public static function ConnectionError($lang = "", $code=0) {
+        $msg = "";
+        switch ($code) {
+            case 1:
+                $msg = $lang === "fr"
+                    ? "Identifiant incorrect."
+                    : "Login doesn't exist.";
+                break;
+            case 2:
+                $msg = $lang === "fr"
+                    ? "Mauvais mot de passe."
+                    : "Wrong password.";
+                break;
+            case 3:
+                $msg = $lang === "fr"
+                    ? "Votre compte n'est pas actif."
+                    : "Your account is not active.";
+                break;
+            case 4:
+                $msg = $lang === "fr"
+                    ? "Connexion à LDAP impossible avec cet identifiant et ce mot de passe."
+                    : "Cannot connect to LDAP using the given login and password";
+                break;
+            case 5:
+                $msg = $lang === "fr"
+                    ? "L'identifiant ou email saisi existe en doublon. S'il vous est impossible de vous connecter, merci de contacter le support."
+                    : "More than one account uses this login or email. If you can't connect, please contact support.";
+                break;
+            default:
+                $msg = $lang === "fr"
+                    ? "Une erreur est survenue durant la connexion."
+                    : "An error occured during connection.";
+                break;
         }
-        return "Wrong password";
-    }
-
-    public static function InvalidLogin($lang = "") {
-        if ($lang == "fr") {
-            return "Ce login n'existe pas.";
-        }
-        return "This login doesn't exist.";
-    }
-
-    public static function ConnectionError($lang = "") {
-        if ($lang == "fr") {
-            return "Une erreur est survenue durant la connexion.";
-        }
-        return "An error occured during connection.";
+        return $msg;
     }
 
     public static function spaceUserUnjoin($lang = "") {

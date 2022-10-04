@@ -19,6 +19,12 @@ class CoreUser extends Model {
     public static $HASH_BCRYPT = 1;
     public static $HASH_DEFAULT = 1;
 
+    public static $CNX_INVALID_LOGIN = 1;
+    public static $CNX_WRONG_PWD = 2;
+    public static $CNX_INACTIVE = 3;
+    public static $CNX_INVALID_LDAP = 4;
+    public static $CNX_DUPLICATED_LOGIN = 5;
+
     public function __construct() {
         $this->tableName = "core_users";
         $this->setColumnsInfo("id", "int(11)", "");
@@ -470,54 +476,64 @@ class CoreUser extends Model {
     }
 
     /**
-     * Check if a local user with a given login exists
-     * @param string $login Local login
+     * Check if a local user with a given login or Email exists
+     * @param string $loginOrEmail Local login or email
      * @return boolean
      */
-    public function isLocalUser($login) {
-        $sql = "select id from core_users where login=? AND source=?";
+    public function isLocalUser($loginOrEmail) {
+        $sql = "select * from core_users where (login=? OR email=?) AND source=?";
         $user = $this->runRequest($sql, array(
-            $login, "local"
+            $loginOrEmail, $loginOrEmail, "local"
         ));
-        if ($user->rowCount() == 1) {
-            return true;
+        $nbElements = $user->rowCount();
+        if ($nbElements == 1) {
+            return $user->fetch();
+        } else if ($nbElements > 1) {
+            throw new PfmAuthException($this::$CNX_DUPLICATED_LOGIN);
         }
         return false;
     }
 
     /**
+     * Check if a local user with a given email exists
+     * @param string $email Local email
+     * @return boolean
+     */
+    public function isLocalUserEmail($email) {
+        $sql = "select id from core_users where email=? AND source=?";
+        $user = $this->runRequest($sql, array(
+            $email, "local"
+        ));
+        return $user->rowCount() == 1;
+    }
+
+    /**
      * Verify that a user is in the database
      *
-     * @param string $login
-     *        	the login
-     * @param string $pwd
-     *        	the password
-     * @return string
-     *      "allowed" if login and password match a database entry where is_active == 1
-     *      "inactive" login and password match a database entry where is_active == 0
-     *      "invalid_login" if login doesn't exist
-     *      "invalid_password" if login exists and password does not match
+     * @param string $login login
+     * @param string $pwd password
+     * @return true if connexion allowed
+     * throw PfmAuthException if unauthorised
      */
     public function connect($login, $pwd) {
         $sql = "SELECT * FROM core_users WHERE login=?";
         $res = $this->runRequest($sql, [$login]);
         if($res->rowCount() != 1) {
             Configuration::getLogger()->debug('[core][connect] user not found', ['login' => $login]);
-            return "invalid_login";
+            throw new PfmAuthException($this::$CNX_INVALID_LOGIN);
         }
         $user = $res->fetch();
         $hash = $user['hash'];
         $pwdDb = $user['pwd'];
         if(!$this->comparePasswords($pwd, $pwdDb, $hash)) {
             Configuration::getLogger()->debug('[core][connect] invalid password', ['user' => $user]);
-            return "invalid_password";
+            throw new PfmAuthException($this::$CNX_WRONG_PWD);
         }
-
-        if ($user["is_active"] == 1 && $user["validated"] == 1) {
-            return "allowed";
-        } else {
+        if ($user["is_active"] != 1 || $user["validated"] != 1) {
             Configuration::getLogger()->debug('[core][connect] inactive user', ['user' => $user]);
-            return "inactive";
+            throw new PfmAuthException($this::$CNX_INACTIVE);
+        } else {
+            return true;
         }
     }
 
@@ -534,7 +550,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmParamException("Cannot find the user using the given parameters: ".$login, 404);
+            throw new PfmAuthException($this->INVALID_LOGIN);
         }
     }
 
@@ -871,12 +887,12 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             $req = $user->fetch();
             if ($req ["is_active"] == 1) {
-                return "allowed";
+                return true;
             } else {
-                return "Your account is not active";
+                throw new PfmAuthException("user inactive");
             }
         } else {
-            return "Login or password not correct";
+            throw new PfmAuthException("incorrect credentials");
         }
     }
 
@@ -945,9 +961,8 @@ class CoreUser extends Model {
         return $this->runRequest($sql, array($active))->fetchAll();
     }
 
-    public function getAcivesForSelect($sortentry) {
-        $modelUser = new CoreUser();
-        $users = $modelUser->getActiveUsers($sortentry);
+    public function getActivesForSelect($sortentry) {
+        $users = $this->getActiveUsers($sortentry);
         $names = array();
         $ids = array();
         $names[] = "";

@@ -10,6 +10,7 @@
 * [booking] make confirmation email optional at booking
 * [services] in project followup, show quantities if not null, and display after service name
 * [documents] fix default url on new document upload (for strict sql support)
+* [coreconnexion] allow to use email for login
 
 ### Fixes
 
