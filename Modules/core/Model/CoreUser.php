@@ -550,7 +550,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmAuthException($this->INVALID_LOGIN);
+            throw new PfmAuthException($this::$CNX_INVALID_LOGIN);
         }
     }
 

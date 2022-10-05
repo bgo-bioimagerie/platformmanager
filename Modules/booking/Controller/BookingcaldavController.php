@@ -237,7 +237,7 @@ class BookingcaldavController extends CorecookiesecureController {
 
         try {
             $user = $um->getUserBylogin($login);
-        } catch(Exception) {
+        } catch (PfmAuthException) {
             Configuration::getLogger()->debug('[caldav] user not found', ['login' => $login]);
         }
         return $user ? $user['idUser'] : 0;

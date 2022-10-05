@@ -335,18 +335,18 @@ class CorespaceaccessController extends CoresecureController {
 
         $formjoin->setValidationButton(CoreTranslator::Ok($lang), $formJoinValidationUrl);
 
-        if($formjoin->check()) {
+        if ($formjoin->check()) {
             $modelCoreUser = new CoreUser();
             $user = null;
             try {
                 $user = $modelCoreUser->getUserByLogin($this->request->getParameter('login'));
-            } catch(PfmParamException) {
+            } catch (PfmAuthException) {
                 $this->displayFormWarnings("LoginDoesNotExists", $id_space, $lang);
                 return;
             }
 
             $pendingModel = new CorePendingAccount();
-            if($pendingModel->isActuallyPending($id_space, $user['idUser'])) {
+            if ($pendingModel->isActuallyPending($id_space, $user['idUser'])) {
                 $this->displayFormWarnings("PendingUserAccount", $id_space, $lang);
                 return;
             }
