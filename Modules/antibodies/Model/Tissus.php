@@ -138,21 +138,23 @@ class Tissus extends Model {
     public function getTissus($id_space ,$id_anticorps, $catalog = false) {
 
         $sql = "SELECT ac_j_tissu_anticorps.id AS id, 
-					   ac_j_tissu_anticorps.id_anticorps AS id_anticorps, 	
-				       ac_j_tissu_anticorps.status AS status,
-				       ac_j_tissu_anticorps.ref_bloc AS ref_bloc,
-				       ac_j_tissu_anticorps.dilution AS dilution,
-				       ac_j_tissu_anticorps.temps_incubation AS temps_incubation,
-					   ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
-					   ac_j_tissu_anticorps.comment AS comment,	
-                                           ac_j_tissu_anticorps.image_url AS image_url,
-					   ac_especes.nom AS espece, ac_especes.id AS espece_id,
-					   ac_organes.nom AS organe, ac_organes.id AS organe_id,
-					   ac_prelevements.nom AS prelevement, ac_prelevements.id AS prelevement_id 			
+                    ac_j_tissu_anticorps.id_anticorps AS id_anticorps,
+                    ac_j_tissu_anticorps.status AS status,
+                    ac_j_tissu_anticorps.ref_bloc AS ref_bloc,
+                    ac_j_tissu_anticorps.dilution AS dilution,
+                    ac_j_tissu_anticorps.temps_incubation AS temps_incubation,
+                    ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
+                    ac_j_tissu_anticorps.comment AS comment,	
+                    ac_j_tissu_anticorps.image_url AS image_url,
+                    ac_especes.nom AS espece, ac_especes.id AS espece_id,
+                    ac_organes.nom AS organe, ac_organes.id AS organe_id,
+                    ac_prelevements.nom AS prelevement, ac_prelevements.id AS prelevement_id,
+                    ac_protocol.id as id_protocol		
 				FROM ac_j_tissu_anticorps
 				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
 				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
 				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
+                LEFT JOIN ac_protocol on ac_protocol.no_proto=ac_j_tissu_anticorps.ref_protocol 
 				WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
         
         if($catalog){
@@ -163,7 +165,7 @@ class Tissus extends Model {
         $res = $this->runRequest($sql, array($id_anticorps, $id_space));
         $tissuss = $res->fetchAll();
         $modelProtocol = new AcProtocol();
-
+        /*
         for ($i = 0 ; $i < count($tissuss) ; $i++) {
             $proto = $modelProtocol->getProtocolsByRef($id_space, $tissuss[$i]["ref_protocol"]);
             if(isset($proto[0])){
@@ -173,7 +175,7 @@ class Tissus extends Model {
                 $tissuss[$i]["id_protocol"] = "";
             }
         }
-
+        */
         return $tissuss;
     }
 

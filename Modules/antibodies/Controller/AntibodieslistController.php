@@ -44,7 +44,7 @@ class AntibodieslistController extends AntibodiesController {
             $s = $_SESSION["ac_advSearch"];
             if( $s['searchName'] == "" &&  $s['searchNoH2P2'] == "" 
                     && $s['searchSource'] == "" && $s['searchCible'] == "" 
-                    && $s['searchValide'] == 0 && $s['searchResp'] == ""){
+                    && (!$s['searchValide']) && $s['searchResp'] == ""){
                 return false;
             }
             return true;
@@ -73,6 +73,7 @@ class AntibodieslistController extends AntibodiesController {
 
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, $sortentry);
+
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);
 
@@ -84,17 +85,15 @@ class AntibodieslistController extends AntibodiesController {
 
     public function anticorpscsvAction($id_space) {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
-        // database query
-        $anticorpsModel = new Anticorps();
-        $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space, "");
+        $lang = $this->getLanguage();
+
+        $anticorpsArray = json_decode($this->request->params()['anticorpsArray'], true);
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);
 
-        $lang = $this->getLanguage();
-
         // make csv file
-        $data = " Anticorps; ; ; ; ; ; ; ; ; Protocole; ; Tissus; ; ; ; ; ; Propriétaire; ; ;  \r\n";
+        $data = " Anticorps; ; ; ; ; ; ; ; ; ; Protocole; ; Tissus; ; ; ; ; ; Propriétaire; ; ;  \r\n";
         $data .= " No; Nom; St; Fournisseur; Source; Réactivité; Référence; Clone; lot; Isotype; proto; Acl dil; commentaire; espèce; organe; statut; ref. bloc; prélèvement; Nom; disponibilité; Date réception;  No Dossier \r\n";
 
         foreach ($anticorpsArray as $anticorps) {
@@ -643,7 +642,6 @@ class AntibodieslistController extends AntibodiesController {
         $anticorpsModel = new Anticorps();
         $anticorpsArray = $anticorpsModel->searchAdv($id_space, $searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp);
         //$anticorpsArray = $anticorpsModel->getAnticorpsInfo("id");
-
 
         $modelstatus = new Status();
         $status = $modelstatus->getStatus($id_space);

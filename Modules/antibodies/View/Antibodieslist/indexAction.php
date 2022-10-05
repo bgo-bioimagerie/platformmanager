@@ -41,7 +41,11 @@
             </div>
 
             <div class="col-2">
-                <button type="button" onclick="location.href = 'anticorpscsv/<?php echo $id_space ?>'" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+                
+                <form action="anticorpscsv/<?php echo $id_space?>" method="post">
+                    <textarea style="display:none;" name="anticorpsArray"><?php echo json_encode($anticorpsArray)?></textarea>
+                    <button type="submit" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
+                </form> 
             </div>
         </div>
     </div>
@@ -238,12 +242,12 @@
                                 <input class="form-control" id="searchName" type="text" name="searchName" value="<?php echo $searchName ?>"
                                         />
                             </div>
-                            <label for="inputEmail" class="form-label col-1">No H2P2:</label>
+                            <label for="searchNoH2P2" class="form-label col-1">No H2P2:</label>
                             <div class="col-2">
                                 <input class="form-control" id="searchNoH2P2" type="text" name="searchNoH2P2" value="<?php echo $searchNoH2P2 ?>"
                                         />
                             </div>
-                            <label for="inputEmail" class="form-label col-1">Source:</label>
+                            <label for="searchSource" class="form-label col-1">Source:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchSource" type="text" name="searchSource" value="<?php echo $searchSource ?>"
                                         />
@@ -251,42 +255,33 @@
                         </div>
 
                         <div class="row mb-2">	
-                            <label for="inputEmail" class="form-label col-1">Tissu cible:</label>
+                            <label for="searchCible" class="form-label col-1">Espèce:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
                                         />
                             </div>
 
-                            <label for="inputEmail" class="form-label col-1">Statut:</label>
+                            <label for="searchValide" class="form-label col-1">Statut:</label>
                             <div class="col-2">
                                 <select class="form-select" id="searchValide" name="searchValide">
-                                    <OPTION value="0" <?php
+                                    <option value="0" <?php
                                     if ($searchColumn == "0") {
                                         echo $selected;
-                                    }?> >  </OPTION>
-                                    <OPTION value="1" <?php
-                                    if ($searchValide == "1") {
-                                        echo $selected;
-                                    }?> > Validé </OPTION>
-                                    <OPTION value="2" <?php
-                                    if ($searchValide == "2") {
-                                        echo $selected;
-                                    }?> > Non validé </OPTION>
-                                    <OPTION value="3" <?php
-                                    if ($searchValide == "3") {
-                                        echo $selected;
-                                    }?> > Non testé </OPTION>
+                                    }?> >  </option>
+                                    <?php foreach ($status as $s) { ?>
+                                    <option value="<?php echo $s['id'] ?>"  <?php if ($searchValide == $s['id']) { echo "selected"; } ?> ><?php echo $s['nom'] ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
 
-                            <label for="inputEmail" class="form-label col-1">Propriétaire:</label>
+                            <label for="searchResp" class="form-label col-1">Propriétaire:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchResp" type="text" name="searchResp" value="<?php echo $searchResp ?>"
                                         />
                             </div>
                         </div>
                         <div class="row mb-2">
-                            <label class="form-label col-2">Commentaire:</label>
+                            <label for="searchCom" class="form-label col-2">Commentaire:</label>
                             <div class="col-4">
                                 <input class="form-control" id="searchCom" type="text" name="searchCom" value="<?php echo $searchCom ?>"
                                         />
@@ -306,7 +301,7 @@
             <table aria-label="list of antibodies" id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;">
                 <thead>	 
                     <tr>
-                        <th id="antibody" class="text-center" colspan="9" style="color:#337AB7;">Anticorps</th>
+                        <th id="antibody" class="text-center" colspan="10" style="color:#337AB7;">Anticorps</th>
                         <th id="protocol" class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
                         <th id="tissues" class="text-center" colspan="7" style="background-color: #eeffee; color:#337AB7;">Tissus</th>
                         <th id="owner" class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
@@ -389,7 +384,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['dilution']
+                                            . ($tissus[$i]['dilution'] ? $tissus[$i]['dilution'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -413,10 +408,12 @@
                                         ?>
                                             <img onclick="viewImage('<?php echo $tissus['id'] ?>','<?php echo $imageFile ?>')" id="imgview_<?php echo $tissus["id"] ?>" src="<?php echo $imageFile ?>" class="img-fluid" alt="photo" />
 
-            <?php
-        }
-    }
-    ?>
+                                        <?php
+                                    } else {
+                                        echo "<p> --- </p>";
+                                    }
+                                }
+                                ?>
                             </td>
                             
                             <td headers="tissues comment"  class="text-left" style="background-color: #eeffee;"><?php
@@ -424,7 +421,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['comment']
+                                            . ($tissus[$i]['comment'] ? $tissus[$i]['comment'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -434,7 +431,7 @@
                                 $tissus = $anticorps ['tissus'];
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>" . $tissus[$i]['espece']
+                                    $val = $val . "<p>" . ($tissus[$i]['espece'] ? $tissus[$i]['espece'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -445,7 +442,7 @@
                             $val = "";
                             for ($i = 0; $i < count($tissus); ++$i) {
                                 $val = $val . "<p>"
-                                        . $tissus[$i]['organe']
+                                        . ($tissus[$i]['organe'] ? $tissus[$i]['organe'] : ' --- ')
                                         . "</p>";
                             }
                             echo $val;
@@ -465,7 +462,7 @@
                                         }
                                     }
                                     $val = $val . "<p style=\"background-color: #" . $background . "\">"
-                                            . $statusTxt
+                                            . ($statusTxt ? $statusTxt : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -477,7 +474,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['ref_bloc']
+                                            . ($tissus[$i]['ref_bloc'] ? $tissus[$i]['ref_bloc'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -488,7 +485,7 @@
                                 $val = "";
                                 for ($i = 0; $i < count($tissus); ++$i) {
                                     $val = $val . "<p>"
-                                            . $tissus[$i]['prelevement']
+                                            . ($tissus[$i]['prelevement'] ? $tissus[$i]['prelevement'] : ' --- ')
                                             . "</p>";
                                 }
                                 echo $val;
@@ -641,6 +638,7 @@
         let myModal = new bootstrap.Modal(document.getElementById('imagepopup_box'))
         myModal.show();
     }
+
 </script>
 
 <?php endblock(); ?>
