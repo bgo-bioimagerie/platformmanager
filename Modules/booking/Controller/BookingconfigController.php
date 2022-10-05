@@ -297,41 +297,30 @@ class BookingconfigController extends CoresecureController {
         return $form;
     }
     
-
-
     protected function optionsQuery($id_space) {
         // set booking settings
-
-        $modelBookingSetting = new BkBookingSettings();
-
-        $tag_visible_rname = $this->request->getParameterNoException("tag_visible_rname");
-        $tag_title_visible_rname = $this->request->getParameterNoException("tag_title_visible_rname");
-        $tag_position_rname = $this->request->getParameterNoException("tag_position_rname");
-        $tag_font_rname = $this->request->getParameterNoException("tag_font_rname");
-        $modelBookingSetting->setEntry("User", $tag_visible_rname, $tag_title_visible_rname, $tag_position_rname, $tag_font_rname, $id_space);
-
-        $tag_visible_rphone = $this->request->getParameterNoException("tag_visible_rphone");
-        $tag_title_visible_rphone = $this->request->getParameterNoException("tag_title_visible_rphone");
-        $tag_position_rphone = $this->request->getParameterNoException("tag_position_rphone");
-        $tag_font_rphone = $this->request->getParameterNoException("tag_font_rphone");
-        $modelBookingSetting->setEntry("Phone", $tag_visible_rphone, $tag_title_visible_rphone, $tag_position_rphone, $tag_font_rphone, $id_space);
-
-        $tag_visible_sdesc = $this->request->getParameterNoException("tag_visible_sdesc");
-        $tag_title_visible_sdesc = $this->request->getParameterNoException("tag_title_visible_sdesc");
-        $tag_position_sdesc = $this->request->getParameterNoException("tag_position_sdesc");
-        $tag_font_sdesc = $this->request->getParameterNoException("tag_font_sdesc");
-        $modelBookingSetting->setEntry("Short desc", $tag_visible_sdesc, $tag_title_visible_sdesc, $tag_position_sdesc, $tag_font_sdesc, $id_space);
-
-        $tag_visible_desc = $this->request->getParameterNoException("tag_visible_desc");
-        $tag_title_visible_desc = $this->request->getParameterNoException("tag_title_visible_desc");
-        $tag_position_desc = $this->request->getParameterNoException("tag_position_desc");
-        $tag_font_desc = $this->request->getParameterNoException("tag_font_desc");
-        $modelBookingSetting->setEntry("Desc", $tag_visible_desc, $tag_title_visible_desc, $tag_position_desc, $tag_font_desc, $id_space);
-
-        //$bookingOptionMessage = "Changes have been saved";
         $modelBookingSettings = new BkBookingSettings();
-        $bookingSettings = $modelBookingSettings->entries($id_space, "display_order");
-        return $bookingSettings;
+
+        $optionTags = $modelBookingSettings->getTagNames($id_space) ?? BkBookingSettings::DEFAULT_TAG_NAMES;
+        
+        foreach($optionTags as $optTag) {
+            $trimOptTag = str_replace(' ', '', $optTag);
+
+            $tag_visible = $this->request->getParameterNoException("tag_visible_".$trimOptTag);
+            $tag_title_visible = $this->request->getParameterNoException("tag_title_visible_".$trimOptTag);
+            $tag_position = $this->request->getParameterNoException("tag_position_".$trimOptTag);
+            $tag_font = $this->request->getParameterNoException("tag_font_".$trimOptTag);
+            
+            $modelBookingSettings->setEntry(
+                $optTag,
+                $tag_visible,
+                $tag_title_visible,
+                $tag_position,
+                $tag_font,
+                $id_space
+            );
+        }
+        return $modelBookingSettings->entries($id_space, "display_order");
     }
 
 }

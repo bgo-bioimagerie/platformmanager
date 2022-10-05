@@ -3,7 +3,6 @@
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 
 function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0){
-	
 	$q = '?';
 	if(!empty($from)) {
 		$elts = implode(':', $from);
@@ -129,7 +128,7 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
 				}
 			} else {
 				if($c['id'] && $role >= CoreSpace::$USER) {
-					$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $shortDescription, $c['full_description'], false, $role);
+					$text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $c['client_name'], $shortDescription, $c['full_description'], false, $role);
 					$text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
 					if($text === '') {
 						$text = '#'.$c['id'];

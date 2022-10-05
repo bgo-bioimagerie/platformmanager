@@ -381,4 +381,11 @@ class ClientsTranslator {
         return $result;
     }
 
+    public static function NoCLientDefined($lang = "") {
+        if ($lang == "fr") {
+            return "Pas de client";
+        }
+        return "No client defined";
+    }
+
 }

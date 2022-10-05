@@ -468,9 +468,18 @@ class BkCalendarEntry extends Model {
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
-        $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+        $sql = 'SELECT
+                bk_calendar_entry.* ,
+                bk_color_codes.color as color_bg,
+                bk_color_codes.text as color_text,
+                core_users.phone as phone,
+                core_users.name as lastname,
+                core_users.firstname as firstname,
+                cl_clients.name as client_name
+                FROM bk_calendar_entry
                 LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
                 INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
                 WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id = :res
@@ -516,9 +525,18 @@ class BkCalendarEntry extends Model {
         }
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
-        $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+        $sql = 'SELECT
+                bk_calendar_entry.*,
+                bk_color_codes.color as color_bg,
+                bk_color_codes.text as color_text,
+                core_users.phone as phone,
+                core_users.name as lastname,
+                core_users.firstname as firstname,
+                cl_clients.name as client_name
+            FROM bk_calendar_entry
             LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
             INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+            LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
             WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')

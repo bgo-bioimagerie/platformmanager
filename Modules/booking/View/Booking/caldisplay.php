@@ -2,6 +2,7 @@
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 
 $day_begin = $this->clean($scheduling['day_begin']);
@@ -45,6 +46,9 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 		for($r = 0 ; $r < count($resourcesBase) ; $r++){
 			$cals = [];
 			foreach($calEntries[$r] as $c) {
+				if (!$c['client_name']) {
+					$c['client_name'] = ClientsTranslator::NoCLientDefined($lang);
+				}
 				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
 					continue;
 				}
