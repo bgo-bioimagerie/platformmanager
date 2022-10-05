@@ -38,26 +38,26 @@
 
                     <div class="col-2">
                         <select class="form-control" name="tag_visible_<?php echo $trimOptTag ?>">
-                            <OPTION value="1" <?php if ($tag_visible == 1) {
+                            <option value="1" <?php if ($tag_visible == 1) {
                                 echo $setSelected;
-                            } ?>> Visible </OPTION>
-                            <OPTION value="0" <?php if ($tag_visible == 0) {
+                            } ?>> Visible </option>
+                            <option value="0" <?php if ($tag_visible == 0) {
                                 echo $setSelected;
-                            } ?>> Hidden </OPTION>
-                            <OPTION value="2" <?php if ($tag_visible == 2) {
+                            } ?>> Hidden </option>
+                            <option value="2" <?php if ($tag_visible == 2) {
                                 echo $setSelected;
-                            } ?>> Managers </OPTION>
+                            } ?>> Managers </option>
                         </select>
                     </div>
 
                     <div class="col-3">
                         <select class="form-control" name="tag_title_visible_<?php echo $trimOptTag ?>">
-                            <OPTION value="1" <?php if ($tag_title_visible == 1) {
+                            <option value="1" <?php if ($tag_title_visible == 1) {
                                 echo $setSelected;
-                            } ?>> Tag Visible </OPTION>
-                            <OPTION value="0" <?php if ($tag_title_visible == 0) {
+                            } ?>> Tag Visible </option>
+                            <option value="0" <?php if ($tag_title_visible == 0) {
                                 echo $setSelected;
-                            } ?>> Tag Hidden </OPTION>
+                            } ?>> Tag Hidden </option>
                         </select>
                     </div>
 
@@ -70,9 +70,9 @@
                                     $selected = $setSelected;
                                 }
                             ?>
-                                <OPTION
+                                <option
                                     value="<?php echo $j + 1 ?>" <?php echo $selected ?>> position <?php echo $j + 1 ?>
-                                </OPTION>
+                                </option>
                             <?php
                             }
                             ?>
@@ -81,15 +81,15 @@
 
                     <div class="col-2">
                         <select class="form-control" name="tag_font_<?php echo $trimOptTag ?>">
-                            <OPTION value="normal" <?php if ($tag_font == "normal") {
+                            <option value="normal" <?php if ($tag_font == "normal") {
                                 echo $setSelected;
-                            } ?>> normal </OPTION>
-                            <OPTION value="bold" <?php if ($tag_font == "bold") {
+                            } ?>> normal </option>
+                            <option value="bold" <?php if ($tag_font == "bold") {
                                     echo $setSelected;
-                                } ?>> bold </OPTION>
-                            <OPTION value="italic" <?php if ($tag_font == "italic") {
+                                } ?>> bold </option>
+                            <option value="italic" <?php if ($tag_font == "italic") {
                                     echo $setSelected;
-                                } ?>> italic </OPTION>
+                                } ?>> italic </option>
                         </select>
                     </div>
                 </div>
