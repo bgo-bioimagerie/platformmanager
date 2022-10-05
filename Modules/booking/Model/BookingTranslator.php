@@ -1851,4 +1851,53 @@ class BookingTranslator {
         }
         return 'Reason';
     }
+
+    public static function BkSettingDisplayName($tagName, $lang="") {
+        $result = "";
+        if($lang == "fr") {
+            switch ($tagName) {
+                case 'User':
+                    $result = 'Compte utilisateur';
+                    break;
+                case 'Phone':
+                    $result = 'Téléphone';
+                    break;
+                case 'Client':
+                    $result = 'Client';
+                    break;
+                case 'Short desc':
+                    $result = 'Description courte';
+                    break;
+                case 'Desc':
+                    $result = 'Description';
+                    break;
+                default:
+                    break;
+            }
+            $result .= ' :';
+        } else {
+            switch ($tagName) {
+                case 'User':
+                    $result = 'User name';
+                    break;
+                case 'Phone':
+                    $result = 'User phone';
+                    break;
+                case 'Client':
+                    $result = 'Client';
+                    break;
+                case 'Short desc':
+                    $result = 'Short description';
+                    break;
+                case 'Desc':
+                    $result = 'Description';
+                    break;
+                default:
+                    break;
+            }
+            $result .= ':';
+        }
+        return $result;
+    }
+
 }
