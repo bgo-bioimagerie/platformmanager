@@ -184,7 +184,7 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmParamException('no end date nor duration specified');
         }
 
-        $checkValidation = $this->checkValidationAuthorisation($id_space, $id, $dateResaStart);
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id);
 
         if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
             $redirPage = $checkValidation['redirPage'];
@@ -1040,7 +1040,7 @@ END:VCALENDAR
         $this->redirect("booking/" . $id_space);
     }
 
-    public function checkValidationAuthorisation($id_space, $id_calEntry, $dateResaStart) {
+    public function checkValidationAuthorisation($id_space, $id_calEntry) {
         $lang = $this->getLanguage();
         $modelCalEntry = new BkCalendarEntry();
         $modelResource = new ResourceInfo();
@@ -1049,19 +1049,11 @@ END:VCALENDAR
         $resource = $modelResource->get($id_space, $entryInfo['resource_id']);
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
-        $temp = explode("-", $dateResaStart);
-        try {
-            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
-        } catch (Exception $e) {
-            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $entryInfo['start_time']]);
-            $curentDateUnix = time();
-        }
-
         $canValidateBooking = $this->hasAuthorization(
             $resource['id_category'],
             $bkAccess, $id_space,
             $_SESSION['id_user'],
-            $curentDateUnix
+            $entryInfo['start_time']
         );
 
         $redir = $this->request->getParameterNoException('from');
@@ -1089,17 +1081,13 @@ END:VCALENDAR
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
-        /* $checkValidation = $this->checkValidationAuthorisation(
-            $id_space,
-            $id,
-            $this->request->getParameter("resa_start")
-        );
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id);
 
         if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
             $redirPage = $checkValidation['redirPage'];
             $backTo = $checkValidation['backTo'];
             return $this->redirect("booking$redirPage/".$id_space, $backTo, ['error' => 'resourceBookingUnauthorized']);
-        } */
+        }
 
         $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
