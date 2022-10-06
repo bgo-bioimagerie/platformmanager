@@ -192,7 +192,9 @@ class BookingdefaultController extends BookingabstractController {
             $curentDateUnix = time();
         }
 
-        $checkValidation = $this->checkValidationAuthorisation($id_space, $id, $curentDateUnix);
+        if ($id > 0) {
+            $checkValidation = $this->checkValidationAuthorisation($id_space, $id, $curentDateUnix);
+        }
 
         if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
             $redirPage = $checkValidation['redirPage'];
