@@ -184,22 +184,29 @@ class BookingdefaultController extends BookingabstractController {
             throw new PfmParamException('no end date nor duration specified');
         }
 
-        $checkValidation = $this->checkValidationAuthorisation($id_space, $id);
+        $temp = explode("-", $dateResaStart);
+        try {
+            $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
+        } catch (Exception $e) {
+            Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $dateResaStart]);
+            $curentDateUnix = time();
+        }
+
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id, $curentDateUnix);
 
         if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
             $redirPage = $checkValidation['redirPage'];
             $backTo = $checkValidation['backTo'];
             return $this->redirect("booking$redirPage/".$id_space, $backTo, ['error' => 'resourceBookingUnauthorized']);
         }
-        
 
         $dateResaStartArray = explode("-", $dateResaStart);
         if ($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
         }
 
-        $ri = $modelResource->get($id_space ,$id_resource);
-        if (!$ri){
+        $ri = $modelResource->get($id_space, $id_resource);
+        if (!$ri) {
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
             throw new PfmAuthException('access denied for this resource', 403);
         }
@@ -1040,7 +1047,7 @@ END:VCALENDAR
         $this->redirect("booking/" . $id_space);
     }
 
-    public function checkValidationAuthorisation($id_space, $id_calEntry) {
+    public function checkValidationAuthorisation($id_space, $id_calEntry, $updatedStartTime=null) {
         $lang = $this->getLanguage();
         $modelCalEntry = new BkCalendarEntry();
         $modelResource = new ResourceInfo();
@@ -1049,11 +1056,12 @@ END:VCALENDAR
         $resource = $modelResource->get($id_space, $entryInfo['resource_id']);
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
+        $startTime = $updatedStartTime ?? $entryInfo['start_time'];
         $canValidateBooking = $this->hasAuthorization(
             $resource['id_category'],
             $bkAccess, $id_space,
             $_SESSION['id_user'],
-            $entryInfo['start_time']
+            $startTime
         );
 
         $redir = $this->request->getParameterNoException('from');
@@ -1061,20 +1069,26 @@ END:VCALENDAR
         $backTo = [];
         $redirPage = '';
         if ($redir) {
-            $redirInfo = explode(':', $redir);
-            $redirPage = $redirInfo[0];
-            $backTo = [
-                "bk_curentDate" => $redirInfo[1],
-                "bk_id_resource"=> $redirInfo[2],
-                "bk_id_area"=> $redirInfo[3],
-                "id_user" => $redirInfo[4],
-                "view" => $redirInfo[5]];
+            try {
+                $redirInfo = explode(':', $redir);
+                $redirPage = $redirInfo[0];
+                $backTo = [
+                    "bk_curentDate" => $redirInfo[1],
+                    "bk_id_resource"=> $redirInfo[2],
+                    "bk_id_area"=> $redirInfo[3],
+                    "id_user" => $redirInfo[4],
+                    "view" => $redirInfo[5]
+                ];
+            } catch (PfmException $e) {
+                Configuration::getLogger()->debug('[booking] invalid redirection');
+            }
         }
 
         if (!$canValidateBooking) {
             $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
             $_SESSION['flashClass'] = "warning";
         }
+        
         return ["canValidate" => $canValidateBooking, "redirPage" => $redirPage, "backTo" => $backTo];
     }
 
