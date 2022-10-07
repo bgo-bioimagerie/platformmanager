@@ -908,37 +908,6 @@ class CoreUser extends Model {
         $this->runRequest($sql, array($uid,$id));
     }
 
-    public function login($login, $pwd) {
-
-        // test if local account
-        if ($this->isLocalUser($login)) {
-            //echo "found local user <br/>";
-            return $this->connect($login, $pwd);
-        }
-
-        // search for LDAP account
-        else {
-            if (CoreLdapConfiguration::get('ldap_use', 0)) {
-
-                $modelLdap = new CoreLdap();
-                $ldapResult = $modelLdap->getUser($login, $pwd);
-                if ($ldapResult == "error") {
-                    return "Cannot connect to ldap using the given login and password";
-                } else {
-                    // update the user infos
-                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                    $userInfo = $this->user->getUserByLogin($login);
-                    if(!$userInfo['apikey']) {
-                        $this->user->newApiKey($userInfo['idUser']);
-                    }
-                    return $this->user->isActive($login);
-                }
-            }
-        }
-
-        return "Login or password not correct";
-    }
-
     public function generateRandomPassword() {
         $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
         $pass = array(); //remember to declare $pass as an array
