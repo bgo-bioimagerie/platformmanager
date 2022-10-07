@@ -13,6 +13,7 @@
 * [documents] fix default url on new document upload (for strict sql support)
 * [booking] add client name in booking infos
 * [coreconnexion] allow to use email for login
+* [coreconnexion] fix auth exceptions display
 
 ### Fixes
 
