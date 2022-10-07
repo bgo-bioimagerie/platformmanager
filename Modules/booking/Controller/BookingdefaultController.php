@@ -37,7 +37,7 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  * Controller for the home page
  */
 class BookingdefaultController extends BookingabstractController {
-
+    
     /**
      * Constructor
      */
@@ -192,11 +192,11 @@ class BookingdefaultController extends BookingabstractController {
             $curentDateUnix = time();
         }
 
-        if ($id > 0) {
-            $checkValidation = $this->checkValidationAuthorisation($id_space, $id, $curentDateUnix);
-        }
+        $redirPage = '';
+        $backTo = [];
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id_resource, $curentDateUnix);
 
-        if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
+        if ($checkValidation != null && !$checkValidation['canValidate']) {
             $redirPage = $checkValidation['redirPage'];
             $backTo = $checkValidation['backTo'];
             return $this->redirect("booking$redirPage/".$id_space, $backTo, ['error' => 'resourceBookingUnauthorized']);
@@ -722,13 +722,11 @@ END:VCALENDAR
                 
             }
         }
-        return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
+        return $this->redirect("booking$redirPage/".$id_space, $backTo, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
         $lang = $this->getLanguage();
-
-
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         $canEditReservation = false;
@@ -1049,21 +1047,18 @@ END:VCALENDAR
         $this->redirect("booking/" . $id_space);
     }
 
-    public function checkValidationAuthorisation($id_space, $id_calEntry, $updatedStartTime=null) {
+    public function checkValidationAuthorisation($id_space, $id_resource, $updatedStartTime) {
         $lang = $this->getLanguage();
-        $modelCalEntry = new BkCalendarEntry();
         $modelResource = new ResourceInfo();
         $modelBkAccess = new BkAccess();
-        $entryInfo = $modelCalEntry->getEntry($id_space, $id_calEntry);
-        $resource = $modelResource->get($id_space, $entryInfo['resource_id']);
+        $resource = $modelResource->get($id_space, $id_resource);
         $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
-        $startTime = $updatedStartTime ?? $entryInfo['start_time'];
         $canValidateBooking = $this->hasAuthorization(
             $resource['id_category'],
             $bkAccess, $id_space,
             $_SESSION['id_user'],
-            $startTime
+            $updatedStartTime
         );
 
         $redir = $this->request->getParameterNoException('from');
@@ -1097,21 +1092,22 @@ END:VCALENDAR
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
-        $checkValidation = $this->checkValidationAuthorisation($id_space, $id);
-
-        if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
-            $redirPage = $checkValidation['redirPage'];
-            $backTo = $checkValidation['backTo'];
-            return $this->redirect("booking$redirPage/".$id_space, $backTo, ['error' => 'resourceBookingUnauthorized']);
-        }
-
         $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
             throw new PfmParamException("reservation not found", 404);
         }
+
         $id_resource = $entryInfo["resource_id"];
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id_resource, time());
+
+        if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
+            $redirPage = $checkValidation['redirPage'];
+            $backTo = $checkValidation['backTo'];
+            return $this->redirect("booking$redirPage/".$id_space,$backTo, ['error' => 'resourceBookingUnauthorized']);
+        }
+
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
