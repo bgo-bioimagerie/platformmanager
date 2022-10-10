@@ -37,7 +37,7 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  * Controller for the home page
  */
 class BookingdefaultController extends BookingabstractController {
-
+    
     /**
      * Constructor
      */
@@ -163,8 +163,6 @@ class BookingdefaultController extends BookingabstractController {
         $modelUser = new CoreUser();
         $modelResource = new ResourceInfo();
         $resource = $modelResource->get($id_space, $this->request->getParameter("id_resource"));
-        $modelBkAccess = new BkAccess();
-        $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
 
         $responsible_id = $this->request->getParameterNoException("responsible_id");
 
@@ -182,43 +180,35 @@ class BookingdefaultController extends BookingabstractController {
         $dateResaStart = $this->request->getParameter("resa_start");
         $dateResaEnd = $this->request->getParameterNoException("resa_end");
         $duration = $this->request->getParameterNoException("resa_duration");
-        if(!$dateResaEnd && !$duration) {
+        if (!$dateResaEnd && !$duration) {
             throw new PfmParamException('no end date nor duration specified');
         }
 
         $temp = explode("-", $dateResaStart);
         try {
             $curentDateUnix = mktime(0, 0, 0, intval($temp[1]), intval($temp[2]), intval($temp[0]));
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->debug('[booking] invalid input date', ['date' => $dateResaStart]);
             $curentDateUnix = time();
         }
 
-        $canValidateBooking = $this->hasAuthorization($resource['id_category'], $bkAccess, $id_space, $_SESSION['id_user'], $curentDateUnix);
-
-        $redir = $this->request->getParameterNoException('from');
-
-        $backto = [];
         $redirPage = '';
-        if($redir) {
-            $redirInfo = explode(':', $redir);
-            $redirPage = $redirInfo[0];
-            $backto = ["bk_curentDate" => $redirInfo[1], "bk_id_resource"=> $redirInfo[2], "bk_id_area"=> $redirInfo[3], "id_user" => $redirInfo[4], "view" => $redirInfo[5]];
-        }
+        $backTo = [];
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id_resource, $curentDateUnix);
 
-        if (!$canValidateBooking) {
-            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
-            $_SESSION['flashClass'] = "warning";
-            return $this->redirect("booking$redirPage/".$id_space, $backto, ['error' => 'resourceBookingUnauthorized']);
+        if ($checkValidation != null && !$checkValidation['canValidate']) {
+            $redirPage = $checkValidation['redirPage'];
+            $backTo = $checkValidation['backTo'];
+            return $this->redirect("booking$redirPage/".$id_space, $backTo, ['error' => 'resourceBookingUnauthorized']);
         }
 
         $dateResaStartArray = explode("-", $dateResaStart);
-        if($dateResaStart == "") {
+        if ($dateResaStart == "") {
             throw new PfmParamException("invalid start date");
         }
 
-        $ri = $modelResource->get($id_space ,$id_resource);
-        if(!$ri){
+        $ri = $modelResource->get($id_space, $id_resource);
+        if (!$ri) {
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
             throw new PfmAuthException('access denied for this resource', 403);
         }
@@ -227,10 +217,9 @@ class BookingdefaultController extends BookingabstractController {
         $schedule = $modelScheduling->getByReArea($id_space, $ri['id_area']);
 
 
-        if($all_day_long == 1){
+        if ($all_day_long == 1) {
             $start_time = mktime($schedule["day_begin"], 0, 0, $dateResaStartArray[1], $dateResaStartArray[2], $dateResaStartArray[0]);
-        }
-        else{
+        } else {
             $hour_startH = $this->request->getParameter("hour_startH");
             $hour_startM = $this->request->getParameter("hour_startm");
             $modelScheduling = new BkScheduling();
@@ -243,7 +232,7 @@ class BookingdefaultController extends BookingabstractController {
         $hour_endH = $this->request->getParameterNoException("hour_endH");
         $hour_endM = $this->request->getParameterNoException("hour_endm");
 
-        if($duration && !$dateResaEnd) {
+        if ($duration && !$dateResaEnd) {
             $units = $this->request->getParameterNoException("resa_units");
             switch ($units) {
                 case 'm':
@@ -733,13 +722,11 @@ END:VCALENDAR
                 
             }
         }
-        return $this->redirect("booking$redirPage/".$id_space, $backto, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
+        return $this->redirect("booking$redirPage/".$id_space, $backTo, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
     private function editreservation($id_space, $resaInfo, $param = "") {
         $lang = $this->getLanguage();
-
-
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
         $canEditReservation = false;
@@ -1060,15 +1047,67 @@ END:VCALENDAR
         $this->redirect("booking/" . $id_space);
     }
 
+    public function checkValidationAuthorisation($id_space, $id_resource, $updatedStartTime) {
+        $lang = $this->getLanguage();
+        $modelResource = new ResourceInfo();
+        $modelBkAccess = new BkAccess();
+        $resource = $modelResource->get($id_space, $id_resource);
+        $bkAccess = $modelBkAccess->getAccessId($id_space, $resource['id']);
+
+        $canValidateBooking = $this->hasAuthorization(
+            $resource['id_category'],
+            $bkAccess, $id_space,
+            $_SESSION['id_user'],
+            $updatedStartTime
+        );
+
+        $redir = $this->request->getParameterNoException('from');
+
+        $backTo = [];
+        $redirPage = '';
+        if ($redir) {
+            try {
+                $redirInfo = explode(':', $redir);
+                $redirPage = $redirInfo[0];
+                $backTo = [
+                    "bk_curentDate" => $redirInfo[1],
+                    "bk_id_resource"=> $redirInfo[2],
+                    "bk_id_area"=> $redirInfo[3],
+                    "id_user" => $redirInfo[4],
+                    "view" => $redirInfo[5]
+                ];
+            } catch (PfmException $e) {
+                Configuration::getLogger()->debug('[booking] invalid redirection');
+            }
+        }
+
+        if (!$canValidateBooking) {
+            $_SESSION['flash'] = BookingTranslator::resourceBookingUnauthorized($lang);
+            $_SESSION['flashClass'] = "warning";
+        }
+        
+        return ["canValidate" => $canValidateBooking, "redirPage" => $redirPage, "backTo" => $backTo];
+    }
+
     public function deleteAction($id_space, $id) {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+
         $sendEmail = intval($this->request->getParameterNoException("sendmail", default:0));
         $modelCalEntry = new BkCalendarEntry();
         $entryInfo = $modelCalEntry->getEntry($id_space, $id);
         if (!$entryInfo) {
             throw new PfmParamException("reservation not found", 404);
         }
+
         $id_resource = $entryInfo["resource_id"];
+        $checkValidation = $this->checkValidationAuthorisation($id_space, $id_resource, time());
+
+        if (isset($checkValidation['canValidate']) && !$checkValidation['canValidate']) {
+            $redirPage = $checkValidation['redirPage'];
+            $backTo = $checkValidation['backTo'];
+            return $this->redirect("booking$redirPage/".$id_space,$backTo, ['error' => 'resourceBookingUnauthorized']);
+        }
+
         $canEdit = $this->canUserEditReservation($id_space, $entryInfo['resource_id'], $_SESSION["id_user"], $id, $entryInfo['recipient_id'], $entryInfo['start_time']);
         if (!$canEdit) {
             throw new PfmAuthException("ERROR: You're not allowed to modify this reservation", 403);
