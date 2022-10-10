@@ -10,16 +10,15 @@
 
 
 
-    <meta name="description" content="Using docker setup Docker images are available at quay.io/bgo_bioimagerie, see docker-compose.yml as compose example.
-Update docker-compose.yml file environment sections with your setup.
-Some variables are defined in a .env file for sensitive and custom data.
-Example:
-PFM_WEB_URL=http://localhost:4000 PFM_ADMIN=pfmadmin # Warning, those are secrets!!! # min 8 characters PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword PFM_ADMIN_EMAIL=admin@pfm.org PFM_ADMIN_APIKEY=123456 PFM_INFLUXDB_TOKEN=123456 MYSQL_ROOT_PASSWORD=xxxx MYSQL_PASSWORD=xxxx .... See example docker/env.example for your .env file.
-Exemple docker-compose.yml use local docker volumes to save database etc.">
+    <meta name="description" content="Rating module allows managers to create satisfaction campaigns
+campaigns Managers can create some satisfaction campaigns with a deadline date. A campaign could be annual or bi-annuel for example.
+Users with bookings or projects during the campaign period receive an email with a link to rate their equipments usage or projects.
+User rate equipements and projects with a note (1 to 5) and an optional comment.
+Managers can view the results of the campaign with a global note, a mean note by resource and the details of the rates/comments.">
 
 
 
-    <title>Docker | Platform Manager</title>
+    <title>Rating | Platform Manager</title>
 
     <link rel="icon" href="/platformmanager/favicon/favicon-32x32.png" type="image/x-icon">
 
@@ -298,7 +297,7 @@ Exemple docker-compose.yml use local docker volumes to save database etc.">
             
             
                 <span class="flex">
-                    <a href="/platformmanager/installation/docker/" class="gdoc-nav__entry is-active">
+                    <a href="/platformmanager/installation/docker/" class="gdoc-nav__entry ">
                         Docker
                     </a>
                 </span>
@@ -728,7 +727,7 @@ Exemple docker-compose.yml use local docker volumes to save database etc.">
             
             
                 <span class="flex">
-                    <a href="/platformmanager/modules/module/rating/" class="gdoc-nav__entry ">
+                    <a href="/platformmanager/modules/module/rating/" class="gdoc-nav__entry is-active">
                         Rating
                     </a>
                 </span>
@@ -976,7 +975,7 @@ Exemple docker-compose.yml use local docker volumes to save database etc.">
         
     
     
-        <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/platformmanager/' href='/platformmanager/'><span itemprop='name'>Welcome</span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/platformmanager/installation/' href='/platformmanager/installation/'><span itemprop='name'>Installation</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Docker</span><meta itemprop='position' content='4' /></li>
+        <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/platformmanager/' href='/platformmanager/'><span itemprop='name'>Welcome</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/platformmanager/modules/' href='/platformmanager/modules/'><span itemprop='name'>Modules</span></a><meta itemprop='position' content='4' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Rating</span><meta itemprop='position' content='5' /></li>
     
 
     
@@ -991,199 +990,22 @@ Exemple docker-compose.yml use local docker volumes to save database etc.">
 
 
     <article class="gdoc-markdown gdoc-markdown__align--left">
-        <h1>Docker</h1>
-        <div class="gdoc-page__anchorwrap">
-    <h2 id="using-docker">
-        Using docker
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/docker/#using-docker" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Using docker" href="#using-docker">
+        <h1>Rating</h1>
+        <p><strong>Rating module</strong> allows <em>managers</em> to create satisfaction campaigns</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="campaigns">
+        campaigns
+        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/modules/module/rating/#campaigns" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor campaigns" href="#campaigns">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
     </h2>
-</div><div class="gdoc-page__anchorwrap">
-    <h3 id="setup">
-        setup
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/docker/#setup" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor setup" href="#setup">
-            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-        </a>
-    </h3>
-</div><p>Docker images are available at quay.io/bgo_bioimagerie,
-see <a class="gdoc-markdown__link" href="docker/docker-compose.yml">docker-compose.yml</a> as compose example.</p>
-<p>Update docker-compose.yml file environment sections with your setup.</p>
-<p>Some variables are defined in a <em>.env</em> file for sensitive and custom data.</p>
-<p>Example:</p>
-<pre><code>PFM_WEB_URL=http://localhost:4000
-PFM_ADMIN=pfmadmin
-# Warning, those are secrets!!!
-# min 8 characters
-PFM_ADMIN_PASSWORD=mysensitivesuperadminpassword
-PFM_ADMIN_EMAIL=admin@pfm.org
-PFM_ADMIN_APIKEY=123456
-PFM_INFLUXDB_TOKEN=123456
-MYSQL_ROOT_PASSWORD=xxxx
-MYSQL_PASSWORD=xxxx
-....
-</code></pre>
-<p>See example docker/env.example for your .env file.</p>
-<p>Exemple docker-compose.yml use local docker volumes to save database etc.
-Only local host mounted volume is <em>data</em> directory which contains space upload files,
-which should be writable by container <em>www-data</em> user and shared among pfm
-instances.</p>
-<p>Though most data are in docker volumes, data <em>must</em> be backuped to an external system
-(databases).</p>
-<div class="gdoc-page__anchorwrap">
-    <h3 id="configenv-variables">
-        Config/Env variables
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/docker/#configenv-variables" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Config/Env variables" href="#configenv-variables">
-            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-        </a>
-    </h3>
-</div><p>Following env variables can be used to override Config/conf.ini:</p>
-<ul>
-<li>DEBUG: 0  # activate debug log level</li>
-<li>DEBUG_SQL: 1  # activate sql log level (not for production)</li>
-<li>MYSQL_HOST: mysql # mysql server name
-<ul>
-<li>MYSQL_DBNAME: platform_manager # name of the database on the mysql server</li>
-<li>MYSQL_USER: platform_manager # Admin account to connect to mysql</li>
-<li>MYSQL_PASS: platform_manager # Password to connect to mysql</li>
-<li>MYSQL_ADMIN_PWD: ${MYSQL_ROOT_PASSWORD}  # used for statistics</li>
-</ul>
-</li>
-<li>SMTP_HOST: mailhog  # smtp host name</li>
-<li>SMTP_PORT: 25  # smtp port</li>
-<li>SMTP_FROM: <a class="gdoc-markdown__link" href="mailto:support@genouest.org">support@genouest.org</a>  # mail <em>from</em> address</li>
-<li>SMTP_TLS: 0 # activate tls support for smtp, false by default</li>
-<li>PFM_MODE: prod  # optional [dev|<em>prod</em>|test], dev mode adds a console in browser with sql info</li>
-<li>PFM_ADMIN_USER: pfmadmin  # superadmin user name (automatically created)</li>
-<li>PFM_ADMIN_EMAIL: <a class="gdoc-markdown__link" href="mailto:admin@pfm.org">admin@pfm.org</a>  # superadmin email</li>
-<li>PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}  # superadmin password</li>
-<li>PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}  # superadmin apikey, ifnot set, will be generated at account creation</li>
-<li>PFM_HEADLESS: 0|1 # optional headless mode (navbar) , default 0</li>
-<li>PFM_ROOTWEB:  # optional, default / to serve app with prefix</li>
-<li>PFM_PUBLIC_URL: ${PFM_WEB_URL}  # public http address for pfm service</li>
-<li>PFM_AMQP_HOST: pfm-rabbitmq  # host for rabbitmq
-<ul>
-<li>PFM_AMQP_USER: pfm  # rabbitmq user</li>
-<li>PFM_AMQP_PASSWORD: pfm  # rabbitmq password</li>
-</ul>
-</li>
-<li>PFM_OPENID: ${PFM_OPENID}  # comma separated list of external openid providers (google, orcid)
-<ul>
-<li>PFM_OPENID_GOOGLE_ICON: /externals/auth/btn_google_signin_dark_normal_web.png</li>
-<li>PFM_OPENID_GOOGLE_URL: ${PFM_OPENID_GOOGLE_URL}</li>
-<li>PFM_OPENID_GOOGLE_LOGIN: ${PFM_OPENID_GOOGLE_LOGIN}</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_ID: ${PFM_OPENID_GOOGLE_CLIENT_ID}</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_SECRET: ${PFM_OPENID_GOOGLE_CLIENT_SECRET}</li>
-</ul>
-</li>
-<li>PFM_INFLUXDB_URL: http://influxdb:8086  # influxdb url
-<ul>
-<li>PFM_INFLUXDB_TOKEN: ${PFM_INFLUXDB_TOKEN}  # influxdb access token</li>
-<li>PFM_INFLUXDB_ORG: pfm  # influxdb default organization</li>
-</ul>
-</li>
-<li>PFM_ALLOW_REGISTRATION: 0  # (dis)allow user self registration</li>
-<li>PFM_JWT_SECRET: ${PFM_JWT_SECRET}  # JWT tokens secret</li>
-<li>PFM_MODULES:   # comma separated list of modules to load (in addition to those defined in conf.ini)</li>
-<li>PFM_REDIS_HOST: redis # optional, redis host name, needed for prometheus stats</li>
-<li>PFM_GRAFANA_URL: http://grafana:3000  # optional, grafana url
-<ul>
-<li>PFM_GRAFANA_USER: admin</li>
-<li>PFM_GRAFANA_PASSWORD: ${PFM_ADMIN_PASSWORD}</li>
-</ul>
-</li>
-<li>PFM_SENTRY_DSN: # optional, catch errors and send to an external Sentry server</li>
-<li>PFM_HELPDESK_EMAIL: # optional, base email used for helpdesk module  <a class="gdoc-markdown__link" href="mailto:support@pfm.org">support@pfm.org</a> for example, users will write to <a class="gdoc-markdown__link" href="mailto:support&#43;space1@pfm.org">support+space1@pfm.org</a>
-<ul>
-<li>PFM_HELPDESK_IMAP_SERVER: ${PFM_HELPDESK_IMAP_SERVER}  # hostname of imap provider</li>
-<li>PFM_HELPDESK_IMAP_PORT: 110 # optional port of imap</li>
-<li>PFM_HELPDESK_IMAP_USER: ${PFM_HELPDESK_IMAP_USER} # mail account name</li>
-<li>PFM_HELPDESK_IMAP_PASSWORD: ${PFM_HELPDESK_IMAP_PASSWORD} # mail account password</li>
-<li>PFM_HELPDESK_IMAP_TLS:  [&rsquo;&rsquo; (default), &lsquo;/ssl&rsquo;]  # empty string or /ssl if using tls</li>
-</ul>
-</li>
-<li>PFM_TIMEZONE: server timezone (Europe/Paris, &hellip;, defaults to UTC)</li>
-<li>PFM_MEMORY: sets php memory_limit (PFM_MEMORY: 1024M for example, else use default php settings) for pfm-events, pfm-helpdesk</li>
-</ul>
-<p>And .env file should define (according to variables used):</p>
-<ul>
-<li>
-<p>PFM_WEB_URL=http://localhost:4000</p>
-</li>
-<li>
-<p>PFM_ADMIN=pfmadmin</p>
-</li>
-<li>
-<p>PFM_ADMIN_PASSWORD=admin4genouest  # min 8 characters</p>
-</li>
-<li>
-<p><a class="gdoc-markdown__link" href="mailto:PFM_ADMIN_EMAIL=admin@pfm.org">PFM_ADMIN_EMAIL=admin@pfm.org</a></p>
-</li>
-<li>
-<p>PFM_ADMIN_APIKEY=123456</p>
-</li>
-<li>
-<p>PFM_INFLUXDB_TOKEN=123456</p>
-</li>
-<li>
-<p>PFM_OPENID=  # comma separated list of supported providers, if empty no external auth</p>
-</li>
-<li>
-<p>If PFM_OPENID is defined:</p>
-<ul>
-<li>PFM_OPENID_GOOGLE_URL=https://oauth2.googleapis.com/token</li>
-<li>PFM_OPENID_GOOGLE_LOGIN=https://accounts.google.com/o/oauth2/v2/auth</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_ID=XXX</li>
-<li>PFM_OPENID_GOOGLE_CLIENT_SECRET=XXX</li>
-</ul>
-</li>
-<li>
-<p>MYSQL_ROOT_PASSWORD=XXX</p>
-</li>
-<li>
-<p>MYSQL_PASSWORD=XXX</p>
-</li>
-<li>
-<p>PFM_JWT_SECRET=xxxx  # used for jwt messages in different actions</p>
-</li>
-<li>
-<p>PFM_HELPDESK_EMAIL=myemail@mydomain</p>
-</li>
-<li>
-<p>PFM_HELPDESK_IMAP_SERVER=x.y.z  # keep empty if not using helpdesk</p>
-</li>
-<li>
-<p>PFM_HELPDESK_IMAP_USER=yyyy</p>
-</li>
-<li>
-<p>PFM_HELPDESK_IMAP_PASSWORD=xxxxx</p>
-</li>
-<li>
-<p>PFM_LDAP_HOST: # optional LDAP configuration overiding ldap.ini, leave empty if non</p>
-<ul>
-<li>PFM_LDAP_PORT: 389  # ldap port to use, default 389 or 636 if tls enabled</li>
-<li>PFM_LDAP_USER: &quot;&quot;  # ldap user id if not anonymous search/bind</li>
-<li>PFM_LDAP_PASSWORD: &quot;&quot;  # ldap user password</li>
-<li>PFM_LDAP_DN: &quot;&quot;  # base dn for ldap (dc=pfm,dc=org for example)</li>
-<li>PFM_LDAP_SEARCH_DN: &quot;&quot;  # base dn for user search and binding (ou=people,dc=pfm,dc=org for example)</li>
-<li>PFM_LDAP_TLS: [0|1]  # use TLS</li>
-<li>PFM_LDAP_DEFAULT_STATUS: [1|2] visitor or user</li>
-<li>PFM_LDAP_SEARCH_ATTR: &ldquo;uid&rdquo; ldap search attributes (pipe separated, ex: &ldquo;uid|mail&rdquo;)</li>
-<li>PFM_LDAP_NAME_ATTR: &ldquo;sn&rdquo; ldap name attribute</li>
-<li>PFM_LDAP_FIRSTNAME_ATTR: &ldquo;givenname&rdquo; ldap firstname attribute</li>
-<li>PFM_LDAP_MAIL_ATTR: &ldquo;mail&rdquo; ldap email attribute</li>
-<li>PFM_USE: [0|1] use ldap  , if ldap_host is set, pfm_use is set to 1 by default unless explicitely set</li>
-</ul>
-</li>
-</ul>
-<div class="gdoc-page__anchorwrap">
-    <h3 id="install">
-        Install
-        <a data-clipboard-text="https://bgo-bioimagerie.github.io/platformmanager/installation/docker/#install" class="gdoc-page__anchor gdoc-page__anchor--right clip" aria-label="Anchor Install" href="#install">
-            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-        </a>
-    </h3>
-</div><p>See <a class="gdoc-markdown__link" href="./upgrade">install</a></p>
+</div><p>Managers can create some satisfaction campaigns with a deadline date.
+A campaign could be annual or bi-annuel for example.</p>
+<p>Users with bookings or projects during the campaign period
+receive an email with a link to rate their equipments usage or projects.</p>
+<p>User rate equipements and projects with a note (1 to 5) and an optional comment.</p>
+<p>Managers can view the results of the campaign with a global note, a mean note by
+resource and the details of the rates/comments.</p>
 
     </article>
 
