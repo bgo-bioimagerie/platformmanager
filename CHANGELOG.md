@@ -4,6 +4,7 @@
 
 ### Features / enhancements
 
+* [core] add user settings to specify default number of elelments to display in arrays
 * [antibodies] allow navigation back to antibodies search results
 
 ## 2.9.0
