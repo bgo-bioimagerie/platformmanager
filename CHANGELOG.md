@@ -5,6 +5,7 @@
 ### Features / enhancements
 
 * [core] add user settings to specify default number of elelments to display in arrays
+* [antibodies] add unit tests
 
 ## 2.9.0
 

@@ -94,6 +94,7 @@ class Organe extends Model {
         $sql = "insert into ac_organes(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importOrgane($id, $name, $id_space) {

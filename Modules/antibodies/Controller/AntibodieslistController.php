@@ -275,17 +275,32 @@ class AntibodieslistController extends AntibodiesController {
         $form = $this->createEditForm($id_space, $anticorps, $id);
         if ($form->check()) {
 
-            $idNew = $this->antibody->setAntibody($id, $id_space, $form->getParameter("name"), $form->getParameter("no_h2p2"), $form->getParameter("fournisseur"), $form->getParameter("id_source"), $form->getParameter("reactivity"), $form->getParameter("reference"), $form->getParameter("clone"), $form->getParameter("lot"), $form->getParameter("id_isotype"), $form->getParameter("stockage")
+            $idNew = $this->antibody->setAntibody(
+                $id,
+                $id_space,
+                $form->getParameter("name"),
+                $form->getParameter("no_h2p2"),
+                $form->getParameter("fournisseur"),
+                $form->getParameter("id_source"),
+                $form->getParameter("reactivity"),
+                $form->getParameter("reference"),
+                $form->getParameter("clone"),
+                $form->getParameter("lot"),
+                $form->getParameter("id_isotype"),
+                $form->getParameter("stockage")
             );
             
-            $this->antibody->setApplicationStaining($id_space, $idNew, $form->getParameter("id_staining"), $form->getParameter("id_application")
+            $this->antibody->setApplicationStaining(
+                $id_space,
+                $idNew,
+                $form->getParameter("id_staining"),
+                $form->getParameter("id_application")
             );
 
             $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
             $_SESSION["flashClass"] = 'success';
 
-            $this->redirect('anticorpsedit/' . $id_space . '/' . $idNew);
-            return;
+            return $this->redirect('anticorpsedit/' . $id_space . '/' . $idNew, [], ['antibody' => ['id' => $idNew]]);
         }
 
         // Tissus table

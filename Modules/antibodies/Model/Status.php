@@ -96,6 +96,7 @@ class Status extends Model {
         $sql = "insert into ac_status(nom, color, display_order, id_space)"
                 . " values(?,?,?,?)";
         $this->runRequest($sql, array($name, $color, $display_order, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importStatus($id, $name, $color, $id_space) {

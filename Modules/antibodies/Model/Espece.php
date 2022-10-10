@@ -94,6 +94,7 @@ class Espece extends Model {
         $sql = "insert into ac_especes(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importEspece($id, $name, $id_space) {

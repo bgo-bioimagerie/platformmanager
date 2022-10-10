@@ -56,13 +56,13 @@ class DemController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->demModel->add($name, $id_space);
+                $id = $this->demModel->add($name, $id_space);
             }
             else{
                 $this->demModel->edit($id, $name, $id_space);
             }
             
-            $this->redirect("dem/".$id_space);
+            return $this->redirect("dem/".$id_space, [], ['dem' => ['id' => $id]]);
         }
 
         $this->render(array(

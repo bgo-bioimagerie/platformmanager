@@ -55,13 +55,13 @@ class KitController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $id_space);
             }
             
-            $this->redirect("kit/".$id_space);
+            return $this->redirect("kit/".$id_space, [], ['kit' => ['id' => $id]]);
         }
 
         $this->render(array(
