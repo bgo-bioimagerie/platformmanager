@@ -468,9 +468,18 @@ class BkCalendarEntry extends Model {
     public function getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $resource_id, $id_user='') {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'res' => $resource_id, 'id_space' => $id_space);
 
-        $sql = 'SELECT bk_calendar_entry.* , bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+        $sql = 'SELECT
+                bk_calendar_entry.* ,
+                bk_color_codes.color as color_bg,
+                bk_color_codes.text as color_text,
+                core_users.phone as phone,
+                core_users.name as lastname,
+                core_users.firstname as firstname,
+                cl_clients.name as client_name
+                FROM bk_calendar_entry
                 LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
                 INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
                 WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id = :res
@@ -516,9 +525,18 @@ class BkCalendarEntry extends Model {
         }
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
 
-        $sql = 'SELECT bk_calendar_entry.*, bk_color_codes.color as color_bg, bk_color_codes.text as color_text, core_users.phone as phone, core_users.name as lastname, core_users.firstname as firstname FROM bk_calendar_entry
+        $sql = 'SELECT
+                bk_calendar_entry.*,
+                bk_color_codes.color as color_bg,
+                bk_color_codes.text as color_text,
+                core_users.phone as phone,
+                core_users.name as lastname,
+                core_users.firstname as firstname,
+                cl_clients.name as client_name
+            FROM bk_calendar_entry
             LEFT JOIN bk_color_codes ON bk_color_codes.id=bk_calendar_entry.color_type_id
             INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+            LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
             WHERE
 				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')
@@ -1090,13 +1108,46 @@ class BkCalendarEntry extends Model {
         return $result;
     }
 
-    function lastUser($id_space, $id){
+    public function getEntriesForPeriod($id_space, $id_user, $date_from, $date_end){
+            $q = array('start' => $date_from, 'end' => $date_end, 'id_space' => $id_space, 'id_user' => $id_user);
+    
+            $sql = 'SELECT bk_calendar_entry.resource_id , core_users.id as user_id, core_users.login as user_login, core_users.email as user_email, re_info.name as resource_name FROM bk_calendar_entry
+                    INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
+                    INNER JOIN re_info ON re_info.id=bk_calendar_entry.resource_id
+                    WHERE
+                    (bk_calendar_entry.end_time <=:end AND bk_calendar_entry.end_time >= :start)
+                    AND bk_calendar_entry.deleted=0
+                    AND core_users.id=:id_user
+                    AND bk_calendar_entry.id_space=:id_space';
+    
+            $req = $this->runRequest($sql, $q);
+            return $req->fetchAll();
+    }
+
+    public function getEmailsWithEntriesForPeriod($id_space, $date_from, $date_end, $maxStatus) {
+        $sql = "SELECT DISTINCT user.email AS email 
+                FROM core_users AS user
+                INNER JOIN bk_calendar_entry AS bk_calendar_entry ON user.id = bk_calendar_entry.recipient_id
+                INNER JOIN core_j_spaces_user AS core_j_spaces_user ON user.id = core_j_spaces_user.id_user
+                WHERE  bk_calendar_entry.deleted=0
+                AND bk_calendar_entry.id_space=?
+                AND user.is_active = 1
+                AND core_j_spaces_user.status>?
+                AND core_j_spaces_user.status<=?
+                AND bk_calendar_entry.end_time >= ? AND bk_calendar_entry.end_time <= ?;";
+        $params = [$id_space, CoreSpace::$VISITOR, $maxStatus, $date_from, $date_end];
+        $req = $this->runRequest($sql, $params);
+        return $req->fetchAll();
+    }
+
+
+    public function lastUser($id_space, $id){
         $sql = 'SELECT UNIX_TIMESTAMP(max(updated_at)) as last_update, UNIX_TIMESTAMP(max(deleted_at)) as last_delete, max(start_time) as last_start FROM bk_calendar_entry WHERE id_space=? AND recipient_id=?';
         $res = $this->runRequest($sql, [$id_space, $id]);
         return $res->rowCount() > 0 ? $res->fetch() : ['last_update' => 0, 'last_delete' => 0, 'last_start' => 0];
     }
 
-    function lastUserPeriod($id_space, $id, $from, $to){
+    public function lastUserPeriod($id_space, $id, $from, $to){
         if(intval($from) == 0) {
             return $this->lastUser($id_space, $id);
         }

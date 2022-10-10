@@ -239,21 +239,54 @@ class Anticorps extends Model {
 
     private function anticorpsInfo($id_space, $ac, $catalog = false) {
         $isotypeModel = new Isotype();
+        $isoall = $isotypeModel->getBySpace($id_space);
+        $isos = [];
+        foreach ($isoall as $iso) {
+            $isos[$iso['id']]  = $iso['nom'];
+        }
         $sourceModel = new Source();
+        $sourceall = $sourceModel->getBySpace($id_space);
+        $sources = [];
+        foreach ($sourceall as $source) {
+            $sources[$source['id']]  = $source['nom'];
+        }
         $tissusModel = new Tissus();
         $stainingModel = new AcStaining();
+        $stainingall = $stainingModel->getBySpace($id_space);
+        $stainings = [];
+        foreach ($stainingall as $s) {
+            $stainings[$s['id']] = $s['name'];
+        }
         $applicationModel = new AcApplication();
+        $applicationsall = $applicationModel->getBySpace($id_space);
+        $applications = [];
+        foreach ($applicationsall as $app) {
+            $applications[$app['id']] = $app['name'];
+        }
+
         for ($i = 0; $i < count($ac); $i++) {
+            $ac[$i]['isotype'] = $isos[$ac[$i]['id_isotype']];
+            $ac[$i]['source']  = $sources[$ac[$i]['id_source']];
+
+            $ac[$i]['tissus'] = $tissusModel->getTissus($id_space, $ac[$i]['id'], $catalog);
+            $ac[$i]['proprietaire'] = $this->getOwners($id_space ,$ac[$i]['id']);
+            //$ac[$i]['tissus'] = [];
+            //$ac[$i]['proprietaire'] = [];
+
+            $ac[$i]['staining']  = $stainings[$ac[$i]['id_staining']] ?? "";
+            $ac[$i]['application']  = $applications[$ac[$i]['id_application']] ?? "";
+
+            /*
             $tmp = $isotypeModel->get($id_space, $ac[$i]['id_isotype']);
             $ac[$i]['isotype'] = $tmp['nom'];
             $tmp = $sourceModel->get($id_space ,$ac[$i]['id_source']);
             $ac[$i]['source'] = $tmp['nom'];
             $ac[$i]['tissus'] = $tissusModel->getTissus($id_space, $ac[$i]['id'], $catalog);
             $ac[$i]['proprietaire'] = $this->getOwners($id_space ,$ac[$i]['id']);
-
             $ac[$i]['staining'] = $stainingModel->getNameFromId($id_space ,$ac[$i]['id_staining']);
             $ac[$i]['application'] = $applicationModel->getNameFromId($id_space, $ac[$i]['id_application']);
-            //print_r($ac[$i]['tissus']);
+            */
+
         }
         return $ac;
     }
@@ -515,7 +548,6 @@ class Anticorps extends Model {
     }
 
     public function searchAdv($id_space ,$searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp) {
-
         $acs = $this->getAnticorpsInfo($id_space, "");
 
         if ($searchName != "") {
@@ -550,7 +582,7 @@ class Anticorps extends Model {
             $anticorps = array();
             foreach ($acs as $as) {
                 foreach ($as["tissus"] as $tissus) {
-                    if ($this->compare($tissus["organe"], $searchCible)) {
+                    if ($this->compare($tissus["espece"], $searchCible)) {
                         $anticorps[] = $as;
                     }
                 }
@@ -558,7 +590,7 @@ class Anticorps extends Model {
             $acs = $anticorps;
         }
 
-        if ($searchValide != 0) {
+        if ($searchValide != 0 && $searchValide != "") {
             $anticorps = array();
             foreach ($acs as $as) {
                 foreach ($as["tissus"] as $tissus) {

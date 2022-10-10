@@ -45,7 +45,7 @@
                 <div class="col-12 col-md-6">
                     <form class="form form-signin" action="corelogin" method="post">
                         <input class="form-control" name="redirection" type="hidden" value="<?php echo $redirection ?>">
-                        <input class="form-control mb-3" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::Login($language) ?>" required autofocus>
+                        <input class="form-control mb-3" name="login" autocomplete="username" type="text" class="form-control" placeholder="<?php echo CoreTranslator::LoginOrEmail($language) ?>" required autofocus>
                         <input class="form-control mb-3" name="pwd" autocomplete="current-password" type="password" class="form-control" placeholder="<?php echo CoreTranslator::Password($language) ?>" required>
                         <div class="checkbox mb-3">
                             <label class="form-check-label" for="remember"><?php echo CoreTranslator::RememberMe($language) ?></label>

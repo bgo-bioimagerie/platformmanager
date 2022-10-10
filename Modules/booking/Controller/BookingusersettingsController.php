@@ -21,10 +21,10 @@ class BookingusersettingsController extends CoresecureController {
      * @see Controller::index()
      */
     public function indexAction() {
-
         $user_id = $this->request->getSession()->getAttribut("id_user");
         $userSettingsModel = new CoreUserSettings();
-        $calendarDefaultView = $userSettingsModel->getUserSetting($user_id, "calendarDefaultView");
+        $calendarDefaultView = $userSettingsModel->getUserSetting($user_id, "calendarDefaultView", "weekarea");
+        $bkDefaultViewType = $userSettingsModel->getUserSetting($user_id, "BkDefaultViewType", "simple");
         
         $lang = $this->getLanguage();
         $form = new Form($this->request, "bokkingusersettingsform");
@@ -34,17 +34,27 @@ class BookingusersettingsController extends CoresecureController {
         $choicesidview = array("bookingday", "bookingdayarea", "bookingweek", "bookingweekarea", "bookingmonth");
         $form->addSelect("calendarDefaultView", BookingTranslator::Default_view($lang), $choicesview, $choicesidview, $calendarDefaultView);
         
+        $form->addSelect(
+            "BkDefaultViewType",
+            "",
+            [BookingTranslator::SimpleView($lang), BookingTranslator::DetailedView($lang)],
+            ['simple', 'detailed'],
+            $bkDefaultViewType
+        );
+
 
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingusersettings");
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
         
         if ($form->check()){
             $calendarDefaultView = $this->request->getParameter("calendarDefaultView");
+            $bkDefaultViewType = $this->request->getParameter("BkDefaultViewType");
 
             $user_id = $this->request->getSession()->getAttribut("id_user");
 
             $userSettingsModel = new CoreUserSettings();
             $userSettingsModel->setSettings($user_id, "calendarDefaultView", $calendarDefaultView);
+            $userSettingsModel->setSettings($user_id, "BkDefaultViewType", $bkDefaultViewType);
 
             $userSettingsModel->updateSessionSettingVariable();
 

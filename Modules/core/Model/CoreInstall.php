@@ -1086,7 +1086,13 @@ class CoreInstall extends Model {
         $dsn = '\'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8\'';
 
         $fileURL = Configuration::getConfigFile();
-        return $this->editConfFile($fileURL, $dsn, $login, $password);
+        $res = false;
+        try {
+            $res = $this->editConfFile($fileURL, $dsn, $login, $password);
+        } catch(Throwable $e) {
+            Configuration::getLogger()->debug('failed to edit config file '.$fileURL, ['err' => $e]);
+        }
+        return $res;
     }
 
     /**

@@ -21,9 +21,9 @@ if($bk_id_resource == null) { $bk_id_resource = '';}
 
 echo drawNavigation('dayarea', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
 if($detailedView) {
-    include 'Modules/booking/View/Booking/caldisplay.php';
+    include_once 'Modules/booking/View/Booking/caldisplay.php';
 } else {
-    include 'Modules/booking/View/Booking/simplecaldisplay.php';
+    include_once 'Modules/booking/View/Booking/simplecaldisplay.php';
 }
 
 
@@ -31,7 +31,7 @@ if($detailedView) {
 
 <div class="row">
 	<div class="col-12">
-	<?php include "Modules/booking/View/colorcodenavbar.php"; ?>
+	<?php include_once "Modules/booking/View/colorcodenavbar.php"; ?>
 	</div>
 </div>
 

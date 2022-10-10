@@ -2,6 +2,7 @@
 
 require_once 'Modules/core/Model/CoreTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
+require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 $modelBookingSetting = new BkBookingSettings();
 $modelBookingSupplemetary = new BkCalSupInfo();
@@ -122,29 +123,42 @@ th {
 					$last_end_time = mktime($day_begin,0,0,$temp[1], $temp[2], $temp[0]);
 					foreach($calData[$calDay][$resId] as $hcalEntry) { ?>
 						<?php
-						
+						if (!$hcalEntry['client_name']) {
+							$hcalEntry['client_name'] = ClientsTranslator::NoCLientDefined($lang);
+						}
 						if($hcalEntry['start_time'] <= $last_end_time){
 							$last_end_time = $hcalEntry['end_time'];
 						}
 							$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']).' #'.$hcalEntry['id'];
-							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+							if($hcalEntry['id'] == 0) {
+								$text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
+							}
+							$extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['client_name'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
 							$extra .= $modelBookingSupplemetary->getSummary($id_space ,$hcalEntry["id"]);
 							if($extra && $context['role'] >= CoreSpace::$USER) {
 								$text .= '<br/>'.$extra;
 							}
 							$hcalEntry['text'] = $text;
-							$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
+							if($hcalEntry['id']) {
+								$hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
+							} else {
+								$hcalEntry['link'] = '';
+							}
 						?>
 						<div class="tcellResa"  style="margin-bottom: 2px; border-radius: 10px; background-color:<?php echo $hcalEntry['color_bg']?>; ">
-						<a style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
+							<?php if ($hcalEntry['id'])  { ?>
+							<a style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
+							<?php } else { ?>
+									<span style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" ><?php echo $hcalEntry['text']; ?></span>
+							<?php }?>
 						</div>
 					<?php } ?>
 					<?php
 						$linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
 					?>
 						<?php if($context['role'] >= CoreSpace::$USER) { ?>
-						<div><a data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"><small></a></div>
+						<div><a data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"></a></div>
 						<?php } ?>
 					</td>
 				

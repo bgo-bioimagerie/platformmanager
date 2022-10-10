@@ -39,7 +39,14 @@ class CoreaboutController extends CorecookiesecureController {
 
     public function plansAction() {
         $plans = Configuration::get('plans', []);
-        $this->render(['plans' => $plans]); 
+        $publicPlans = [];
+        foreach($plans as $p) {
+            if(isset($p['custom'])) {
+                continue;
+            }
+            $publicPlans[] = $p;
+        }
+        $this->render(['plans' => $publicPlans]); 
     }
 
     public function privacyAction() {
