@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.1
+
+### Features / enhancements
+
+* [antibodies] allow navigation back to antibodies search results
+
 ## 2.9.0
 
 ### Features / enhancements

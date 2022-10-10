@@ -203,7 +203,7 @@
 
         <div class="row">
                 <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
-                    method="post">
+                    method="get">
 
                 <?php
                 if (!isset($searchName)) {
