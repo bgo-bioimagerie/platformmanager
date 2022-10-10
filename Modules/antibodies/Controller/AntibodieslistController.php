@@ -67,8 +67,8 @@ class AntibodieslistController extends AntibodiesController {
         }
 
         // get the antibodies list
-        if($sortentry == ""){
-            $sortentry = "A";
+        if ($sortentry == "") {
+            $sortentry = "All";
         }
 
         $anticorpsModel = new Anticorps();
