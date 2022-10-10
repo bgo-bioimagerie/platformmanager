@@ -2,6 +2,7 @@
 
 require_once 'Framework/Request.php';
 require_once 'Framework/Constants.php';
+require_once 'Modules/core/Model/CoreUserSettings.php';
 
 /**
  * Class allowing to generate and check a form html view. 
@@ -398,6 +399,13 @@ class TableView {
     }
 
     private function addHeader(){
+        $userSettingsModel = new CoreUserSettings();
+        $user_id = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
+        $arrayDefaultDisplay = 10;
+        if($user_id) {
+            $arrayDefaultDisplay = $userSettingsModel->getUserSetting($user_id, "arrayDefaultDisplay", "10");
+        }
+
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
         $col = 0;
@@ -407,12 +415,13 @@ class TableView {
         if(count($this->linesButtonActions) > 0 && !$this->isprint) {
             $col+=count($this->linesButtonActions);
         }
-        $str1 = str_replace('let defaultCol = 0;','let defaultCol = '.$col.';', $str1);
+        $str1 = str_replace('let defaultCol = 0;', 'let defaultCol = '.$col.';', $str1);
+        $str1 = str_replace('let defaultLen = 10;', 'let defaultLen = '.$arrayDefaultDisplay.';', $str1);
         return str_replace("tableID", $this->tableID, $str1);
     }
     
     /**
-     * 
+     * @deprecated
      * @param type $html
      * @param int $headerscount
      * @return string

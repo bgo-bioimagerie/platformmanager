@@ -14,7 +14,7 @@
         <div class="card">
             <div class="card-header"><?php echo $this->clean($controller["module"]) ?></div>
             <div class="card-body">
-                <a href="<?php echo $this->clean($controller["controller"]) ?>">
+                <a href="<?php echo strtolower($this->clean($controller["controller"])) ?>">
                     <button
                         type="button"
                         class="btn btn-primary"
