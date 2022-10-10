@@ -14,6 +14,7 @@
 * [booking] add client name in booking infos
 * [coreconnexion] allow to use email for login
 * [coreconnexion] fix auth exceptions display
+* [booking] fix reservation edition or deletion when unauthorised
 
 ### Fixes
 
