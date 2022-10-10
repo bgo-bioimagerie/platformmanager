@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.1
+
+### Features / enhancements
+
+* [core] add user settings to specify default number of elelments to display in arrays
+
 ## 2.9.0
 
 ### Features / enhancements
