@@ -9,9 +9,11 @@
 * [rating] add new feature satisfaction campaigns #616
 * [booking] make confirmation email optional at booking
 * [services] in project followup, show quantities if not null, and display after service name
+* [booking] add in user pref and booking config choice to view simple or detailed view by default Closes #720
 * [documents] fix default url on new document upload (for strict sql support)
 * [booking] add client name in booking infos
 * [coreconnexion] allow to use email for login
+* [coreconnexion] fix auth exceptions display
 * [booking] fix reservation edition or deletion when unauthorised
 
 ### Fixes

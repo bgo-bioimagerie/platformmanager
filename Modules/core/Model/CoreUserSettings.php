@@ -62,11 +62,11 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @return mixed
      */
-    public function getUserSetting($user_id, $setting) {
+    public function getUserSetting($user_id, $setting, $default=null) {
         $sql = "select value from core_users_settings where user_id=? and setting=?";
         $user = $this->runRequest($sql, array($user_id, $setting));
         $tmp = $user->fetch();
-        return  $tmp ? $tmp[0] : null;
+        return  $tmp ? $tmp[0] : $default;
     }
 
     /**

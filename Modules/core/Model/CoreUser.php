@@ -550,7 +550,7 @@ class CoreUser extends Model {
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result
         } else {
-            throw new PfmAuthException($this->INVALID_LOGIN);
+            throw new PfmAuthException($this::$CNX_INVALID_LOGIN);
         }
     }
 
@@ -906,37 +906,6 @@ class CoreUser extends Model {
         $uinfo->delete($id);
         $sql = 'UPDATE core_users SET login=?,pwd=NULL,is_active=0,deleted=1,deleted_at=NOW(),remember_key=NULL,name=NULL,firstname=NULL, email=NULL, phone=NULL WHERE id=?';
         $this->runRequest($sql, array($uid,$id));
-    }
-
-    public function login($login, $pwd) {
-
-        // test if local account
-        if ($this->isLocalUser($login)) {
-            //echo "found local user <br/>";
-            return $this->connect($login, $pwd);
-        }
-
-        // search for LDAP account
-        else {
-            if (CoreLdapConfiguration::get('ldap_use', 0)) {
-
-                $modelLdap = new CoreLdap();
-                $ldapResult = $modelLdap->getUser($login, $pwd);
-                if ($ldapResult == "error") {
-                    return "Cannot connect to ldap using the given login and password";
-                } else {
-                    // update the user infos
-                    $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                    $userInfo = $this->user->getUserByLogin($login);
-                    if(!$userInfo['apikey']) {
-                        $this->user->newApiKey($userInfo['idUser']);
-                    }
-                    return $this->user->isActive($login);
-                }
-            }
-        }
-
-        return "Login or password not correct";
     }
 
     public function generateRandomPassword() {
