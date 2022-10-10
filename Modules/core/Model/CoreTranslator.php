@@ -2303,5 +2303,19 @@ class CoreTranslator {
         }
         return "An error occured during file upload.";
     }
+
+    public static function CoreDefaults($lang = "") {
+        if($lang == "fr") {
+            return "Paramètres généraux";
+        }
+        return "Global parameters";
+    }
+
+    public static function DefaultsArrayView($lang = "") {
+        if($lang == "fr") {
+            return "Affichage d'éléments par tableau";
+        }
+        return "Displayed array elements";
+    }
     
 }
