@@ -949,13 +949,14 @@ class BkCalendarEntry extends Model {
     }
 
     public function computeDuration($id_space, $booking) {
-        $modelResource = new ResourceInfo();
+        //$modelResource = new ResourceInfo();
         $modelScheduling = new BkScheduling();
         $id_resource = $booking['resource_id'];
         $id_client = $booking['responsible_id'];
         $start_time = $booking['start_time'];
         $end_time = $booking['end_time'];
-        $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
+        $bkScheduling = $modelScheduling->getByResource($id_space, $id_resource);
+        // $bkScheduling = $modelScheduling->getByReArea($id_space ,$modelResource->getAreaID($id_space, $id_resource));
         $day_begin = $bkScheduling['day_begin'];
         $day_end = $bkScheduling['day_end'];
 

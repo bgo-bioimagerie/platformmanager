@@ -270,15 +270,29 @@ class BookingController extends BookingabstractController {
 
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        // $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        $schedule = $mschedule->getByResource($id_space, $curentResource);
+
         if($schedule['shared']) {
             $modelRes = new ResourceInfo();
+            $resourceList = $modelRes->getForSpace($id_space);
+            $resIds = [];
+            foreach ($resourceList as $r) {
+                $rcal = $mschedule->getByResource($id_space, $r['id']);
+                if($rcal['id'] != $schedule['id']) {
+                    continue;
+                }
+                $resIds[] = $r['id'];
+            }
+
+            /*
             $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
             $resIds = [];
             for ($r = 0; $r < count($resourcesBase); $r++) {
                 $resIds[] = $resourcesBase[$r]["id"];
             }
+            */
             $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
             $calmap = [];
             $calEntries = [];
@@ -321,8 +335,8 @@ class BookingController extends BookingabstractController {
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
-        $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
+        // $modelScheduling = new BkScheduling();
+        // $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
 
         $u = new CoreSpaceUser();
@@ -341,14 +355,14 @@ class BookingController extends BookingabstractController {
         if ($detailedViewRequest == 'simple') {
             $detailedView = false;
         }
-        
 
         // view
         return $this->render(array(
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
-            'scheduling' => $scheduling,
+            'scheduling' => $schedule,
+            'shareCalendar' => true,
             'resourceInfo' => $resourceInfo,
             'resourceBase' => $resourceBase,
             'date' => $curentDate,
@@ -418,8 +432,10 @@ class BookingController extends BookingabstractController {
         $curentAreaId = $menuData['curentAreaId'];
 
         $resIds = [];
+
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resIds[] = $resourcesBase[$r]["id"];
+            
         }
 
 
@@ -455,15 +471,32 @@ class BookingController extends BookingabstractController {
         $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
+        $schedule = null;
+        $shareCalendar = true;
         foreach($resourcesBase as $r) {
             $calEntries[] = [];
+            $mschedule = new BkScheduling();
+            $rschedule = $mschedule->getByResource($id_space, $r['id']);
+            if($schedule == null) {
+                $schedule = $rschedule;
+            } else if ($schedule['id'] != $rschedule['id']) {
+                $shareCalendar = false;
+                break;
+            }
         }
+        if(!$shareCalendar) {
+            if($schedule['shared']) {
+                Configuration::getLogger()->debug('[booking][dayarea] shared calendar but all area resources do not use same calendar!!', ['id_space' => $id_space, 'area' => $curentAreaId]);
+            }
+            $schedule['shared'] = false;
+        }
+
         foreach($cals as $cal) {
             $calmap[$cal['resource_id']][] = $cal;
         }
 
-        $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        //$mschedule = new BkScheduling();
+        //$schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if($schedule['shared']) {
             foreach($resourcesBase as $i => $r) {
                 foreach ($cals as $cal) {
@@ -497,8 +530,8 @@ class BookingController extends BookingabstractController {
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
-        $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
+        // $modelScheduling = new BkScheduling();
+        // $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
@@ -527,7 +560,8 @@ class BookingController extends BookingabstractController {
             'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
-            'scheduling' => $scheduling,
+            'scheduling' => $schedule,
+            'shareCalendar' => $shareCalendar,
             'resourcesBase' => $resourcesBase,
             'date' => $curentDate,
             'date_unix' => $curentDateUnix,
@@ -625,7 +659,9 @@ class BookingController extends BookingabstractController {
         //$calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        // $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        $schedule = $mschedule->getByResource($id_space, $curentResource);
+
         if($schedule['shared']) {
             $modelRes = new ResourceInfo();
             $resourcesBaseShared = $modelRes->resourcesForArea($id_space, $curentAreaId);
@@ -680,8 +716,8 @@ class BookingController extends BookingabstractController {
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
-        $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
+        // $modelScheduling = new BkScheduling();
+        // $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         $u = new CoreSpaceUser();
         $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
@@ -715,7 +751,8 @@ class BookingController extends BookingabstractController {
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'agendaStyle' => $agendaStyle,
-            'scheduling' => $scheduling,
+            'scheduling' => $schedule,
+            'shareCalendar' => true,
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,
@@ -821,15 +858,35 @@ class BookingController extends BookingabstractController {
         $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
-        foreach($resourcesBase as $r) {
-            $calEntries[] = [];
-        }
+
         foreach($cals as $cal) {
             $calmap[$cal['resource_id']][] = $cal;
         }
 
-        $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
+        $schedule = null;
+        $shareCalendar = true;
+        foreach($resourcesBase as $r) {
+            $calEntries[] = [];
+            $mschedule = new BkScheduling();
+            $rschedule = $mschedule->getByResource($id_space, $r['id']);
+            if($schedule == null) {
+                $schedule = $rschedule;
+            } else if ($schedule['id'] != $rschedule['id']) {
+                $shareCalendar = false;
+                break;
+            }
+        }
+        if(!$shareCalendar) {
+            if($schedule['shared']) {
+                Configuration::getLogger()->debug('[booking][weekarea] shared calendar but all area resources do not use same calendar!!', ['id_space' => $id_space, 'area' => $curentAreaId]);
+            }
+            $schedule['shared'] = false;
+        }
+
+
+
+        // $mschedule = new BkScheduling();
+        // $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if($schedule['shared']) {
             foreach($resourcesBase as $i => $r) {
                 foreach ($cals as $cal) {
@@ -873,8 +930,8 @@ class BookingController extends BookingabstractController {
         $modelCSS = new BkBookingTableCSS();
         $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
-        $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
+        // $modelScheduling = new BkScheduling();
+        // $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
@@ -915,7 +972,8 @@ class BookingController extends BookingabstractController {
             'colorcodes' => $colorcodes,
             'isUserAuthorizedToBook' => $isUserAuthorizedToBook,
             'agendaStyle' => $agendaStyle,
-            'scheduling' => $scheduling,
+            'scheduling' => $schedule,
+            'shareCalendar' => $shareCalendar,
             'afterDate' => $afterDate,
             'beforeDate' => $beforeDate,
             'bk_id_resource' => $curentResource,

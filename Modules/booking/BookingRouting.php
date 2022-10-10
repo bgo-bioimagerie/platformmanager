@@ -15,6 +15,9 @@ class BookingRouting extends Routing{
         $router->map('PROPFIND', '/caldav/[i:id_space]/[i:id_cal]', 'booking/bookingcaldav/propfind', 'booking_caldav_propfind_notrailing'); // btsync sometimes force removal of trailing slash
         $router->map('REPORT', '/caldav/[i:id_space]/1/', 'booking/bookingcaldav/report', 'booking_caldav_report');
         $router->map('REPORT', '/caldav/[i:id_space]/0/', 'booking/bookingcaldav/report', 'booking_caldav_report_default');
+
+        $router->map('POST', '/bookingscheduling/assign/[i:kind]/[i:id_space]/[i:id]/[i:id_calendar]', 'booking/bookingscheduling/assign', 'booking_scheduling_assign');
+        $router->map('GET', '/bookingscheduling/delete/[i:id_space]/[i:id]', 'booking/bookingscheduling/delete', 'booking_scheduling_delete');
         $router->map('GET', '/bookingauthorisationsdelete/[i:id_space]/[i:id_user]/[i:id]', 'booking/bookingauthorisations/delete', 'booking_bookingauthorisations_delete');
     }
 

@@ -19,6 +19,7 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 require_once 'Modules/booking/Model/BkStats.php';
 require_once 'Modules/booking/Model/BkStatsUser.php';
+require_once 'Modules/booking/Model/BkScheduling.php';
 
 require_once 'Modules/core/Model/CoreHistory.php';
 require_once 'Modules/core/Model/CoreUser.php';
@@ -147,6 +148,12 @@ class EventHandler {
         $this->logger->debug('[spaceCreate]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
+        $bks = new BkResourceSchedule();
+        $defaultSchedule = $bks->getDefault($space['id']);
+        if(!$defaultSchedule) {
+            $bk = new BkScheduling();
+            $bk->createDefault($space['id']);
+        }
         $statHandler = new Statistics();
         $statHandler->createDB($space['shortname']);
         $this->spaceCount();

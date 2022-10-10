@@ -19,6 +19,15 @@ $calData = [];
 $calResources = [];
 $calDays = [];
 
+$rCalendars = [];
+if(!$shareCalendar) {
+	foreach ($resourcesBase as $r) {
+		$mschedule = new BkScheduling();
+		$s = $mschedule->getByResource($id_space, $r['id']);
+		$rCalendars[$r['id']] = $s;
+	}
+}
+
 $q = '?';
 if(!empty($from)) {
 	$elts = implode(':', $from);
@@ -36,7 +45,7 @@ for ($d = 0 ; $d < $nbDays ; $d++){
 	$sufixStream = date("S", $date_unix);
 	
 	$isAvailableDay = false;
-	if($scheduling["is_".strtolower($dayStream)] == 1) {
+	if(!$shareCalendar || $scheduling["is_".strtolower($dayStream)] == 1) {
 	//if ($available_days[$d] == 1){
 		$isAvailableDay = true;
 
@@ -105,7 +114,7 @@ th {
 <?php
 	foreach ($days as $calDay) {
 
-		if(!array_key_exists($resId, $calData[$calDay])){
+		if(!array_key_exists($resId, $calData[$calDay]) || (!$shareCalendar && $rCalendars[$resId]["is_".strtolower($calDay)] == 0)){
 			echo "<td></td>";
 			continue;
 		}

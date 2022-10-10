@@ -209,14 +209,16 @@ class BookingTest extends BookingBaseTest {
 
         $r = new ReArea();
         $areas = $r->getForSpace($space['id']);
+        $bk = new BkScheduling();
+        $defaultSchedule = $bk->getDefault($space['id']);
         $area = $areas[0];
         $req = $this->request([
-            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id']
+            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$defaultSchedule['id']
         ]);
         $c = new BookingschedulingController($req, $space);
-        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $defaultSchedule['id']]);
         $bkScheduling = $data['bkScheduling'];
-        $this->assertTrue($bkScheduling['id']  == 0);
+        $this->assertTrue($bkScheduling['id']  == $defaultSchedule['id']);
 
         // cannot book at 19h
         $this->asUser($user['login'], $space['id']);
@@ -231,16 +233,16 @@ class BookingTest extends BookingBaseTest {
         $this->asUser($manager['login'], $space['id']);
         $bkScheduling['day_end'] = '20';
         $form = array_merge([
-            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id'],
+            'path' => 'bookingschedulingedit/'.$space['id'].'/'.$defaultSchedule['id'],
             'formid' => 'bookingschedulingedit'
         ], $bkScheduling);
         $req = $this->request($form);
 
         $c = new BookingschedulingController($req, $space);
-        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $defaultSchedule['id']]);
         $bkScheduling = $data['bkScheduling'];
 
-        $this->assertTrue($bkScheduling['id']  > 0);
+        $this->assertTrue($bkScheduling['id']  == $defaultSchedule['id']);
 
         $this->asUser($user['login'], $space['id']);
         // cannot book at 19h
