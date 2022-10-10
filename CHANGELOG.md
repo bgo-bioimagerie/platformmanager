@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.1
+
+### Features / enhancements
+
+* [antibodies] set "all" to default for antibodies list
+
 ## 2.9.0
 
 ### Features / enhancements
