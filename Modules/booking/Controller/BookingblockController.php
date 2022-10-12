@@ -44,7 +44,7 @@ class BookingblockController extends BookingsettingsController {
             $errorMessage = $errorMessage ? $errorMessage . "</br>" : "";
             $errorMessage .= BookingTranslator::ColorNeeded($lang);
         }
-        if ($errorMessage != "") {
+        if ($errorMessage && $errorMessage != "") {
             $_SESSION["flash"] = $errorMessage;
             $_SESSION["flashClass"] = 'warning';
         }
