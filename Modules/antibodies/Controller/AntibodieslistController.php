@@ -461,8 +461,11 @@ class AntibodieslistController extends AntibodiesController {
     }
 
     protected function createEditForm($id_space, $anticorps, $id) {
-
         $lang = $this->getLanguage();
+
+        $missingItems = [];
+        $mandatoryEntries = [];
+
         $form = new Form($this->request, 'antibodyEditForm');
         $form->setTitle(AntibodiesTranslator::AntibodyInfo($lang));
 
@@ -472,7 +475,14 @@ class AntibodieslistController extends AntibodiesController {
 
         $modelSource = new Source();
         $sourcesList = $modelSource->getForList($id_space);
-        $form->addSelect("id_source", AntibodiesTranslator::Source($lang), $sourcesList["names"], $sourcesList["ids"], $anticorps["id_source"]);
+        $mandatoryEntries["source"] = $sourcesList['ids'];
+        $form->addSelectMandatory(
+            "id_source",
+            AntibodiesTranslator::Source($lang),
+            $sourcesList["names"],
+            $sourcesList["ids"],
+            $anticorps["id_source"]
+        );
 
         $form->addText("reactivity", AntibodiesTranslator::Reactivity($lang), false, $anticorps["reactivity"]);
         $form->addText("reference", AntibodiesTranslator::Reference($lang), false, $anticorps["reference"]);
@@ -481,7 +491,14 @@ class AntibodieslistController extends AntibodiesController {
 
         $modelIsotype = new Isotype();
         $isotypesList = $modelIsotype->getForList($id_space);
-        $form->addSelect("id_isotype", AntibodiesTranslator::Isotype($lang), $isotypesList["names"], $isotypesList["ids"], $anticorps["id_isotype"]);
+        $mandatoryEntries["isotype"] = $isotypesList['ids'];
+        $form->addSelectMandatory(
+            "id_isotype",
+            AntibodiesTranslator::Isotype($lang),
+            $isotypesList["names"],
+            $isotypesList["ids"],
+            $anticorps["id_isotype"]
+        );
 
         $form->addText("stockage", AntibodiesTranslator::Stockage($lang), false, $anticorps["stockage"]);
 
@@ -495,12 +512,26 @@ class AntibodieslistController extends AntibodiesController {
 
         //$form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
 
+        $missingItems = $this->getMissingItems($mandatoryEntries);
+        Configuration::getLogger()->debug('[TEST]', ["missingItems" => $missingItems]);
+
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);
         return $form;
     }
 
-    public function uploadTissusImage($id_space ,$id) {
+    protected function getMissingItems($mandatoryEntries) {
+        Configuration::getLogger()->debug('[TEST]', ["mandatoryEntries" => $mandatoryEntries]);
+        $missingItems = [];
+        foreach ($mandatoryEntries as $entry => $list) {
+            if (empty($list)) {
+                $missingItems[] = $entry;
+            }
+        }
+        return $missingItems;
+    }
+
+    public function uploadTissusImage($id_space, $id) {
         //print_r($_FILES);
 
         $target_dir = "data/antibodies/";
