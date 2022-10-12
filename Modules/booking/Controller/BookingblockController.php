@@ -36,16 +36,15 @@ class BookingblockController extends BookingsettingsController {
         $modelColor = new BkColorCode();
         $colorCodes = $modelColor->getColorCodes($id_space);
 
-        $errorMessage = null;
+        $errorMessages = [];
         if (empty($resources)) {
-            $errorMessage = BookingTranslator::ResourceNeeded($lang);
+            $errorMessages[] = BookingTranslator::ResourceNeeded($lang);
         }
         if (empty($colorCodes)) {
-            $errorMessage = $errorMessage ? $errorMessage . "</br>" : "";
-            $errorMessage .= BookingTranslator::ColorNeeded($lang);
+            $errorMessages[] = BookingTranslator::ColorNeeded($lang);
         }
-        if ($errorMessage && $errorMessage != "") {
-            $_SESSION["flash"] = $errorMessage;
+        if (!empty($errorMessages)) {
+            $_SESSION["flash"] = implode("</br>", $errorMessages);
             $_SESSION["flashClass"] = 'warning';
         }
 
