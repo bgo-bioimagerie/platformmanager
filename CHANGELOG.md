@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.2
+
+### Fixes
+
+* [antibodies] set missing mandatory fields in tissus edition
+
 ## 2.9.1
 
 ### Features / enhancements
