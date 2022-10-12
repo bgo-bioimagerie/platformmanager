@@ -504,16 +504,40 @@ class AntibodieslistController extends AntibodiesController {
 
         $modelApp = new AcApplication();
         $applicationsList = $modelApp->getForList($id_space);
-        $form->addSelect("id_application", AntibodiesTranslator::Application($lang), $applicationsList["names"], $applicationsList["ids"], $anticorps["id_application"]);
+        $mandatoryEntries["application"] = $applicationsList['ids'];
+        $form->addSelectMandatory(
+            "id_application",
+            AntibodiesTranslator::Application($lang),
+            $applicationsList["names"],
+            $applicationsList["ids"],
+            $anticorps["id_application"]
+        );
 
         $modelStaining = new AcStaining();
         $stainingsList = $modelStaining->getForList($id_space);
-        $form->addSelect("id_staining", AntibodiesTranslator::Staining($lang), $stainingsList["names"], $stainingsList["ids"], $anticorps["id_staining"]);
+        $mandatoryEntries["staining"] = $stainingsList['ids'];
+        $form->addSelectMandatory(
+            "id_staining",
+            AntibodiesTranslator::Staining($lang),
+            $stainingsList["names"],
+            $stainingsList["ids"],
+            $anticorps["id_staining"]
+        );
 
         //$form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
 
         $missingItems = $this->getMissingItems($mandatoryEntries);
         Configuration::getLogger()->debug('[TEST]', ["missingItems" => $missingItems]);
+
+        if (!empty($missingItems)) {
+            $errorMessage = ""; 
+            foreach ($missingItems as $missingItem) {
+                $errorMessage .= $missingItem . " / ";
+            }
+            $_SESSION["flash"] = $errorMessage;
+            $_SESSION["flashClass"] = 'warning';
+        }
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);
