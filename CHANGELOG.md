@@ -36,11 +36,7 @@
 ### Fixes
 
 * [booking] remove deleted supinfos fetch in reservation edition, closes #712
-<<<<<<< HEAD
-* [booking] fix package selection when booking settings sets "force package"
-=======
 * [booking] fix package selection when booking settings sets "force package" closes #719
->>>>>>> develop
 
 ## 2.8.2
 
@@ -103,7 +99,6 @@
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
 * [booking] show old client account used for a booking, in booking edition in case user switched to new client
->>>>>>> develop
 
 ## 2.7.0
 
