@@ -287,7 +287,7 @@ class AntibodiesTranslator {
         if ($lang == "fr") {
             return "Certains éléments doivent être créés en amont de l'enregistrement de votre anticorps : ";
         }
-        return "Some items must be created in order to being able to recird this antibody: ";
+        return "Some items must be created in order to being able to record this antibody: ";
     }
     
 }
