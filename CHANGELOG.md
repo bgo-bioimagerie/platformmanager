@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.2
+
+### Fixes
+
+* [mailer] remove default cc and mailerconfig cc option
+
 ## 2.9.1
 
 ### Features / enhancements

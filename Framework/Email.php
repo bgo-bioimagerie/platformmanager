@@ -305,7 +305,7 @@ class Email extends Model {
 
     public function getMailerSetCopyToFrom($spaceId) {
         $modelConfig = new CoreConfig();
-        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 1);
+        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 0);
         return ($mailerSetCopyToFrom == 1);
     }
 
