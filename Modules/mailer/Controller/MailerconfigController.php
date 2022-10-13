@@ -53,11 +53,12 @@ class MailerconfigController extends CoresecureController {
             return $this->redirect("mailerconfig/".$id_space);
         }
         
+        // cf issue #735
         /* $mailerSetCopyToFrom = $this->mailerSetCopyToFromForm($lang, $id_space);
         if ($mailerSetCopyToFrom->check()) {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam(
-                "mailerSetCopyToFrom",
+                "MailerSetCopyToFrom",
                 $this->request->getParameter('mailerSetCopyToFrom'),
                 $id_space
             );
@@ -66,9 +67,10 @@ class MailerconfigController extends CoresecureController {
         } */
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang),
-            $formEdit->getHtml($lang),
-            // $mailerSetCopyToFrom->getHtml($lang)
+        $forms = array(
+            $formMenusactivation->getHtml($lang),
+            $formEdit->getHtml($lang)
+            /* $mailerSetCopyToFrom->getHtml($lang) (cf issue #735) */
         );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }

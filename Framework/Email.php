@@ -60,8 +60,9 @@ class Email extends Model {
             $mail->Body = $content;
         }
 
-        if ($sentCopyToFrom){
-            $mail->AddCC($from);
+        if ($sentCopyToFrom) {
+            // cf issue #735
+            // $mail->AddCC($from);
         }
 
         // filter email if user unsubscribed

@@ -45,8 +45,9 @@ class MailerSend extends Model {
 
         $mail->Body = $content;
 
-        if ($sentCopyToFrom){
-            $mail->AddCC($from);
+        if ($sentCopyToFrom) {
+            // cf issue #735
+            // $mail->AddCC($from);
         }
 
         if (is_array($toAdress)) {
