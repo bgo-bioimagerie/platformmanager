@@ -463,7 +463,6 @@ class AntibodieslistController extends AntibodiesController {
     protected function createEditForm($id_space, $anticorps, $id) {
         $lang = $this->getLanguage();
 
-        $missingItems = [];
         $mandatoryEntries = [];
 
         $form = new Form($this->request, 'antibodyEditForm');
@@ -524,35 +523,29 @@ class AntibodieslistController extends AntibodiesController {
             $anticorps["id_staining"]
         );
 
+        $this->setMissingItemsWarning($mandatoryEntries);
+
         //$form->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
-
-        $missingItems = $this->getMissingItems($mandatoryEntries);
-        Configuration::getLogger()->debug('[TEST]', ["missingItems" => $missingItems]);
-
-        if (!empty($missingItems)) {
-            $errorMessage = ""; 
-            foreach ($missingItems as $missingItem) {
-                $errorMessage .= $missingItem . " / ";
-            }
-            $_SESSION["flash"] = $errorMessage;
-            $_SESSION["flashClass"] = 'warning';
-        }
-
 
         $form->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . "/" . $id);
         $form->setColumnsWidth(2, 8);
         return $form;
     }
 
-    protected function getMissingItems($mandatoryEntries) {
-        Configuration::getLogger()->debug('[TEST]', ["mandatoryEntries" => $mandatoryEntries]);
+    protected function setMissingItemsWarning($mandatoryEntries) {
+        $lang = $this->getLanguage();
         $missingItems = [];
         foreach ($mandatoryEntries as $entry => $list) {
             if (empty($list)) {
-                $missingItems[] = $entry;
+                $missingItems[] = AntibodiesTranslator::$entry($lang);
             }
         }
-        return $missingItems;
+        if (!empty($missingItems)) {
+            $errorMessage = AntibodiesTranslator::MissingItems($lang);
+            $errorMessage .= implode(', ', $missingItems);
+            $_SESSION["flash"] = $errorMessage;
+            $_SESSION["flashClass"] = 'warning';
+        }
     }
 
     public function uploadTissusImage($id_space, $id) {
