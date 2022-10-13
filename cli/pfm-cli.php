@@ -54,6 +54,10 @@ $cli = Cli::create()
     ->opt('dry', 'Dry run', false, 'boolean')
     ->command('config')
     ->opt('yaml:y', 'Yaml output', false, 'boolean')
+    ->command('user')
+    ->opt('login', 'login identifier', true, 'string')
+    ->opt('password', 'new password', false, 'string')
+    ->opt('apikey', 'generate new apikey', false, 'boolean')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer')
     ->command('maintenance')
@@ -65,6 +69,29 @@ $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'user':
+            if (!$args->getOpt('login')) {
+                Configuration::getLogger()->error('Missing user parameter');
+                break;
+            }
+            $login = $args->getOpt('login');
+            $cum = new CoreUser();
+            $userId = $cum->getUserIDByLogin($login);
+            if (!$userId) {
+                Configuration::getLogger()->error('User not found', ['user' => $login]);
+                break;
+            }
+            if ($args->getOpt('password')) {
+                $pwd = $args->getOpt('password');
+                $cum->changePwd($userId, $pwd);
+                Configuration::getLogger()->info('Password updated', ['user' => $login]);
+                break;
+            }
+            if ($args->getopt('apikey')) {
+                $apikey = $cum->newApiKey($userId);
+                Configuration::getLogger()->info("Api key updated", ["user" => $login, "key" => $apikey]);
+            }
+            break;
         case 'maintenance':
             $modelCoreConfig = new CoreConfig();
             if ($args->getOpt('on')) {
