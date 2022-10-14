@@ -60,8 +60,9 @@ class Email extends Model {
             $mail->Body = $content;
         }
 
-        if ($sentCopyToFrom){
-            $mail->AddCC($from);
+        if ($sentCopyToFrom) {
+            // cf issue #735
+            // $mail->AddCC($from);
         }
 
         // filter email if user unsubscribed
@@ -305,7 +306,7 @@ class Email extends Model {
 
     public function getMailerSetCopyToFrom($spaceId) {
         $modelConfig = new CoreConfig();
-        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 1);
+        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 0);
         return ($mailerSetCopyToFrom == 1);
     }
 

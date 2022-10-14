@@ -9,7 +9,7 @@ weight: 3
 ### setup
 
 Docker images are available at quay.io/bgo_bioimagerie,
-see [docker-compose.yml](docker/docker-compose.yml) as compose example.
+see [docker-compose.yml](https://github.com/bgo-bioimagerie/platformmanager/blob/master/docker/docker-compose.yml) as compose example.
 
 Update docker-compose.yml file environment sections with your setup.
 
@@ -129,4 +129,4 @@ And .env file should define (according to variables used):
 
 ### Install
 
-See [install](./upgrade)
+See [install](../upgrade)

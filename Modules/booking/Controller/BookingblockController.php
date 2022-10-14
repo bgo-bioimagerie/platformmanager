@@ -36,6 +36,18 @@ class BookingblockController extends BookingsettingsController {
         $modelColor = new BkColorCode();
         $colorCodes = $modelColor->getColorCodes($id_space);
 
+        $errorMessages = [];
+        if (empty($resources)) {
+            $errorMessages[] = BookingTranslator::ResourceNeeded($lang);
+        }
+        if (empty($colorCodes)) {
+            $errorMessages[] = BookingTranslator::ColorNeeded($lang);
+        }
+        if (!empty($errorMessages)) {
+            $_SESSION["flash"] = implode("</br>", $errorMessages);
+            $_SESSION["flashClass"] = 'warning';
+        }
+
         $bm = new BkCalendarEntry();
         $blockedEntries = $bm->blockedEntries($id_space);
         $table = new TableView();
@@ -44,7 +56,7 @@ class BookingblockController extends BookingsettingsController {
 
 
 
-        for($i=0;$i<count($blockedEntries);$i++){
+        for ($i=0; $i<count($blockedEntries); $i++) {
             $e = $blockedEntries[$i];
             $start = new DateTime();
             $start->setTimestamp($e['start_time']);
@@ -58,6 +70,7 @@ class BookingblockController extends BookingsettingsController {
 
         }
         
+
         $headers = array(
             "id" => "ID",
             "start" => BookingTranslator::Beginning_of_the_reservation($lang),

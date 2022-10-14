@@ -14,14 +14,14 @@ use PHPMailer\PHPMailer\PHPMailer;
  */
 class MailerSend extends Model {
 
-    public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true){
-            echo "send email from " .$fromName. "(" . $from . ") to ";
-            print_r($toAdress);
-            echo " subject = " . $subject . " content = " . $content. "<br/>";
-            if($sentCopyToFrom){
-                echo " use copy to from <br/>";
-            }
+    public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true) {
+        echo "send email from " .$fromName. "(" . $from . ") to ";
+        print_r($toAdress);
+        echo " subject = " . $subject . " content = " . $content. "<br/>";
+        if ($sentCopyToFrom) {
+            echo " use copy to from <br/>";
         }
+    }
 
     public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ){
 
@@ -45,33 +45,31 @@ class MailerSend extends Model {
 
         $mail->Body = $content;
 
-        if ($sentCopyToFrom){
-            $mail->AddCC($from);
+        if ($sentCopyToFrom) {
+            // cf issue #735
+            // $mail->AddCC($from);
         }
 
-        if (is_array ($toAdress)){
-            foreach($toAdress as $addres){
-                if ($addres[0] && $addres[0] != ""){
-                                    //echo $addres[0] . "<br/>";
-                                    //$mail->AddAddress($addres[0]);
-                                    $mail->addBCC($addres[0]);
+        if (is_array($toAdress)) {
+            foreach ($toAdress as $addres) {
+                if ($addres[0] && $addres[0] != "") {
+                    //echo $addres[0] . "<br/>";
+                    //$mail->AddAddress($addres[0]);
+                    $mail->addBCC($addres[0]);
                 }
             }
-        }
-        else{
-            if ( $toAdress != "" ){
-                //$mail->AddAddress($toAdress);
-                $mail->addBCC($toAdress);
-            }
+        } elseif ($toAdress != "") {
+            //$mail->AddAddress($toAdress);
+            $mail->addBCC($toAdress);
         }
 
         // get the language
         $lang = "En";
-        if (isset ( $_SESSION ["user_settings"] ["language"] )) {
+        if (isset($_SESSION ["user_settings"] ["language"])) {
             $lang = $_SESSION ["user_settings"] ["language"];
         }
 
-        if(!$mail->Send()) {
+        if (!$mail->Send()) {
             return MailerTranslator::Message_Not_Send($lang) . $mail->ErrorInfo;
         } else {
             return MailerTranslator::Message_Send($lang);
