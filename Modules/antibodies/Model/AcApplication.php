@@ -91,6 +91,7 @@ class AcApplication extends Model {
         $sql = "INSERT into ac_applications(name, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     /**

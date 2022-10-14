@@ -9,6 +9,10 @@
 * [mailer] remove default cc and mailerconfig cc option
 * [doc] fix install docs broken links
 
+### Other
+
+* [antibodies] add unit tests
+
 ## 2.9.1
 
 ### Features / enhancements

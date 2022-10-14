@@ -83,6 +83,7 @@ class AcOption extends Model {
         $sql = "insert into ac_options(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     /**

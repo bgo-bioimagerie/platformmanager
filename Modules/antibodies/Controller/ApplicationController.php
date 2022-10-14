@@ -56,13 +56,13 @@ class ApplicationController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->acapplicationModel->add($name, $id_space);
+                $id = $this->acapplicationModel->add($name, $id_space);
             }
             else{
                 $this->acapplicationModel->edit($id, $name, $id_space);
             }
             
-            $this->redirect("application/".$id_space);
+            return $this->redirect("application/".$id_space, [], ['application' => ['id' => $id]]);
         }
 
         $this->render(array(
