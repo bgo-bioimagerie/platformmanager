@@ -8,6 +8,7 @@
 * [antibodies] set missing mandatory fields in tissus edition
 * [mailer] remove default cc and mailerconfig cc option
 * [doc] fix install docs broken links
+* [services] add close projects at invoice option
 
 ## 2.9.1
 
