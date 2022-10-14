@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.2
+
+### Fixes
+
+* [doc] fix install docs broken links
+
 ## 2.9.1
 
 ### Features / enhancements
@@ -7,7 +13,6 @@
 * [core] add user settings to specify default number of elelments to display in arrays
 * [antibodies] allow navigation back to antibodies search results
 * [antibodies] set "all" to default for antibodies list
-* [doc] fix install docs broken links
 
 ## 2.9.0
 
