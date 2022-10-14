@@ -280,7 +280,14 @@ class AntibodiesTranslator {
         if ($lang == "fr") {
             return "Etes-vous sûr de vouloir suprimer cet anticorps ?";
         }
-        return "Are you sure to delete the antibody ?";
-    } 
+        return "Are you sure to delete the antibody?";
+    }
+
+    public static function MissingItems($lang) {
+        if ($lang == "fr") {
+            return "Certains éléments doivent être créés en amont de l'enregistrement de votre anticorps : ";
+        }
+        return "Some items must be created in order to being able to record this antibody: ";
+    }
     
 }
