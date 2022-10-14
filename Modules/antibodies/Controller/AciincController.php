@@ -54,13 +54,13 @@ class AciincController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $id_space);
             }
             
-            $this->redirect("aciinc/".$id_space);
+            return $this->redirect("aciinc/".$id_space, [], ['aciinc' => ['id' => $id]]);
         }
 
         return $this->render(array(

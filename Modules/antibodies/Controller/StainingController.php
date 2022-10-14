@@ -55,13 +55,13 @@ class StainingController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $id_space);
             }
             
-            $this->redirect("staining/".$id_space);
+            return $this->redirect("staining/".$id_space, [], ['staining' => ['id' => $id]]);
         }
 
         $this->render(array(

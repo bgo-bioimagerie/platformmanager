@@ -59,13 +59,13 @@ class ProtoController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $id_space);
             }
             
-            $this->redirect("proto/".$id_space);
+            return $this->redirect("proto/".$id_space, [], ['proto' => ['id' => $id]]);
         }
 
         $this->render(array(

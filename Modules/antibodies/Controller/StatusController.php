@@ -59,13 +59,13 @@ class StatusController extends AntibodiesController {
             $color = $this->request->getParameter("color");
             $display_order = $this->request->getParameter("display_order");
             if (!$id){
-                $this->model->add($name, $color, $display_order, $id_space);
+                $id = $this->model->add($name, $color, $display_order, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $color, $display_order, $id_space);
             }
             
-            $this->redirect("status/".$id_space);
+            return $this->redirect("status/".$id_space, [], ['status' => ['id' => $id]]);
         }
 
         $this->render(array(

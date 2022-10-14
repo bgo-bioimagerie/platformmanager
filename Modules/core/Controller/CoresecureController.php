@@ -81,9 +81,9 @@ abstract class CoresecureController extends CorecookiesecureController {
         }
 
         // Check by API Key
-        if(isset($_SERVER["HTTP_X_API_KEY"])) {
+        if(isset($_SERVER["HTTP_X_API_KEY"]) && isset($_SERVER["HTTP_X_API_USER"])) {
             $modelUser = new CoreUser();
-            $apiUser = $modelUser->getByApiKey($_SERVER["HTTP_X_API_KEY"]);
+            $apiUser = $modelUser->getByApiKey($_SERVER["HTTP_X_API_KEY"], $_SERVER["HTTP_X_API_USER"]);
             if($apiUser != null) {
                 Configuration::getLogger()->debug('[api][auth]', ['login' => $apiUser['login']]);
                 $this->initSession($apiUser['login']);

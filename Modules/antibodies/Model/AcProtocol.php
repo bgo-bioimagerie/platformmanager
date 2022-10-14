@@ -54,6 +54,9 @@ class AcProtocol extends Model {
         return $pdo;
     }
 
+    /**
+     * @deprecated?
+     */
     public function addManualProtocol($id_space) {
 
         $kit = "Manuel";
@@ -235,6 +238,7 @@ class AcProtocol extends Model {
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         $this->runRequest($sql, array($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "") {

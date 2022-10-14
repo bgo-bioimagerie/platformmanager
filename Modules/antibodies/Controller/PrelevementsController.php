@@ -55,13 +55,13 @@ class PrelevementsController extends AntibodiesController {
         if($form->check()){
             $name = $this->request->getParameter("nom");
             if (!$id){
-                $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $id_space);
             }
             else{
                 $this->model->edit($id, $name, $id_space);
             }
             
-            $this->redirect("prelevements/".$id_space);
+            return $this->redirect("prelevements/".$id_space, [], ['prelevement' => ['id' => $id]]);
         }
 
         $this->render(array(

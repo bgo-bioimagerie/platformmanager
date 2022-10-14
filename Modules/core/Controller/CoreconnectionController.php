@@ -233,16 +233,16 @@ class CoreconnectionController extends CorecookiesecureController {
                 if ($userByEmail["source"] == "ext") {
                     $_SESSION['flash'] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
-
-                    $newPassWord = $this->randomPassword();
-                    $model->changePwd($userByEmail["id"], $newPassWord);
+                    $modelCoreUser = new CoreUser();
+                    $newPassword = $modelCoreUser->generateRandomPassword();
+                    $model->changePwd($userByEmail["id"], $newPassword);
 
                     $mailer = new Email();
                     $from = Configuration::get('smtp_from');
                     $fromName = "Platform-Manager";
                     $toAdress = $email;
                     $subject = CoreTranslator::AccountPasswordReset($lang);
-                    $content = CoreTranslator::AccountPasswordResetMessage($lang) . "'" . $newPassWord . "'";
+                    $content = CoreTranslator::AccountPasswordResetMessage($lang) . "'" . $newPassword . "'";
                     $mailer->sendEmail($from, $fromName, $toAdress, $subject, $content, false);
                     $_SESSION['flash'] = CoreTranslator::ResetPasswordMessageSend($lang);
                     $_SESSION["flashClass"] = 'success';
@@ -263,17 +263,6 @@ class CoreconnectionController extends CorecookiesecureController {
         return $this->render(array("home_title" => $home_title,
             "home_message" => $home_message,
             "formHtml" => $form->getHtml($lang)));
-    }
-
-    protected function randomPassword() {
-        $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789";
-        $pass = array(); //remember to declare $pass as an array
-        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-        for ($i = 0; $i < 8; $i++) {
-            $n = random_int(0, $alphaLength);
-            $pass[] = $alphabet[$n];
-        }
-        return implode($pass); //turn the array into a string
     }
 
 }

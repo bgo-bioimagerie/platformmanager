@@ -4,6 +4,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once 'Framework/Email.php';
 require_once 'Framework/Model.php';
 require_once 'Modules/helpdesk/Model/Helpdesk.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreFiles.php';
@@ -386,6 +387,7 @@ while(true) {
         }
     }
     Model::resetDatabase();
+    CoreConfig::clearParams();
     sleep(Configuration::get('helpdesk_imap_sleep_seconds', 15 * 60)); // Wait 15 minutes or config defined
 
     }

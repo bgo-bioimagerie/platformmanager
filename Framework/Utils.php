@@ -82,6 +82,27 @@ class Utils {
         return self::_get_col_letter($num-1);
     }
 
+    /**
+     * SQL objects are returend as arrays with keys and indexes
+     * Remove numeric indexes to keep only object params
+     */
+    public static function cleanObject($obj, $isArray=false) {
+        if($isArray) {
+            foreach($obj as $key => $value) {
+                $obj[$key] = self::cleanObject($value);
+            }
+            return $obj;
+        }
+        $res = [];
+        foreach ($obj as $key => $value) {
+            if (is_numeric($key)) {
+                continue;
+            }
+            $res[$key] = $value;
+        }
+        return $res;
+    }
+
 
 }
 

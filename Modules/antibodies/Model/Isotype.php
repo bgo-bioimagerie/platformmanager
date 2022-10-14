@@ -93,6 +93,7 @@ class Isotype extends Model {
         $sql = "insert into ac_isotypes(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importIsotype($id, $name, $id_space) {
