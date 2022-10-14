@@ -4,7 +4,8 @@
 
 ### Fixes
 
-[booking] add requires on block resources form, clean view
+* [booking] add requires on block resources form, clean view
+* [antibodies] set missing mandatory fields in tissus edition
 
 ## 2.9.1
 
