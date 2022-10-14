@@ -1,6 +1,10 @@
 # Changes
 
-## 2.9.2
+## 2.9.2
+
+### Fixes
+
+[booking] add requires on block resources form, clean view
 
 ### Other
 
