@@ -6,6 +6,7 @@
 
 * [booking] add requires on block resources form, clean view
 * [antibodies] set missing mandatory fields in tissus edition
+* [mailer] remove default cc and mailerconfig cc option
 
 ## 2.9.1
 
