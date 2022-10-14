@@ -47,55 +47,72 @@ class MailerconfigController extends CoresecureController {
         }
 
         $formEdit = $this->EditForm($lang, $id_space);
-        if($formEdit->check()) {
+        if ($formEdit->check()) {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("mailerEdit", $this->request->getParameter('mailerEdit'), $id_space);
             return $this->redirect("mailerconfig/".$id_space);
         }
         
-        $MailerSetCopyToFrom = $this->MailerSetCopyToFromForm($lang, $id_space);
-        if($MailerSetCopyToFrom->check()){
+        // cf issue #735
+        /* $mailerSetCopyToFrom = $this->mailerSetCopyToFromForm($lang, $id_space);
+        if ($mailerSetCopyToFrom->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("MailerSetCopyToFrom", $this->request->getParameter('MailerSetCopyToFrom'), $id_space);
-            
+            $modelConfig->setParam(
+                "MailerSetCopyToFrom",
+                $this->request->getParameter('mailerSetCopyToFrom'),
+                $id_space
+            );
             $this->redirect("mailerconfig/".$id_space);
             return;
-        }
+        } */
 
         // view
-        $forms = array($formMenusactivation->getHtml($lang),
-                        $formEdit->getHtml($lang),
-                       $MailerSetCopyToFrom->getHtml($lang) 
-                        );
+        $forms = array(
+            $formMenusactivation->getHtml($lang),
+            $formEdit->getHtml($lang)
+            /* $mailerSetCopyToFrom->getHtml($lang) (cf issue #735) */
+        );
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
     
-    protected function MailerSetCopyToFromForm($lang, $id_space){
+    protected function mailerSetCopyToFromForm($lang, $id_space) {
         $modelConfig = new CoreConfig();
-        $MailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space, 1);
+        $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $id_space, 0);
         
-        $form = new Form($this->request, "MailerSetCopyToFromForm");
+        $form = new Form($this->request, "mailerSetCopyToFromForm");
         $form->addSeparator(MailerTranslator::SendCopyToSender($lang));
 
-        $form->addSelect("MailerSetCopyToFrom", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $MailerSetCopyToFrom);
+        $form->addSelect(
+            "mailerSetCopyToFrom",
+            "",
+            array(CoreTranslator::yes($lang),
+            CoreTranslator::no($lang)),
+            array(1,0),
+            $mailerSetCopyToFrom
+        );
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
-
 
         return $form;
     }
 
-    protected function EditForm($lang, $id_space){
+    protected function EditForm($lang, $id_space) {
         $modelConfig = new CoreConfig();
         $mailEdit = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
         
         $form = new Form($this->request, "mailerEditForm");
         $form->addSeparator(CoreTranslator::EditionAccess($lang));
 
-        $form->addSelect("mailerEdit", "", array(CoreTranslator::Manager($lang), CoreTranslator::Admin($lang)), array(CoreSpace::$MANAGER, CoreSpace::$ADMIN), $mailEdit);
+        $form->addSelect(
+            "mailerEdit",
+            "",
+            array(CoreTranslator::Manager($lang),
+            CoreTranslator::Admin($lang)),
+            array(CoreSpace::$MANAGER, CoreSpace::$ADMIN),
+            $mailEdit
+        );
         
         $form->setValidationButton(CoreTranslator::Save($lang), "mailerconfig/".$id_space);
-
 
         return $form;
     }
