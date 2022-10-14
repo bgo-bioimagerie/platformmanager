@@ -46,9 +46,22 @@ class ServicesconfigController extends CoresecureController {
         }
 
         $formWarning = $this->warningForm($id_space, $lang);
-        if($formWarning->check()){
+        if ($formWarning->check()) {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("SeProjectDelayWarning", $this->request->getParameter("SeProjectDelayWarning"), $id_space);
+        
+            $this->redirect("servicesconfig/".$id_space);
+            return;
+        }
+
+        $formCloseAtInvoice = $this->closeAtInvoiceForm($id_space, $lang);
+        if ($formCloseAtInvoice->check()) {
+            $modelConfig = new CoreConfig();
+            $modelConfig->setParam(
+                "seProjectCloseAtInvoice",
+                $this->request->getParameter("seProjectCloseAtInvoice"),
+                $id_space
+            );
         
             $this->redirect("servicesconfig/".$id_space);
             return;
@@ -104,6 +117,7 @@ class ServicesconfigController extends CoresecureController {
             $formMenusactivation->getHtml($lang),
             $formMenuName->getHtml($lang),
             $formWarning->getHtml($lang),
+            $formCloseAtInvoice->getHtml($lang),
             $formPerodProject->getHtml($lang), $formProjectCommand->getHtml($lang),
             $formStock->getHtml($lang),
             $formKanban->getHtml($lang)
@@ -123,6 +137,23 @@ class ServicesconfigController extends CoresecureController {
         
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
 
+        return $form;
+    }
+
+    public function closeAtInvoiceForm($id_space, $lang) {
+        $modelCoreConfig = new CoreConfig();
+        $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $id_space, 0);
+        $form = new Form($this->request, "seProjectCloseAtInvoice");
+        $form->addSeparator(ServicesTranslator::ProjectClosure($lang));
+        $form->addSelect(
+            "seProjectCloseAtInvoice",
+            ServicesTranslator::CloseProjectAtInvoice($lang),
+            array(CoreTranslator::yes($lang), CoreTranslator::no($lang)),
+            array(1, 0),
+            $seProjectCloseAtInvoice
+        );
+        
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
 
         return $form;
     }

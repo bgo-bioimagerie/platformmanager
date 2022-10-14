@@ -10,6 +10,7 @@
 * [doc] fix install docs broken links
 * [core] in background process, reset core config parameters
   with reset, core config params are loaded only once
+* [services] add close projects at invoice option
 
 ### Other
 
