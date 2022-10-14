@@ -6,10 +6,13 @@ require_once 'Framework/FCache.php';
 require_once 'Framework/Events.php';
 require_once 'Framework/Statistics.php';
 require_once 'Framework/Router.php';
+require_once 'Framework/Utils.php';
+
 
 require_once 'Modules/core/Model/CoreInstall.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+
 
 use Symfony\Component\Yaml\Yaml;
 use Garden\Cli\Cli;
@@ -58,6 +61,7 @@ $cli = Cli::create()
     ->opt('login', 'login identifier', true, 'string')
     ->opt('password', 'new password', false, 'string')
     ->opt('apikey', 'generate new apikey', false, 'boolean')
+    ->opt('email', 'new email', false, 'string')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer')
     ->command('maintenance')
@@ -85,12 +89,21 @@ try {
                 $pwd = $args->getOpt('password');
                 $cum->changePwd($userId, $pwd);
                 Configuration::getLogger()->info('Password updated', ['user' => $login]);
-                break;
             }
             if ($args->getopt('apikey')) {
                 $apikey = $cum->newApiKey($userId);
                 Configuration::getLogger()->info("Api key updated", ["user" => $login, "key" => $apikey]);
             }
+            if ($args->getopt('email')) {
+                $email = $args->getopt('email');
+                $user = Utils::cleanObject($cum->getUser($userId));
+                $cum->editBaseInfo($userId, $user['name'], $user['firstname'], $email);
+            }
+            $user = Utils::cleanObject($cum->getUser($userId));
+            echo Yaml::dump(['User' => $user], 3);
+            $cs = new CoreSpace();
+            $userRoles = Utils::cleanObject($cs->getUserSpacesRoles(0, $userId), true);
+            echo Yaml::dump(['Roles' => $userRoles], 3);
             break;
         case 'maintenance':
             $modelCoreConfig = new CoreConfig();
