@@ -100,7 +100,6 @@
 * [core] fix role checks on user unjoin (test was failing and email not sent)
 * [helpdesk] handle some error cases
 * [booking] show old client account used for a booking, in booking edition in case user switched to new client
->>>>>>> develop
 
 ## 2.7.0
 
