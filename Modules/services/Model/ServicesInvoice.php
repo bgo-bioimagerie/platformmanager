@@ -211,7 +211,6 @@ class ServicesInvoice extends InvoiceModel {
         // Close projects if option defined in services config (core_config in db)
         $modelCoreConfig = new CoreConfig();
         $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $id_space, 0);
-        Configuration::getLogger()->debug('[TEST]', ["seProjectCloseAtInvoice" => $seProjectCloseAtInvoice]);
         if ($seProjectCloseAtInvoice == 1) {
             foreach ($id_projects as $projectId) {
                 $modelProject->setEntryClosed($id_space, $projectId, date("Y-m-d", time()));
