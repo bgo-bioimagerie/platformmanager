@@ -181,7 +181,7 @@ class ServicesInvoice extends InvoiceModel {
 
 
         $contentAll = $this->getInvoiceProjects($id_space, $id_client, $id_projects);
-        if(empty($contentAll['services'])) {
+        if (empty($contentAll['services'])) {
             return false;
         }
 
@@ -207,6 +207,17 @@ class ServicesInvoice extends InvoiceModel {
         $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         $modelInvoice->setTitle($id_space, $id_invoice, $title);
         $modelInvoice->setNumber($id_space, $id_invoice, $number);
+
+        // Close projects if option defined in services config (core_config in db)
+        $modelCoreConfig = new CoreConfig();
+        $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $id_space, 0);
+        Configuration::getLogger()->debug('[TEST]', ["seProjectCloseAtInvoice" => $seProjectCloseAtInvoice]);
+        if ($seProjectCloseAtInvoice == 1) {
+            foreach ($id_projects as $projectId) {
+                $modelProject->setEntryClosed($id_space, $projectId, date("Y-m-d", time()));
+            }
+        }
+        
         return true;
     }
 
