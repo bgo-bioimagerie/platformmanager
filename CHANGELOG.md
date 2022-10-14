@@ -8,6 +8,8 @@
 * [antibodies] set missing mandatory fields in tissus edition
 * [mailer] remove default cc and mailerconfig cc option
 * [doc] fix install docs broken links
+* [core] in background process, reset core config parameters
+  with reset, core config params are loaded only once
 
 ### Other
 
