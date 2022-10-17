@@ -1731,9 +1731,16 @@ class BookingTranslator {
 
     public static function ColorNeeded($lang) {
         if ($lang == "fr") {
-            return "Vous devez d'abord créer au moins un code couleur dans le module  Calendrier config > Codes couleur";
+            return "Vous devez d'abord créer au moins un code couleur dans le module  Calendrier config > Codes couleur.";
         }
-        return "You need first to create at leat one color code in Bokking settings module > Color codes";
+        return "You need first to create at leat one color code in Booking settings module > Color codes.";
+    }
+
+    public static function ResourceNeeded($lang) {
+        if ($lang == "fr") {
+            return "Vous devez d'abord créer au moins une ressource dans le module  Ressources.";
+        }
+        return "You need first to create at leat one resource code in Resources module.";
     }
 
     public static function ShowAll($lang = "") {

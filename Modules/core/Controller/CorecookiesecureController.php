@@ -37,7 +37,9 @@ abstract class CorecookiesecureController extends Controller {
             $this->request->getSession()->setAttribut("email", $sessuser['email']);
             $this->request->getSession()->setAttribut("company", Configuration::get("name"));
             $this->request->getSession()->setAttribut("user_status", $sessuser['status_id']);
-
+            if (isset($_SERVER["HTTP_X_API_KEY"])) {
+                $this->request->getSession()->setAttribut("logbyapi", 1);
+            }
             // add the user settings to the session
             $modelUserSettings = new CoreUserSettings();
             $settings = $modelUserSettings->getUserSettings($sessuser['idUser']);

@@ -43,10 +43,12 @@ class AcOwner extends Model {
         if (!$id) {
             $sql = "INSERT INTO ac_j_user_anticorps (id_anticorps, id_utilisateur, disponible, date_recept, no_dossier, id_space) VALUES (?,?,?,?,?, ?);";
             $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id_space));
+            $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE ac_j_user_anticorps SET id_anticorps=?, id_utilisateur=?, disponible=?, date_recept=?, no_dossier=? WHERE id=? AND id_space=?";
             $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id, $id_space));
         }
+        return $id;
     }
 
     public function getInfoForAntibody($id_space, $id_antibody) {

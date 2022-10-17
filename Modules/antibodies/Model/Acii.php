@@ -83,6 +83,7 @@ class Acii extends Model {
         $sql = "insert into ac_aciis(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     /**

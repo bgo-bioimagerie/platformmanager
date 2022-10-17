@@ -851,6 +851,20 @@ class ServicesTranslator {
         return "Projects delay warning (in days)";
     }
 
+    public static function CloseProjectAtInvoice($lang) {
+        if ($lang == "fr") {
+            return "Fermer le projet à la génération de la facture";
+        }
+        return "Close project at invoice generation";
+    }
+
+    public static function ProjectClosure($lang) {
+        if ($lang == "fr") {
+            return "Fermeture du projet";
+        }
+        return "Project closure";
+    }
+
     public static function industryProjectInDelay($lang) {
         if ($lang == "fr") {
             return "Projets privés en délai";

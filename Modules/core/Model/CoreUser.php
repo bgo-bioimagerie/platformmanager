@@ -121,11 +121,12 @@ class CoreUser extends Model {
             "action" => Events::ACTION_USER_APIKEY,
             "user" => ["id" => intval($id), "apikey" => $apikey]
         ]);
+        return $apikey;
     }
 
-    public function getByApiKey($apikey) {
-        $sql = "SELECT * FROM core_users WHERE apikey=?";
-        return $this->runRequest($sql, array($apikey))->fetch();
+    public function getByApiKey($apikey, $login) {
+        $sql = "SELECT * FROM core_users WHERE apikey=? AND login=?";
+        return $this->runRequest($sql, array($apikey, $login))->fetch() ?? null;
     }
 
     public function getDateCreated($id) {

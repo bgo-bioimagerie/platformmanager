@@ -94,6 +94,7 @@ class Prelevement extends Model {
         $sql = "insert into ac_prelevements(nom, id_space)"
                 . " values(?,?)";
         $this->runRequest($sql, array($name, $id_space));
+        return $this->getDatabase()->lastInsertId();
     }
 
     public function importPrelevement($id, $name, $id_space) {

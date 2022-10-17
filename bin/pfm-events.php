@@ -3,18 +3,19 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once 'Framework/Events.php';
 require_once 'Framework/Configuration.php';
 require_once 'Framework/Model.php';
+require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Framework/Statistics.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-// date_default_timezone_set(Configuration::get('timezone', 'UTC'));
+// to defined timezone: date_default_timezone_set(Configuration::get('timezone', 'UTC'));
 
-if(Configuration::get('sentry_dsn', '')) {
+if (Configuration::get('sentry_dsn', '')) {
     \Sentry\init(['dsn' => Configuration::get('sentry_dsn')]);
 }
 
-while(true) {
+while (true) {
 
 	try {
 
@@ -29,9 +30,12 @@ while(true) {
 			try {
 				$backend = new EventHandler();
 				$backend->message($msg);
-			} catch(Exception $e) {
+				// params use a cache to avoid reloading all params
+				// we are in a loop, reload params between messages
+				CoreConfig::clearParams();
+			} catch (Exception $e) {
 				Configuration::getLogger()->error('something went wrong', ['error' => $e->getMessage()]);
-				if(Configuration::get('sentry_dsn', '')) {
+				if (Configuration::get('sentry_dsn', '')) {
 					\Sentry\captureException($e);
 				}
 			}
@@ -46,9 +50,9 @@ while(true) {
 			$channel->wait();
 		}
 
-	} catch(Throwable $e) {
+	} catch (Throwable $e) {
 		Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage()]);
-		if(Configuration::get('sentry_dsn', '')) {
+		if (Configuration::get('sentry_dsn', '')) {
 			\Sentry\captureException($e);
 		}
 	}

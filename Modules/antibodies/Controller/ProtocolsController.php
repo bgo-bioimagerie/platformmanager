@@ -170,12 +170,12 @@ class ProtocolsController extends AntibodiesController {
 
         // add query
         if ($id == "") {
-            $this->protocolModel->addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
+            $id = $this->protocolModel->addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
         } else {
             $this->protocolModel->editProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
         }
 
-        $this->redirect("protocols/".$id_space. "/id");
+        return $this->redirect("protocols/".$id_space. "/id", [], ['protocol' => ['id' => $id]]);
     }
 
     public function deleteAction($id_space, $id) {
