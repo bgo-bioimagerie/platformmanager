@@ -1,5 +1,13 @@
 # Changes
 
+## 2.9.3
+
+### Fixes
+
+* [services] show empty line in project user selection if customer has no user
+ else first user in selection will be used by default
+ (and added to list fo project users)
+
 ## 2.9.2
 
 ### Fixes
