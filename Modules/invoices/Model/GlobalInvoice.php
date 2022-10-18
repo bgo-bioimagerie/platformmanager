@@ -17,11 +17,12 @@ class GlobalInvoice extends Model {
 
         $clm = new ClClient();
         $resps = $clm->getAll($id_space);
-
+        $found = false;
         foreach( $resps as $resp ){
             $respFound  =  $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $id_user, $lang);
             if($respFound) {
                 $found = true;
+                break;
             }
             
         }

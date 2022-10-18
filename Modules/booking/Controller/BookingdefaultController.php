@@ -722,6 +722,13 @@ END:VCALENDAR
                 
             }
         }
+
+
+        if ($checkValidation != null) {
+            $redirPage = $checkValidation['redirPage'];
+            $backTo = $checkValidation['backTo'];
+        }
+
         return $this->redirect("booking$redirPage/".$id_space, $backTo, ['bkcalentry' => ['id' => $id_entry], 'error' => $error]);
     }
 
@@ -1142,7 +1149,15 @@ END:VCALENDAR
             }
         }
         $modelCalEntry->removeEntry($id_space, $id);
-        $this->redirect("booking/" . $id_space);
+
+        $redirPage = '';
+        $backTo = [];
+        if ($checkValidation != null) {
+            $redirPage = $checkValidation['redirPage'];
+            $backTo = $checkValidation['backTo'];
+        }
+
+        $this->redirect("booking$redirPage/" . $id_space, $backTo);
     }
 
 }

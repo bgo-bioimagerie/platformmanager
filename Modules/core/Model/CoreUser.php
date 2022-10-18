@@ -489,7 +489,8 @@ class CoreUser extends Model {
         $nbElements = $user->rowCount();
         if ($nbElements == 1) {
             return $user->fetch();
-        } else if ($nbElements > 1) {
+        }
+        if ($nbElements > 1) {
             throw new PfmAuthException($this::$CNX_DUPLICATED_LOGIN);
         }
         return false;

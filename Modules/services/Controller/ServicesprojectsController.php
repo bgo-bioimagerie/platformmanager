@@ -423,11 +423,6 @@ class ServicesprojectsController extends ServicesController {
         $modelClient = new ClClient();
         $modelVisa = new SeVisa();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space ,"name");
-        // remove users first entry if == ""
-        if (!empty($users) && $users["ids"][0] == "") {
-            array_shift($users["ids"]);
-            array_shift($users["names"]);
-        }
         $clients = $modelClient->getForList($id_space);
 
         if($value['id_resp'] && !in_array($value['id_resp'], $clients["ids"])){
@@ -894,7 +889,7 @@ class ServicesprojectsController extends ServicesController {
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
             $formProjectUserIds = $this->request->getParameter("users");
         }
-        if (!in_array($id_user, $formProjectUserIds)) {
+        if ($id_user && !in_array($id_user, $formProjectUserIds)) {
             array_push($formProjectUserIds, $id_user);
             // if main project user not in users list, display warning
             $_SESSION['flash'] = ServicesTranslator::MainUserNotInList($lang);
