@@ -357,12 +357,11 @@ class BookingstatisticsController extends StatisticsController
 
             if ($searchDate_start == "" || $searchDate_end == "") {
                 $errormessage = "You must specify a start date and an end date";
-                $this->render(array(
+                return $this->render(array(
                     'lang' => $lang,
                     'id_space' => $id_space,
                     'errorMessage' => $errormessage
                 ));
-                return;
             }
 
             // convert start date to unix date
@@ -375,14 +374,13 @@ class BookingstatisticsController extends StatisticsController
 
             if ($searchDate_e <= $searchDate_s) {
                 $errormessage = "The start date must be before the end date";
-                $this->render(array(
+                return $this->render(array(
                     'lang' => $lang,
                     'id_space' => $id_space,
                     'errorMessage' => $errormessage,
                     'searchDate_start' => $searchDate_start,
                     'searchDate_end' => $searchDate_end
                 ));
-                return;
             }
 
             $champ = $this->request->getParameterNoException('champ');
@@ -399,7 +397,7 @@ class BookingstatisticsController extends StatisticsController
 
 
             if ($outputType == 1) { // only details
-                $this->render(array(
+                return $this->render(array(
                     'lang' => $lang,
                     'id_space' => $id_space,
                     'searchDate_start' => $searchDate_start,
@@ -411,10 +409,9 @@ class BookingstatisticsController extends StatisticsController
                     'output' => $outputType,
                     'table' => $table
                 ));
-                return;
             } elseif ($outputType == 2) { // only summary
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                $this->render(array(
+                return  $this->render(array(
                     'lang' => $lang,
                     'id_space' => $id_space,
                     'searchDate_start' => $searchDate_start,
@@ -426,10 +423,9 @@ class BookingstatisticsController extends StatisticsController
                     'output' => $outputType,
                     'summaryTable' => $summaryTable
                 ));
-                return;
             } elseif ($outputType == 3) { // details and summary
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
-                $this->render(array(
+                return $this->render(array(
                     'lang' => $lang,
                     'id_space' => $id_space,
                     'searchDate_start' => $searchDate_start,
@@ -442,7 +438,6 @@ class BookingstatisticsController extends StatisticsController
                     'table' => $table,
                     'summaryTable' => $summaryTable
                 ));
-                return;
             } elseif ($outputType == 4) { // details csv
                 return $this->exportDetailsCSV($table, $lang);
             } elseif ($outputType == 5) { // summary csv
@@ -451,7 +446,7 @@ class BookingstatisticsController extends StatisticsController
             }
         }
 
-        $this->render(array(
+        return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space
         ));
@@ -496,6 +491,7 @@ class BookingstatisticsController extends StatisticsController
         header("Content-Type: application/csv-tab-delimited-table");
         header("Content-disposition: filename=rapport.csv");
         echo $content;
+        return $content;
     }
 
     /**
@@ -562,5 +558,6 @@ class BookingstatisticsController extends StatisticsController
         header("Content-Type: application/csv-tab-delimited-table");
         header("Content-disposition: filename=rapport.csv");
         echo $content;
+        return $content;
     }
 }

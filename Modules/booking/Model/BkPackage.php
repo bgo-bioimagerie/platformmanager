@@ -1,13 +1,15 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/booking/Model/BkBookingAbstractSups.php';
+
 
 /**
  * Class defining the area model
  *
  * @author Sylvain Prigent
  */
-class BkPackage extends Model
+class BkPackage extends BkBookingAbstractSups
 {
     public function __construct()
     {
@@ -48,16 +50,6 @@ class BkPackage extends Model
         $this->runRequest($sql4);
     }
 
-    public function getByResource($id_space, $id_resource, $include_deleted = false)
-    {
-        $sql = "SELECT * FROM bk_packages WHERE id_resource=? AND id_space=?";
-        if (!$include_deleted) {
-            $sql .= " AND deleted=0";
-        }
-        $req = $this->runRequest($sql, array($id_resource, $id_space));
-        return $req->fetchAll();
-    }
-
     /**
      * check if a package is deleted
      */
@@ -83,12 +75,6 @@ class BkPackage extends Model
         }
         $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req ? $req[0] : null;
-    }
-
-    public function getForSpace($id_space, $sort)
-    {
-        $sql = "SELECT * FROM bk_packages WHERE deleted=0 AND id_space=? ORDER BY " . $sort . " ASC;";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     public function getById($id_space, $id_pk)
