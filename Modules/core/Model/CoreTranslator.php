@@ -1320,9 +1320,9 @@ class CoreTranslator
     public static function Company($lang)
     {
         if ($lang == "fr") {
-            return "Privé";
+            return "Entreprise";
         }
-        return "Private";
+        return "Company";
     }
 
     public static function AlreadyExists($elem, $lang)
