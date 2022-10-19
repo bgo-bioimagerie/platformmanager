@@ -4,11 +4,9 @@ require_once 'Framework/Model.php';
 
 abstract class BkBookingAbstractSups extends Model
 {
-    protected string $tableName;
-
     public function getForSpace($id_space, $sort)
     {
-        if(!$this->tableName) {
+        if (!$this->tableName) {
             throw new PfmException("invalid access, table name not defined for ".get_class($this), 500);
         }
         $sql = "SELECT * FROM ".$this->tableName." WHERE deleted=0 AND id_space=? ORDER BY " . $sort . " ASC;";
@@ -22,7 +20,8 @@ abstract class BkBookingAbstractSups extends Model
         $name,
         $mandatory,
         $is_invoicing_unit,
-        $duration);
+        $duration
+    );
 
     abstract public function getBySupID($id_space, $id_quantity, $id_resource);
 
@@ -30,7 +29,7 @@ abstract class BkBookingAbstractSups extends Model
 
     public function getByResource($id_space, $id_resource, $include_deleted=false, $sort=false)
     {
-        if(!$this->tableName) {
+        if (!$this->tableName) {
             throw new PfmException("invalid access, table name not defined for ".get_class($this), 500);
         }
         $sql = "SELECT * from ".$this->tableName." WHERE id_resource=? AND id_space=?";
@@ -43,7 +42,3 @@ abstract class BkBookingAbstractSups extends Model
         return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
     }
 }
-
-
-
-?>
