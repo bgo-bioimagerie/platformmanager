@@ -18,61 +18,61 @@ $calResources = [];
 $calDays = [];
 
 $nbBlocks = 1;
-if ($size_bloc_resa == 900){
-	$caseTimeLength = 900;
-	$nbBlocks = 4;
-} else if($size_bloc_resa == 1800) {
-	$caseTimeLength = 1800;
-	$nbBlocks = 2;
+if ($size_bloc_resa == 900) {
+    $caseTimeLength = 900;
+    $nbBlocks = 4;
+} elseif ($size_bloc_resa == 1800) {
+    $caseTimeLength = 1800;
+    $nbBlocks = 2;
 }
 
-for ($d = 0 ; $d < $nbDays ; $d++){
-	// day title
-	$temp = explode("-", $startDate);
-	$date_unix = mktime(0,0,0,$temp[1], $temp[2]+$d, $temp[0]);
-	$date_next = $date_unix + 60 * 60 * 24;
-	$dayStream = date("l", $date_unix);
-	$monthStream = date("M", $date_unix);
-	$dayNumStream = date("d", $date_unix);
-	$sufixStream = date("S", $date_unix);
+for ($d = 0 ; $d < $nbDays ; $d++) {
+    // day title
+    $temp = explode("-", $startDate);
+    $date_unix = mktime(0, 0, 0, $temp[1], $temp[2]+$d, $temp[0]);
+    $date_next = $date_unix + 60 * 60 * 24;
+    $dayStream = date("l", $date_unix);
+    $monthStream = date("M", $date_unix);
+    $dayNumStream = date("d", $date_unix);
+    $sufixStream = date("S", $date_unix);
 
 
-	$isAvailableDay = false;
-	if($scheduling["is_".strtolower($dayStream)] == 1) {
-	//if ($available_days[$d] == 1){
-		$isAvailableDay = true;
-			
+    $isAvailableDay = false;
+    if ($scheduling["is_".strtolower($dayStream)] == 1) {
+        //if ($available_days[$d] == 1){
+        $isAvailableDay = true;
 
-		for($r = 0 ; $r < count($resourcesBase) ; $r++){
-			$cals = [];
-			foreach($calEntries[$r] as $c) {
-				if (!$c['client_name']) {
-					$c['client_name'] = ClientsTranslator::NoCLientDefined($lang);
-				}
-				if($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
-					continue;
-				}
-				$cals[] = $c;
-			}
-			$colResHeader = compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
-			foreach($colResHeader as $h => $colData) {
-				if(!key_exists($h, $calData)) {
-					$calData[$h] = [];
-				}
-				foreach ($colData as $i => $calEntry) {
-					if(!key_exists($calEntry['day'], $calData[$h])) {
-						$calData[$h][$calEntry['day']] = [];
-					}
-					if(!key_exists($calEntry['resource_id'], $calData[$h][$calEntry['day']])) {
-						$calData[$h][$calEntry['day']][$calEntry['resource_id']] = [];
-					}
-					$calData[$h][$calEntry['day']][$calEntry['resource_id']][] = $calEntry;
-				}
-			}
-			$calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
+
+        for ($r = 0 ; $r < count($resourcesBase) ; $r++) {
+            $cals = [];
+            foreach ($calEntries[$r] as $c) {
+                if (!$c['client_name']) {
+                    $c['client_name'] = ClientsTranslator::NoCLientDefined($lang);
+                }
+                if ($c['end_time'] < $date_unix || $c['start_time'] >= $date_next) {
+                    continue;
+                }
+                $cals[] = $c;
+            }
+            $colResHeader = compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
+            foreach ($colResHeader as $h => $colData) {
+                if (!key_exists($h, $calData)) {
+                    $calData[$h] = [];
+                }
+                foreach ($colData as $i => $calEntry) {
+                    if (!key_exists($calEntry['day'], $calData[$h])) {
+                        $calData[$h][$calEntry['day']] = [];
+                    }
+                    if (!key_exists($calEntry['resource_id'], $calData[$h][$calEntry['day']])) {
+                        $calData[$h][$calEntry['day']][$calEntry['resource_id']] = [];
+                    }
+                    $calData[$h][$calEntry['day']][$calEntry['resource_id']][] = $calEntry;
+                }
+            }
+            $calResources[$resourcesBase[$r]['id']] = $resourcesBase[$r];
             $calDays[$dayStream] = date('Y-m-d', $date_unix);
-		}
-	}
+        }
+    }
 }
 
 ksort($calData);
@@ -91,27 +91,27 @@ th {
 <thead>
 	<tr><th scope="col"></th>
 	<?php
-		$calh = array_keys($calData);
-		$days = [];
-		if(!empty($calh)) {
-			$days = $calData[array_keys($calData)[0]];
-		}
-	?>
+        $calh = array_keys($calData);
+$days = [];
+if (!empty($calh)) {
+    $days = $calData[array_keys($calData)[0]];
+}
+?>
 	<?php foreach ($days as $calDay => $calRes) { ?>
-		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo BookingTranslator::translateDayFromEn($calDay, $lang).' '.CoreTranslator::dateFromEn($calDays[$calDay],$lang) ?> </th>
+		<th id="<?php echo $calDay?>" colspan="<?php echo count($calRes) ?>"><?php echo BookingTranslator::translateDayFromEn($calDay, $lang).' '.CoreTranslator::dateFromEn($calDays[$calDay], $lang) ?> </th>
 	<?php } ?>
 	</tr>
 	<tr>
         <th scope="col">Time</th>
         <?php foreach ($days as $calDay => $calRes) { ?>
-		<?php foreach($calResources as $resId => $resource) { ?>
+		<?php foreach ($calResources as $resId => $resource) { ?>
 		<th colspan="1" id="res<?php echo $resId ?>" id="resource" style="text-align: center">
 		<?php
-		echo $resource['name'];
-		if($resource['last_state'] != ""){
-			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
-		}
-		?>
+    echo $resource['name'];
+		    if ($resource['last_state'] != "") {
+		        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+		    }
+		    ?>
 		</th>
         <?php } ?>
 		<?php } ?>
@@ -119,40 +119,42 @@ th {
 </thead>
 <tbody>
 	<?php
-	if(empty($calData)) {
-		echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
-	}
-	foreach ($calData as $i => $calDay) {
-			for($e=0;$e<$nbBlocks;$e++) {
-	?>
+    if (empty($calData)) {
+        echo "<tr><td>".BookingTranslator::Closed($lang)."</td></tr>";
+    }
+    foreach ($calData as $i => $calDay) {
+        for ($e=0;$e<$nbBlocks;$e++) {
+            ?>
 		<tr>
-			<?php if($e==0) { ?>
+			<?php if ($e==0) { ?>
 				<th rowspan="<?php echo $nbBlocks ?>"  id="h<?php echo $i?>" class="col-2"><?php echo $i ?>:00</th>
 			<?php } ?>
-			<?php foreach($calDay as $calDayEntry => $calRes) { ?>
-				<?php for($r = 0 ; $r < count($resourcesBase) ; $r++){
-					if(!array_key_exists($resourcesBase[$r]['id'], $calRes)) {
-						continue;
-					}
-					$hCalEntries = $calRes[$resourcesBase[$r]['id']];
-					$hcalEntry = $hCalEntries[$e];
-				?>
+			<?php foreach ($calDay as $calDayEntry => $calRes) { ?>
+				<?php for ($r = 0 ; $r < count($resourcesBase) ; $r++) {
+				    if (!array_key_exists($resourcesBase[$r]['id'], $calRes)) {
+				        continue;
+				    }
+				    $hCalEntries = $calRes[$resourcesBase[$r]['id']];
+				    $hcalEntry = $hCalEntries[$e];
+				    ?>
 					
 				<?php
-					$style = 'padding: 1px !important;';
-					if(!$hcalEntry['text'] && $hcalEntry['expand']) {
-						$style .= 'border-top-style: hidden !important;';
-					}
-					if(!$hcalEntry['free']) { $style .= 'background-color:'.$hcalEntry['color_bg'].';';  }
-				?>
+				        $style = 'padding: 1px !important;';
+				    if (!$hcalEntry['text'] && $hcalEntry['expand']) {
+				        $style .= 'border-top-style: hidden !important;';
+				    }
+				    if (!$hcalEntry['free']) {
+				        $style .= 'background-color:'.$hcalEntry['color_bg'].';';
+				    }
+				    ?>
 					<td style="<?php echo $style ?>" headers="<?php echo $calDayEntry ?> res<?php echo $resId ?> h<?php echo $i ?>">
-						<?php if($hcalEntry['free']) { ?>
+						<?php if ($hcalEntry['free']) { ?>
 							<?php if ($hcalEntry['link']) { ?>
 							<div><a  data-status="free" aria-label="book at <?php echo $hcalEntry['hour'] ?>" class="bi-plus" href="<?php echo $hcalEntry['link'] ?>"></a></div>
 							<?php } ?>
 						<?php } else { ?>
 						<div class="text-center tcellResa"  style="background-color:<?php echo $hcalEntry['color_bg']?>; ">
-							<?php if(!$hcalEntry['expand']) { ?>
+							<?php if (!$hcalEntry['expand']) { ?>
 							<a class="text-center" style="color:<?php echo $hcalEntry['color_text']?>; font-size: <?php echo $agendaStyle["resa_font_size"] ?>px;" href="<?php echo $hcalEntry['link'] ?>"><?php echo $hcalEntry['text']; ?>
 							</a>
 							<?php } ?>
@@ -164,9 +166,9 @@ th {
 			<?php 	} ?>
 		</tr>
 	<?php
-			}
-	}
-	?>
+        }
+    }
+?>
 </tbody>
 </table>
 </div>

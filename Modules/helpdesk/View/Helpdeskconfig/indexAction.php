@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -10,8 +10,8 @@
     </div>
 
     <?php
-    if($fromAddress) {
-    ?>
+    if ($fromAddress) {
+        ?>
         <div class="col-12">
             <div class="alert alert-info" role="alert">
             <p><?php echo  'Helpdesk email: '.$fromAddress ?></p>
@@ -19,7 +19,7 @@
         </div>
     <?php
     } else {
-    ?>
+        ?>
         <div class="col-12">
             <div class="alert alert-danger" role="alert">
             <p><?php echo  'Helpdesk email not configured, please contact administrator!' ?></p>
@@ -27,9 +27,9 @@
         </div>
     <?php
     }
-    ?>
+?>
     
-    <?php foreach($forms as $form){ ?>
+    <?php foreach ($forms as $form) { ?>
     <div class="col-12" style="height: 7px;">
         <p></p>
     </div>

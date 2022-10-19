@@ -1,4 +1,4 @@
-<?php include 'Modules/statistics/View/layout.php' ?>
+<?php include_once 'Modules/statistics/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -27,8 +27,8 @@
                                     ?>
                             <OPTION value="<?php echo $rId ?>"> <?php echo $rName ?> </OPTION>
                             <?php
-                        }
-                        ?>
+                                }
+?>
                     </select>
                 </div>
                 <div class="checkbox col-8 offset-4">

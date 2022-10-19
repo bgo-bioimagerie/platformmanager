@@ -8,6 +8,10 @@
  else first user in selection will be used by default
  (and added to list fo project users)
 * [booking] after booking, go back to booking selected day
+* [services] for stats, force project service quantities conversion to float value
+  issue should not occur except on old values
+* rename some internal methods
+
 
 ## 2.9.2
 
@@ -29,7 +33,7 @@
 
 ### Features / enhancements
 
-* [core] add user settings to specify default number of elelments to display in arrays
+* [core] add user settings to specify default number of elements to display in arrays
 * [antibodies] allow navigation back to antibodies search results
 * [antibodies] set "all" to default for antibodies list
 

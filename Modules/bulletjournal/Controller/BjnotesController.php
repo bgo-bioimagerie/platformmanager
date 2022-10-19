@@ -11,68 +11,70 @@ require_once 'Modules/bulletjournal/Model/BjTask.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BjnotesController extends CoresecureController {
-
+class BjnotesController extends CoresecureController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $year, $month) {
+    public function indexAction($id_space, $year, $month)
+    {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
-        if ($month == "" || $month == 0){
+
+        if ($month == "" || $month == 0) {
             $month = date('m', time());
         }
-        if ($year == "" || $year == 0){
+        if ($year == "" || $year == 0) {
             $year = date('Y', time());
         }
-        
+
         $modelNote = new BjNote();
-        
+
         $notes = $modelNote->getAllForMonth($id_space, $month, $year);
-        
+
         // edit note form
         $noteForm = $this->createNoteForm($id_space, $lang);
         $taskForm = $this->createTaskForm($id_space, $lang);
         $eventForm = $this->createEventForm($id_space, $lang);
-        
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "month" => $month, 
+
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "month" => $month,
             "year" => $year,
             "notes" => $notes, "noteForm" => $noteForm,
             "taskForm" => $taskForm, "eventForm" => $eventForm), "indexAction");
     }
-    
-    public function monthbeforeAction($id_space, $year, $month){
-        if( $month == 1){
+
+    public function monthbeforeAction($id_space, $year, $month)
+    {
+        if ($month == 1) {
             $year = $year-1;
             $month = 12;
-        }
-        else{
+        } else {
             $month = $month -1;
         }
-        
+
         $this->indexAction($id_space, $year, $month);
     }
-    
-    public function monthafterAction($id_space, $year, $month){
-        if( $month == 12){
+
+    public function monthafterAction($id_space, $year, $month)
+    {
+        if ($month == 12) {
             $year = $year+1;
             $month = 1;
-        }
-        else{
+        } else {
             $month = $month + 1;
         }
-        
+
         $this->indexAction($id_space, $year, $month);
     }
-    
-    
-    public function createNoteForm($id_space, $lang){
+
+
+    public function createNoteForm($id_space, $lang)
+    {
         $form = new Form($this->request, "editNoteForm", true);
         $form->addHidden("formnoteid", 0);
         $form->addHidden("formnoteismonth", 0);
@@ -84,8 +86,9 @@ class BjnotesController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bjeditnotequery/".$id_space);
         return $form->getHtml($lang);
     }
-    
-    public function createTaskForm($id_space, $lang){
+
+    public function createTaskForm($id_space, $lang)
+    {
         $form = new Form($this->request, "editTaskForm", true);
         $form->addHidden("formtaskid", 0);
         $form->addHidden("formtaskismonth", 0);
@@ -99,8 +102,9 @@ class BjnotesController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "bjedittask/".$id_space);
         return $form->getHtml($lang);
     }
-    
-    public function createEventForm($id_space, $lang){
+
+    public function createEventForm($id_space, $lang)
+    {
         $form = new Form($this->request, "editEventForm", true);
         $form->addHidden("formeventid", 0);
         $form->addHidden("formeventismonth", 0);
@@ -116,7 +120,8 @@ class BjnotesController extends CoresecureController {
         return $form->getHtml($lang);
     }
 
-    public function deletenoteAction($id_space, $id) {
+    public function deletenoteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelNote = new BjNote();
         $modelNote->delete($id_space, $id);
@@ -126,5 +131,4 @@ class BjnotesController extends CoresecureController {
         $modelTask->delete($id_space, $id);
         return null;
     }
-
 }

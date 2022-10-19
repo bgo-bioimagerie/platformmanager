@@ -14,19 +14,20 @@ require_once 'Modules/antibodies/Model/AcApplication.php';
  *
  * @author Sylvain Prigent
  */
-class Anticorps extends Model {
-
-    public function __construct() {
+class Anticorps extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "ac_anticorps";
     }
 
     /**
      * Create the unit table
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `ac_anticorps` (
   				`id` int(11) NOT NULL AUTO_INCREMENT,
   				`nom` varchar(30) NOT NULL DEFAULT '',
@@ -48,15 +49,15 @@ class Anticorps extends Model {
   				PRIMARY KEY (`id`)
 				)";
         $this->runRequest($sql);
-		
+
         /*
-		$sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
-  				`id_anticorps` int(11) NOT NULL,
-  				`id_utilisateur` int(11) NOT NULL,	
-				`disponible` int(2) NOT NULL,		
-				`date_recept` DATE NOT NULL,
-				`no_dossier` varchar(12) NOT NULL,
-				`id_space` int(11) NOT NULL DEFAULT 0
+        $sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
+                `id_anticorps` int(11) NOT NULL,
+                `id_utilisateur` int(11) NOT NULL,
+                `disponible` int(2) NOT NULL,
+                `date_recept` DATE NOT NULL,
+                `no_dossier` varchar(12) NOT NULL,
+                `id_space` int(11) NOT NULL DEFAULT 0
                 )";
         $this->runRequest($sql);
         */
@@ -68,84 +69,94 @@ class Anticorps extends Model {
         $this->addColumn("ac_anticorps", "image_url", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "image_desc", "varchar(250)", "");
         $this->addColumn("ac_anticorps", "id_space", "INT(11)", 0);
-
     }
 
-    public function mergeUsers($users){
-        for($i = 1 ; $i < count($users) ; $i++){
+    public function mergeUsers($users)
+    {
+        for ($i = 1 ; $i < count($users) ; $i++) {
             $sql = "UPDATE ac_j_user_anticorps SET id_utilisateur=? WHERE id_utilisateur=?";
             $this->runRequest($sql, array($users[0], $users[$i]));
         }
-    } 
-    
-    public function getIdFromNoH2P2($no_h2p2, $id_space){
+    }
+
+    public function getIdFromNoH2P2($no_h2p2, $id_space)
+    {
         $sql = "SELECT id FROM ac_anticorps WHERE no_h2p2=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($no_h2p2, $id_space));
-        if($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
         }
         return 0;
     }
-    
-    public function setExportCatalog($id_space, $id, $exportCatalog) {
+
+    public function setExportCatalog($id_space, $id, $exportCatalog)
+    {
         $sql = "UPDATE ac_anticorps SET export_catalog=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($exportCatalog, $id, $id_space));
     }
 
-    public function setImageDesc($id_space, $id, $image_desc) {
+    public function setImageDesc($id_space, $id, $image_desc)
+    {
         $sql = "UPDATE ac_anticorps SET image_desc=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($image_desc, $id, $id_space));
     }
 
-    public function setImageUrl($id_space, $id, $image_url) {
+    public function setImageUrl($id_space, $id, $image_url)
+    {
         $sql = "UPDATE ac_anticorps SET image_url=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($image_url, $id, $id_space));
     }
 
-    public function setApplicationStaining($id_space ,$id, $id_staining, $id_application) {
+    public function setApplicationStaining($id_space, $id, $id_staining, $id_application)
+    {
         $sql = "UPDATE ac_anticorps SET id_staining=?, id_application=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id_staining, $id_application, $id, $id_space));
     }
 
-    public function getBySpace($id_space){
+    public function getBySpace($id_space)
+    {
         $sql = "select * from ac_anticorps WHERE id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
-    
+
     /**
      * Get the anticorps information
      *
      * @param string $sortentry column used to sort the users
      * @return multitype:
      */
-    public function getAnticorps($id_space ,$letter = 'All', $sortentry = 'id') {
+    public function getAnticorps($id_space, $letter = 'All', $sortentry = 'id')
+    {
         $sql = "SELECT * FROM ac_anticorps WHERE id_space=? AND deleted=0";
-        
-        if($letter != 'All' && $letter != ''){
+
+        if ($letter != 'All' && $letter != '') {
             $sql .= " AND nom LIKE '".$letter."%'";
         }
         $sql .= " ORDER BY " . $sortentry . " ASC;";
-        
+
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function getLargerNoH2P2($id_space) {
+    public function getLargerNoH2P2($id_space)
+    {
         $sql = "SELECT no_h2p2 from ac_anticorps WHERE id_space=? AND deleted=0 order by no_h2p2 DESC;";
         $user = $this->runRequest($sql, array($id_space));
         $tmp = $user->fetch();
-        return $tmp? $tmp[0] : null;
+        return $tmp ? $tmp[0] : null;
     }
 
-    public function isAnticorps($id_space ,$no_h2p2) {
+    public function isAnticorps($id_space, $no_h2p2)
+    {
         $sql = "SELECT * from ac_anticorps where no_h2p2=? AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($no_h2p2, $id_space));
         return ($user->rowCount() == 1);
     }
 
-    public function isAnticorpsID($id_space, $id) {
+    public function isAnticorpsID($id_space, $id)
+    {
         $sql = "SELECT * from ac_anticorps where id=? AND id_space=? AND deleted=0";
         $user = $this->runRequest($sql, array($id, $id_space));
         return ($user->rowCount() == 1);
@@ -153,7 +164,7 @@ class Anticorps extends Model {
 
     /**
      * Add an antibody to the database
-     * 
+     *
      * @param unknown $nom
      * @param unknown $no_h2p2
      * @param unknown $fournisseur
@@ -168,10 +179,11 @@ class Anticorps extends Model {
      * @param unknown $date_recept
      * @return string
      */
-    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
+    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    {
         //$cvm = new CoreVirtual();
         $new_no_h2p2 = $no_h2p2;
-        if(!$no_h2p2) {
+        if (!$no_h2p2) {
             $redis = new Redis();
             $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
             $new_no_h2p2 = $redis->incr("pfm:$id_space:antibodies");
@@ -187,20 +199,19 @@ class Anticorps extends Model {
 
         return $this->getDatabase()->lastInsertId();
     }
-    
-    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage){
-        if($this->isAnticorpsID($id_space ,$id)){
+
+    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    {
+        if ($this->isAnticorpsID($id_space, $id)) {
             $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
             return $id;
-        }
-        else{
+        } else {
             return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
         }
     }
 
-    public function importAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
-
-
+    public function importAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    {
         $sql = "insert into ac_anticorps(id, id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference,
 										 clone, lot, id_isotype, stockage)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -210,7 +221,8 @@ class Anticorps extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
+    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    {
         $sql = "UPDATE ac_anticorps SET nom=?, no_h2p2=?, fournisseur=?, id_source=?, reactivity=?, reference=?, 
 										 clone=?, lot=?, id_isotype=?, stockage=?
 									WHERE id=? AND id_space=?";
@@ -224,12 +236,14 @@ class Anticorps extends Model {
      * @param string $sortentry column used to sort the users
      * @return Ambigous <multitype:, boolean>
      */
-    public function getAnticorpsInfo($id_space, $letter="") {
+    public function getAnticorpsInfo($id_space, $letter="")
+    {
         $ac = $this->getAnticorps($id_space, $letter, 'no_h2p2');
-        return $this->anticorpsInfo($id_space ,$ac);
+        return $this->anticorpsInfo($id_space, $ac);
     }
 
-    public function getAnticorpsInfoCatalog($id_space) {
+    public function getAnticorpsInfoCatalog($id_space)
+    {
         $sql = "select * from ac_anticorps WHERE export_catalog=1 AND id_space=? AND deleted=0 ORDER BY no_h2p2 ASC;";
         $user = $this->runRequest($sql, array($id_space));
         $ac = $user->fetchAll();
@@ -237,7 +251,8 @@ class Anticorps extends Model {
         return $this->anticorpsInfo($id_space, $ac, true);
     }
 
-    private function anticorpsInfo($id_space, $ac, $catalog = false) {
+    private function anticorpsInfo($id_space, $ac, $catalog = false)
+    {
         $isotypeModel = new Isotype();
         $isoall = $isotypeModel->getBySpace($id_space);
         $isos = [];
@@ -269,7 +284,7 @@ class Anticorps extends Model {
             $ac[$i]['source']  = $sources[$ac[$i]['id_source']];
 
             $ac[$i]['tissus'] = $tissusModel->getTissus($id_space, $ac[$i]['id'], $catalog);
-            $ac[$i]['proprietaire'] = $this->getOwners($id_space ,$ac[$i]['id']);
+            $ac[$i]['proprietaire'] = $this->getOwners($id_space, $ac[$i]['id']);
             //$ac[$i]['tissus'] = [];
             //$ac[$i]['proprietaire'] = [];
 
@@ -286,12 +301,12 @@ class Anticorps extends Model {
             $ac[$i]['staining'] = $stainingModel->getNameFromId($id_space ,$ac[$i]['id_staining']);
             $ac[$i]['application'] = $applicationModel->getNameFromId($id_space, $ac[$i]['id_application']);
             */
-
         }
         return $ac;
     }
 
-    public function getAnticorpsInfoSearch($id_space, $columnName, $searchTxt) {
+    public function getAnticorpsInfoSearch($id_space, $columnName, $searchTxt)
+    {
         $sql = "select * from ac_anticorps where id_space=? AND deleted=0 AND " . $columnName . " LIKE '%$searchTxt%'";
         $user = $this->runRequest($sql, array($id_space, $searchTxt));
         $ac = $user->fetchAll();
@@ -299,14 +314,13 @@ class Anticorps extends Model {
         return $this->anticorpsInfo($id_space, $ac);
     }
 
-    public function getAnticorpsProprioSearch($id_space, $columnName, $searchTxt) {
-
+    public function getAnticorpsProprioSearch($id_space, $columnName, $searchTxt)
+    {
         $acs = $this->getAnticorpsInfo($id_space);
 
         if ($columnName == "nom_proprio") {
             $anticorps = array();
             foreach ($acs as $as) {
-
                 foreach ($as["proprietaire"] as $proprio) {
                     if (strstr($proprio["name"], $searchTxt)) {
                         $anticorps[] = $as;
@@ -318,7 +332,6 @@ class Anticorps extends Model {
         } elseif ($columnName == "disponibilite") {
             $anticorps = array();
             foreach ($acs as $as) {
-
                 foreach ($as["proprietaire"] as $proprio) {
                     if (strstr($proprio["disponible"], $searchTxt)) {
                         $anticorps[] = $as;
@@ -342,8 +355,8 @@ class Anticorps extends Model {
         }
     }
 
-    public function getAnticorpsTissusSearch($id_space, $columnName, $searchTxt) {
-
+    public function getAnticorpsTissusSearch($id_space, $columnName, $searchTxt)
+    {
         /*
           `espece` int(11) NOT NULL,
           `organe` int(11) NOT NULL,
@@ -356,7 +369,6 @@ class Anticorps extends Model {
         if ($columnName == "dilution") {
             $anticorps = array();
             foreach ($acs as $as) {
-
                 foreach ($as["tissus"] as $proprio) {
                     if (strstr($proprio["dilution"], $searchTxt)) {
                         $anticorps[] = $as;
@@ -368,7 +380,6 @@ class Anticorps extends Model {
         } elseif ($columnName == "temps_incubation") {
             $anticorps = array();
             foreach ($acs as $as) {
-
                 foreach ($as["tissus"] as $proprio) {
                     if (strstr($proprio["temps_incubation"], $searchTxt)) {
                         $anticorps[] = $as;
@@ -440,8 +451,8 @@ class Anticorps extends Model {
         }
     }
 
-    public function getOwners($id_space, $acId) {
-
+    public function getOwners($id_space, $acId)
+    {
         $sql = "SELECT ac_j_user_anticorps.id_utilisateur AS id_user, ac_j_user_anticorps.date_recept AS date_recept, 
 					   ac_j_user_anticorps.disponible AS disponible, ac_j_user_anticorps.no_dossier AS no_dossier, 
 					   core_users.name AS name, core_users.firstname AS firstname
@@ -454,30 +465,33 @@ class Anticorps extends Model {
         return $user->fetchAll();
     }
 
-    public function addOwner($id_space ,$id_user, $id_anticorps, $date, $disponible, $no_dossier) {
-
+    public function addOwner($id_space, $id_user, $id_anticorps, $date, $disponible, $no_dossier)
+    {
         $sql = "insert into ac_j_user_anticorps(id_space, id_utilisateur, id_anticorps, date_recept, disponible, no_dossier)"
                 . " values(?, ?, ?, ?, ?, ?)";
         $pdo = $this->runRequest($sql, array($id_space, $id_user, $id_anticorps, $date, $disponible, $no_dossier));
 
         return $this->getDatabase()->lastInsertId();
     }
-    
-    public function updateOwnerId($id_space, $old_id, $anticorps_id, $new_id){
+
+    public function updateOwnerId($id_space, $old_id, $anticorps_id, $new_id)
+    {
         $sql = "UPDATE ac_j_user_anticorps SET id_utilisateur=? WHERE id_utilisateur=? AND id_anticorps=? AND id_space=?";
         $this->runRequest($sql, array($new_id, $old_id, $anticorps_id, $id_space));
     }
 
-    public function removeOwners($id_space, $id) {
+    public function removeOwners($id_space, $id)
+    {
         $sql = "DELETE FROM ac_j_user_anticorps WHERE id_anticorps = ? AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
     }
 
-    public function getAnticorpsFromId($id_space, $id) {
+    public function getAnticorpsFromId($id_space, $id)
+    {
         $sql = "SELECT * FROM ac_anticorps WHERE id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         $anticorps = $req->fetch();
-        if(!$anticorps){
+        if (!$anticorps) {
             return null;
         }
 
@@ -486,12 +500,13 @@ class Anticorps extends Model {
 
         // get tissus
         $tissusModel = new Tissus();
-        $anticorps['tissus'] = $tissusModel->getTissus($id_space ,$id);
+        $anticorps['tissus'] = $tissusModel->getTissus($id_space, $id);
 
         return $anticorps;
     }
 
-    public function getAnticorpsIdFromNoH2p2($id_space, $no_h2p2) {
+    public function getAnticorpsIdFromNoH2p2($id_space, $no_h2p2)
+    {
         $sql = "SELECT id FROM ac_anticorps WHERE no_h2p2=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($no_h2p2, $id_space));
         $anticorps = $req->fetch();
@@ -499,8 +514,8 @@ class Anticorps extends Model {
         return $anticorps;
     }
 
-    public function getDefaultAnticorps() {
-
+    public function getDefaultAnticorps()
+    {
         $anticorps["id"] = "";
         $anticorps["id_space"] = 0;
         $anticorps["nom"] = "";
@@ -525,7 +540,8 @@ class Anticorps extends Model {
         return $anticorps;
     }
 
-    private function endsWith($haystack, $needle) {
+    private function endsWith($haystack, $needle)
+    {
         $length = strlen($needle);
         if ($length == 0) {
             return true;
@@ -533,8 +549,8 @@ class Anticorps extends Model {
         return (substr($haystack, -$length) === $needle);
     }
 
-    private function compare($str, $serach) {
-
+    private function compare($str, $serach)
+    {
         if ($this->endsWith($serach, "*")) {
             $search2 = substr($serach, 0, -1);
 
@@ -547,7 +563,8 @@ class Anticorps extends Model {
         }
     }
 
-    public function searchAdv($id_space ,$searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp) {
+    public function searchAdv($id_space, $searchName, $searchNoH2P2, $searchSource, $searchCible, $searchValide, $searchResp)
+    {
         $acs = $this->getAnticorpsInfo($id_space, "");
 
         if ($searchName != "") {
@@ -616,9 +633,9 @@ class Anticorps extends Model {
         return $acs;
     }
 
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         $sql = "UPDATE ac_anticorps SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
-
 }

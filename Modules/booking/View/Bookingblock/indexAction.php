@@ -1,4 +1,4 @@
-<?php include 'Modules/booking/View/layoutsettings.php' ?>
+<?php include_once 'Modules/booking/View/layoutsettings.php' ?>
 
     
 <?php startblock('content') ?>
@@ -113,20 +113,20 @@
                 <select class="form-select" id="color_code_id" name="color_code_id" required >
                     <?php
                     $colorID = 1;
-                    foreach ($colorCodes as $colorCode) {
-                        $codeID = $this->clean($colorCode["id"]);
-                        $codeName = $this->clean($colorCode["name"]);
-                        $selected = "";
-                        if ($codeID == $colorID) {
-                            $selected = "selected=\"selected\"";
-                        }
-                        ?>
+foreach ($colorCodes as $colorCode) {
+    $codeID = $this->clean($colorCode["id"]);
+    $codeName = $this->clean($colorCode["name"]);
+    $selected = "";
+    if ($codeID == $colorID) {
+        $selected = "selected=\"selected\"";
+    }
+    ?>
                         <OPTION value="<?php echo $codeID ?>" <?php echo $selected ?>>
                             <?php echo $codeName ?>
                         </OPTION>
                         <?php
-                    }
-                    ?>
+}
+?>
                 </select>
             </div>
         </div>

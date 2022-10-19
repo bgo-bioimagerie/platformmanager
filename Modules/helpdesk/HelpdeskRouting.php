@@ -2,9 +2,10 @@
 
 require_once 'Framework/Routing.php';
 
-class HelpdeskRouting extends Routing{
-
-    public function routes($router) {
+class HelpdeskRouting extends Routing
+{
+    public function routes($router)
+    {
         $router->map('GET', '/helpdesk/[i:id_space]', 'helpdesk/helpdesk/index', 'helpdesk_index');
         $router->map('GET', '/helpdesk/[i:id_space]/settings', 'helpdesk/helpdesk/settings', 'helpdesk_settings');
         $router->map('GET', '/helpdesk/[i:id_space]/unread', 'helpdesk/helpdesk/unreadCount', 'helpdesk_unread_count');
@@ -21,10 +22,7 @@ class HelpdeskRouting extends Routing{
     /**
      * Empty but needed as abstract from Routing
      */
-    public function listRoutes() {
-
+    public function listRoutes()
+    {
     }
-
 }
-
-?>

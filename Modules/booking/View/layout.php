@@ -3,7 +3,7 @@
 
 
 <?php startblock('spacemenu'); ?>
-    <?php include 'Modules/booking/View/navbarbooking.php'; ?>
+    <?php include_once 'Modules/booking/View/navbarbooking.php'; ?>
 <?php endblock(); ?>
 
 

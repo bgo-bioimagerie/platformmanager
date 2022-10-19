@@ -9,19 +9,20 @@ require_once 'Modules/core/Model/CoreConfig.php';
  *
  * @author Sylvain Prigent
  */
-class CoreUserSettings extends Model {
-
-    public function __construct() {
+class CoreUserSettings extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "core_users_settings";
     }
 
     /**
      * Create the user settings table
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `core_users_settings` (
 		`user_id` int(11) NOT NULL,
 		`setting` varchar(30) NOT NULL DEFAULT '',
@@ -32,7 +33,8 @@ class CoreUserSettings extends Model {
         return $pdo;
     }
 
-    public function mergeUsers($users) {
+    public function mergeUsers($users)
+    {
         for ($i = 1; $i < count($users); $i++) {
             $sql = "UPDATE core_users_settings SET user_id=? WHERE user_id=?";
             $this->runRequest($sql, array($users[0], $users[$i]));
@@ -44,7 +46,8 @@ class CoreUserSettings extends Model {
      * @param number $user_id User ID
      * @return multitype: Use settings
      */
-    public function getUserSettings($user_id) {
+    public function getUserSettings($user_id)
+    {
         $sql = "select setting, value  from core_users_settings where user_id=?";
         $user = $this->runRequest($sql, array($user_id));
         $res = $user->fetchAll();
@@ -62,7 +65,8 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @return mixed
      */
-    public function getUserSetting($user_id, $setting, $default=null) {
+    public function getUserSetting($user_id, $setting, $default=null)
+    {
         $sql = "select value from core_users_settings where user_id=? and setting=?";
         $user = $this->runRequest($sql, array($user_id, $setting));
         $tmp = $user->fetch();
@@ -75,7 +79,8 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    public function setSettings($user_id, $setting, $value) {
+    public function setSettings($user_id, $setting, $value)
+    {
         if (!$this->isSetting($user_id, $setting)) {
             $this->addSetting($user_id, $setting, $value);
         } else {
@@ -89,7 +94,8 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @return boolean
      */
-    protected function isSetting($user_id, $setting) {
+    protected function isSetting($user_id, $setting)
+    {
         $sql = "select * from core_users_settings where user_id=? and setting=?";
         $req = $this->runRequest($sql, array($user_id, $setting));
         return ($req->rowCount() == 1) ? true : false;
@@ -101,7 +107,8 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    protected function addSetting($user_id, $setting, $value) {
+    protected function addSetting($user_id, $setting, $value)
+    {
         $sql = "insert into core_users_settings (user_id, setting, value)
 				 VALUES(?,?,?)";
         $this->runRequest($sql, array($user_id, $setting, $value));
@@ -113,7 +120,8 @@ class CoreUserSettings extends Model {
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    protected function updateSetting($user_id, $setting, $value) {
+    protected function updateSetting($user_id, $setting, $value)
+    {
         $sql = "update core_users_settings set value=? where user_id=? and setting=?";
         $this->runRequest($sql, array($value, $user_id, $setting));
     }
@@ -121,10 +129,10 @@ class CoreUserSettings extends Model {
     /**
      * Set user setting into a session variable
      */
-    public function updateSessionSettingVariable() {
+    public function updateSessionSettingVariable()
+    {
         // add the user settings to the session
         $settings = $this->getUserSettings($_SESSION["id_user"]);
         $_SESSION["user_settings"] = $settings;
     }
-
 }

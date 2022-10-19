@@ -12,30 +12,30 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class RerespsstatusController extends ResourcesBaseController {
-
+class RerespsstatusController extends ResourcesBaseController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->model = new ReRespsStatus();
         //$this->checkAuthorizationMenu("resources");
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -47,7 +47,7 @@ class RerespsstatusController extends ResourcesBaseController {
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
-        
+
         $data = $this->model->getForSpace($id_space);
 
         $tableHtml = $table->view($data, $headers);
@@ -63,14 +63,14 @@ class RerespsstatusController extends ResourcesBaseController {
     /**
      * Edit form
      */
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         // get belonging info
         $data = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
-            $data = $this->model->get($id_space ,$id);
+            $data = $this->model->get($id_space, $id);
         }
 
         // lang
@@ -82,7 +82,7 @@ class RerespsstatusController extends ResourcesBaseController {
         $form->setTitle(ResourcesTranslator::Edit_Resps_status($lang), 3);
         $form->addHidden("id", $data["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
-        
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "rerespsstatusedit/".$id_space. "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "rerespsstatus/".$id_space);
 
@@ -103,12 +103,11 @@ class RerespsstatusController extends ResourcesBaseController {
         }
     }
 
-    public function deleteAction($id_space, $id) {
-        
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         $this->model->delete($id_space, $id);
         $this->redirect("rerespsstatus/".$id_space);
     }
-
 }

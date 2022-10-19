@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Utils.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
@@ -14,7 +15,8 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 
-class BkStats {
+class BkStats
+{
     public const STATS_AUTH_STAT = 'bk_auth_stats';
     public const STATS_AUTH_LIST = 'bk_auth_list';
     public const STATS_BK_USERS = 'bk_users';
@@ -23,8 +25,8 @@ class BkStats {
     public const STATS_QUANTITIES = 'bk_quantities';
     public const STATS_BK_TIME = 'bk_time';
 
-    public function generateStats($file, $id_space, $period_begin, $period_end) {
-
+    public function generateStats($file, $id_space, $period_begin, $period_end)
+    {
         $modelResource = new ReCategory();
         $resources = $modelResource->getBySpace($id_space);
         $modelVisa = new ReVisa();
@@ -40,7 +42,7 @@ class BkStats {
             }
         }
 
-        
+
         // by unit
         $modelClients = new ClClient();
         $units = $modelClients->getAll($id_space);
@@ -62,10 +64,10 @@ class BkStats {
         $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
     }
 
-    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
-
+    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end)
+    {
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        
+
         // Set properties
         $spreadsheet->getProperties()->setCreator("Platform-Manager");
         $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
@@ -104,7 +106,7 @@ class BkStats {
         foreach ($instructors as $instructor) {
             $curentLine++;
             $letter = Utils::get_col_letter(1);
-            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $modelUser->getUserFUllName($instructor["id_instructor"]));
+            $spreadsheet->getActiveSheet()->SetCellValue($letter . $curentLine, $modelUser->getUserFullName($instructor["id_instructor"]));
             $spreadsheet->getActiveSheet()->getStyle($letter . $curentLine)->applyFromArray($stylesheet["borderedCell"]);
 
             $total = 0;
@@ -216,7 +218,7 @@ class BkStats {
 
         // record modifications and download file
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($file);
@@ -227,8 +229,8 @@ class BkStats {
      * @param array $table
      * @param string $lang
      */
-    public function exportstatbookingusersCSV($file, $users) {
-
+    public function exportstatbookingusersCSV($file, $users)
+    {
         $content = "name ; email \r\n";
 
         foreach ($users as $user) {
@@ -237,27 +239,28 @@ class BkStats {
         }
 
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($file, $content);
     }
 
 
-    public function getBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $lang='en') {
+    public function getBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $lang='en')
+    {
         $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, null, $lang);
         // write excel file
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         // record modifications and download file
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($filepath);
     }
 
-    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang='en') {
-
+    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang='en')
+    {
         if (!$spreadsheet) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
@@ -277,11 +280,12 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
-        if($dateBegin == "") {
+    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
         $dateBeginArray = explode("-", $dateBegin);
@@ -325,11 +329,12 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
-        if($dateBegin == "") {
+    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
         $dateBeginArray = explode("-", $dateBegin);
@@ -417,7 +422,8 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
+    public function statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
         // get data
         $modelGraph = new BkGraph();
         $modelClient = new ClClient();
@@ -469,8 +475,8 @@ class BkStats {
         return $spreadsheet;
     }
 
-    protected function getStylesheet() {
-
+    protected function getStylesheet()
+    {
         $styleBorderedCell = array(
             'font' => array(
                 'name' => 'Times',
@@ -531,15 +537,16 @@ class BkStats {
             'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
     }
 
-    public function getQuantitiesReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+    public function getQuantitiesReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en')
+    {
         $modelBooking = new BkCalendarEntry();
         $stats = $modelBooking->getStatsQuantities(
-                $id_space,
-                $dateBegin,
-                $dateEnd,
-                $lang
+            $id_space,
+            $dateBegin,
+            $dateEnd,
+            $lang
         );
-        if(empty($stats)) {
+        if (empty($stats)) {
             throw new PfmParamException('no data found for this period');
         }
         $data = '';
@@ -547,40 +554,37 @@ class BkStats {
             $data .= $stat['name'].';'.$stat['count']."\n";
         }
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($filepath, $data);
     }
 
-    public function getReservationsRespReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+    public function getReservationsRespReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en')
+    {
         $modelBooking = new BkCalendarEntry();
         $stats = $modelBooking->getStatTimeResps(
-                $id_space,
-                $dateBegin,
-                $dateEnd
+            $id_space,
+            $dateBegin,
+            $dateEnd
         );
         $csv = ",";
-        foreach ( $stats["resources"] as $resoure ){
+        foreach ($stats["resources"] as $resoure) {
             $csv .= $resoure["name"] . ",";
         }
         $csv .= "\n";
-        foreach ( $stats["count"] as $data ){
+        foreach ($stats["count"] as $data) {
             $csv .= $data["responsible"] . ",";
-            foreach( $data["count"] as $count ){
+            foreach ($data["count"] as $count) {
                 $csv .= $count["time"] . ",";
             }
             $csv .= "\n";
         }
-        
+
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($filepath, $csv);
     }
-
-
 }
-
-?>

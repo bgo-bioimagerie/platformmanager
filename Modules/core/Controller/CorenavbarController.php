@@ -11,21 +11,23 @@ require_once 'Modules/core/Model/CoreMainSubMenu.php';
  * @deprecated replaced by framework Controller/Navbar
  * @author Sylvain Prigent
  */
-class CorenavbarController extends CoresecureController {
-
+class CorenavbarController extends CoresecureController
+{
     /**
-     * 
+     *
      */
-    public function indexAction() {
+    public function indexAction()
+    {
     }
 
     /**
      * Get the navbar content
      * @return string
      */
-    public function navbar() {
+    public function navbar()
+    {
         $login = '';
-        if(isset($_SESSION["login"])) {
+        if (isset($_SESSION["login"])) {
             $login = $_SESSION["login"];
         }
         $menu = $this->buildNavBar($login);
@@ -36,8 +38,8 @@ class CorenavbarController extends CoresecureController {
      * Get the tool menu
      * @return multitype: tool menu content
      */
-    public function getMenu() {
-        
+    public function getMenu()
+    {
         $modelMainMenus = new CoreMainMenu();
         $mainMenu = $modelMainMenus->getAll();
         /*
@@ -47,7 +49,7 @@ class CorenavbarController extends CoresecureController {
         foreach($submenus as $submenu) {
             $submap[$submenu['id_main_menu']][] = $submenu;
         }
-        
+
         for($i = 0 ; $i < count($mainMenu) ; $i++){
             //$mainMenu[$i]["items"] = $modelMainSubMenus->getForMenu($mainMenu[$i]["id"]);
             $mainMenu[$i]["items"] = $submap[$mainMenu[$i]['id']] ?? [];
@@ -55,13 +57,14 @@ class CorenavbarController extends CoresecureController {
         */
         return $mainMenu;
     }
-    
+
     /**
      * Get the admin menu
      * @return multitype: Amdin menu
      */
-    public function getAdminMenu() {
-        if(!isset($_SESSION["user_status"])) {
+    public function getAdminMenu()
+    {
+        if (!isset($_SESSION["user_status"])) {
             return null;
         }
         $user_status_id = $_SESSION["user_status"];
@@ -77,9 +80,10 @@ class CorenavbarController extends CoresecureController {
     /**
      * Get the navbar view
      * @param string $login User login
-     * @return string: Menu view (html) 
+     * @return string: Menu view (html)
      */
-    public function buildNavBar($login) {
+    public function buildNavBar($login)
+    {
         $userName = $login;
         $lang = $this->getLanguage();
         $toolMenu = $this->getMenu();
@@ -88,11 +92,12 @@ class CorenavbarController extends CoresecureController {
 
         // get the view menu,fill it, and return the content
         $view = $this->generateNavfile(
-                array('userName' => $userName,
-                    'toolMenu' => $toolMenu, 
-                    'toolAdmin' => $toolAdmin,
-                    'impersonate' => $_SESSION['logged_login'] ?? null,
-                    'lang' => $lang));
+            array('userName' => $userName,
+                'toolMenu' => $toolMenu,
+                'toolAdmin' => $toolAdmin,
+                'impersonate' => $_SESSION['logged_login'] ?? null,
+                'lang' => $lang)
+        );
         // Send the view
         return $view;
     }
@@ -101,9 +106,10 @@ class CorenavbarController extends CoresecureController {
      * Internal method to build the navbar into HTML
      * @param  $data navbar content
      * @throws Exception
-     * @return string Menu view (html) 
+     * @return string Menu view (html)
      */
-    private function generateNavfile($data) {
+    private function generateNavfile($data)
+    {
         $file = 'Modules/core/View/navbar.php';
         if (file_exists($file)) {
             extract($data);
@@ -117,5 +123,4 @@ class CorenavbarController extends CoresecureController {
             throw new PfmFileException("unable to find the file: '$file' ", 404);
         }
     }
-
 }

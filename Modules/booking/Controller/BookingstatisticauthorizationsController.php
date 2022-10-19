@@ -25,13 +25,14 @@ require_once 'Modules/core/Model/CoreUser.php';
 
 require_once 'Modules/statistics/Controller/StatisticsController.php';
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingstatisticauthorizationsController extends StatisticsController {
-
-    public function indexAction($id_space) {
+class BookingstatisticauthorizationsController extends StatisticsController
+{
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -88,7 +89,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
     /**
      * Form to export the list of authorized user per resource category
      */
-    public function authorizedusersAction($id_space) {
+    public function authorizedusersAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the resource list
         $resourceModel = new ReCategory();
@@ -104,7 +106,8 @@ class BookingstatisticauthorizationsController extends StatisticsController {
     /**
      * Query to export the list of authorized user per resource category
      */
-    public function authorizedusersqueryAction($id_space) {
+    public function authorizedusersqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         // get the selected resource id
         $resource_id = $this->request->getParameter("resource_id");
@@ -130,5 +133,4 @@ class BookingstatisticauthorizationsController extends StatisticsController {
         ]);
         return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
     }
-
 }

@@ -1,5 +1,5 @@
 <?php
-include 'Modules/core/View/layout.php';
+include_once 'Modules/core/View/layout.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
@@ -17,7 +17,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
                     <textarea class="form-control" id="comment" name="comment" required></textarea>
                 </div>
             </div>
-            <?php if(isset($context['currentSpace']['termsofuse']) && $context['currentSpace']['termsofuse']) { ?>
+            <?php if (isset($context['currentSpace']['termsofuse']) && $context['currentSpace']['termsofuse']) { ?>
             <div class="form-group mb-3">
                 <label class="form-label col-xs-4" for="agree">I agree with terms of use* : <a target="_blank" rel="nofollow noopener noreferrer" href="<?php echo $context['currentSpace']['termsofuse'] ?>">(read policy)</a></label>
                 <div class="col-xs-8">

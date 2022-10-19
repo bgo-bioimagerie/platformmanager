@@ -10,27 +10,28 @@ require_once 'Modules/services/Model/SeServiceType.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for services list page
  */
-class ServiceslistingController extends ServicesController {
-
+class ServiceslistingController extends ServicesController
+{
     private $serviceModel;
     private $typeModel;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
         $this->typeModel = new SeServiceType();
-
     }
 
-    public function listingAction($id_space) {
+    public function listingAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -64,14 +65,15 @@ class ServiceslistingController extends ServicesController {
         ));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if (!$id) {
             $value = array("name" => "", "description" => "", "display_order" => "", "type_id" => "");
         } else {
-            $value = $this->serviceModel->getItem($id_space ,$id);
+            $value = $this->serviceModel->getItem($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
@@ -90,7 +92,8 @@ class ServiceslistingController extends ServicesController {
 
         if ($form->check()) {
             $service_id = $this->serviceModel->setService(
-                $id, $id_space,
+                $id,
+                $id_space,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("description"),
                 $this->request->getParameter("display_order"),
@@ -103,14 +106,16 @@ class ServiceslistingController extends ServicesController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $this->serviceModel->delete($id_space, $id);
         $this->redirect("serviceslisting/" . $id_space);
     }
 
-    public function stockAction($id_space) {
+    public function stockAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -128,5 +133,4 @@ class ServiceslistingController extends ServicesController {
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
-
 }

@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include_once 'Modules/core/View/layout.php' ?>
 
 
 
@@ -22,9 +22,9 @@
                         <div class="col-12 col-md-2">
                         <?php
                         $imageFile = "data/catalog/" . $entry["image_url"];
-                        if (file_exists($imageFile) && !is_dir($imageFile)) {
-                            list($width, $height, $type, $attr) = getimagesize($imageFile);
-                        ?>
+        if (file_exists($imageFile) && !is_dir($imageFile)) {
+            list($width, $height, $type, $attr) = getimagesize($imageFile);
+            ?>
                             <a href="<?php echo $imageFile ?>">
                                 <img alt="prestation image" src="<?php echo $imageFile ?>" width="100%" />
                             </a>

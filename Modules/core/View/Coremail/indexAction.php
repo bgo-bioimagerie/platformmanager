@@ -1,5 +1,5 @@
 <?php
-include 'Modules/core/View/spacelayout.php';
+include_once 'Modules/core/View/spacelayout.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
 ?>
 
@@ -10,10 +10,12 @@ require_once 'Modules/core/Model/CoreTranslator.php';
     <div class="container">
     <form action="/coremail/<?php echo $id_space; ?>" method="POST">
     <div class="bm-3 row">
-    <?php foreach($mods as $key => $mod) { ?>
+    <?php foreach ($mods as $key => $mod) { ?>
         <div class="col-4 form-check">
             <label class="form-check-label" for="<?php echo $key; ?>"><?php echo $key; ?></label>
-            <input class="form-check-input" type="checkbox" <?php if($mod) { echo "checked"; }?> id="<?php echo $key; ?>" name="s_<?php echo $key; ?>"/>
+            <input class="form-check-input" type="checkbox" <?php if ($mod) {
+                echo "checked";
+            }?> id="<?php echo $key; ?>" name="s_<?php echo $key; ?>"/>
         </div>
     <?php } ?>
     </div>

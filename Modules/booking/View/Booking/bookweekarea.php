@@ -1,4 +1,4 @@
-<?php include 'Modules/booking/View/layout.php' ?>
+<?php include_once 'Modules/booking/View/layout.php' ?>
 
 <?php startblock('meta') ?>
 	<meta name="robots" content="noindex" />
@@ -16,11 +16,15 @@ $startDate = $mondayDate;
 $toDate = $sundayDate;
 $nbDays = 7;
 $from = ["weekarea", $date, $bk_id_resource, $bk_id_area, $id_user, $detailedView ? 'detailed' : 'simple'];
-if($bk_id_area == null) { $bk_id_area = '';}
-if($bk_id_resource == null) { $bk_id_resource = '';}
+if ($bk_id_area == null) {
+    $bk_id_area = '';
+}
+if ($bk_id_resource == null) {
+    $bk_id_resource = '';
+}
 
 echo drawNavigation('weekarea', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
-if($detailedView) {
+if ($detailedView) {
     include_once 'Modules/booking/View/Booking/caldisplay.php';
 } else {
     include_once 'Modules/booking/View/Booking/simplecaldisplay.php';

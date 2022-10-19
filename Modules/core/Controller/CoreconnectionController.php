@@ -19,15 +19,16 @@ require_once 'Modules/core/Model/CoreSpace.php';
  *
  * @author Sylvain Prigent
  */
-class CoreconnectionController extends CorecookiesecureController {
-
+class CoreconnectionController extends CorecookiesecureController
+{
     private $user;
     private $logger;
 
     /**
      * Connstructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->user = new CoreUser();
         $this->logger = Configuration::getLogger();
@@ -38,7 +39,8 @@ class CoreconnectionController extends CorecookiesecureController {
      * @see Controller::index()
      *
      */
-    public function indexAction($message = "", $redirection = "") {
+    public function indexAction($message = "", $redirection = "")
+    {
         $language = $this->getLanguage();
 
         $modelConfig = new CoreConfig();
@@ -49,7 +51,7 @@ class CoreconnectionController extends CorecookiesecureController {
 
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
-        if(!empty($openid_providers)) {
+        if (!empty($openid_providers)) {
             foreach ($openid_providers as $openid_provider) {
                 $nonce = uniqid("pfm");
                 $provider = [
@@ -67,7 +69,7 @@ class CoreconnectionController extends CorecookiesecureController {
         }
         $_SESSION["redirect"] = "coretiles";
 
-        if(isset($_GET['redirect_url'])) {
+        if (isset($_GET['redirect_url'])) {
             $redirection = urldecode($_GET['redirect_url']);
         }
 
@@ -84,14 +86,15 @@ class CoreconnectionController extends CorecookiesecureController {
      * Shows the login page
      * @throws Exception
      */
-    public function loginAction() {
+    public function loginAction()
+    {
         $lang = $this->getLanguage();
         if ($this->request->isParameter("login") && $this->request->isParameter("pwd")) {
             $login = $this->request->getParameter("login");
             $pwd = $this->request->getParameter("pwd", false);
 
             $redirection = '';
-            if($this->request->isParameter('redirection')) {
+            if ($this->request->isParameter('redirection')) {
                 $redirection = $this->request->getParameter('redirection');
             }
             try {
@@ -100,7 +103,7 @@ class CoreconnectionController extends CorecookiesecureController {
             } catch (PfmAuthException $e) {
                 return $this->loginError($redirection, $e->getMessage());
             }
-            
+
             // generate the remember me cookie
             if ($this->request->isParameter("remember")) {
                 $key = hash('sha512', $this->generateRandomKey());
@@ -111,14 +114,13 @@ class CoreconnectionController extends CorecookiesecureController {
                 $modelUser = new CoreUser();
                 $modelUser->setRememberKey($loggedUser['idUser'], $key);
             }
-            if($redirection) {
+            if ($redirection) {
                 $this->redirect($redirection);
                 return;
             }
             // redirect
             $redirectPath = $this->getRedirectPath();
             $this->redirectNoRemoveHeader($redirectPath);
-            
         } else {
             throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
         }
@@ -127,12 +129,13 @@ class CoreconnectionController extends CorecookiesecureController {
     /**
      * In case of connection failure,
      * redirects and sets flash message depending on connection error message
-     * 
+     *
      * @param string $redirection redirection string
      * @param string $connection_error error returned at connection failure
-     * 
+     *
      */
-    private function loginError($redirection, $connection_error = 0) {
+    private function loginError($redirection, $connection_error = 0)
+    {
         $lang = $this->getLanguage();
         $_SESSION['flashClass'] = "danger";
         $_SESSION['flash'] = CoreTranslator::ConnectionError($lang, $connection_error);
@@ -143,7 +146,8 @@ class CoreconnectionController extends CorecookiesecureController {
      *
      * @return type
      */
-    public function getRedirectPath() {
+    public function getRedirectPath()
+    {
         $modelConfig = new CoreConfig();
         $redirectController = $modelConfig->getParam("default_home_path");
         if ($redirectController == "") {
@@ -162,8 +166,8 @@ class CoreconnectionController extends CorecookiesecureController {
     /**
      * Logout (delete the session)
      */
-    public function logoutAction() {
-
+    public function logoutAction()
+    {
         setcookie('auth', '', -1);
 
         $this->request->getSession()->destroy();
@@ -176,7 +180,8 @@ class CoreconnectionController extends CorecookiesecureController {
      * @param string $pwd User pssword
      * @return string Error message
      */
-    private function userConnection($login, $pwd) {
+    private function userConnection($login, $pwd)
+    {
         // Check if localUser
         try {
             $localUser = $this->user->isLocalUser($login);
@@ -197,7 +202,7 @@ class CoreconnectionController extends CorecookiesecureController {
                         // update the user infos
                         $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
                         $userInfo = $this->user->getUserByLogin($login);
-                        if(!$userInfo['apikey']) {
+                        if (!$userInfo['apikey']) {
                             $this->user->newApiKey($userInfo['idUser']);
                         }
                         try {
@@ -215,8 +220,8 @@ class CoreconnectionController extends CorecookiesecureController {
         }
     }
 
-    public function passwordforgottenAction() {
-
+    public function passwordforgottenAction()
+    {
         $lang = $this->getLanguage();
         $form = new Form($this->request, 'formpasswordforgottern');
         $form->addEmail("email", CoreTranslator::Email($lang), true);
@@ -229,7 +234,6 @@ class CoreconnectionController extends CorecookiesecureController {
             $model = new CoreUser();
             $userByEmail = $model->getUserByEmail($email);
             if ($userByEmail) {
-
                 if ($userByEmail["source"] == "ext") {
                     $_SESSION['flash'] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
@@ -247,9 +251,7 @@ class CoreconnectionController extends CorecookiesecureController {
                     $_SESSION['flash'] = CoreTranslator::ResetPasswordMessageSend($lang);
                     $_SESSION["flashClass"] = 'success';
                 }
-
-            }
-            else{
+            } else {
                 $_SESSION['flash'] = CoreTranslator::UserNotFoundWithEmail($lang);
                 $_SESSION["flashClass"] = 'danger';
             }
@@ -264,5 +266,4 @@ class CoreconnectionController extends CorecookiesecureController {
             "home_message" => $home_message,
             "formHtml" => $form->getHtml($lang)));
     }
-
 }

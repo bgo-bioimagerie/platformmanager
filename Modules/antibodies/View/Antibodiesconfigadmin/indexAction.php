@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include_once 'Modules/core/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -9,7 +9,7 @@
         <h1><?php echo AntibodiesTranslator::configuration($lang) ?></h1>
     </div>
     
-    <?php foreach($forms as $form){ ?>
+    <?php foreach ($forms as $form) { ?>
     <div class="col-12 col-10 offset-1" style="height: 7px;">
         <p></p>
     </div>

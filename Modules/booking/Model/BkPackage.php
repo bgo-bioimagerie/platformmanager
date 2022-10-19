@@ -7,9 +7,10 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class BkPackage extends Model {
-
-    public function __construct() {
+class BkPackage extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "bk_packages";
     }
 
@@ -18,7 +19,8 @@ class BkPackage extends Model {
      *
      * @return PDOStatement
      */
-    public function createTable() {
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_packages` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
         `id_package` int(11) NOT NULL,
@@ -46,7 +48,8 @@ class BkPackage extends Model {
         $this->runRequest($sql4);
     }
 
-    public function getByResource($id_space, $id_resource, $include_deleted = false) {
+    public function getByResource($id_space, $id_resource, $include_deleted = false)
+    {
         $sql = "SELECT * FROM bk_packages WHERE id_resource=? AND id_space=?";
         if (!$include_deleted) {
             $sql .= " AND deleted=0";
@@ -58,19 +61,22 @@ class BkPackage extends Model {
     /**
      * check if a package is deleted
      */
-    public function isDeleted($id_space, $id_pkg) {
+    public function isDeleted($id_space, $id_pkg)
+    {
         $sql = "SELECT * FROM bk_packages WHERE id=? AND id_space=? AND deleted=1";
         $req = $this->runRequest($sql, array($id_pkg, $id_space));
         return $req->rowCount() > 0;
     }
 
-    public function getAll($id_space, $sortentrey) {
+    public function getAll($id_space, $sortentrey)
+    {
         $sql = "SELECT * FROM bk_packages WHERE deleted=0 AND id_space=? ORDER BY " . $sortentrey . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
-    
-    public function getName($id_space, $id, $include_deleted = false) {
+
+    public function getName($id_space, $id, $include_deleted = false)
+    {
         $sql = "SELECT name FROM bk_packages WHERE id=? AND id_space=?";
         if (!$include_deleted) {
             $sql .= " AND deleted=0";
@@ -79,12 +85,14 @@ class BkPackage extends Model {
         return $req ? $req[0] : null;
     }
 
-    public function getForSpace($id_space, $sort) {
+    public function getForSpace($id_space, $sort)
+    {
         $sql = "SELECT * FROM bk_packages WHERE deleted=0 AND id_space=? ORDER BY " . $sort . " ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getById($id_space, $id_pk) {
+    public function getById($id_space, $id_pk)
+    {
         $sql = "SELECT * FROM bk_packages WHERE id=? AND id_space=?";
         return $this->runRequest($sql, array($id_pk, $id_space))->fetch();
     }
@@ -92,8 +100,8 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function getPackagePrice($id_space, $id_package, $id_pricing) {
-
+    public function getPackagePrice($id_space, $id_package, $id_pricing)
+    {
         $sql = 'SELECT price FROM bk_j_packages_prices WHERE id_package=? AND id_pricing=? AND deleted=0 AND id_space=?';
         $req = $this->runRequest($sql, array($id_package, $id_pricing, $id_space));
         return $req->fetch();
@@ -102,7 +110,8 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function getPrices($id_space, $resourceID) {
+    public function getPrices($id_space, $resourceID)
+    {
         $sql = "SELECT id, id_package, name, duration FROM bk_packages WHERE id_resource=? AND deleted=0 AND id_space=? ORDER BY id_package ASC;";
         $data = $this->runRequest($sql, array(
             $resourceID,
@@ -116,7 +125,6 @@ class BkPackage extends Model {
         $packages = $data->fetchAll();
 
         for ($p = 0; $p < count($packages); $p++) {
-
             $sql = "SELECT * FROM bk_j_packages_prices WHERE id_package=? AND deleted=0 AND id_space=?";
             $data = $this->runRequest($sql, array($packages[$p]["id"], $id_space));
             $prices = $data->fetchAll();
@@ -127,7 +135,8 @@ class BkPackage extends Model {
         return $packages;
     }
 
-    public function getPackageDuration($id_space, $id,$include_deleted = false) {
+    public function getPackageDuration($id_space, $id, $include_deleted = false)
+    {
         $sql = "SELECT duration FROM bk_packages WHERE id=? AND id_space=?";
         if (!$include_deleted) {
             $sql .= " AND deleted=0";
@@ -137,8 +146,8 @@ class BkPackage extends Model {
         return $duration ? $duration[0] : null;
     }
 
-    public function setSupplementary($id_space, $id_package, $id_resource, $name, $mandatory, $isInvoicingUnit, $duration) {
-
+    public function setSupplementary($id_space, $id_package, $id_resource, $name, $mandatory, $isInvoicingUnit, $duration)
+    {
         $id = $this->getPackageID($id_space, $id_package, $id_resource);
         if ($id > 0) {
             $this->updatePackage($id_space, $id, $id_package, $id_resource, $duration, $name);
@@ -148,7 +157,8 @@ class BkPackage extends Model {
         }
     }
 
-    public function getPackageID($id_space, $id_package, $id_resource) {
+    public function getPackageID($id_space, $id_package, $id_resource)
+    {
         $sql = "SELECT id FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
         if ($req->rowCount() == 1) {
@@ -159,7 +169,8 @@ class BkPackage extends Model {
         }
     }
 
-    public function getBySupID($id_space, $id_package, $id_resource) {
+    public function getBySupID($id_space, $id_package, $id_resource)
+    {
         $sql = "SELECT * FROM bk_packages WHERE id_package=? AND id_resource=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_package, $id_resource, $id_space));
         if ($req->rowCount() == 1) {
@@ -169,21 +180,22 @@ class BkPackage extends Model {
         }
     }
 
-    public function addPackage($id_space, $id_package, $id_resource, $duration, $name) {
-
+    public function addPackage($id_space, $id_package, $id_resource, $duration, $name)
+    {
         $sql = "insert into bk_packages(id_package, id_resource, duration, name, id_space)"
                 . " values(?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id_package, $id_resource, (float) ($duration), $name, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updatePackage($id_space, $id, $id_package, $id_resource, $duration, $name) {
-
+    public function updatePackage($id_space, $id, $id_package, $id_resource, $duration, $name)
+    {
         $sql = "UPDATE bk_packages SET id_package=?, id_resource=?, duration=?, name=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id_package, $id_resource, $duration, $name, $id, $id_space));
     }
 
-    public function isPackage($id_space, $id) {
+    public function isPackage($id_space, $id)
+    {
         $sql = "SELECT * FROM bk_packages WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
         return ($req->rowCount() == 1);
@@ -192,7 +204,8 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function setPrice($id_space, $id_package, $id_pricing, $price) {
+    public function setPrice($id_space, $id_package, $id_pricing, $price)
+    {
         if ($this->isPackagePrice($id_space, $id_package, $id_pricing)) {
             $this->updatePackagePrice($id_space, $id_package, $id_pricing, $price);
         } else {
@@ -203,7 +216,8 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function isPackagePrice($id_space, $id_package, $id_pricing) {
+    public function isPackagePrice($id_space, $id_package, $id_pricing)
+    {
         $sql = "SELECT * FROM bk_j_packages_prices WHERE id_package=? AND id_pricing=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_package, $id_pricing, $id_space));
         return ($req->rowCount() == 1);
@@ -212,7 +226,8 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function updatePackagePrice($id_space, $id_package, $id_pricing, $price) {
+    public function updatePackagePrice($id_space, $id_package, $id_pricing, $price)
+    {
         $sql = "UPDATE bk_j_packages_prices SET price=? WHERE id_package=? AND id_pricing=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($price, $id_package, $id_pricing, $id_space));
     }
@@ -220,13 +235,15 @@ class BkPackage extends Model {
     /**
      * @deprecated
      */
-    public function addPackagePrice($id_space, $id_package, $id_pricing, $price) {
+    public function addPackagePrice($id_space, $id_package, $id_pricing, $price)
+    {
         $sql = "INSERT INTO bk_j_packages_prices(id_package, id_pricing, price, id_space)"
                 . " values(?, ?, ?, ?)";
         $this->runRequest($sql, array($id_package, $id_pricing, $price, $id_space));
     }
 
-    public function removeUnlisted($id_space, $ids, $idIsPackage=false) {
+    public function removeUnlisted($id_space, $ids, $idIsPackage=false)
+    {
         $id_column = $idIsPackage ? "id_package" : "id";
         $sql = "SELECT id, id_package FROM bk_packages WHERE deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_space));
@@ -246,7 +263,8 @@ class BkPackage extends Model {
         }
     }
 
-    public function deletePackage($id_space, $id) {
+    public function deletePackage($id_space, $id)
+    {
         $sql = "UPDATE bk_packages SET deleted=1,deleted_at=NOW() WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
 
@@ -254,5 +272,4 @@ class BkPackage extends Model {
         $sql2 = "UPDATE bk_j_packages_prices SET deleted=1,deleted_at=NOW() WHERE id_package = ? AND id_space=?";
         $this->runRequest($sql2, array($id, $id_space));
     }
-
 }

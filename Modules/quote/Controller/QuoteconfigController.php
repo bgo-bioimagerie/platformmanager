@@ -16,33 +16,34 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Controller/CoreabstractpdftemplateController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class QuoteconfigController extends PfmTemplateController {
-
+class QuoteconfigController extends PfmTemplateController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         // maintenance form
         $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang);
         if ($formMenusactivation->check()) {
@@ -52,16 +53,17 @@ class QuoteconfigController extends PfmTemplateController {
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
-        
+
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function pdftemplateAction($id_space) {
-        return $this->pdftemplate($id_space, 'quote', new QuoteTranslator());    
+    public function pdftemplateAction($id_space)
+    {
+        return $this->pdftemplate($id_space, 'quote', new QuoteTranslator());
     }
 
-    public function pdftemplatedeleteAction($id_space, $name) {
+    public function pdftemplatedeleteAction($id_space, $name)
+    {
         return $this->pdftemplatedelete($id_space, 'quote', $name);
     }
-
 }

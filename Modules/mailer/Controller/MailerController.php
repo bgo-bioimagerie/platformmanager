@@ -20,13 +20,14 @@ require_once 'Modules/core/Model/CoreConfig.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class MailerController extends CoresecureController {
-
-    public function navbar($id_space) {
+class MailerController extends CoresecureController
+{
+    public function navbar($id_space)
+    {
         return "";
     }
 
@@ -34,13 +35,14 @@ class MailerController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
 
         // get sort action
         $areasList = array();
         $resourcesList = array();
-        
+
         $modelSpace = new CoreSpace();
         $statusUserMenu = $modelSpace->getSpaceMenusRole($id_space, "resources");
         if ($statusUserMenu > 0) {
@@ -64,9 +66,9 @@ class MailerController extends CoresecureController {
         $modelConfig = new CoreConfig();
         $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
 
-        if($this->role >= $editRole) {
+        if ($this->role >= $editRole) {
             $mails = $mm->getMails($id_space);
-        } else if ($this->role >= CoreSpace::$USER) {
+        } elseif ($this->role >= CoreSpace::$USER) {
             $mails = $mm->getMails($id_space, Mailer::$SPACE_MEMBERS);
         }
 
@@ -90,11 +92,12 @@ class MailerController extends CoresecureController {
         ));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
         $modelConfig = new CoreConfig();
         $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
-        if($this->role < $editRole) {
+        if ($this->role < $editRole) {
             throw new PfmAuthException('not enough privileges');
         }
         $mm = new Mailer();
@@ -102,13 +105,14 @@ class MailerController extends CoresecureController {
         $this->redirect('mailer/'.$id_space);
     }
 
-    public function sendAction($id_space) {
+    public function sendAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
 
         $modelConfig = new CoreConfig();
         $editRole = $modelConfig->getParamSpace("mailerEdit", $id_space, CoreSpace::$ADMIN);
-        
-        if($this->role < $editRole) {
+
+        if ($this->role < $editRole) {
             throw new PfmAuthException('not enough privileges');
         }
         $from = $this->request->getParameter("from");
@@ -132,8 +136,8 @@ class MailerController extends CoresecureController {
             if ($to === "managers") {
                 $mailType = Mailer::$SPACE_MANAGERS;
                 $modelUser = new CoreUser();
-                $content = "From " . $modelUser->getUserFUllName($_SESSION["id_user"]) . " :</br>" . $content;
-            } else if($to === "admins") {
+                $content = "From " . $modelUser->getUserFullName($_SESSION["id_user"]) . " :</br>" . $content;
+            } elseif ($to === "admins") {
                 $mailType = Mailer::$SPACES_ADMINS;
                 $modelUser = new CoreUser();
                 $userAppStatus = $modelUser->getStatus($_SESSION['id_user'] ?? 0);
@@ -144,12 +148,12 @@ class MailerController extends CoresecureController {
                 $modelSpaceUser = new CoreSpaceUser();
                 $admins = $modelSpaceUser->admins();
                 $emails = [];
-                foreach($admins as $admin) {
-                    if($admin['email']) {
+                foreach ($admins as $admin) {
+                    if ($admin['email']) {
                         $emails[] = ['email' => $admin['email']];
                     }
                 }
-                if(empty($emails)) {
+                if (empty($emails)) {
                     throw new PfmParamException('no space admins found');
                 }
                 $to = $emails;
@@ -177,30 +181,30 @@ class MailerController extends CoresecureController {
         ));
     }
 
-    public function notifsAction($id_space) {
+    public function notifsAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("mailer", $id_space, $_SESSION["id_user"]);
-        if(!$this->role || $this->role < CoreSpace::$USER) {
+        if (!$this->role || $this->role < CoreSpace::$USER) {
             return $this->render(['data' => ['notifs' => 0]]);
         }
         $mm = new Mailer();
         $recent = 0;
-        if($this->role == CoreSpace::$USER) {
+        if ($this->role == CoreSpace::$USER) {
             $recents = $mm->recent($id_space, Mailer::$SPACE_MEMBERS);
-            if($recents) {
+            if ($recents) {
                 $recent = $recents['total'];
             }
-        } else if($this->role == Corespace::$MANAGER) {
+        } elseif ($this->role == Corespace::$MANAGER) {
             $recents = $mm->recent($id_space, Mailer::$SPACE_MANAGERS);
-            if($recents) {
+            if ($recents) {
                 $recent = $recents['total'];
             }
-        } else if($this->role == Corespace::$ADMIN) {
+        } elseif ($this->role == Corespace::$ADMIN) {
             $recents = $mm->recent($id_space, Mailer::$SPACES_ADMINS);
-            if($recents) {
+            if ($recents) {
                 $recent = $recents['total'];
             }
         }
         return $this->render(['data' => ['notifs' => $recent]]);
     }
-
 }

@@ -27,33 +27,35 @@ require_once 'Modules/users/Model/UsersTranslator.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CorespaceadminController extends CoresecureController {
-
+class CorespaceadminController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             //throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $lang = $this->getLanguage();
-        
+
         $table = new TableView();
         $table->setTitle(CoreTranslator::Spaces($lang), 3);
 
@@ -61,15 +63,15 @@ class CorespaceadminController extends CoresecureController {
         foreach (Configuration::get('plans', []) as $plan) {
             $plans[$plan['id']] = $plan['name'];
         }
-        
+
         $modelSpace = new CoreSpace();
         $data = $modelSpace->getSpaces("name");
-        for($i = 0 ; $i < count($data) ; $i++){
+        for ($i = 0 ; $i < count($data) ; $i++) {
             $data[$i]["url"] = "corespace/" . $data[$i]["id"];
             $data[$i]['plan_expire'] = $data[$i]['plan_expire'] ? date('Y-m-d', $data[$i]['plan_expire']) : '';
             $data[$i]['plan'] = $plans[$data[$i]['plan']] ?? $data[$i]['plan'];
         }
-        
+
         $headers = array(
             "name" => CoreTranslator::Name($lang),
             "status" => CoreTranslator::Status($lang),
@@ -77,15 +79,16 @@ class CorespaceadminController extends CoresecureController {
             "plan" => 'Plan',
             "plan_expire" => 'Expiration'
         );
-        
+
         $table->addLineEditButton("spaceadminedit");
         $table->addDeleteButton("spaceadmindelete");
         $tableHtml = $table->view($data, $headers);
-        
+
         return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
     }
-    
-    public function editAction($id_space){
+
+    public function editAction($id_space)
+    {
         // Check user is superadmin or space admin
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
@@ -99,13 +102,13 @@ class CorespaceadminController extends CoresecureController {
         $form = new Form($this->request, "corespaceadminedit");
         $form->setTitle(CoreTranslator::$formTitle($lang));
 
-        if(!$space) {
+        if (!$space) {
             $space = CoreSpace::new();
             $form->addSelect("preconfigure", CoreTranslator::Preconfigure_space($lang), array(CoreTranslator::no($lang),CoreTranslator::yes($lang)), array(0,1), 0);
         }
 
         $spaceAdmins = $modelSpace->spaceAdmins($id_space);
-        
+
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $space["color"]);
@@ -122,22 +125,22 @@ class CorespaceadminController extends CoresecureController {
         $usersIds = array();
         $usersNames[] = CoreTranslator::Select($lang);
         $usersIds[] = 0;
-        foreach($users as $user){
+        foreach ($users as $user) {
             $usersNames[] = $user["name"] . " " . $user["firstname"];
             $usersIds[] = $user["id"];
         }
 
-        if($isSuperAdmin) {
+        if ($isSuperAdmin) {
             $configPlans = Configuration::get('plans', []);
             $plans = [];
             $plansIds = [];
-            foreach($configPlans as $p) {
+            foreach ($configPlans as $p) {
                 $plans[] = $p['name'];
                 $plansIds[] = $p['id'];
             }
             $form->addSelect('plan', 'Plan', $plans, $plansIds, $space['plan']);
             $expires = $space['plan_expire'];
-            if($expires) {
+            if ($expires) {
                 $expires = date('Y-m-d', $expires);
             }
         }
@@ -149,7 +152,7 @@ class CorespaceadminController extends CoresecureController {
 
         $form->addSelect("user_desactivate", CoreTranslator::Disable_user_account_when($lang), $choices, $choicesid, $space['user_desactivate'] ?? 1);
         $form->addSelect("on_user_deactivate", CoreTranslator::Disable_user_account_on($lang), [CoreTranslator::Disable_Inactivate($lang), CoreTranslator::Disable_Remove($lang)], [CoreConfig::$ONEXPIRE_INACTIVATE, CoreConfig::$ONEXPIRE_REMOVE], $space['on_user_desactivate'] ?? CoreConfig::$ONEXPIRE_INACTIVATE);
-        
+
         $formAdd = new FormAdd($this->request, "addformspaceedit");
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
@@ -158,19 +161,21 @@ class CorespaceadminController extends CoresecureController {
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
         $id = $id_space;
-        if ($form->check()){
+        if ($form->check()) {
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
             $shortname = preg_replace('/[^a-z0-9\-_]/', '', $shortname);
-            if($space && $space['shortname']) {
+            if ($space && $space['shortname']) {
                 // Cannot modify shortname once set
                 $shortname = $space['shortname'];
             }
             // set base informations
-            if($isSuperAdmin) {
+            if ($isSuperAdmin) {
                 // Only super admin can create
                 Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
-                $id = $modelSpace->setSpace($id_space, $this->request->getParameter("name"), 
+                $id = $modelSpace->setSpace(
+                    $id_space,
+                    $this->request->getParameter("name"),
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
@@ -179,12 +184,11 @@ class CorespaceadminController extends CoresecureController {
                     $this->request->getParameter("txtcolor"),
                 );
                 $plan = $this->request->getParameterNoException("plan");
-                if($plan !== "") {
+                if ($plan !== "") {
                     //plan_expire , plan
                     $expires = $this->request->getParameterNoException("plan_expire");
-                    if($expires) {
+                    if ($expires) {
                         $expires = Utils::timestamp($expires, $lang);
-
                     } else {
                         $expires = 0;
                     }
@@ -192,13 +196,13 @@ class CorespaceadminController extends CoresecureController {
                 }
 
                 $planChanged = false;
-                if(!$space['id']) {
+                if (!$space['id']) {
                     $planChanged = true;
                 }
-                if(intval($space['plan']) != intval($plan)) {
+                if (intval($space['plan']) != intval($plan)) {
                     $planChanged = true;
                 }
-                if($planChanged) {
+                if ($planChanged) {
                     $event = [
                         "action" => Events::ACTION_PLAN_EDIT,
                         "space" => ["id" => intval($id)],
@@ -207,18 +211,19 @@ class CorespaceadminController extends CoresecureController {
                     ];
                     Events::send($event);
                 }
-
             } else {
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
-                $modelSpace->editSpace($id_space, $this->request->getParameter("name"), 
+                $modelSpace->editSpace(
+                    $id_space,
+                    $this->request->getParameter("name"),
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
                     $shortname,
                     $this->request->getParameter("contact"),
                     $this->request->getParameter("support"),
                     $this->request->getParameter("txtcolor"),
-                    );
+                );
             }
 
             $modelSpace->setDescription($id, $this->request->getParameter("description"));
@@ -228,7 +233,7 @@ class CorespaceadminController extends CoresecureController {
             $termsofuse = $this->request->getParameterNoException("termsofuse");
             $modelSpace->setTermsOfUse($id, $termsofuse);
             $modelSpace->setOnDeactivate($id, $this->request->getParameter('on_user_deactivate'));
-            
+
             // upload image
             $target_dir = "data/core/menu/";
             if ($_FILES && $_FILES["image"]["name"] != "") {
@@ -239,21 +244,21 @@ class CorespaceadminController extends CoresecureController {
 
                 $modelSpace->setImage($id, $target_dir . $url);
             }
-            
+
             $newSpace = $modelSpace->getSpace($id);
 
             if ($this->request->getParameterNoException("preconfigure")) {
                 $this->preconfigureSpace($newSpace);
             }
 
-            if($isSuperAdmin) {
+            if ($isSuperAdmin) {
                 return $this->redirect("spaceadmin", [], ['space' => $newSpace]);
             }
         }
 
         // set showTodo to true if coming back from a todo action
         $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
- 
+
         // generate todoList informations
         $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
         return $this->render(
@@ -265,10 +270,10 @@ class CorespaceadminController extends CoresecureController {
                 "data" => ["space" => $space]
             )
         );
-        
     }
 
-    protected function todolist($id_space) {
+    protected function todolist($id_space)
+    {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
 
@@ -277,24 +282,25 @@ class CorespaceadminController extends CoresecureController {
         $baseModules = array('users', 'resources', 'clients', 'booking');
         array_push($activeModules, 'users');
 
-        foreach($baseModules as $baseModule) {
+        foreach ($baseModules as $baseModule) {
             if (in_array($baseModule, $activeModules)) {
-                $fName = 'get' . ucFirst($baseModule) . 'Todo'; 
+                $fName = 'get' . ucFirst($baseModule) . 'Todo';
                 $todoData[$baseModule] = $this->$fName($id_space, $lang);
             }
         }
 
         $modulesDocUrl = "https://bgo-bioimagerie.github.io/platformmanager/modules/module/";
-        foreach(array_keys($todoData) as $module) {
+        foreach (array_keys($todoData) as $module) {
             $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
             if ($todoData[$module]['title'] != "Users") {
                 $todoData[$module] = $this->checkForTasksDone($todoData[$module], $id_space);
             }
-        }        
+        }
         return $todoData;
     }
 
-    protected function getUsersTodo($id_space, $lang) {
+    protected function getUsersTodo($id_space, $lang)
+    {
         $modelUser = new CoreUser();
         $modelPending = new CorePendingAccount();
         return
@@ -319,7 +325,8 @@ class CorespaceadminController extends CoresecureController {
             ];
     }
 
-    protected function getResourcesTodo($id_space, $lang) {
+    protected function getResourcesTodo($id_space, $lang)
+    {
         return
             [
                 "title" => "Resources",
@@ -352,7 +359,8 @@ class CorespaceadminController extends CoresecureController {
             ];
     }
 
-    protected function getClientsTodo($id_space, $lang) {
+    protected function getClientsTodo($id_space, $lang)
+    {
         $modelUser = new CoreUser();
         return
             [
@@ -390,11 +398,12 @@ class CorespaceadminController extends CoresecureController {
             ];
     }
 
-    protected function getBookingTodo($id_space, $lang) {
+    protected function getBookingTodo($id_space, $lang)
+    {
         $modelUser = new CoreUser();
         $modelReArea = new ReArea();
         $opt = "(".CoreTranslator::Optional($lang).") ";
-        return 
+        return
             [
                 "title" => "Booking",
                 "tasks" => [
@@ -440,7 +449,8 @@ class CorespaceadminController extends CoresecureController {
             ];
     }
 
-    protected function checkForTasksDone($moduleTodo, $id_space) {
+    protected function checkForTasksDone($moduleTodo, $id_space)
+    {
         for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
             $model = new $moduleTodo['tasks'][$i]['model']();
             $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
@@ -448,7 +458,8 @@ class CorespaceadminController extends CoresecureController {
         return $moduleTodo;
     }
 
-    protected function preconfigureSpace($space) {
+    protected function preconfigureSpace($space)
+    {
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -474,7 +485,8 @@ class CorespaceadminController extends CoresecureController {
         $_SESSION['flashClass'] = "success";
     }
 
-    protected function activateModule($moduleName, $status, $space) {
+    protected function activateModule($moduleName, $status, $space)
+    {
         $formId = $moduleName . "menusactivationForm";
         $moduleBaseName = strpos($moduleName, 'settings') ? explode("settings", $moduleName)[0] : $moduleName;
         $params = array(
@@ -490,15 +502,14 @@ class CorespaceadminController extends CoresecureController {
         $c = new $ctrlName($this->request, $space);
         $c->runAction($moduleBaseName, 'index', ['id_space' => $space['id']]);
     }
-    
-    public function deleteAction($id_space){
+
+    public function deleteAction($id_space)
+    {
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $model = new CoreSpace();
         $model->delete($id_space);
         $this->redirect("spaceadmin");
-        
     }
-
 }

@@ -19,9 +19,10 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class CoreusersController extends CoresecureController {
-
-    public function mainMenu() {
+class CoreusersController extends CoresecureController
+{
+    public function mainMenu()
+    {
         if (!str_contains($_SERVER['REQUEST_URI'], "coremyaccount")) {
             return null;
         }
@@ -40,7 +41,8 @@ class CoreusersController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $lang = $this->getLanguage();
 
@@ -75,14 +77,14 @@ class CoreusersController extends CoresecureController {
             $data[$i]["date_last_login"] = CoreTranslator::dateFromEn($data[$i]["date_last_login"], $lang);
             unset($data[$i]['password']);
             unset($data[$i]['apikey']);
-
         }
 
         $tableHtml = $table->view($data, $header, true);
         return $this->render(array("tableHtml" => $tableHtml, "lang" => $lang, "data" => ["users" => $users]));
     }
 
-    public function editAction($id) {
+    public function editAction($id)
+    {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $modelUser = new CoreUser();
         $modelUsersInfo = new UsersInfo();
@@ -156,14 +158,12 @@ class CoreusersController extends CoresecureController {
                 "role_name" => CoreTranslator::Role($lang),
             );
             $rolesTableHtml = $rolesTable->view($roles, $headers);
-
-
         }
         $script = "";
         if ($form->check()) {
             $canEditUser = true;
 
-            if(!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
+            if (!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailInvalid", $id, $lang);
                 return;
@@ -175,7 +175,7 @@ class CoreusersController extends CoresecureController {
                     $this->displayFormWarnings("LoginAlreadyExists", $id, $lang);
                     return;
                 }
-                if($modelUser->isEmail($form->getParameter("email"))) {
+                if ($modelUser->isEmail($form->getParameter("email"))) {
                     // if email already exists, warn user
                     $canEditUser = false;
                     $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
@@ -201,7 +201,7 @@ class CoreusersController extends CoresecureController {
                 return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
-        
+
         if ($id > 0 && $formPwd->check()) {
             $this->editPwdQuery($form, $lang);
             $this->redirect("coreusers");
@@ -222,13 +222,15 @@ class CoreusersController extends CoresecureController {
         ));
     }
 
-    protected function displayFormWarnings($cause, $id, $lang) {
+    protected function displayFormWarnings($cause, $id, $lang)
+    {
         $_SESSION["flash"] = CoreTranslator::$cause($lang);
         $_SESSION["flashClass"] = "danger";
         $this->redirect("coreusersedit/" . $id ?? 0);
     }
 
-    protected function editPwdQuery($formPwd, $lang) {
+    protected function editPwdQuery($formPwd, $lang)
+    {
         $modelUser = new CoreUser();
         $this->checkAuthorization(CoreStatus::$ADMIN);
         $pwd = $formPwd->getParameter("pwd");
@@ -243,7 +245,8 @@ class CoreusersController extends CoresecureController {
         }
     }
 
-    protected function editQuery($form, $lang) {
+    protected function editQuery($form, $lang)
+    {
         $modelUser = new CoreUser();
         $modelUsersInfo = new UsersInfo();
         $this->checkAuthorization(CoreStatus::$ADMIN);
@@ -269,7 +272,7 @@ class CoreusersController extends CoresecureController {
                 $modelUsersInfo->set(
                     $id,
                     "",
-                    $form->getParameter("unit"), 
+                    $form->getParameter("unit"),
                     $form->getParameter("organization")
                 );
             }
@@ -286,14 +289,15 @@ class CoreusersController extends CoresecureController {
             $modelUsersInfo->set(
                 $id,
                 "",
-                $form->getParameter("unit"), 
+                $form->getParameter("unit"),
                 $form->getParameter("organization")
             );
         }
         return $id;
     }
 
-    public function deleteAction($id) {
+    public function deleteAction($id)
+    {
         $this->checkAuthorization(CoreStatus::$ADMIN);
         if (!$this->isLinkedToAnySpace($id)) {
             $modelPending = new CorePendingAccount();
@@ -307,14 +311,15 @@ class CoreusersController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * Returns true if user is pending or active in any space
-     * 
+     *
      * @param int $id_user
-     * 
+     *
      * @return bool
      */
-    public function isLinkedToAnySpace($idUser) {
+    public function isLinkedToAnySpace($idUser)
+    {
         $coreSpaceModel = new CoreSpaceUser();
         $corePendingModel = new CorePendingAccount();
         return (
@@ -323,7 +328,8 @@ class CoreusersController extends CoresecureController {
         );
     }
 
-    public function myaccountAction() {
+    public function myaccountAction()
+    {
         $lang = $this->getLanguage();
         $id = $_SESSION["id_user"];
         $modelUser = new CoreUser();
@@ -339,7 +345,6 @@ class CoreusersController extends CoresecureController {
 
 
         if ($formPwd->check()) {
-
             $this->myaccountquery($modelUser, $formPwd, $id, $lang);
             $this->redirect("coretiles");
             return;
@@ -351,14 +356,14 @@ class CoreusersController extends CoresecureController {
         ));
     }
 
-    protected function myaccountquery($modelUser, $formPwd, $id, $lang) {
+    protected function myaccountquery($modelUser, $formPwd, $id, $lang)
+    {
         $u = $modelUser->getInfo($id);
         $previouspwddb = $u['pwd'];
         $hash = $u['hash'];
         $previouspwd = $formPwd->getParameter("currentpwd");
 
         if ($modelUser->comparePasswords($previouspwd, $previouspwddb, $hash)) {
-
             $pwd = $formPwd->getParameter("pwd");
             $pwdc = $formPwd->getParameter("confirm");
             if ($pwd == $pwdc) {
@@ -372,13 +377,14 @@ class CoreusersController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * Generates form for users to choose their default language
-     * 
+     *
      * @return view default language editing screen
-     * 
+     *
      */
-    public function languageeditAction() {
+    public function languageeditAction()
+    {
         // language form
         $id_user = $_SESSION["id_user"];
         $userSettingsModel = new CoreUserSettings();
@@ -388,7 +394,7 @@ class CoreusersController extends CoresecureController {
         $choicesidview = array("en", "fr");
 
         $form = new Form($this->request, "languageForm");
-        $form->setTitle(CoreTranslator::Default_language($lang));  
+        $form->setTitle(CoreTranslator::Default_language($lang));
         $form->addSelect(
             "language",
             CoreTranslator::Default_language($lang),
@@ -400,7 +406,7 @@ class CoreusersController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Ok($lang), "coreuserslanguageedit");
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coresettings");
 
-        if ($form->check()){
+        if ($form->check()) {
             $lang = $this->request->getParameter("language");
             $userSettingsModel->setSettings($id_user, "language", $lang);
             $userSettingsModel->updateSessionSettingVariable();
@@ -412,5 +418,4 @@ class CoreusersController extends CoresecureController {
             'form' => $form->getHtml($lang)
         ));
     }
-
 }

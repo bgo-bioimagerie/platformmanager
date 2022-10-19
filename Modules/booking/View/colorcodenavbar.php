@@ -7,7 +7,7 @@
 
 </style>
 
-<?php 
+<?php
 require_once 'Modules/booking/Model/BookingTranslator.php';
 ?>
 
@@ -21,33 +21,33 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 		</h4>
 	</div>
 
-	<?php 
-	$cmpt = 0;
-	for ($i = 0 ; $i < count($colorcodes) ; $i++){
-		$colorcode = $colorcodes[$i];
-		$name = $this->clean($colorcode["name"]);
-		$color = $this->clean($colorcode["color"]);
-		$txtcolor = $this->clean($colorcode["text"]);
-		$cmpt++;
-	if ($cmpt == 1){
-		?>
+	<?php
+    $cmpt = 0;
+for ($i = 0 ; $i < count($colorcodes) ; $i++) {
+    $colorcode = $colorcodes[$i];
+    $name = $this->clean($colorcode["name"]);
+    $color = $this->clean($colorcode["color"]);
+    $txtcolor = $this->clean($colorcode["text"]);
+    $cmpt++;
+    if ($cmpt == 1) {
+        ?>
 		<div class="">
-		<?php 
-	}	
-	?>
+		<?php
+    }
+    ?>
 	
 	<div class="">
 		<p class="text-center" id="colorparagraph" style="background-color: <?php echo $color?>; color: <?php echo $txtcolor?>"><?php echo $name?></p>
 	</div>
-	<?php 
-		if ($cmpt == 6 || $i == count($colorcodes)-1){
-		?>
+	<?php
+        if ($cmpt == 6 || $i == count($colorcodes)-1) {
+            ?>
 			</div>
-			<?php 
-			$cmpt=0;
-		}	
-	}
-	?>
+			<?php
+                $cmpt=0;
+        }
+}
+?>
 
 </div>
 

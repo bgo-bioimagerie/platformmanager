@@ -1,5 +1,5 @@
 <?php require_once 'Framework/ti.php' ?>
-<?php include 'Modules/layout.php' ?>
+<?php include_once 'Modules/layout.php' ?>
 
 
 <?php startblock('stylesheet') ?>

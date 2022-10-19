@@ -13,16 +13,17 @@ require_once 'Modules/bulletjournal/Model/BjCollectionNote.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BjcollectionsApi extends CoresecureController {
-
+class BjcollectionsApi extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("bulletjournal");
     }
@@ -31,16 +32,17 @@ class BjcollectionsApi extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function notecollectionsAction($id_space, $id) {
+    public function notecollectionsAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         //$lang = $this->getLanguage();
 
         $modelCollection = new BjCollectionNote();
         $collections = $modelCollection->getNoteCollections($id_space, $id);
-        
+
         $model = new BjNote();
-        $noteName = $model->getName($id_space,$id);
-        
+        $noteName = $model->getName($id_space, $id);
+
         $data = array("collections" => $collections, "id_note" => $id, "noteName" => $noteName);
         echo json_encode($data);
     }

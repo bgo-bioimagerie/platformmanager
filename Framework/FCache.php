@@ -7,14 +7,14 @@ require_once 'Framework/Errors.php';
  *
  * @author Sylvain Prigent
  */
-class FCache extends Model {
-
+class FCache extends Model
+{
     /**
      * Load the urls into the cach table
      * Call this function to generate the cache
      */
-    public function load() {
-
+    public function load()
+    {
         // URLS
         $this->createTableURL();
         $this->loadUrls();
@@ -23,19 +23,17 @@ class FCache extends Model {
     /**
      * Implement the URL loading
      */
-    public function loadUrls() {
-
+    public function loadUrls()
+    {
         // get the modules list
         $modulesNames = Configuration::get("modules");
 
         // load each modules
         foreach ($modulesNames as $moduleName) {
-
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             //echo "module file = " . $routingClassUrl . "<br/>";
             if (file_exists($routingClassUrl)) {
-
                 $this->addRoutsToDatabase($moduleName, $routingClassUrl);
             } else {
                 throw new PfmException("The module '$moduleName' has a not valid routing file", 500);
@@ -48,10 +46,11 @@ class FCache extends Model {
      * @param string $moduleName Name of the module
      * @param string $routingClassUrl url of the controller
      */
-    protected function addRoutsToDatabase($moduleName, $routingClassUrl) {
-        require_once ($routingClassUrl);
+    protected function addRoutsToDatabase($moduleName, $routingClassUrl)
+    {
+        require_once($routingClassUrl);
         $className = ucfirst($moduleName) . "Routing";
-        $routingClass = new $className ();
+        $routingClass = new $className();
         $routingClass->listRoutes();
         for ($r = 0; $r < $routingClass->count(); $r++) {
             $identifier = $routingClass->getIdentifier($r);
@@ -76,8 +75,8 @@ class FCache extends Model {
      * @param type $gets
      * @param type $getsRegexp
      */
-    protected function setCacheUrl($identifier, $url, $module, $controller, $actions, $gets, $getsRegexp, $isApi) {
-
+    protected function setCacheUrl($identifier, $url, $module, $controller, $actions, $gets, $getsRegexp, $isApi)
+    {
         // insert the urls
         $id = $this->setCacheUrlDB($identifier, $url, $module, $controller, $actions, $isApi);
 
@@ -96,18 +95,18 @@ class FCache extends Model {
      * @param type $action
      * @return type
      */
-    protected function setCacheUrlDB($identifier, $url, $module, $controller, $action, $isApi) {
-        
+    protected function setCacheUrlDB($identifier, $url, $module, $controller, $action, $isApi)
+    {
         //echo "identifier = " . $identifier . "<br/>";
         //echo "isApi = " . $isApi . "<br/>";
-        
+
         $id = $this->getChacheUrlID($identifier);
         //echo 'id = ' . $id . "<br/>";
         if ($id > 0) {
             //echo "update cache_urls begin <br/>";
             $sql = "UPDATE cache_urls SET identifier=?, url=?, module=?, controller=?, action=?, isapi=? WHERE id=?";
             $this->runRequest($sql, array($identifier, $url, $module, $controller, $action, $isApi, $id));
-            //echo "update cache_urls end <br/>";
+        //echo "update cache_urls end <br/>";
         } else {
             //echo "insert cache_urls begin <br/>";
             $sql = "INSERT INTO cache_urls (identifier, url, module, controller, action, isapi) VALUES(?,?,?,?,?,?) ";
@@ -125,19 +124,19 @@ class FCache extends Model {
      * @param type $regexp
      * @return type
      */
-    protected function setCacheUrlGetDB($id_url, $name, $regexp) {
-
+    protected function setCacheUrlGetDB($id_url, $name, $regexp)
+    {
         //echo "name = " . $name; echo "<br/>";
         //echo "regexp = " . $regexp; echo "<br/>";
         //echo "id_url = " . $id_url; echo "<br/>";
-        
+
         $id = $this->getChacheUrlGetID($id_url, $name);
         //echo "id = "; print_r($id); echo "<br/>";
         if ($id > 0) {
             //echo "UPDATE cache_urls_gets begin <br/>";
             $sql = "UPDATE cache_urls_gets SET `url_id`=?, `name`=?, `regexp`=? WHERE id=?";
             $this->runRequest($sql, array($id_url, $name, $regexp, $id));
-            //echo "UPDATE cache_urls_gets end <br/>";
+        //echo "UPDATE cache_urls_gets end <br/>";
         } else {
             //echo "INSERT cache_urls_gets begin <br/>";
             $sql = "INSERT INTO cache_urls_gets (`url_id`, `name`, `regexp`) VALUES(?,?,?) ";
@@ -154,7 +153,8 @@ class FCache extends Model {
      * @param type $name
      * @return boolean
      */
-    protected function getChacheUrlGetID($id_url, $name) {
+    protected function getChacheUrlGetID($id_url, $name)
+    {
         $sql = "SELECT id FROM cache_urls_gets WHERE url_id=? AND name=?";
         $req = $this->runRequest($sql, array($id_url, $name));
         if ($req->rowCount() == 1) {
@@ -169,7 +169,8 @@ class FCache extends Model {
      * @param type $identifier
      * @return boolean
      */
-    protected function getChacheUrlID($identifier) {
+    protected function getChacheUrlID($identifier)
+    {
         $sql = "SELECT id FROM cache_urls WHERE identifier=?";
         $req = $this->runRequest($sql, array($identifier));
         if ($req->rowCount() == 1) {
@@ -182,7 +183,8 @@ class FCache extends Model {
     /**
      * Remove all the cache
      */
-    public function freeTableURL() {
+    public function freeTableURL()
+    {
         $sql = "TRUNCATE TABLE cache_urls";
         $this->runRequest($sql);
         $sqlg = "TRUNCATE TABLE cache_urls_gets";
@@ -192,7 +194,8 @@ class FCache extends Model {
     /**
      * Create the cache tables
      */
-    protected function createTableURL() {
+    protected function createTableURL()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `cache_urls` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`identifier` varchar(255) NOT NULL DEFAULT '',
@@ -205,9 +208,9 @@ class FCache extends Model {
 		);";
 
         $this->runRequest($sql);
-        
+
         $this->addColumn("cache_urls", "isapi", "int(1)", 0);
-        
+
 
         $sqlg = "CREATE TABLE IF NOT EXISTS `cache_urls_gets` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
@@ -225,7 +228,8 @@ class FCache extends Model {
      * @param type $path
      * @return type
      */
-    public function getURLInfos($path) {
+    public function getURLInfos($path)
+    {
         $sql = "SELECT * FROM cache_urls WHERE url=?";
         $urlInfo = $this->runRequest($sql, array($path))->fetch();
         if (!$urlInfo) {
@@ -238,7 +242,8 @@ class FCache extends Model {
         return $urlInfo;
     }
 
-    public function listAll() {
+    public function listAll()
+    {
         $sql = "SELECT * FROM cache_urls";
         $urlInfo = $this->runRequest($sql)->fetchAll();
         if (!$urlInfo) {
@@ -250,12 +255,11 @@ class FCache extends Model {
             $params = $this->runRequest($sqlg, array($url["id"]))->fetchAll();
             $urlParams = [$url['url'], sprintf('%s/%s/%s', $url['module'], $url['controller'], $url['action'])];
             foreach ($params as $param) {
-               $urlParams[] = $param['name'];
+                $urlParams[] = $param['name'];
             }
             $urls[] = $urlParams;
         }
 
-        return $urls;    
+        return $urls;
     }
-
 }

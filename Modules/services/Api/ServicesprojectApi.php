@@ -6,16 +6,17 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/services/Model/SeProject.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectApi extends CoresecureController {
-
+class ServicesprojectApi extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("bulletjournal");
     }
@@ -25,7 +26,8 @@ class ServicesprojectApi extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function editentryqueryAction($id_space) {
+    public function editentryqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         throw new PfmException("not supported", 500);
 
@@ -37,7 +39,7 @@ class ServicesprojectApi extends CoresecureController {
         if(!$id){
             $isedit = 0;
         }
-        
+
         $ismonth = $this->request->getParameter("formnoteismonth");
         $name = $this->request->getParameter("formnotename");
         $type = 1;
@@ -55,11 +57,12 @@ class ServicesprojectApi extends CoresecureController {
         */
     }
 
-    public function getprojectentryAction($id_space, $id) {
+    public function getprojectentryAction($id_space, $id)
+    {
         $modelProject = new SeProject();
 
         $data = $modelProject->getProjectEntry($id_space, $id);
-        
+
         echo json_encode($data);
     }
 }

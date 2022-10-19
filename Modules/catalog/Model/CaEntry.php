@@ -3,17 +3,19 @@
 require_once 'Framework/Model.php';
 
 /**
- * Class defining the template table model. 
+ * Class defining the template table model.
  *
  * @author Sylvain Prigent
  */
-class CaEntry extends Model {
-
-    public function __construct() {
+class CaEntry extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "ca_entries";
     }
 
-    public function createTable() {
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_entries` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`id_category` int(11) NOT NULL,
@@ -35,39 +37,45 @@ class CaEntry extends Model {
             $sql = "ALTER TABLE `ca_entries` ADD `image_url` varchar(300) NOT NULL";
             $this->runRequest($sql);
         }
-        
+
         $this->addColumn("ca_entries", "id_space", "int(11)", 0);
     }
 
-    public function add($id_space, $id_category, $title, $short_desc, $full_desc) {
+    public function add($id_space, $id_category, $title, $short_desc, $full_desc)
+    {
         $sql = "INSERT INTO ca_entries(id_space, id_category, title, short_desc, full_desc, image_url) VALUES(?,?,?,?,?, '')";
         $this->runRequest($sql, array($id_space, $id_category, $title, $short_desc, $full_desc));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function setImageUrl($id_space, $id, $url) {
+    public function setImageUrl($id_space, $id, $url)
+    {
         $sql = "update ca_entries set image_url=? where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($url, $id, $id_space));
     }
 
-    public function edit($id, $id_space, $id_category, $title, $short_desc, $full_desc) {
+    public function edit($id, $id_space, $id_category, $title, $short_desc, $full_desc)
+    {
         $sql = "update ca_entries set id_category=?, title=?, short_desc=?, full_desc=? where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_category, $title, $short_desc, $full_desc, $id, $id_space));
     }
 
-    public function getAll($id_space) {
+    public function getAll($id_space)
+    {
         $sql = "SELECT * FROM ca_entries WHERE id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
-    public function list() {
+    public function list()
+    {
         $sql = "SELECT * FROM ca_entries WHERE deleted=0";
         $req = $this->runRequest($sql);
-        return $req->fetchAll();   
+        return $req->fetchAll();
     }
 
-    public function getInfo($id_space, $id) {
+    public function getInfo($id_space, $id)
+    {
         $sql = "SELECT * FROM ca_entries WHERE id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         $inter = $req->fetch();
@@ -78,15 +86,16 @@ class CaEntry extends Model {
      * Delete a category
      * @param number $id Entry ID
      */
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         $sql = "DELETE FROM ca_entries WHERE id = ? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
-    public function getCategoryEntries($id_space, $id) {
+    public function getCategoryEntries($id_space, $id)
+    {
         $sql = "SELECT * FROM ca_entries WHERE id_category=? AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
         return $req->fetchAll();
     }
-
 }

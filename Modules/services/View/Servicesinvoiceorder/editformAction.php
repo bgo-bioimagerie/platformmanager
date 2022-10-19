@@ -1,4 +1,4 @@
-<?php include 'Modules/invoices/View/layout.php' ?>
+<?php include_once 'Modules/invoices/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -9,13 +9,13 @@
     
     <h4> <?php echo ServicesTranslator::Orders($lang) ?> </h4>
     
-    <?php 
-        foreach ($details as $d){
+    <?php
+        foreach ($details as $d) {
             ?>
             <a href="<?php echo $d[1] ?>"><?php echo $d[0] ?></a>, 
             <?php
         }
-    ?>
+?>
     
     <h4> <?php echo InvoicesTranslator::Content($lang) ?> </h4>
     

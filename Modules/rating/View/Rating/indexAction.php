@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 
 <?php startblock('stylesheet') ?>
 <script src="externals/pfm/star-rating/VueStarRating.umd.min.js"></script>
@@ -76,4 +76,3 @@ Vue.createApp({
 </script>
 
 <?php endblock();
-

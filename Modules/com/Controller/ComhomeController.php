@@ -8,14 +8,14 @@ require_once 'Modules/com/Model/ComNews.php';
 require_once 'Modules/com/Controller/ComController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ComhomeController extends ComController {
-
-    public function indexAction($id_space) {
-
+class ComhomeController extends ComController
+{
+    public function indexAction($id_space)
+    {
         $modelParam = new CoreConfig();
         $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
         $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
@@ -37,13 +37,15 @@ class ComhomeController extends ComController {
         ));
     }
 
-    public function getnewsAction($id_space) {
+    public function getnewsAction($id_space)
+    {
         $modelNews = new ComNews();
         $news = $modelNews->getByDate($id_space, 10);
         $this->render(['data' => ['news' => $news]]);
     }
 
-    public function getTweets($id_space) {
+    public function getTweets($id_space)
+    {
         $modelParam = new CoreConfig();
         require_once('externals/twitter-api/TwitterAPIExchange.php');
 
@@ -63,22 +65,20 @@ class ComhomeController extends ComController {
 
         $tweets = json_decode($twitter->setGetfield($getfield)
                         ->buildOauth($url, $requestMethod)
-                        ->performRequest(), TRUE);
+                        ->performRequest(), true);
 
 
         $htmls = array();
         foreach ($tweets as $tweet) {
-            
             $url = 'https://publish.twitter.com/oembed';
             $requestMethod = "GET";
             $getfield = '?url='. "https://twitter.com/".$tweet['user']["screen_name"]."/status/".$tweet['id'];
 
             $htmlArray = json_decode($twitter->setGetfield($getfield)
                     ->buildOauth($url, $requestMethod)
-                    ->performRequest(), TRUE);
+                    ->performRequest(), true);
             $htmls[] = $htmlArray["html"];
         }
         return $htmls;
     }
-
 }

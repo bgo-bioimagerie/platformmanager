@@ -8,18 +8,18 @@ require_once 'Modules/documents/Model/Document.php';
  *
  * @author Sylvain Prigent
  */
-class DocumentsInstall extends Model {
-
+class DocumentsInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         $model = new Document();
         $model->createTable();
-        
+
         if (!file_exists('data/documents/')) {
             mkdir('data/documents/', 0755, true);
         }

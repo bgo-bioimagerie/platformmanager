@@ -27,14 +27,15 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class CorespaceaccessController extends CoresecureController {
-
-    public function sideMenu() {
+class CorespaceaccessController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("core", $id_space);
-        
+
         $dataView = [
             'id_space' => $id_space,
             'title' => CoreTranslator::Users($lang),
@@ -50,7 +51,8 @@ class CorespaceaccessController extends CoresecureController {
         return $this->twig->render("Modules/core/View/Corespaceaccess/navbar.twig", $dataView);
     }
 
-    public function impersonateAction($id_space, $id_user) {
+    public function impersonateAction($id_space, $id_user)
+    {
         $modelSpace = new CoreSpace();
         $role = $modelSpace->getUserSpaceRole($id_space, $_SESSION['id_user']);
         if ($role <= CoreSpace::$MANAGER) {
@@ -60,7 +62,7 @@ class CorespaceaccessController extends CoresecureController {
         if ($role != CoreSpace::$USER) {
             throw new PfmAuthException("Error 403: Permission denied, user not with User role", 403);
         }
- 
+
         $this->request->getSession()->setAttribut("logged_id_user", $_SESSION['id_user']);
         $this->request->getSession()->setAttribut("logged_login", $_SESSION['login']);
         $this->request->getSession()->setAttribut("logged_email", $_SESSION['email']);
@@ -84,8 +86,9 @@ class CorespaceaccessController extends CoresecureController {
         $this->redirect("coretiles");
     }
 
-    public function unimpersonateAction($id_space) {
-        if(!isset($_SESSION['logged_id_user'])) {
+    public function unimpersonateAction($id_space)
+    {
+        if (!isset($_SESSION['logged_id_user'])) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
 
@@ -93,7 +96,7 @@ class CorespaceaccessController extends CoresecureController {
             'to_id' => $_SESSION['logged_id_user'], 'to_login' => $_SESSION['logged_login'],
             'from_id' => $_SESSION['id_user'], 'from_login' => $_SESSION['login']
         ]);
- 
+
         $this->request->getSession()->setAttribut("id_user", $_SESSION['logged_id_user']);
         $this->request->getSession()->setAttribut("login", $_SESSION['logged_login']);
         $this->request->getSession()->setAttribut("email", $_SESSION['logged_email']);
@@ -106,11 +109,10 @@ class CorespaceaccessController extends CoresecureController {
         $this->request->getSession()->unset("logged_id_space");
 
         $this->redirect("coretiles");
-
-
     }
 
-    public function notifsAction($id_space) {
+    public function notifsAction($id_space)
+    {
         try {
             $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         } catch(Exception) {
@@ -122,16 +124,17 @@ class CorespaceaccessController extends CoresecureController {
         $this->render(['data' => ['notifs' => $count['total']]]);
     }
 
-    public function downloadConventionAction($id_space, $id_user) {
+    public function downloadConventionAction($id_space, $id_user)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $m = new CoreSpaceUser();
         $user = $m->getUserSpaceInfo2($id_space, $id_user);
-        if(!$user) {
+        if (!$user) {
             throw new PfmParamException('user not found', 404);
         }
         $path = $user['convention_url'];
         $file = explode('/', $path);
-        if($path == null || !file_exists($path)) {
+        if ($path == null || !file_exists($path)) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
             throw new PfmFileException('file does not exists', 404);
         }
@@ -146,8 +149,9 @@ class CorespaceaccessController extends CoresecureController {
         readfile($path);
     }
 
-    public function doexpireAction($id_space){
-        if($this->role < CoreSpace::$ADMIN) {
+    public function doexpireAction($id_space)
+    {
+        if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('space admin only access');
         }
         $modelSpace = new CoreSpace();
@@ -155,11 +159,12 @@ class CorespaceaccessController extends CoresecureController {
         $u = new CoreUser();
         $remove = ($space['on_user_desactivate'] == CoreConfig::$ONEXPIRE_REMOVE);
         $users = $u->disableUsers($space['user_desactivate'], $remove, $id_space, false);
-        $this->redirect("/corespaceaccess/$id_space/user/expire", [], ['users' => $users]);    
+        $this->redirect("/corespaceaccess/$id_space/user/expire", [], ['users' => $users]);
     }
 
-    public function expireAction($id_space) {
-        if($this->role < CoreSpace::$ADMIN) {
+    public function expireAction($id_space)
+    {
+        if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('space admin only access');
         }
         $lang = $this->getLanguage();
@@ -189,16 +194,14 @@ class CorespaceaccessController extends CoresecureController {
             'space' => $space,
             'data' => ['users' => $users]
         ));
-
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $letter = "A", $active = "") {
-
+    public function indexAction($id_space, $letter = "A", $active = "")
+    {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
@@ -222,15 +225,15 @@ class CorespaceaccessController extends CoresecureController {
         $clm = new ClClientUser();
         $clus = $clm->getForSpace($id_space);
         $cmap = [];
-        foreach($clus as $cl){
-            if(!array_key_exists($cl['id_user'], $cmap)){
+        foreach ($clus as $cl) {
+            if (!array_key_exists($cl['id_user'], $cmap)) {
                 $cmap[$cl['id_user']] = 0;
             }
             $cmap[$cl['id_user']]++;
         }
 
         // get user list
-        
+
         $usersArray = array();
         $isActive = ($active === "active") ? 1 : 0;
         $modelSpaceUser = new CoreSpaceUser();
@@ -246,7 +249,7 @@ class CorespaceaccessController extends CoresecureController {
         // table view
         $table = new TableView();
         $table->addLineButton("corespaceuseredit/" . $id_space, "id", CoreTranslator::Access($lang));
-        $table->addLineButton("corespaceaccess/" . $id_space . "/impersonate" , "id", "Impersonate");
+        $table->addLineButton("corespaceaccess/" . $id_space . "/impersonate", "id", "Impersonate");
 
 
         /* $modelOptions = new CoreSpaceAccessOptions();
@@ -293,18 +296,21 @@ class CorespaceaccessController extends CoresecureController {
         ), "indexAction");
     }
 
-    public function usersAction($id_space, $letter = "") {
+    public function usersAction($id_space, $letter = "")
+    {
         $_SESSION["users_lastvisited"] = "active";
         $this->indexAction($id_space, $letter, "active");
     }
 
-    public function usersinactifAction($id_space, $letter = "") {
+    public function usersinactifAction($id_space, $letter = "")
+    {
         $_SESSION["users_lastvisited"] = "unactive";
         $this->indexAction($id_space, $letter, "unactive");
     }
 
 
-    public function useraddAction($id_space) {
+    public function useraddAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -373,13 +379,13 @@ class CorespaceaccessController extends CoresecureController {
                 return;
             }
 
-            if(!$form->getParameter("email") || !$modelCoreUser->isEmailFormat($form->getParameter("email"))) {
+            if (!$form->getParameter("email") || !$modelCoreUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailInvalid", $id_space, $lang);
                 return;
             }
 
-            if($modelCoreUser->isEmail($form->getParameter("email"))) {
+            if ($modelCoreUser->isEmail($form->getParameter("email"))) {
                 // if email alreday exists, warn user
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailAlreadyExists", $id_space, $lang);
@@ -390,17 +396,17 @@ class CorespaceaccessController extends CoresecureController {
                 $pwd = $modelCoreUser->generateRandomPassword();
 
                 $id_user = $modelCoreUser->createAccount(
-                        $form->getParameter("login"),
-                        $pwd,
-                        $form->getParameter("name"),
-                        $form->getParameter("firstname"),
-                        $form->getParameter("email")
+                    $form->getParameter("login"),
+                    $pwd,
+                    $form->getParameter("name"),
+                    $form->getParameter("firstname"),
+                    $form->getParameter("email")
                 );
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
                 $spaceModel = new CoreSpace();
                 $spaceName = $spaceModel->getSpaceName($id_space);
-                
+
                 $mailParams = [
                     "email" => $form->getParameter("email"),
                     "login" => $form->getParameter("login"),
@@ -434,7 +440,8 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
-    protected function displayFormWarnings($cause, $id_space, $lang) {
+    protected function displayFormWarnings($cause, $id_space, $lang)
+    {
         $_SESSION["flash"] = CoreTranslator::$cause($lang);
         $_SESSION["flashClass"] = "danger";
         $this->redirect("corespaceaccessuseradd/" . $id_space);
@@ -443,7 +450,8 @@ class CorespaceaccessController extends CoresecureController {
     /**
      * @deprecated
      */
-    public function usereditAction($id_space, $id){
+    public function usereditAction($id_space, $id)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -454,7 +462,7 @@ class CorespaceaccessController extends CoresecureController {
         }
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
-        
+
         return $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
@@ -463,13 +471,14 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
-    public function generateSpaceAccessForm($id_space, $id_user, $todo=false) {
+    public function generateSpaceAccessForm($id_space, $id_user, $todo=false)
+    {
         // $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
 
         $modelUser = new CoreUser();
-        $fullname = $modelUser->getUserFUllName($id_user);
+        $fullname = $modelUser->getUserFullName($id_user);
 
         $modelUserSpace = new CoreSpaceUser();
         $spaceUserInfo = $modelUserSpace->getUserSpaceInfo2($id_space, $id_user);
@@ -486,20 +495,21 @@ class CorespaceaccessController extends CoresecureController {
         $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
-        } 
+        }
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setDeleteButton(CoreTranslator::Delete($lang), "corespaceuserdelete/".$id_space, $id_user);
         return $form;
     }
 
-    public function validateSpaceAccessForm($id_space, $id_user, $form) {
+    public function validateSpaceAccessForm($id_space, $id_user, $form)
+    {
         // $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUserSpace = new CoreSpaceUser();
 
         $modelUserSpace->setRole($id_user, $id_space, $form->getParameter("role"));
         $modelUserSpace->setDateEndContract($id_user, $id_space, CoreTranslator::dateToEn($form->getParameter("date_contract_end"), $lang));
-        $modelUserSpace->setDateConvention($id_user, $id_space,  CoreTranslator::dateToEn($form->getParameter("date_convention"), $lang));
+        $modelUserSpace->setDateConvention($id_user, $id_space, CoreTranslator::dateToEn($form->getParameter("date_convention"), $lang));
 
         // upload convention
         $target_dir = "data/conventions/";
@@ -517,13 +527,14 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * Delete user account from a given space
-     * 
+     *
      * @param type $id_space
      * @param type $id_user
      */
-    public function userdeleteAction($id_space, $id_user) {
+    public function userdeleteAction($id_space, $id_user)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $spaceUserModel = new CoreSpaceUser();
@@ -541,7 +552,8 @@ class CorespaceaccessController extends CoresecureController {
         ));
     }
 
-    public function pendingusersAction($id_space) {
+    public function pendingusersAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -581,14 +593,15 @@ class CorespaceaccessController extends CoresecureController {
 
     /**
      * Activate a user with a role in space
-     * 
+     *
      * @param int $id_space id of the space
      * @param int $id id of core_pending_accounts
      */
-    public function pendingusereditAction($id_space, $id) {
+    public function pendingusereditAction($id_space, $id)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-    
+
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
 
@@ -597,7 +610,7 @@ class CorespaceaccessController extends CoresecureController {
         $userId = $pendingInfo["id_user"];
 
         $modelUser = new CoreUser();
-        $fullname = $modelUser->getUserFUllName($userId);
+        $fullname = $modelUser->getUserFullName($userId);
         $modelStatus = new CoreSpace();
         $roles = $modelStatus->roles($lang);
         $userRole = $modelStatus->getUserSpaceRole($id_space, $userId);
@@ -607,8 +620,7 @@ class CorespaceaccessController extends CoresecureController {
         $form->addSelect("role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"], $userRole);
         $form->setValidationButton(CoreTranslator::Save($lang), "corespacependinguseredit/".$id_space."/".$id);
 
-        if ( $form->check() ){
-
+        if ($form->check()) {
             $modelUser->validateAccount($userId);
             $modelSpace->setUserIfNotExist($userId, $id_space, $form->getParameter("role"));
             $modelPending->validate($id, $_SESSION["id_user"]);
@@ -636,14 +648,15 @@ class CorespaceaccessController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * Reject a pending user
      * (sets validate=0 && validated_by=<logged user id> in core_pending_accounts)
-     * 
+     *
      * @param int $id_space
      * @param int $id pending account id
      */
-    public function pendinguserdeleteAction($id_space, $id) {
+    public function pendinguserdeleteAction($id_space, $id)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $modelPending = new CorePendingAccount();
         $id_user = $modelPending->get($id)["id_user"];
@@ -659,5 +672,4 @@ class CorespaceaccessController extends CoresecureController {
         $email->notifyUserByEmail($mailParams, "reject_pending_user", $this->getLanguage());
         $this->redirect("corespacependingusers/".$id_space);
     }
-
 }

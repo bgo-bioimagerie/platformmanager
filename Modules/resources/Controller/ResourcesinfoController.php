@@ -26,18 +26,18 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ResourcesinfoController extends ResourcesBaseController {
-
+class ResourcesinfoController extends ResourcesBaseController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -65,10 +65,10 @@ class ResourcesinfoController extends ResourcesBaseController {
         $categories = $modelCategory->getBySpace($id_space);
         $careas = [];
         $ccats = [];
-        foreach($categories as $c) {
+        foreach ($categories as $c) {
             $ccats[$c['id']] = $c['name'];
         }
-        foreach($areas as $c) {
+        foreach ($areas as $c) {
             $careas[$c['id']] = $c['name'];
         }
         for ($i = 0; $i < count($resources); $i++) {
@@ -84,8 +84,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         return $this->render(array("data" => ["resources" => $data], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get data
@@ -145,33 +145,35 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         if ($form->check()) {
             $rid = $form->getParameter("id");
-            if($rid == 0) {
+            if ($rid == 0) {
                 $plan = (new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']))->plan();
-                if($plan && array_key_exists('limits', $plan) && array_key_exists('resources', $plan['limits']) && $plan['limits']['resources']) {
+                if ($plan && array_key_exists('limits', $plan) && array_key_exists('resources', $plan['limits']) && $plan['limits']['resources']) {
                     // Count
                     $spaceResources = $modelResource->getBySpace($id_space);
-                    if(count($spaceResources) >= $plan['limits']['resources']) {
+                    if (count($spaceResources) >= $plan['limits']['resources']) {
                         throw new PfmParamException("Resource plan limit reached: ".$plan['limits']['resources']);
                     }
                 }
             }
-            $id = $modelResource->set($form->getParameter("id"),
-            $form->getParameter("name"),
-            $form->getParameter("brand"),
-            $form->getParameter("type"),
-            $form->getParameter("description"),
-            $form->getParameter("long_description"),
-            $form->getParameter("id_category"),
-            $form->getParameter("id_area"),
-            $id_space,
-            $form->getParameter("display_order"));
+            $id = $modelResource->set(
+                $form->getParameter("id"),
+                $form->getParameter("name"),
+                $form->getParameter("brand"),
+                $form->getParameter("type"),
+                $form->getParameter("description"),
+                $form->getParameter("long_description"),
+                $form->getParameter("id_category"),
+                $form->getParameter("id_area"),
+                $id_space,
+                $form->getParameter("display_order")
+            );
 
             // set default authorizations in bk_access
             $modelBkAccess = new BkAccess();
             if (!$modelBkAccess->get($id_space, $id)) {
-                $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'    
+                $modelBkAccess->set($id_space, $id, 3); // 3 for 'manager'
             }
-            
+
             // upload image
             $target_dir = "data/resources/";
             if (array_key_exists("image", $_FILES) && $_FILES["image"]["name"] != "") {
@@ -198,7 +200,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "headerInfo" => $headerInfo, "formHtml" => $form->getHtml()));
     }
 
-    public function eventsroAction($id_space, $id) {
+    public function eventsroAction($id_space, $id)
+    {
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -221,7 +224,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $events = $modelEvent->getByResource($id_space, $id);
 
         for ($i = 0; $i < count($events); $i++) {
-            $events[$i]["user"] = $modelUser->getUserFUllName($events[$i]["id_user"]);
+            $events[$i]["user"] = $modelUser->getUserFullName($events[$i]["id_user"]);
             $events[$i]["eventtype"] = $modelEventType->getName($id_space, $events[$i]["id_eventtype"]);
             $events[$i]["state"] = $modelState->getName($id_space, $events[$i]["id_state"]);
             $events[$i]["date"] = CoreTranslator::dateFromEn($events[$i]["date"], $lang);
@@ -232,8 +235,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml, "resourceInfo" => $resourceInfo));
     }
 
-    public function eventsAction($id_space, $id) {
-
+    public function eventsAction($id_space, $id)
+    {
         $is_authorized = $this->checkAuthorizationMenuSpaceNoException("resources", $id_space, $_SESSION["id_user"]);
         if (!$is_authorized) {
             $this->eventsroAction($id_space, $id);
@@ -260,7 +263,7 @@ class ResourcesinfoController extends ResourcesBaseController {
         $events = $modelEvent->getByResource($id_space, $id);
 
         for ($i = 0; $i < count($events); $i++) {
-            $events[$i]["user"] = $modelUser->getUserFUllName($events[$i]["id_user"]);
+            $events[$i]["user"] = $modelUser->getUserFullName($events[$i]["id_user"]);
             $events[$i]["eventtype"] = $modelEventType->getName($id_space, $events[$i]["id_eventtype"]);
             $events[$i]["state"] = $modelState->getName($id_space, $events[$i]["id_state"]);
             $events[$i]["date"] = CoreTranslator::dateFromEn($events[$i]["date"], $lang);
@@ -274,7 +277,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "headerInfo" => $headerInfo, "tableHtml" => $tableHtml, "id_resource" => $id));
     }
 
-    public function deleteeventAction($id_space, $id_resource, $id) {
+    public function deleteeventAction($id_space, $id_resource, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelEvent = new ReEvent();
         $modelEvent->delete($id_space, $id);
@@ -282,14 +286,14 @@ class ResourcesinfoController extends ResourcesBaseController {
         $this->redirect("resourcesevents/" . $id_space . "/" . $id_resource);
     }
 
-    public function editeventroAction($id_space, $id_resource, $id_event) {
-
+    public function editeventroAction($id_space, $id_resource, $id_event)
+    {
         $lang = $this->getLanguage();
         $formEvent = $this->createEventForm($id_space, $id_resource, $id_event, $lang, false);
         $filesTable = $this->createFilesTable($id_space, $id_event, $lang);
 
         $data = null;
-        if($id_event > 0) {
+        if ($id_event > 0) {
             $modelEvent = new ReEvent();
             $data = $modelEvent->get($id_space, $id_event);
         }
@@ -308,7 +312,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         ));
     }
 
-    public function editEventAction($id_space, $id_resource, $id_event) {
+    public function editEventAction($id_space, $id_resource, $id_event)
+    {
         $authorized = $this->checkAuthorizationMenuSpaceNoException("resources", $id_space, $_SESSION["id_user"]);
         if (!$authorized) {
             return $this->editeventroAction($id_space, $id_resource, $id_event);
@@ -327,9 +332,8 @@ class ResourcesinfoController extends ResourcesBaseController {
 
         $formEvent = $this->createEventForm($id_space, $id_resource, $id_event, $lang);
         if ($formEvent->check()) {
-
             $modelEvent = new ReEvent();
-            $new_id_event = $modelEvent->set($id_space , $id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
+            $new_id_event = $modelEvent->set($id_space, $id_event, $id_resource, CoreTranslator::dateToEn($formEvent->getParameter("date"), $lang), $formEvent->getParameter("id_user"), $formEvent->getParameter("id_eventtype"), $formEvent->getParameter("id_state"), $formEvent->getParameter("comment"));
             $_SESSION['flash'] = 'Event updated';
             return $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $new_id_event, [], ['reevent' => ['id' => $new_id_event]]);
         }
@@ -352,7 +356,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         ));
     }
 
-    public function editeventfileAction($id_space) {
+    public function editeventfileAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $id_resource = $this->request->getParameter("id_resource");
@@ -370,16 +375,16 @@ class ResourcesinfoController extends ResourcesBaseController {
         $this->redirect("resourceeditevent/" . $id_space . "/" . $id_resource . "/" . $id_event);
     }
 
-    public function downloadeventfileAction($id_space, $id) {
+    public function downloadeventfileAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelEventData = new ReEventData();
         $reData = $modelEventData->get($id_space, $id);
         $file = $reData['url'];
         if (file_exists($file)) {
-            
             $fileNameArray = explode("/", $file);
             $fileName = $fileNameArray[ count($fileNameArray) -1];
-            
+
             header("Content-Type: binary/octet-stream");
             header("Content-Disposition: attachment; filename=$fileName");
             header("Content-Length: " . filesize("$file"));
@@ -390,8 +395,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         }
     }
 
-    protected function createFilesTable($id_space, $id_event, $lang) {
-
+    protected function createFilesTable($id_space, $id_event, $lang)
+    {
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Files($lang), 3);
         $table->useSearch(false);
@@ -409,8 +414,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         return $table->view($events, $headers);
     }
 
-    protected function createDownloadForm($id_space, $id_resource, $id_event, $lang) {
-
+    protected function createDownloadForm($id_space, $id_resource, $id_event, $lang)
+    {
         $form = new Form($this->request, "eventaddfileform");
         $form->addSeparator(ResourcesTranslator::Add_File($lang));
         $form->addHidden("id_resource", $id_resource);
@@ -421,12 +426,12 @@ class ResourcesinfoController extends ResourcesBaseController {
         return $form;
     }
 
-    protected function createEventForm($id_space, $id_resource, $id_event, $lang, $editButton = true) {
-
+    protected function createEventForm($id_space, $id_resource, $id_event, $lang, $editButton = true)
+    {
         $modelResources = new ResourceInfo();
 
         $modelEvent = new ReEvent();
-        $modelUser = New CoreUser();
+        $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsers($id_space);
         $choicesU = array();
         $choicesidU = array();
@@ -435,7 +440,7 @@ class ResourcesinfoController extends ResourcesBaseController {
             $choicesidU[] = $user["id"];
         }
 
-        $modelET = New ReEventType();
+        $modelET = new ReEventType();
         $ets = $modelET->getForSpace($id_space);
         $choicesET = array();
         $choicesidET = array();
@@ -444,7 +449,7 @@ class ResourcesinfoController extends ResourcesBaseController {
             $choicesidET[] = $et["id"];
         }
 
-        $modelState = New ReState();
+        $modelState = new ReState();
         $states = $modelState->getForSpace($id_space);
         $choicesS = array();
         $choicesidS = array();
@@ -482,7 +487,8 @@ class ResourcesinfoController extends ResourcesBaseController {
         return $form;
     }
 
-    public function respsAction($id_space, $id_resource) {
+    public function respsAction($id_space, $id_resource)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -529,7 +535,6 @@ class ResourcesinfoController extends ResourcesBaseController {
 
 
         if ($form->check()) {
-
             $id_users = $this->request->getParameter("id_user");
             $id_statuss = $this->request->getParameter("id_status");
 
@@ -537,7 +542,7 @@ class ResourcesinfoController extends ResourcesBaseController {
             for ($i = 0; $i < count($id_users); $i++) {
                 $ids[] = $modelResps->setResp($id_space, $id_resource, $id_users[$i], $id_statuss[$i]);
             }
-            $modelResps->clean($id_space ,$id_resource, $id_users);
+            $modelResps->clean($id_space, $id_resource, $id_users);
             return $this->redirect("resourcesresp/" . $id_space . "/" . $id_resource, [], ['reresps' => $ids]);
         }
 
@@ -552,20 +557,20 @@ class ResourcesinfoController extends ResourcesBaseController {
         ));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $modelResource = new ResourceInfo();
         $modelResource->delete($id_space, $id);
-        
+
         // get resource bk_access and delete it
         $modelBkAccess = new BkAccess();
         if ($modelBkAccess->get($id_space, $id)) {
             $modelBkAccess->delete($id_space, $id);
         }
-        
+
 
         $this->redirect("resources/" . $id_space);
     }
-
 }

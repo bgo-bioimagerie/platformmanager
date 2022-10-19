@@ -13,19 +13,20 @@ require_once 'Framework/Events.php';
  *
  * @author Sylvain Prigent
  */
-class CoreStar extends Model {
-
-    public function __construct() {
+class CoreStar extends Model
+{
+    public function __construct()
+    {
         $this->tableName = 'core_star';
     }
 
     /**
      * Create the status table
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `core_star` (
 		`id` int(11) NOT NULL AUTO_INCREMENT,
 		`id_user` int(11) NOT NULL,
@@ -34,29 +35,32 @@ class CoreStar extends Model {
 		);";
         $this->runRequest($sql);
     }
-    
-    public function stars($id_user){
+
+    public function stars($id_user)
+    {
         $sql = "SELECT * FROM core_star WHERE id_user=?";
         return $this->runRequest($sql, array($id_user))->fetchAll();
     }
 
-    public function star($id_user, $id_space){
+    public function star($id_user, $id_space)
+    {
         $sql = "SELECT * FROM core_star WHERE id_user=? AND id_space=?";
         $exists = $this->runRequest($sql, array($id_user, $id_space))->fetch();
-        if(!$exists) {
+        if (!$exists) {
             $sql = "INSERT INTO core_star (id_user, id_space) VALUES (?,?)";
             $this->runRequest($sql, array($id_user, $id_space));
         }
     }
 
-    public function delete($id_user, $id_space) {
+    public function delete($id_user, $id_space)
+    {
         $sql = "DELETE FROM core_star WHERE id_user=? AND id_space=?";
         $this->runRequest($sql, array($id_user, $id_space));
     }
 
-    public function deleteSpace($id_space) {
+    public function deleteSpace($id_space)
+    {
         $sql = "DELETE FROM core_star WHERE id_space=?";
         $this->runRequest($sql, array($id_space));
     }
-
 }

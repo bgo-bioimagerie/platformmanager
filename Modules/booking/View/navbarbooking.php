@@ -78,7 +78,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                                     <option value="<?php echo $areaID ?>" <?php echo $selected ?>> <?php echo $this->clean($area['name']) ?> </option>
                                     <?php
                                 }
-                                ?>
+?>
                             </select>
                             <script type="text/javascript">
                                 function getareaval(sel) {
@@ -95,18 +95,18 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                             <select class="form-select" name="id_resource"  onchange="getresourceval(this);">
                                 <option value="0" > ... </option>
                                 <?php
-                                foreach ($menuData['resources'] as $resource) {
-                                    $resourceID = $this->clean($resource['id']);
-                                    $curentResourceId = $this->clean($menuData['curentResourceId']);
-                                    $selected = "";
-                                    if ($curentResourceId == $resourceID) {
-                                        $selected = "selected=\"selected\"";
-                                    }
-                                    ?>
+foreach ($menuData['resources'] as $resource) {
+    $resourceID = $this->clean($resource['id']);
+    $curentResourceId = $this->clean($menuData['curentResourceId']);
+    $selected = "";
+    if ($curentResourceId == $resourceID) {
+        $selected = "selected=\"selected\"";
+    }
+    ?>
                                     <option value="<?php echo $resourceID ?>" <?php echo $selected ?>> <?php echo $this->clean($resource['name']) ?> </option>
                                     <?php
-                                }
-                                ?>
+}
+?>
                             </select>
                             <script type="text/javascript">
                                 function getresourceval(sel) {
@@ -118,10 +118,10 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                 </div>
                 <?php
                 $dateSize = 6;
-                if(isset($users) && count($users) > 1) {
-                    $dateSize = 3;
-                }
-                ?>
+if (isset($users) && count($users) > 1) {
+    $dateSize = 3;
+}
+?>
 
 
                 <div class="col-12 col-md-<?php echo $dateSize; ?>" id="range">
@@ -136,49 +136,51 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
                         </div>
                     </fieldset>
                 </div>
-                <?php if(isset($users) && count($users) > 1) {  ?>
+                <?php if (isset($users) && count($users) > 1) {  ?>
                 <div class="col-12 col-md-3" id="users">
                     <fieldset>
                         <legend><?php echo CoreTranslator::User($lang) ?></legend>
                         <div>
                             <div class='input-group'>
                                 <?php
-                                $curUser = "all:0";
-                                if(!isset($id_user)){
-                                    $id_user = '';
-                                }
-                                if($id_user){
-                                    for($i=0;$i<count($users);$i++){
-                                        if($users[$i]['id'] == $id_user) {
-                                            $curUser = ($users[$i]['firstname'] ? $users[$i]['name'].' '.$users[$i]['firstname'] : $users[$i]['name']).':'.$users[$i]['id'];
-                                        }
-                                    }
-                                }
-                                ?>
+                $curUser = "all:0";
+                    if (!isset($id_user)) {
+                        $id_user = '';
+                    }
+                    if ($id_user) {
+                        for ($i=0;$i<count($users);$i++) {
+                            if ($users[$i]['id'] == $id_user) {
+                                $curUser = ($users[$i]['firstname'] ? $users[$i]['name'].' '.$users[$i]['firstname'] : $users[$i]['name']).':'.$users[$i]['id'];
+                            }
+                        }
+                    }
+                    ?>
 
                                 <?php
-                                if($context['role']<CoreSpace::$MANAGER) { ?>
+                    if ($context['role']<CoreSpace::$MANAGER) { ?>
                                     <select class="form-select" id="id_user" name="id_user" onchange="$('#navform').submit();">
                                         <option value="0"><?php echo BookingTranslator::ShowAll($lang); ?></option>
-                                        <option <?php if($id_user) { echo "selected";} ?> value="<?php echo $users[1]['id'] ?>"><?php echo BookingTranslator::ShowMine($lang); ?></option>
+                                        <option <?php if ($id_user) {
+                                            echo "selected";
+                                        } ?> value="<?php echo $users[1]['id'] ?>"><?php echo BookingTranslator::ShowMine($lang); ?></option>
                                     </select>
                                 <?php } else {
-                                ?>
+                                    ?>
                                 <input type="hidden" id="id_user" name="id_user" value="<?php echo $id_user ?>"/>
                                 <input class="form-control" list="user_list" value="<?php echo $curUser?>" onchange="getuserval(this.value)"/>
 
                                 <datalist id="user_list">
                                 <?php
-                                    foreach($users as $i => $user){
-                                        $selected = "";
-                                        if($i == 0 && !$id_user) {
-                                            $selected = 'selected';
-                                        }
-                                        if($id_user == $user['id']) {
-                                            $selected = 'selected';
-                                        }
-                                    ?>
-                                    <option <?php echo $selected ?> value="<?php echo ($user['firstname'] ? $user['name'].' '.$user['firstname'] : $user['name']).':'.$user['id'] ?>">
+                                        foreach ($users as $i => $user) {
+                                            $selected = "";
+                                            if ($i == 0 && !$id_user) {
+                                                $selected = 'selected';
+                                            }
+                                            if ($id_user == $user['id']) {
+                                                $selected = 'selected';
+                                            }
+                                            ?>
+                                    <option <?php echo $selected ?> value="<?php echo($user['firstname'] ? $user['name'].' '.$user['firstname'] : $user['name']).':'.$user['id'] ?>">
                                     <?php } ?>                                    
                                 </datalist>
                                 <script type="text/javascript">

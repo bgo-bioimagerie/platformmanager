@@ -13,21 +13,21 @@ require_once 'Modules/services/Model/SeVisa.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ServicesprojectganttController extends ServicesController {
-
+class ServicesprojectganttController extends ServicesController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
 
-     // TODO: gérer les autorisations par projet ?
+    // TODO: gérer les autorisations par projet ?
 
-    public function indexAction($id_space, $allPeriod = 0, $incharge = "", $id_project = null) {
-
+    public function indexAction($id_space, $allPeriod = 0, $incharge = "", $id_project = null)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -38,7 +38,7 @@ class ServicesprojectganttController extends ServicesController {
         $ganttOpened = ServicesTranslator::GanttOpened($lang);
         $ganttPeriod = ServicesTranslator::GanttPeriod($lang);
 
-        if($allPeriod == 1){
+        if ($allPeriod == 1) {
             $ganttStatus = $ganttPeriod;
             $modelConfig = new CoreConfig();
             $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
@@ -50,19 +50,18 @@ class ServicesprojectganttController extends ServicesController {
             if ($projectperiodend === "") {
                 $projectperiodend = $today->format('Y')."-12-31";
             }
-            
+
             $projectperiodbeginArray = explode("-", $projectperiodbegin);
             $projectperiodendArray = explode("-", $projectperiodend);
-            if( $projectperiodbeginArray[1] <= date("m", time()) ){
+            if ($projectperiodbeginArray[1] <= date("m", time())) {
                 $year = date("Y", time());
-            }
-            else {
+            } else {
                 $year = date("Y", time()) - 1;
             }
             $yearp = $year + 1;
             $periodStart = $year . "-" . $projectperiodbeginArray[1] . "-" . $projectperiodbeginArray[2];
             $periodEnd = $yearp . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2] . "<br/>";
-                    
+
             if ($incharge == "") {
                 $projects = $modelProject->allPeriodProjects($id_space, $periodStart, $periodEnd);
             } else {
@@ -92,7 +91,7 @@ class ServicesprojectganttController extends ServicesController {
             "viewInKanban" => ServicesTranslator::ViewInKanban($lang),
             "allProjects" => ServicesTranslator::All_projects($lang),
         ];
-        
+
         $data = array(
             'lang' => $lang,
             'id_space' => $id_space,
@@ -106,7 +105,6 @@ class ServicesprojectganttController extends ServicesController {
             "headerInfo" => $headerInfo,
         );
         // render
-        $this->render($data,"indexAction");
+        $this->render($data, "indexAction");
     }
-
 }

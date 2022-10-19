@@ -2,16 +2,17 @@
 
 require_once 'Framework/Routing.php';
 
-class ServicesInvoices extends Routing {
-
+class ServicesInvoices extends Routing
+{
     private $id_space;
 
-    public function setSpace($id_space) {
+    public function setSpace($id_space)
+    {
         $this->id_space = $id_space;
     }
 
-    public function listRoutes() {
-
+    public function listRoutes()
+    {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $this->id_space);
         if ($servicesuseproject == 1) {
@@ -23,5 +24,4 @@ class ServicesInvoices extends Routing {
         }
         $this->addRoute("servicesprices", "servicesprices", "servicesprices", "index", array("id_space"), array(""));
     }
-
 }

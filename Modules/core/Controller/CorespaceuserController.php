@@ -32,8 +32,10 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class CorespaceuserController extends CorespaceaccessController {
-    public function editAction($id_space, $id_user) {
+class CorespaceuserController extends CorespaceaccessController
+{
+    public function editAction($id_space, $id_user)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $origin = ["page" => $this->request->getParameterNoException("origin")];
@@ -41,7 +43,7 @@ class CorespaceuserController extends CorespaceaccessController {
             ? true : false;
         $modelOptions = new CoreSpaceAccessOptions();
         $options = array_reverse($modelOptions->getAll($id_space));
-        $modules = array_map(function($option) {
+        $modules = array_map(function ($option) {
             return $option['module'];
         }, $options);
 
@@ -112,7 +114,7 @@ class CorespaceuserController extends CorespaceaccessController {
             $forms['booking'] = ['forms' => [$bkAuthAddFormHtml, $bkAuthTableHtml, $bkHistoryTableHtml], 'show' => 0];
             $btnNames['booking'] = BookingTranslator::bookingauthorisations($lang);
         }
-        
+
         $modelSpace = new CoreSpace();
         $space = $modelSpace->getSpace($id_space);
         $dataView = [
@@ -129,5 +131,4 @@ class CorespaceuserController extends CorespaceaccessController {
         ];
         return $this->render($dataView, "editAction");
     }
-
 }

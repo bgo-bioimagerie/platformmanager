@@ -2,9 +2,10 @@
 
 require_once 'Framework/Model.php';
 
-class QuoteItem extends Model {
-
-    public function __construct() {
+class QuoteItem extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "qo_quoteitems";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_quote", "int(11)", 0);
@@ -15,8 +16,8 @@ class QuoteItem extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getList($id_space) {
-
+    public function getList($id_space)
+    {
         $names = array();
         $ids = array();
 
@@ -37,17 +38,20 @@ class QuoteItem extends Model {
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function get($id_space, $id) {
+    public function get($id_space, $id)
+    {
         $sql = "SELECT * FROM qo_quoteitems WHERE id=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function getAll($id_space, $id_quote) {
+    public function getAll($id_space, $id_quote)
+    {
         $sql = "SELECT * FROM qo_quoteitems WHERE id_quote=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_quote, $id_space))->fetchAll();
     }
 
-    public function setItem($id_space, $id, $id_quote, $id_content, $module, $quantity, $comment) {
+    public function setItem($id_space, $id, $id_quote, $id_content, $module, $quantity, $comment)
+    {
         if (!$id) {
             $sql = 'INSERT INTO qo_quoteitems (id_quote, id_content, module, quantity, comment, id_space) VALUES (?,?,?,?,?,?)';
             $this->runRequest($sql, array($id_quote, $id_content, $module, $quantity, $comment, $id_space));
@@ -59,7 +63,8 @@ class QuoteItem extends Model {
         }
     }
 
-    public function delete($id_space, $id){
+    public function delete($id_space, $id)
+    {
         $sql = "DELETE FROM qo_quoteitems WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }

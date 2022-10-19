@@ -1,4 +1,4 @@
-<?php include 'Modules/bulletjournal/View/layout.php' ?>
+<?php include_once 'Modules/bulletjournal/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

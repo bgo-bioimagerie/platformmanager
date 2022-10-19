@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class MailerInstall extends Model {
-
+class MailerInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         if (!file_exists('data/mailer/')) {
             mkdir('data/mailer/', 0755, true);
         }

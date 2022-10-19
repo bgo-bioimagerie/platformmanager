@@ -4,20 +4,21 @@ require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 require_once 'Framework/Configuration.php';
 
 /**
- * Class defining the  LDAP model to connect 
+ * Class defining the  LDAP model to connect
  * user from LDAP
- * 
+ *
  * @author Sylvain Prigent from GRR
  */
-class CoreLdap {
-
+class CoreLdap
+{
     /**
      * Get the user information using LDAP
      * @param string $_login User login
-     * @param string $_password User password 
+     * @param string $_password User password
      * @return multitype: User informatins (name, firstname, login, email)
      */
-    public function getUser($_login, $_password) {
+    public function getUser($_login, $_password)
+    {
         $user_dn = $this->grr_opensession($_login, $_password);
         return $this->grr_getinfo_ldap($user_dn, $_login, $_password);
     }
@@ -31,31 +32,32 @@ class CoreLdap {
      * @param array $tab_groups
      * @return multitype: User informatins (name, firstname, login, email)
      */
-    private function grr_opensession($_login, $_password, $_user_ext_authentifie = '', $tab_login = array(), $tab_groups = array()) {
+    private function grr_opensession($_login, $_password, $_user_ext_authentifie = '', $tab_login = array(), $tab_groups = array())
+    {
         // Initialisation de $auth_ldap
         $auth_ldap = 'no';
         // Initialisation de $auth_imap
         $auth_imap = 'no';
         // Initialisation de $est_authentifie_sso
-        $est_authentifie_sso = FALSE;
+        $est_authentifie_sso = false;
 
         // On traite le cas NON SSO
         // -> LDAP sans SSO
         // -> Imap
         if (@function_exists("ldap_connect")) {
             $login_search = preg_replace("/[^\-@._[:space:]a-zA-Z0-9]/", "", $_login);
-            if ($login_search != $_login){
+            if ($login_search != $_login) {
                 return "6";
             }
             $user_dn = $this->grr_verif_ldap($_login, $_password);
 
             if ($user_dn == "error_1") {
                 return "7";
-            } else if ($user_dn == "error_2") {
+            } elseif ($user_dn == "error_2") {
                 return "8";
-            } else if ($user_dn == "error_3") {
+            } elseif ($user_dn == "error_3") {
                 return "9";
-            } else if ($user_dn) {
+            } elseif ($user_dn) {
                 $auth_ldap = 'yes';
                 return $user_dn;
             } else {
@@ -68,9 +70,10 @@ class CoreLdap {
      * Check if a user can connect with LDAP
      * @param string $_login User login
      * @param string $_password User password
-     * @return boolean 
+     * @return boolean
      */
-    private function grr_verif_ldap($_login, $_password) {
+    private function grr_verif_ldap($_login, $_password)
+    {
         global $ldap_filter;
         if ($_password == '') {
             echo "password empty";
@@ -93,7 +96,6 @@ class CoreLdap {
             $ds = $this->grr_connect_ldap($ldap_adresse, $ldap_port, $_login, $_password, $use_tls);
         }
         if ($ds) {
-
             //$modelCoreconfig = new CoreConfig();
             // Attributs testés pour egalite avec le login
             $atts = explode("|", CoreLdapConfiguration::get('ldap_search_attr', "uid"));
@@ -102,10 +104,9 @@ class CoreLdap {
             reset($atts);
             foreach ($atts as $att) {
                 $dn = $this->grr_ldap_search_user($ds, $ldap_base, $att, $login_search, $ldap_filter);
-                if (($dn == "error_1") || ( $dn == "error_2") || ( $dn == "error_3")){
+                if (($dn == "error_1") || ($dn == "error_2") || ($dn == "error_3")) {
                     return $dn;
-                }
-                else if ($dn) {
+                } elseif ($dn) {
                     Configuration::getLogger()->debug("[ldap] search user", ["dn" => $dn]);
                     // on a le dn
                     if (ldap_bind($ds, $dn, $_password)) {
@@ -119,9 +120,9 @@ class CoreLdap {
             }
             // Si echec, essayer de deviner le DN, dans le cas où il n'y a pas de filtre supplémentaires
             reset($atts);
-            if (!isset($ldap_filter) || ( $ldap_filter = "")) {
+            if (!isset($ldap_filter) || ($ldap_filter = "")) {
                 foreach ($atts as $att) {
-                //while (list (, $att ) = each($atts)) {
+                    //while (list (, $att ) = each($atts)) {
                     $dn = $att . "=" . $login_search . "," . $ldap_base;
                     Configuration::getLogger()->debug('[ldap] try to bind user', ["dn" => $dn]);
                     if (@ldap_bind($ds, $dn, $_password)) {
@@ -134,7 +135,7 @@ class CoreLdap {
                 }
             }
             return false;
-        } else{
+        } else {
             return false;
         }
     }
@@ -149,17 +150,15 @@ class CoreLdap {
      * @param string $msg_error
      * @return mixed|boolean error message or true/false if $msg_error=="no"
      */
-    private function grr_connect_ldap($l_adresse, $l_port, $l_login, $l_pwd, $use_tls, $msg_error = "no") {
-        
-
+    private function grr_connect_ldap($l_adresse, $l_port, $l_login, $l_pwd, $use_tls, $msg_error = "no")
+    {
         $ldap_dsn = "ldap://$l_adresse:$l_port";
-        if($use_tls) {
+        if ($use_tls) {
             $ldap_dsn = "ldaps://$l_adresse:$l_port";
         }
         Configuration::getLogger()->debug('[ldap][grr_connect_ldap]', ['dsn' => $ldap_dsn]);
         $ds = ldap_connect($ldap_dsn);
         if ($ds) {
-            
             // On dit qu'on utilise LDAP V3, sinon la V2 par défaut est utilisé et le bind ne passe pas.
             if (!(ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3))) {
                 if ($msg_error != "no") {
@@ -167,16 +166,16 @@ class CoreLdap {
                 }
                 return false;
             }
-            
+
             // Option LDAP_OPT_REFERRALS à désactiver dans le cas d'active directory
             @ldap_set_option($ds, LDAP_OPT_REFERRALS, 0);
             if ($use_tls && !@ldap_start_tls($ds)) {
-                    if ($msg_error != "no") {
-                        return "error_2";
-                    }
-                    return false;
+                if ($msg_error != "no") {
+                    return "error_2";
+                }
+                return false;
             }
-            
+
             // Accès non anonyme
             if ($l_login != '') {
                 Configuration::getLogger()->debug('[ldap] user bind');
@@ -188,8 +187,8 @@ class CoreLdap {
                 $b = ldap_bind($ds);
             }
             Configuration::getLogger()->debug('[ldap] bind ok');
-            
-            
+
+
             if ($b) {
                 return $ds;
             } else {
@@ -216,9 +215,8 @@ class CoreLdap {
      * @param string $diagnostic
      * @return string|boolean
      */
-    private function grr_ldap_search_user($ds, $basedn, $login_attr, $login, $filtre_sup = "", $diagnostic = "no") {
-        
-
+    private function grr_ldap_search_user($ds, $basedn, $login_attr, $login, $filtre_sup = "", $diagnostic = "no")
+    {
         // Construction du filtre
         $filter = "(" . $login_attr . "=" . $login . ")";
         if (!empty($filtre_sup)) {
@@ -229,15 +227,15 @@ class CoreLdap {
                     "dn",
                     $login_attr
                         ), 0, 0);
-        
+
         if ($res) {
             Configuration::getLogger()->debug('[ldap][grr_ldap_search_user] geet entries');
             $info = @ldap_get_entries($ds, $res);
-            if ((!is_array($info)) || ( $info ['count'] == 0)) {
+            if ((!is_array($info)) || ($info ['count'] == 0)) {
                 return false;
-            } else if ($info ['count'] > 1) {
+            } elseif ($info ['count'] > 1) {
                 // Si plusieurs entrées, on accepte uniquement en mode diagnostic
-                    return false;
+                return false;
             } else {
                 return $info [0] ['dn'];
             }
@@ -254,7 +252,8 @@ class CoreLdap {
      * @param string $_password
      * @return string|multitype: User informations or error message
      */
-    private function grr_getinfo_ldap($_dn, $_login, $_password) {
+    private function grr_getinfo_ldap($_dn, $_login, $_password)
+    {
         Configuration::getLogger()->debug('[ldap][grr_getinfo_ldap]');
 
         $m_setting_ldap_champ_nom = CoreLdapConfiguration::get('ldap_name_attr', 'sn');
@@ -313,5 +312,4 @@ class CoreLdap {
             "mail" => $l_email
         );
     }
-
 }

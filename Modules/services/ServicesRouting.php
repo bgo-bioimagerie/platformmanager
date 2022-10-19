@@ -2,9 +2,10 @@
 
 require_once 'Framework/Routing.php';
 
-class ServicesRouting extends Routing {
-
-    public function routes($router) {
+class ServicesRouting extends Routing
+{
+    public function routes($router)
+    {
         $router->map('GET', '/user/services/projects/[i:id_space]', 'services/servicesprojects/user', 'services_user_projects');
         $router->map('GET|POST', '/services/getServiceType/[i:id_space]/[i:id_service]', 'services/services/getServiceType', 'services_getservicetype');
         $router->map('GET', '/servicesprojects/kanban/[i:id_space]/[i:id_project]', 'services/servicesprojects/kanban', 'services_project_kanban');
@@ -19,8 +20,8 @@ class ServicesRouting extends Routing {
         $router->map('GET', '/servicesprojects/openfile/[i:id_space]/[i:id_task]', 'services/servicesprojects/openfile', 'services_project_openfile');
     }
 
-    public function listRoutes() {
-
+    public function listRoutes()
+    {
         // config
         $this->addRoute("servicesconfig", "servicesconfig", "servicesconfig", "index", array("id_space"), array(""));
 
@@ -110,7 +111,7 @@ class ServicesRouting extends Routing {
 
         $this->addRoute("servicesstatisticsprojectsamplesreturn", "servicesstatisticsprojectsamplesreturn", "servicesstatisticsproject", "samplesreturn", array("id_space"), array(""));
 
-        
+
         // stock
         $this->addRoute("stockcabinets", "stockcabinets", "stockcabinet", "index", array("id_space"), array(""));
         $this->addRoute("stockcabinetedit", "stockcabinetedit", "stockcabinet", "edit", array("id_space", "id"), array("", ""));
@@ -119,8 +120,5 @@ class ServicesRouting extends Routing {
         $this->addRoute("stockshelfs", "stockshelfs", "stockshelf", "index", array("id_space"), array(""));
         $this->addRoute("stockshelfedit", "stockshelfedit", "stockshelf", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("stockshelfdelete", "stockshelfdelete", "stockshelf", "delete", array("id_space", "id"), array("", ""));
-        
-        
     }
-
 }

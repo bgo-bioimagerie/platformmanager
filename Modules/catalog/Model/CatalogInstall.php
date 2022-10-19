@@ -10,15 +10,15 @@ require_once 'Modules/catalog/Model/CaEntry.php';
  *
  * @author Sylvain Prigent
  */
-class CatalogInstall extends Model {
-
+class CatalogInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {
-
+    public function createDatabase()
+    {
         $modulesModel1 = new CaCategory();
         $modulesModel1->createTable();
 
@@ -29,5 +29,4 @@ class CatalogInstall extends Model {
             mkdir('data/catalog/logos', 0755, true);
         }
     }
-
 }
