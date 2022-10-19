@@ -253,17 +253,6 @@ class Router
     }
 
     /**
-     * Install request
-     * @param Request $request
-     * @return boolean
-     * @throws Exception
-     */
-    private function install($request)
-    {
-        throw new PfmDbException("Install not supported anymore", 403);
-    }
-
-    /**
      *
      * @param Request $request
      * @return array

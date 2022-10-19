@@ -421,11 +421,12 @@ abstract class Controller
                 $view->generate($dataView);
             }
             ob_end_flush();
-            return;
+            return null;
         }
         $view = new View($actionView, $controllerView, $this->module);
         $view->generate($dataView);
         ob_end_flush();
+        return null;
     }
 
     /**
