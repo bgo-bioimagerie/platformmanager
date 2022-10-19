@@ -166,20 +166,20 @@ class CoreusersController extends CoresecureController
             if (!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailInvalid", $id, $lang);
-                return;
+                return null;
             }
             if (!$id) {
                 // creating a new user
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
                     $canEditUser = false;
                     $this->displayFormWarnings("LoginAlreadyExists", $id, $lang);
-                    return;
+                    return null;
                 }
                 if ($modelUser->isEmail($form->getParameter("email"))) {
                     // if email already exists, warn user
                     $canEditUser = false;
                     $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
-                    return;
+                    return null;
                 }
             } else {
                 // updating an existing user
@@ -187,7 +187,7 @@ class CoreusersController extends CoresecureController
                     // if email, excepting user's one, already exists, warn user
                     $canEditUser = false;
                     $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
-                    return;
+                    return null;
                 }
             }
 

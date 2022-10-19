@@ -66,14 +66,6 @@ class CatalogTranslator
         return "Catalog manager";
     }
 
-    public static function catalogsettings($lang = "")
-    {
-        if ($lang == "fr") {
-            return "Gestion du catalog";
-        }
-        return "Catalog manager";
-    }
-
     public static function Prestations($lang = "")
     {
         if ($lang == "fr") {

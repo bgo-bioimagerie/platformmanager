@@ -63,9 +63,12 @@ class ComhomeController extends ComController
 
         $twitter = new TwitterAPIExchange($settings);
 
-        $tweets = json_decode($twitter->setGetfield($getfield)
-                        ->buildOauth($url, $requestMethod)
-                        ->performRequest(), true);
+        $tweets = json_decode(
+            $twitter->setGetfield($getfield)
+                    ->buildOauth($url, $requestMethod)
+                    ->performRequest(),
+            true
+        );
 
 
         $htmls = array();
@@ -74,9 +77,12 @@ class ComhomeController extends ComController
             $requestMethod = "GET";
             $getfield = '?url='. "https://twitter.com/".$tweet['user']["screen_name"]."/status/".$tweet['id'];
 
-            $htmlArray = json_decode($twitter->setGetfield($getfield)
+            $htmlArray = json_decode(
+                $twitter->setGetfield($getfield)
                     ->buildOauth($url, $requestMethod)
-                    ->performRequest(), true);
+                    ->performRequest(),
+                true
+            );
             $htmls[] = $htmlArray["html"];
         }
         return $htmls;

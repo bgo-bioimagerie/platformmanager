@@ -266,14 +266,6 @@ class ClientsTranslator
         return "County";
     }
 
-    public static function Tel($lang)
-    {
-        if ($lang == "fr") {
-            return "Téléphone";
-        }
-        return "Phone";
-    }
-
     public static function Fax($lang)
     {
         if ($lang == "fr") {

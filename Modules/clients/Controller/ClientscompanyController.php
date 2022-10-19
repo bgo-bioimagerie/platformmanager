@@ -54,7 +54,7 @@ class ClientscompanyController extends ClientsController
         $form->addText('city', ClientsTranslator::City($lang), true, $data["city"]);
         $form->addText('county', ClientsTranslator::County($lang), false, $data["county"]);
         $form->addText('country', ClientsTranslator::Country($lang), true, $data["country"]);
-        $form->addText('tel', ClientsTranslator::Tel($lang), true, $data["tel"]);
+        $form->addText('tel', ClientsTranslator::Phone($lang), true, $data["tel"]);
         $form->addText('fax', ClientsTranslator::Fax($lang), false, $data["fax"]);
         $form->addText('email', ClientsTranslator::Email($lang), true, $data["email"]);
         $form->addText('approval_number', ClientsTranslator::ApprovalNumber($lang), true, $data["approval_number"]);

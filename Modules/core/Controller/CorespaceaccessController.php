@@ -348,13 +348,13 @@ class CorespaceaccessController extends CoresecureController
                 $user = $modelCoreUser->getUserByLogin($this->request->getParameter('login'));
             } catch (PfmAuthException) {
                 $this->displayFormWarnings("LoginDoesNotExists", $id_space, $lang);
-                return;
+                return null;
             }
 
             $pendingModel = new CorePendingAccount();
             if ($pendingModel->isActuallyPending($id_space, $user['idUser'])) {
                 $this->displayFormWarnings("PendingUserAccount", $id_space, $lang);
-                return;
+                return null;
             }
 
             $modelUserSpace = new CoreSpaceUser();
@@ -376,20 +376,20 @@ class CorespaceaccessController extends CoresecureController
             if ($modelCoreUser->isLogin($this->request->getParameter('login'))) {
                 $canEditUser = false;
                 $this->displayFormWarnings("LoginAlreadyExists", $id_space, $lang);
-                return;
+                return null;
             }
 
             if (!$form->getParameter("email") || !$modelCoreUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailInvalid", $id_space, $lang);
-                return;
+                return null;
             }
 
             if ($modelCoreUser->isEmail($form->getParameter("email"))) {
                 // if email alreday exists, warn user
                 $canEditUser = false;
                 $this->displayFormWarnings("EmailAlreadyExists", $id_space, $lang);
-                return;
+                return null;
             }
 
             if ($canEditUser) {

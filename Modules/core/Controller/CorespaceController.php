@@ -77,8 +77,7 @@ class CorespaceController extends CoresecureController
         $showCom = ($space_home_page == "comhome");
 
         if ($space_home_page != "" && !$showCom) {
-            $this->redirect($space_home_page . "/" . $id_space);
-            return;
+            return $this->redirect($space_home_page . "/" . $id_space);
         }
 
         $lang = $this->getLanguage();

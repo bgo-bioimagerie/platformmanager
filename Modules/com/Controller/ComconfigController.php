@@ -55,8 +55,7 @@ class ComconfigController extends CoresecureController
                 $modelConfig->setParam('space_home_page', '', $id_space);
             }
 
-            $this->redirect("comconfig/" . $id_space);
-            return;
+            return $this->redirect("comconfig/" . $id_space);
         }
 
         $twitterForm = $this->twitterConfigForm($lang, $id_space);
@@ -68,8 +67,7 @@ class ComconfigController extends CoresecureController
             $modelConfig->setParam("twitter_consumer_key", $this->request->getParameter("twitter_consumer_key"), $id_space);
             $modelConfig->setParam("twitter_consumer_secret", $this->request->getParameter("twitter_consumer_secret"), $id_space);
 
-            $this->redirect("comconfig/" . $id_space);
-            return;
+            return $this->redirect("comconfig/" . $id_space);
         }
 
         // view
@@ -77,7 +75,7 @@ class ComconfigController extends CoresecureController
             $useComAsSpaceHomePageForm->getHtml($lang),
             $twitterForm->getHtml($lang));
 
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
     protected function useComAsSpaceHomePage($lang, $id_space)

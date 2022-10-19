@@ -83,7 +83,7 @@ class CoremainmenuController extends CoresecureController
             $menuid = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
-            $this->redirect("coremainmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name")]]);
+            return $this->redirect("coremainmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name")]]);
         }
 
         return $this->render(array(
@@ -101,7 +101,7 @@ class CoremainmenuController extends CoresecureController
         $model = new CoreMainMenu();
         $model->delete($id);
 
-        $this->redirect("coremainmenus");
+        return $this->redirect("coremainmenus");
     }
 
     public function submenusAction()
@@ -160,9 +160,7 @@ class CoremainmenuController extends CoresecureController
             );
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
-            $this->redirect("coremainsubmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name"), 'id_main_menu' => $form->getParameter("id_main_menu")]]);
-
-            return;
+            return $this->redirect("coremainsubmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name"), 'id_main_menu' => $form->getParameter("id_main_menu")]]);
         }
 
         return $this->render(array(
@@ -176,7 +174,7 @@ class CoremainmenuController extends CoresecureController
         $model = new CoreMainSubMenu();
         $model->delete($id);
 
-        $this->redirect("coremainsubmenus");
+        return $this->redirect("coremainsubmenus");
     }
 
     public function itemsAction()
@@ -255,7 +253,7 @@ class CoremainmenuController extends CoresecureController
             );
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
-            $this->redirect("coremainmenuitems", array(), ['menu' => ['id' => $itemid, 'name' => $form->getParameter("name"), 'id_space' => $form->getParameter("id_space"), 'id_sub_menu' => $form->getParameter("id_sub_menu")]]);
+            return $this->redirect("coremainmenuitems", array(), ['menu' => ['id' => $itemid, 'name' => $form->getParameter("name"), 'id_space' => $form->getParameter("id_space"), 'id_sub_menu' => $form->getParameter("id_sub_menu")]]);
         }
 
         return $this->render(array(
@@ -273,6 +271,6 @@ class CoremainmenuController extends CoresecureController
         $model = new CoreMainMenuItem();
         $model->delete($id);
 
-        $this->redirect("coremainmenuitems");
+        return $this->redirect("coremainmenuitems");
     }
 }

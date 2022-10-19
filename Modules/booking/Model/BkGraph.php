@@ -466,6 +466,7 @@ class BkGraph extends Model
 
     /**
      * Generate a pie chart number of reservation per resource
+     * @deprecated
      * @param unknown $year
      * @param unknown $numTotal
      * @return string
@@ -548,6 +549,7 @@ class BkGraph extends Model
 
     /**
      * Generate a pie chart number of reservation per resource
+     * @deprecated
      * @param int $year
      * @param float $numTotal
      * @return string

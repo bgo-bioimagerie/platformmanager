@@ -115,8 +115,7 @@ class CoreconnectionController extends CorecookiesecureController
                 $modelUser->setRememberKey($loggedUser['idUser'], $key);
             }
             if ($redirection) {
-                $this->redirect($redirection);
-                return;
+                return $this->redirect($redirection);
             }
             // redirect
             $redirectPath = $this->getRedirectPath();
@@ -124,6 +123,7 @@ class CoreconnectionController extends CorecookiesecureController
         } else {
             throw new PfmAuthException(CoreTranslator::UndefinedCredentials($lang), 401);
         }
+        return null;
     }
 
     /**
