@@ -160,11 +160,11 @@ class CoreUser extends Model
      *
      * @param int $desactivateSetting core or space deactivation setting
      * @param bool $remove if set, remove from space and also delete user authorisations, else only set status to inactive in space
-     * @param int $id_space space to check else apply on all users
+     * @param int $idSpace space to check else apply on all users
      * @param bool $dry list users only, do not remove users
      * @return array list of users to remove or that should be removed
      */
-    public function disableUsers($desactivateSetting, $remove=false, $id_space=0, $dry=false): array
+    public function disableUsers($desactivateSetting, $remove=false, $idSpace=0, $dry=false): array
     {
         $date = date('Y-m-d', time());
 
@@ -216,8 +216,8 @@ class CoreUser extends Model
             $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
             $params = [$date];
         }
-        if ($id_space > 0) {
-            $params[] = $id_space;
+        if ($idSpace > 0) {
+            $params[] = $idSpace;
             $sql .= ' AND core_j_spaces_user.id_space=?';
         }
 
@@ -335,10 +335,10 @@ class CoreUser extends Model
         }
     }
 
-    public function getStatus($id_user)
+    public function getStatus($idUser)
     {
         $sql = "SELECT status_id FROM core_users WHERE id=?";
-        $req = $this->runRequest($sql, array($id_user));
+        $req = $this->runRequest($sql, array($idUser));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -346,10 +346,10 @@ class CoreUser extends Model
         return 0;
     }
 
-    public function getEmail($id_user)
+    public function getEmail($idUser)
     {
         $sql = "SELECT email FROM core_users WHERE id=?";
-        $req = $this->runRequest($sql, array($id_user));
+        $req = $this->runRequest($sql, array($idUser));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -997,14 +997,14 @@ class CoreUser extends Model
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function getSpaceActiveUsersForSelect($id_space, $sortentry)
+    public function getSpaceActiveUsersForSelect($idSpace, $sortentry)
     {
         $sql = "SELECT core_j_spaces_user.id_user AS id,"
                 . "core_users.name AS name,core_users.firstname AS firstname "
                 . "FROM core_j_spaces_user "
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=? AND core_users.is_active=1 ORDER BY core_users.name";
-        $users = $this->runRequest($sql, array($id_space))->fetchAll();
+        $users = $this->runRequest($sql, array($idSpace))->fetchAll();
         $names = array();
         $ids = array();
         $names[] = "";
@@ -1016,22 +1016,22 @@ class CoreUser extends Model
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function getSpaceActiveUsers($id_space)
+    public function getSpaceActiveUsers($idSpace)
     {
         $sql = "SELECT core_users.*"
                 . "FROM core_j_spaces_user "
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function countSpaceActiveUsers($id_space)
+    public function countSpaceActiveUsers($idSpace)
     {
         $sql = "SELECT count(core_users.id) AS total "
                 . "FROM core_j_spaces_user "
                 . "INNER JOIN core_users ON core_j_spaces_user.id_user = core_users.id "
                 . "WHERE core_j_spaces_user.id_space=?";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $total = $req->fetch();
         return $total['total'];
     }

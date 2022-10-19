@@ -92,7 +92,7 @@ blockquote {
                             <div class="card-footer" v-if="message.type=='0'">
                                 <div>
                                     <div v-for="attach in message.attachements" :key="attach.id">
-                                    <a v-bind:href="'/corefiles/<?php echo $id_space ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
+                                    <a v-bind:href="'/corefiles/<?php echo $idSpace ?>/' + attach.id_file" target="_blank" rel="noopener noreferrer" >{{attach.name_file}}</a>
                                     </div>
                                 </div>
                                 <button type="button" class="btn btn-primary" @click="reply(ticket.ticket.id, message.id)"><small>reply</small></button>
@@ -248,7 +248,7 @@ Vue.createApp({
                     headers: headers,
                     method: 'POST',
                 }
-                fetch(`/helpdesk/<?php echo $id_space ?>/${id}/status/4`, cfg).
+                fetch(`/helpdesk/<?php echo $idSpace ?>/${id}/status/4`, cfg).
                 then(() => {
                     resolve()
                 }).catch(err => {
@@ -316,7 +316,7 @@ Vue.createApp({
                 headers: headers,
                 method: 'GET',
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/settings`, cfg).
             then(response => response.json()).
             then((data) => {
                 this.preferences = {
@@ -338,7 +338,7 @@ Vue.createApp({
                     'settings': this.preferences
                 })
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/settings`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/settings`, cfg).
             then(() => { this.message = "Settings updated"})
         },
         updateStatus(event) {
@@ -349,7 +349,7 @@ Vue.createApp({
                 headers: headers,
                 method: 'POST',
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/status/${event.target.value}`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/${this.ticket.ticket.id}/status/${event.target.value}`, cfg).
             then(() => {
                 if(event.target.value == 4) {
                     this.filter = 0;
@@ -388,7 +388,7 @@ Vue.createApp({
                 headers: headers,
                 method: 'POST'
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}/assign`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/${this.ticket.ticket.id}/assign`, cfg).
             then(() => this.fetchTicket(this.ticket.ticket.id))
         },
         back() {
@@ -436,7 +436,7 @@ Vue.createApp({
                     body: f
                 }
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${this.ticket.ticket.id}`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/${this.ticket.ticket.id}`, cfg).
             then(response => response.json()).
             then((data) => {
                 this.fetchTicket(data.ticket.id)
@@ -451,7 +451,7 @@ Vue.createApp({
             this.mdText = '';
             this.text = '';
             this.ticket = {
-                'id_space': <?php echo $id_space ?>,
+                'id_space': <?php echo $idSpace ?>,
                 'ticket': {
                 'id': 0,
                 'subject': '',
@@ -512,7 +512,7 @@ Vue.createApp({
             let cfg = {
                 headers: headers
             }
-            fetch(`/helpdesk/<?php echo $id_space ?>/${id}`, cfg).
+            fetch(`/helpdesk/<?php echo $idSpace ?>/${id}`, cfg).
             then((response) => response.json()).
             then(data => {
                 for(let i=0;i<data.messages.length;i++) {
@@ -539,7 +539,7 @@ Vue.createApp({
                     limit: this.limit
                 })
             }
-            fetch('/helpdesk/<?php echo $id_space ?>/list/' + this.filter + '?' + params , cfg).
+            fetch('/helpdesk/<?php echo $idSpace ?>/list/' + this.filter + '?' + params , cfg).
             then((response) => response.json()).
             then(data => {
                 this.tickets = data.tickets;
@@ -564,7 +564,7 @@ Vue.createApp({
                     limit: this.limit
                 })
             }
-            fetch('/helpdesk/<?php echo $id_space ?>/unread' , cfg).
+            fetch('/helpdesk/<?php echo $idSpace ?>/unread' , cfg).
             then((response) => response.json()).
             then(data => {
                 let unreads = {}

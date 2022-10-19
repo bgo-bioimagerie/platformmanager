@@ -36,35 +36,35 @@ class ClientsconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // maintenance form
-        //$formMenusactivation = $this->menusactivationForm($lang, $id_space);
-        $formMenusactivation = $this->menusactivationForm($id_space, 'clients', $lang);
+        //$formMenusactivation = $this->menusactivationForm($lang, $idSpace);
+        $formMenusactivation = $this->menusactivationForm($idSpace, 'clients', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'clients', 'credit-card');
+            $this->menusactivation($idSpace, 'clients', 'credit-card');
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "clientsuseraccounts";
             if ($this->request->getParameter("clientsMenustatus") > 0) {
-                $modelAccess->exists($id_space, $toolname)
-                    ? $modelAccess->reactivate($id_space, $toolname)
-                    : $modelAccess->set($id_space, $toolname, "clients", $toolname);
+                $modelAccess->exists($idSpace, $toolname)
+                    ? $modelAccess->reactivate($idSpace, $toolname)
+                    : $modelAccess->set($idSpace, $toolname, "clients", $toolname);
             } else {
-                $modelAccess->delete($id_space, $toolname);
+                $modelAccess->delete($idSpace, $toolname);
             }
 
-            $this->redirect("clientsconfig/".$id_space);
+            $this->redirect("clientsconfig/".$idSpace);
             return;
         }
 
         // menu name
-        $menuNameForm = $this->menuNameForm($id_space, 'clients', $lang);
+        $menuNameForm = $this->menuNameForm($idSpace, 'clients', $lang);
         if ($menuNameForm->check()) {
-            $this->setMenuName($id_space, 'clients');
-            $this->redirect("clientsconfig/" . $id_space);
+            $this->setMenuName($idSpace, 'clients');
+            $this->redirect("clientsconfig/" . $idSpace);
             return;
         }
 
@@ -73,6 +73,6 @@ class ClientsconfigController extends CoresecureController
                        $menuNameForm->getHtml($lang)
             );
 
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
     }
 }

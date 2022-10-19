@@ -46,15 +46,15 @@ class ServicesstatisticsprojectController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("begining_period");
         if ($date_begin == "") {
-            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
             if ($date_begin != "") {
                 $dateArray = explode("-", $date_begin);
                 $y = date("Y") - 1;
@@ -67,7 +67,7 @@ class ServicesstatisticsprojectController extends ServicesController
         }
         $date_end = $this->request->getParameterNoException("end_period");
         if ($date_end == "") {
-            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
             if ($date_end != "") {
                 $dateArray = explode("-", $date_end);
                 $y = date("Y");
@@ -85,19 +85,19 @@ class ServicesstatisticsprojectController extends ServicesController
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, $date_begin);
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, $date_end);
 
-        $form->setValidationButton("Ok", "servicesstatisticsproject/" . $id_space);
+        $form->setValidationButton("Ok", "servicesstatisticsproject/" . $idSpace);
 
         $stats = "";
         if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $dateBegin = $form->getParameter("begining_period");
             $dateEnd = $form->getParameter("end_period");
             $name = 'stats_'.SeStats::STATS_PROJECTS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
 
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
 
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
@@ -107,17 +107,17 @@ class ServicesstatisticsprojectController extends ServicesController
                 "user" => ["id" => $_SESSION['id_user']],
                 "lang" => $lang,
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
 
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
         // set the view
         $formHtml = $form->getHtml($lang);
         // view
         $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             'formHtml' => $formHtml,
             'stats' => $stats
@@ -125,19 +125,19 @@ class ServicesstatisticsprojectController extends ServicesController
     }
 
 
-    public function samplesreturnAction($id_space)
+    public function samplesreturnAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $c = new CoreFiles();
         $cs = new CoreSpace();
-        $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+        $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
         $date = date('Y-m-d');
         $name = 'stats_'.SeStats::STATS_PROJECT_SAMPLES.'_'.str_replace('/', '-', $date).'.xlsx';
 
-        $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-        $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+        $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+        $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
 
         Events::send([
             "action" => Events::ACTION_STATISTICS_REQUEST,
@@ -145,21 +145,21 @@ class ServicesstatisticsprojectController extends ServicesController
             "user" => ["id" => $_SESSION['id_user']],
             "lang" => $lang,
             "file" => ["id" => $fid],
-            "space" => ["id" => $id_space]
+            "space" => ["id" => $idSpace]
         ]);
 
-        return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+        return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
     }
 
-    public function mailrespsAction($id_space)
+    public function mailrespsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("begining_period");
         if ($date_begin == "") {
-            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
             $m = $dateArray[1] ?? 1;
@@ -168,7 +168,7 @@ class ServicesstatisticsprojectController extends ServicesController
         }
         $date_end = $this->request->getParameterNoException("end_period");
         if ($date_end == "") {
-            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
             $dateArray = explode("-", $date_end);
             $y = date("Y");
             $m = $dateArray[1] ?? 12;
@@ -182,18 +182,18 @@ class ServicesstatisticsprojectController extends ServicesController
         $form->addDate("begining_period", ServicesTranslator::Beginning_period($lang), true, $date_begin);
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, $date_end);
 
-        $form->setValidationButton("Ok", "servicesstatisticsmailresps/" . $id_space);
+        $form->setValidationButton("Ok", "servicesstatisticsmailresps/" . $idSpace);
 
         if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $dateBegin = $this->request->getParameter('begining_period');
             $dateEnd = $this->request->getParameter('end_period');
             $name = 'stats_'.SeStats::STATS_MAIL_RESPS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
 
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
 
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
@@ -203,12 +203,12 @@ class ServicesstatisticsprojectController extends ServicesController
                 "user" => ["id" => $_SESSION['id_user']],
                 "lang" => $lang,
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
 
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
-        $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $idSpace, "formHtml" => $form->getHtml($lang)));
     }
 }

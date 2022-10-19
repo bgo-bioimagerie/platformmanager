@@ -22,7 +22,7 @@
     </div>
     <div class="col-12" style="background-color: #fff; border-radius: 7px; padding: 7px;">
         <h3><?php echo InvoicesTranslator::PDFTemplate($lang) ?></h3>
-        <a class="btn btn-primary" href="invoicepdftemplate/<?php echo $id_space ?>" ><?php echo CoreTranslator::Edit($lang) ?></a>
+        <a class="btn btn-primary" href="invoicepdftemplate/<?php echo $idSpace ?>" ><?php echo CoreTranslator::Edit($lang) ?></a>
     </div>
 
 </div>

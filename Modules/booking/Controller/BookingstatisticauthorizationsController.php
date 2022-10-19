@@ -31,21 +31,21 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
  */
 class BookingstatisticauthorizationsController extends StatisticsController
 {
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
 
-        $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+        $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
         $dateArray = explode("-", $date_begin);
         $y = date("Y") - 1;
         $m = $dateArray[1] ?? '01';
         $d = $dateArray[2] ?? '01';
         $date_begin = $y . "-" . $m . "-" . $d;
 
-        $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+        $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
         $dateArray = explode("-", $date_end);
         $y = date("Y");
         $m = $dateArray[1] ?? '12';
@@ -58,7 +58,7 @@ class BookingstatisticauthorizationsController extends StatisticsController
         $form->addDate("period_begin", BookingTranslator::PeriodBegining($lang), true, $date_begin);
         $form->addDate("period_end", BookingTranslator::PeriodEnd($lang), true, $date_end);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatisticauthorizations/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatisticauthorizations/" . $idSpace);
 
         if ($form->check()) {
             $period_begin = $this->request->getParameter("period_begin");
@@ -66,10 +66,10 @@ class BookingstatisticauthorizationsController extends StatisticsController
 
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $name = 'stats_'.BkStats::STATS_AUTH_STAT.'_'.str_replace('/', '-', $period_begin).'_'.str_replace('/', '-', $period_end).'.xlsx';
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_AUTH_STAT,
@@ -78,27 +78,27 @@ class BookingstatisticauthorizationsController extends StatisticsController
                 "lang" => $lang,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
-        $this->render(array("lang" => $lang, "id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("lang" => $lang, "id_space" => $idSpace, "formHtml" => $form->getHtml($lang)));
     }
 
     /**
      * Form to export the list of authorized user per resource category
      */
-    public function authorizedusersAction($id_space)
+    public function authorizedusersAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         // get the resource list
         $resourceModel = new ReCategory();
-        $resourcesCategories = $resourceModel->getBySpace($id_space);
+        $resourcesCategories = $resourceModel->getBySpace($idSpace);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'resourcesCategories' => $resourcesCategories
         ));
     }
@@ -106,9 +106,9 @@ class BookingstatisticauthorizationsController extends StatisticsController
     /**
      * Query to export the list of authorized user per resource category
      */
-    public function authorizedusersqueryAction($id_space)
+    public function authorizedusersqueryAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         // get the selected resource id
         $resource_id = $this->request->getParameter("resource_id");
         $email = $this->request->getParameterNoException("email");
@@ -117,10 +117,10 @@ class BookingstatisticauthorizationsController extends StatisticsController
 
         $c = new CoreFiles();
         $cs = new CoreSpace();
-        $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+        $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
         $name = 'stats_'.BkStats::STATS_AUTH_LIST.'_'.$resource_id.'.xlsx';
-        $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-        $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+        $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+        $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
         Events::send([
             "action" => Events::ACTION_STATISTICS_REQUEST,
             "stat" => BkStats::STATS_AUTH_LIST,
@@ -129,8 +129,8 @@ class BookingstatisticauthorizationsController extends StatisticsController
             "user" => ["id" => $_SESSION['id_user']],
             "lang" => $lang,
             "file" => ["id" => $fid],
-            "space" => ["id" => $id_space]
+            "space" => ["id" => $idSpace]
         ]);
-        return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+        return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
     }
 }

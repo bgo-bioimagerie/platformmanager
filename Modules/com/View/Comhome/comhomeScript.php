@@ -42,7 +42,7 @@ let newsView = Vue.createApp({
                 headers: headers,
                 method: 'GET',
             };
-            fetch(`getnews/<?php echo $id_space ?>`, cfg).
+            fetch(`getnews/<?php echo $idSpace ?>`, cfg).
                 then((response) => response.json()).
                 then(data => {
                     if (data.news) {

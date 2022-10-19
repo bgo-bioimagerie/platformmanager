@@ -34,7 +34,7 @@
 
     function editentry(id) {
         var arrayid = id.split("_");
-        showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
+        showEditEntryForm(<?php echo $idSpace ?>, arrayid[1]);
     }
 
     /**

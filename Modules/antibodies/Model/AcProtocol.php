@@ -58,7 +58,7 @@ class AcProtocol extends Model
     /**
      * @deprecated?
      */
-    public function addManualProtocol($id_space)
+    public function addManualProtocol($idSpace)
     {
         $kit = "Manuel";
         $no_proto = 0;
@@ -76,19 +76,19 @@ class AcProtocol extends Model
         $sql = "insert into ac_protocol(kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe, id_space)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        $this->runRequest($sql, array($kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe, $id_space));
+        $this->runRequest($sql, array($kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe, $idSpace));
     }
 
-    public function getBySpace($id_space)
+    public function getBySpace($idSpace)
     {
         $sql = "select * from ac_protocol WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
-    public function getForList($id_space)
+    public function getForList($idSpace)
     {
-        $data = $this->getBySpace($id_space);
+        $data = $this->getBySpace($idSpace);
         $names = array();
         $ids = array();
         foreach ($data as $d) {
@@ -104,63 +104,63 @@ class AcProtocol extends Model
      * @param string $sortentry Entry that is used to sort the isotypes
      * @return multitype: array
      */
-    public function getProtocols($id_space, $sortentry = 'id')
+    public function getProtocols($idSpace, $sortentry = 'id')
     {
         $sql = "select * from ac_protocol WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
-    public function getProtocols2($id_space, $sortentry = 'id')
+    public function getProtocols2($idSpace, $sortentry = 'id')
     {
         $sql = "select * from ac_protocol WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $protos = $req->fetchAll();
 
-        return $this->getAssociateAnticorpsInfo($id_space, $protos);
+        return $this->getAssociateAnticorpsInfo($idSpace, $protos);
     }
 
-    private function getAssociateAnticorpsInfo($id_space, $protos)
+    private function getAssociateAnticorpsInfo($idSpace, $protos)
     {
         for ($i = 0; $i < count($protos); $i++) {
             // no to names
             $model = new Kit();
-            $protos[$i]["kit"] = $model->getNameFromId($id_space, $protos[$i]["kit"]);
+            $protos[$i]["kit"] = $model->getNameFromId($idSpace, $protos[$i]["kit"]);
 
             $model = new Proto();
-            $protos[$i]["proto"] = $model->getNameFromId($id_space, $protos[$i]["proto"]);
+            $protos[$i]["proto"] = $model->getNameFromId($idSpace, $protos[$i]["proto"]);
 
             $model = new Fixative();
-            $protos[$i]["fixative"] = $model->getNameFromId($id_space, $protos[$i]["fixative"]);
+            $protos[$i]["fixative"] = $model->getNameFromId($idSpace, $protos[$i]["fixative"]);
 
             $model = new AcOption();
-            $protos[$i]["option_"] = $model->getNameFromId($id_space, $protos[$i]["option_"]);
+            $protos[$i]["option_"] = $model->getNameFromId($idSpace, $protos[$i]["option_"]);
 
             $model = new Enzyme();
-            $protos[$i]["enzyme"] = $model->getNameFromId($id_space, $protos[$i]["enzyme"]);
+            $protos[$i]["enzyme"] = $model->getNameFromId($idSpace, $protos[$i]["enzyme"]);
 
             $model = new Dem();
-            $protos[$i]["dem"] = $model->getNameFromId($id_space, $protos[$i]["dem"]);
+            $protos[$i]["dem"] = $model->getNameFromId($idSpace, $protos[$i]["dem"]);
 
             $model = new Aciinc();
-            $protos[$i]["acl_inc"] = $model->getNameFromId($id_space, $protos[$i]["acl_inc"]);
+            $protos[$i]["acl_inc"] = $model->getNameFromId($idSpace, $protos[$i]["acl_inc"]);
 
             $model = new Linker();
-            $protos[$i]["linker"] = $model->getNameFromId($id_space, $protos[$i]["linker"]);
+            $protos[$i]["linker"] = $model->getNameFromId($idSpace, $protos[$i]["linker"]);
 
             $model = new Inc();
-            $protos[$i]["inc"] = $model->getNameFromId($id_space, $protos[$i]["inc"]);
+            $protos[$i]["inc"] = $model->getNameFromId($idSpace, $protos[$i]["inc"]);
 
             $model = new Acii();
-            $protos[$i]["acll"] = $model->getNameFromId($id_space, $protos[$i]["acll"]);
+            $protos[$i]["acll"] = $model->getNameFromId($idSpace, $protos[$i]["acll"]);
 
             $model = new Inc();
-            $protos[$i]["inc2"] = $model->getNameFromId($id_space, $protos[$i]["inc2"]);
+            $protos[$i]["inc2"] = $model->getNameFromId($idSpace, $protos[$i]["inc2"]);
 
 
             if ($protos[$i]["associe"] == 1) {
                 $sql = "select id_anticorps from ac_j_tissu_anticorps where ref_protocol=? AND id_space=? AND deleted=0";
-                $req = $this->runRequest($sql, array($protos[$i]["no_proto"], $id_space));
+                $req = $this->runRequest($sql, array($protos[$i]["no_proto"], $idSpace));
                 $ac = $req->fetchAll();
 
                 //print("ref protocol = " + $protos[$i]["id"] + "<br />");
@@ -185,30 +185,30 @@ class AcProtocol extends Model
         return $protos;
     }
 
-    public function getProtocolsByRef($id_space, $protocolRef)
+    public function getProtocolsByRef($idSpace, $protocolRef)
     {
         $sql = "select * from ac_protocol where no_proto=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($protocolRef, $id_space));
+        $req = $this->runRequest($sql, array($protocolRef, $idSpace));
         $protos = $req->fetchAll();
 
-        return $this->getAssociateAnticorpsInfo($id_space, $protos);
+        return $this->getAssociateAnticorpsInfo($idSpace, $protos);
     }
 
-    public function getProtocolsByAnticorps($id_space, $anticorpsId)
+    public function getProtocolsByAnticorps($idSpace, $anticorpsId)
     {
         $sql = "SELECT * FROM ac_protocol WHERE no_proto IN (SELECT ref_protocol		 			
 				FROM ac_j_tissu_anticorps
 				WHERE id_anticorps=? AND id_space=? AND deleted=0)";
-        $req = $this->runRequest($sql, array($anticorpsId, $id_space));
+        $req = $this->runRequest($sql, array($anticorpsId, $idSpace));
         $protos = $req->fetchAll();
 
-        return $this->getAssociateAnticorpsInfo($id_space, $protos);
+        return $this->getAssociateAnticorpsInfo($idSpace, $protos);
     }
 
-    public function getProtocolsNo($id_space)
+    public function getProtocolsNo($idSpace)
     {
         $sql = "select id, no_proto from ac_protocol WHERE id_space=? AND deleted=0 order by no_proto ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -219,10 +219,10 @@ class AcProtocol extends Model
      * @throws Exception id the isotype is not found
      * @return mixed array
      */
-    public function getProtocol($id_space, $id)
+    public function getProtocol($idSpace, $id)
     {
         $sql = "select * from ac_protocol where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -235,21 +235,21 @@ class AcProtocol extends Model
      *
      *
      */
-    public function addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
+    public function addProtocol($idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
     {
         $sql = "insert into ac_protocol(id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        $this->runRequest($sql, array($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe));
+        $this->runRequest($sql, array($idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function importProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
+    public function importProtocol($id, $idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
     {
         $sql = "insert into ac_protocol(id, id_space, kit, no_proto, proto, fixative, option_, enzyme, dem, acl_inc, linker, inc, acll, inc2, associe)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-        $this->runRequest($sql, array($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe));
+        $this->runRequest($sql, array($id, $idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe));
     }
 
     /**
@@ -258,22 +258,22 @@ class AcProtocol extends Model
      * @param int $id Id of the isotype to update
      * @param string $name New name of the isotype
      */
-    public function editProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
+    public function editProtocol($id, $idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe = "")
     {
         $sql = "update ac_protocol set kit=?, no_proto=?, proto=?, fixative=?, option_=?, enzyme=?, dem=?, acl_inc=?, linker=?, inc=?, acll=?, inc2=?, associe=? where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe, $id, $id_space));
+        $this->runRequest($sql, array($kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe, $id, $idSpace));
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE ac_protocol SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 
-    public function isProtocolOfID($id_space, $id)
+    public function isProtocolOfID($idSpace, $id)
     {
         $sql = "select * from ac_protocol where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() > 0) {
             return true;
         } else {
@@ -281,10 +281,10 @@ class AcProtocol extends Model
         }
     }
 
-    public function existsProtocol($id_space, $kit, $no_proto)
+    public function existsProtocol($idSpace, $kit, $no_proto)
     {
         $sql = "select * from ac_protocol where kit=? and no_proto=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($kit, $no_proto, $id_space));
+        $req = $this->runRequest($sql, array($kit, $no_proto, $idSpace));
         if ($req->rowCount() > 0) {
             return true;
         } else {

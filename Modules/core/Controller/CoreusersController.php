@@ -196,8 +196,8 @@ class CoreusersController extends CoresecureController
                     ? CoreTranslator::AccountHasBeenCreated($lang)
                     : CoreTranslator::AccountHasBeenModified($lang);
                 $_SESSION["flashClass"] = "success";
-                $id_user = $this->editQuery($form, $lang);
-                $user = $modelUser->getInfo($id_user);
+                $idUser = $this->editQuery($form, $lang);
+                $user = $modelUser->getInfo($idUser);
                 return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
@@ -314,7 +314,7 @@ class CoreusersController extends CoresecureController
      *
      * Returns true if user is pending or active in any space
      *
-     * @param int $id_user
+     * @param int $idUser
      *
      * @return bool
      */
@@ -386,7 +386,7 @@ class CoreusersController extends CoresecureController
     public function languageeditAction()
     {
         // language form
-        $id_user = $_SESSION["id_user"];
+        $idUser = $_SESSION["id_user"];
         $userSettingsModel = new CoreUserSettings();
 
         $lang = $this->getLanguage();
@@ -408,7 +408,7 @@ class CoreusersController extends CoresecureController
 
         if ($form->check()) {
             $lang = $this->request->getParameter("language");
-            $userSettingsModel->setSettings($id_user, "language", $lang);
+            $userSettingsModel->setSettings($idUser, "language", $lang);
             $userSettingsModel->updateSessionSettingVariable();
             $this->redirect("coresettings");
         }

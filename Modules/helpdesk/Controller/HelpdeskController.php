@@ -19,16 +19,16 @@ use League\CommonMark\CommonMarkConverter;
 
 class HelpdeskController extends CoresecureController
 {
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $spaceModel = new CoreSpace();
-        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $spaceModel->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("helpdesk", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("helpdesk", $idSpace);
         $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "role" => $role,
             "ticket" => null,
@@ -36,17 +36,17 @@ class HelpdeskController extends CoresecureController
         ));
     }
 
-    public function notifsAction($id_space)
+    public function notifsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
             return $this->render(['data' => ['notifs' => 0]]);
         }
 
         $hm = new Helpdesk();
-        $unread = $hm->unread($id_space);
+        $unread = $hm->unread($idSpace);
         $total = 0;
         if (!empty($unread)) {
             foreach ($unread as $u) {
@@ -60,10 +60,10 @@ class HelpdeskController extends CoresecureController
         return $this->render(['data' => ['notifs' => $total]]);
     }
 
-    public function setSettingsAction($id_space)
+    public function setSettingsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
-        $role = $this->spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
+        $role = $this->spaceModel->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if ($role < CoreSpace::$MANAGER) {
             throw new PfmAuthException('not authorized', 403);
         }
@@ -71,21 +71,21 @@ class HelpdeskController extends CoresecureController
 
         $cussm = new CoreUserSpaceSettings();
         $settings = $this->request->getParameter('settings');
-        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyNew", $settings['notifyNew'] ? 1 : 0);
-        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyAssignedUpdate", $settings['notifyAssignedUpdate'] ? 1 : 0);
-        $cussm->setUserSettings($id_space, $_SESSION["id_user"], "hp_notifyAllUpdate", $settings['notifyAllUpdate'] ? 1 : 0);
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "data" => [
+        $cussm->setUserSettings($idSpace, $_SESSION["id_user"], "hp_notifyNew", $settings['notifyNew'] ? 1 : 0);
+        $cussm->setUserSettings($idSpace, $_SESSION["id_user"], "hp_notifyAssignedUpdate", $settings['notifyAssignedUpdate'] ? 1 : 0);
+        $cussm->setUserSettings($idSpace, $_SESSION["id_user"], "hp_notifyAllUpdate", $settings['notifyAllUpdate'] ? 1 : 0);
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "data" => [
             "settings" => $settings
         ]));
     }
 
-    public function settingsAction($id_space)
+    public function settingsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
 
 
         $cussm = new CoreUserSpaceSettings();
-        $settings = $cussm->getUserSettings($id_space, $_SESSION["id_user"]);
+        $settings = $cussm->getUserSettings($idSpace, $_SESSION["id_user"]);
 
         $this->render(array("data" => [
             "settings" => [
@@ -99,11 +99,11 @@ class HelpdeskController extends CoresecureController
     /**
      * reply or add note
      */
-    public function assignAction($id_space, $id_ticket)
+    public function assignAction($idSpace, $id_ticket)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
             throw new PfmAuthException('not authorized', 403);
         }
@@ -112,7 +112,7 @@ class HelpdeskController extends CoresecureController
         if (!$ticket) {
             throw new PfmParamException('ticket not found', 404);
         }
-        if ($ticket['id_space'] != $id_space) {
+        if ($ticket['id_space'] != $idSpace) {
             throw new PfmAuthException('not authorized', 403);
         }
         $hm->assign($id_ticket, $_SESSION['id_user']);
@@ -122,11 +122,11 @@ class HelpdeskController extends CoresecureController
     /**
      * Update ticket info/status/...
      */
-    public function statusAction($id_space, $id_ticket, $status)
+    public function statusAction($idSpace, $id_ticket, $status)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
             throw new PfmAuthException('not authorized', 403);
         }
@@ -135,7 +135,7 @@ class HelpdeskController extends CoresecureController
         if (!$ticket) {
             throw new PfmParamException('ticket not found', 404);
         }
-        if ($ticket['id_space'] != $id_space) {
+        if ($ticket['id_space'] != $idSpace) {
             throw new PfmAuthException('not authorized', 403);
         }
         $hm->setStatus($id_ticket, $status);
@@ -145,20 +145,20 @@ class HelpdeskController extends CoresecureController
     /**
      * reply or add note
      */
-    public function messageAction($id_space, $id_ticket)
+    public function messageAction($idSpace, $id_ticket)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if (!$ticket && $id_ticket > 0) {
             throw new PfmParamException('ticket not found', 404);
         }
-        if ($id_ticket > 0 && $ticket['id_space'] != $id_space) {
+        if ($id_ticket > 0 && $ticket['id_space'] != $idSpace) {
             throw new PfmAuthException('not authorized', 403);
         }
 
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role) {
             throw new PfmAuthException('not authorized', 403);
         }
@@ -172,7 +172,7 @@ class HelpdeskController extends CoresecureController
             // user not manager not creator of ticket
             throw new PfmAuthException('not authorized', 403);
         }
-        $space = $sm->getSpace($id_space);
+        $space = $sm->getSpace($idSpace);
         $params = $this->request->params();
         $id = 0;
         $isNew = false;
@@ -189,7 +189,7 @@ class HelpdeskController extends CoresecureController
                 if (! $fileNameOK) {
                     throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
                 }
-                $attachId = $c->set(0, $id_space, $name, $role, $module, $_SESSION['id_user']);
+                $attachId = $c->set(0, $idSpace, $name, $role, $module, $_SESSION['id_user']);
                 $file = $c->get($attachId);
                 $attachementFiles[] = $file;
                 $filePath = $c->path($file);
@@ -211,7 +211,7 @@ class HelpdeskController extends CoresecureController
 
             if ($id_ticket == 0) {
                 $isNew = true;
-                $newTicket = $hm->createTicket($id_space, $toAddress[0], $from, $params['subject'], $params['body'], 0, $attachments);
+                $newTicket = $hm->createTicket($idSpace, $toAddress[0], $from, $params['subject'], $params['body'], 0, $attachments);
                 $id_ticket = $newTicket['ticket'];
                 $ticket = $hm->get($id_ticket);
                 $id = $newTicket['message'];
@@ -235,9 +235,9 @@ class HelpdeskController extends CoresecureController
         } else {
             $id = $hm->addNote($id_ticket, $params['body'], $_SESSION['email']);
         }
-        $hm->notify($id_space, $id_ticket, "en", $isNew);
+        $hm->notify($idSpace, $id_ticket, "en", $isNew);
 
-        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($id_space)]]);
+        Events::send(["action" => Events::ACTION_HELPDESK_TICKET, "space" => ["id" => intval($idSpace)]]);
 
 
         $this->render(['data' => ['message' => ['id' => $id], 'ticket' => ['id' => $ticket['id']]]]);
@@ -246,23 +246,23 @@ class HelpdeskController extends CoresecureController
     /**
      * Get messages
      */
-    public function messagesAction($id_space, $id_ticket)
+    public function messagesAction($idSpace, $id_ticket)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $hm = new Helpdesk();
         $ticket = $hm->get($id_ticket);
         if (!$ticket) {
             throw new PfmParamException('ticket not found', 404);
         }
         $ticket['status'] = intval($ticket['status']);
-        if ($ticket['id_space'] != $id_space) {
+        if ($ticket['id_space'] != $idSpace) {
             throw new PfmAuthException('not in space', 403);
         }
         $messages = $hm->getMessages($id_ticket);
         $filter = false;
         $sm = new CoreSpace();
 
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
             $filter = true;
         }
@@ -303,17 +303,17 @@ class HelpdeskController extends CoresecureController
     /**
      * Count unread messages per status (managers only)
      */
-    public function unreadCountAction($id_space)
+    public function unreadCountAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
             $this->render(['data' => ['unread' => []]]);
             return;
         }
         $hm = new Helpdesk();
-        $tickets = $hm->unread($id_space);
+        $tickets = $hm->unread($idSpace);
         $this->render(['data' => ['unread' => $tickets]]);
     }
 
@@ -323,20 +323,20 @@ class HelpdeskController extends CoresecureController
      * If not admin of space, returns only tickets assigned or opened by session user
      * If GET request parameter contains *mine* then returns only tickets created or assigned by current user
      */
-    public function listAction($id_space, $status)
+    public function listAction($idSpace, $status)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
 
         $hm = new Helpdesk();
-        $id_user = 0;
+        $idUser = 0;
         $sm = new CoreSpace();
-        $role = $sm->getUserSpaceRole($id_space, $_SESSION['id_user']);
+        $role = $sm->getUserSpaceRole($idSpace, $_SESSION['id_user']);
         if (!$role || $role < CoreSpace::$MANAGER) {
-            $id_user = $_SESSION['id_user'];
+            $idUser = $_SESSION['id_user'];
         }
 
-        if (!$id_user && isset($_GET['mine'])) {
-            $id_user = $_SESSION['id_user'];
+        if (!$idUser && isset($_GET['mine'])) {
+            $idUser = $_SESSION['id_user'];
         }
 
         $offset = 0;
@@ -350,7 +350,7 @@ class HelpdeskController extends CoresecureController
             $limit = intval($_GET['limit']);
         }
 
-        $tickets = $hm->list($id_space, $status, $id_user, $offset, $limit);
+        $tickets = $hm->list($idSpace, $status, $idUser, $offset, $limit);
 
         $this->render(['data' => ['tickets' => $tickets, 'offset' => $offset, 'limit' => $limit]]);
     }

@@ -22,63 +22,63 @@ class AciiController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get the user list
-        $aciisArray = $this->aciiModel->getBySpace($id_space);
+        $aciisArray = $this->aciiModel->getBySpace($idSpace);
 
         $table = new TableView();
         $table->setTitle("AcII", 3);
-        $table->addLineEditButton("aciiedit/".$id_space."/");
-        $table->addDeleteButton("aciidelete/".$id_space."/", "id", "nom");
+        $table->addLineEditButton("aciiedit/".$idSpace."/");
+        $table->addDeleteButton("aciidelete/".$idSpace."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($aciisArray, $headers);
 
         return $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $acii = $this->aciiModel->get($id_space, $id);
+        $acii = $this->aciiModel->get($idSpace, $id);
 
         $form = new Form($this->request, "aciieditform");
         $form->setTitle("Modifier AcII");
         $form->addText("nom", "nom", true, $acii["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "aciiedit/".$id_space.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "aciiedit/".$idSpace.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->aciiModel->add($name, $id_space);
+                $id = $this->aciiModel->add($name, $idSpace);
             } else {
-                $this->aciiModel->edit($id, $name, $id_space);
+                $this->aciiModel->edit($id, $name, $idSpace);
             }
 
-            return $this->redirect("acii/".$id_space, [], ['acii' => ['id' => $id]]);
+            return $this->redirect("acii/".$idSpace, [], ['acii' => ['id' => $id]]);
         }
 
         return $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get source info
-        $this->aciiModel->delete($id_space, $id);
+        $this->aciiModel->delete($idSpace, $id);
 
-        $this->redirect("acii/" . $id_space);
+        $this->redirect("acii/" . $idSpace);
     }
 }

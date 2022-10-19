@@ -81,37 +81,37 @@ class SeProject extends Model
         $this->runRequest($sql3);
     }
 
-    public function setSampleStock($id_space, $id, $samplestocked, $id_cabinet, $cabinetcomment)
+    public function setSampleStock($idSpace, $id, $samplestocked, $id_cabinet, $cabinetcomment)
     {
         $sql = "UPDATE se_project SET samplestocked=?, id_sample_cabinet=?, samplescomment=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($samplestocked, $id_cabinet, $cabinetcomment, $id, $id_space));
+        $this->runRequest($sql, array($samplestocked, $id_cabinet, $cabinetcomment, $id, $idSpace));
     }
 
-    public function sampleReturn($id_space, $id, $samplereturn, $samplereturndate)
+    public function sampleReturn($idSpace, $id, $samplereturn, $samplereturndate)
     {
         $sql = "UPDATE se_project SET samplereturn=?, samplereturndate=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($samplereturn, $samplereturndate, $id, $id_space));
+        $this->runRequest($sql, array($samplereturn, $samplereturndate, $id, $idSpace));
     }
 
-    public function closeProject($id_space, $id, $date_close, $closed_by)
+    public function closeProject($idSpace, $id, $date_close, $closed_by)
     {
         if ($date_close == "") {
             $date_close = null;
         }
         $sql = "UPDATE se_project SET date_close=?, closed_by=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($date_close, $closed_by, $id, $id_space));
+        $this->runRequest($sql, array($date_close, $closed_by, $id, $idSpace));
     }
 
-    public function getRespsPeriod($id_space, $periodStart, $periodEnds)
+    public function getRespsPeriod($idSpace, $periodStart, $periodEnds)
     {
         $sql = "SELECT DISTINCT id_resp "
                 . " FROM se_project "
                 . " WHERE deleted=0 AND id_space=? AND date_open<=? AND (date_close is null OR date_close>=?) ";
-        $req = $this->runRequest($sql, array($id_space, $periodEnds, $periodStart));
+        $req = $this->runRequest($sql, array($idSpace, $periodEnds, $periodStart));
         $data = $req->fetchAll();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($data); $i++) {
-            $clientInfo = $modelClient->get($id_space, $data[$i]["id_resp"]);
+            $clientInfo = $modelClient->get($idSpace, $data[$i]["id_resp"]);
             $data[$i]["name"] = $clientInfo["name"];
             $data[$i]["email"] = $clientInfo["email"];
         }
@@ -129,19 +129,19 @@ class SeProject extends Model
         }
     }
 
-    public function setSampleReturn($id_space, $id, $samplereturn, $samplereturndate)
+    public function setSampleReturn($idSpace, $id, $samplereturn, $samplereturndate)
     {
         if ($samplereturndate == "") {
             $samplereturndate = null;
         }
         $sql = "UPDATE se_project SET samplereturn=?, samplereturndate=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($samplereturn, $samplereturndate, $id, $id_space));
+        $this->runRequest($sql, array($samplereturn, $samplereturndate, $id, $idSpace));
     }
 
-    public function getIdFromName($name, $id_space)
+    public function getIdFromName($name, $idSpace)
     {
         $sql = "SELECT id FROM se_project WHERE name=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($name, $id_space));
+        $req = $this->runRequest($sql, array($name, $idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -149,14 +149,14 @@ class SeProject extends Model
         return 0;
     }
 
-    public function allOpenedProjects($id_space)
+    public function allOpenedProjects($idSpace)
     {
         $sql = "SELECT * FROM se_project WHERE id_space=? AND deleted=0 AND date_close is null ORDER BY date_open ASC;";
-        $projects = $this->runRequest($sql, array($id_space))->fetchAll();
+        $projects = $this->runRequest($sql, array($idSpace))->fetchAll();
         return $projects;
     }
 
-    public function allPeriodProjects($id_space, $periodStart, $periodEnd)
+    public function allPeriodProjects($idSpace, $periodStart, $periodEnd)
     {
         $sql = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND ("
                 . " ( date_open<=? AND date_close>=? AND date_close<=? ) "
@@ -165,7 +165,7 @@ class SeProject extends Model
                 . " OR ( date_open<=? AND date_close>=?) "
                 . " OR date_close is null "
                 . ") ORDER BY date_open ASC;";
-        $projects = $this->runRequest($sql, array($id_space,
+        $projects = $this->runRequest($sql, array($idSpace,
                     $periodStart, $periodStart, $periodEnd,
                     $periodStart, $periodEnd, $periodStart, $periodEnd,
                     $periodStart, $periodEnd, $periodEnd,
@@ -181,24 +181,24 @@ class SeProject extends Model
         return $projects;
     }
 
-    public function allOpenedProjectsByInCharge($id_space, $id_incharge)
+    public function allOpenedProjectsByInCharge($idSpace, $id_incharge)
     {
         $sql = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND in_charge=? AND date_close is null ORDER BY date_open ASC;";
-        $projects = $this->runRequest($sql, array($id_space, $id_incharge))->fetchAll();
+        $projects = $this->runRequest($sql, array($idSpace, $id_incharge))->fetchAll();
         return $projects;
     }
 
-    public function allPeriodProjectsByInCharge($id_space, $id_incharge, $periodStart, $periodEnd)
+    public function allPeriodProjectsByInCharge($idSpace, $id_incharge, $periodStart, $periodEnd)
     {
         $sql = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND in_charge=? AND date_open<=? AND (date_close is null OR date_close>=?) ORDER BY date_open ASC;";
-        $projects = $this->runRequest($sql, array($id_space, $id_incharge, $periodEnd, $periodStart))->fetchAll();
+        $projects = $this->runRequest($sql, array($idSpace, $id_incharge, $periodEnd, $periodStart))->fetchAll();
         return $projects;
     }
 
-    public function deleteEntry($id_space, $id)
+    public function deleteEntry($idSpace, $id)
     {
         $sql = "DELETE FROM se_project_service WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 
     /**
@@ -247,31 +247,31 @@ class SeProject extends Model
         return array();
     }
 
-    public function closedProjectsPeriods($id_space, $periodEnd)
+    public function closedProjectsPeriods($idSpace, $periodEnd)
     {
         $sql = "SELECT date_close FROM se_project WHERE date_close is not null AND id_space=? AND deleted=0 ORDER BY date_close ASC";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
         return $this->extractYears($data, $periodEnd);
     }
 
-    public function closedProjectsYears($id_space)
+    public function closedProjectsYears($idSpace)
     {
         $sql = "SELECT date_close FROM se_project WHERE deleted=0 AND date_close is not null AND id_space=? ORDER BY date_open ASC";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
         return $this->extractYears($data);
     }
 
-    public function allProjectsYears($id_space)
+    public function allProjectsYears($idSpace)
     {
         $sql = "SELECT date_open from se_project WHERE deleted=0 AND id_space=? ORDER BY date_open ASC";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
         return $this->extractYears($data);
     }
 
-    public function getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_resp)
+    public function getProjectsOpenedPeriodResp($idSpace, $beginPeriod, $endPeriod, $id_resp)
     {
         $sql = "SELECT id FROM se_project WHERE id_space=? AND deleted=0 AND date_close is null AND date_open>=? AND date_open<? AND id_resp=?";
-        $req = $this->runRequest($sql, array($id_space, $beginPeriod, $endPeriod, $id_resp))->fetchAll();
+        $req = $this->runRequest($sql, array($idSpace, $beginPeriod, $endPeriod, $id_resp))->fetchAll();
         $data = array();
         foreach ($req as $d) {
             $data[] = $d["id"];
@@ -279,42 +279,42 @@ class SeProject extends Model
         return $data;
     }
 
-    public function getServicesInvoice($id_space, $id_invoice)
+    public function getServicesInvoice($idSpace, $id_invoice)
     {
         $sql = "SELECT id FROM se_project_service WHERE id_invoice=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_invoice, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_invoice, $idSpace))->fetchAll();
     }
 
-    public function setServiceInvoice($id_space, $id, $id_invoice)
+    public function setServiceInvoice($idSpace, $id, $id_invoice)
     {
         $sql = "UPDATE se_project_service SET id_invoice=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_invoice, $id, $id_space));
+        $this->runRequest($sql, array($id_invoice, $id, $idSpace));
     }
 
-    public function getResp($id_space, $id_project)
+    public function getResp($idSpace, $id_project)
     {
         $sql = "SELECT id_resp FROM se_project WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_project, $id_space))->fetch();
+        $req = $this->runRequest($sql, array($id_project, $idSpace))->fetch();
         return $req[0];
     }
 
-    public function getName($id_space, $id_project)
+    public function getName($idSpace, $id_project)
     {
         $sql = "SELECT name FROM se_project WHERE id=? AND id_space=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($id_project, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id_project, $idSpace))->fetch();
         return $tmp ? $tmp[0] : null;
     }
 
-    public function getNoInvoicesServices($id_space, $id_project)
+    public function getNoInvoicesServices($idSpace, $id_project)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_invoice=0 AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_project, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_project, $idSpace))->fetchAll();
     }
 
-    public function getOpenedProjectForList($id_space)
+    public function getOpenedProjectForList($idSpace)
     {
         $sql = "SELECT * FROM se_project WHERE date_close is null AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space))->fetchAll();
+        $req = $this->runRequest($sql, array($idSpace))->fetchAll();
 
         $ids = array();
         $names = array();
@@ -324,30 +324,30 @@ class SeProject extends Model
         $modelClient = new ClClient();
         foreach ($req as $r) {
             $ids[] = $r["id"];
-            $names[] = $modelClient->getName($id_space, $r['id_resp']) . ": " . $r["name"];
+            $names[] = $modelClient->getName($idSpace, $r['id_resp']) . ": " . $r["name"];
         }
         return array("ids" => $ids, "names" => $names);
     }
 
-    public function setOrigin($id_space, $id, $id_origin)
+    public function setOrigin($idSpace, $id, $id_origin)
     {
         $sql = "UPDATE se_project SET id_origin=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_origin, $id, $id_space));
+        $this->runRequest($sql, array($id_origin, $id, $idSpace));
     }
 
-    public function setClosedBy($id_space, $id, $idClose)
+    public function setClosedBy($idSpace, $id, $idClose)
     {
         $sql = "UPDATE se_project SET closed_by=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($idClose, $id, $id_space));
+        $this->runRequest($sql, array($idClose, $id, $idSpace));
     }
 
-    public function setInCharge($id_space, $id, $id_visa)
+    public function setInCharge($idSpace, $id, $id_visa)
     {
         $sql = "UPDATE se_project SET in_charge=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_visa, $id, $id_space));
+        $this->runRequest($sql, array($id_visa, $id, $idSpace));
     }
 
-    public function setEntry($id_space, $id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
+    public function setEntry($idSpace, $id_entry, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
     {
         if ($date == "") {
             $date = null;
@@ -355,45 +355,45 @@ class SeProject extends Model
         if ($id_entry > 0) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>";
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=?, id_project=?, id_service=?, date=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date, $id_entry, $id_space));
+            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date, $id_entry, $idSpace));
             return $id_entry;
         } else {
             //echo "add service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>";
             $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice, id_space) VALUES (?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $id_space));
+            $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $idSpace));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function setService($id_space, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
+    public function setService($idSpace, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
     {
         if ($date == "") {
             $date = null;
         }
-        if ($this->isProjectService($id_space, $id_project, $id_service, $date)) {
+        if ($this->isProjectService($idSpace, $id_project, $id_service, $date)) {
             //echo "update service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>";
             $sql = "UPDATE se_project_service SET quantity=?, comment=?, id_invoice=? WHERE id_project=? AND id_service=? AND date=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date, $id_space));
+            $this->runRequest($sql, array($quantity, $comment, $id_invoice, $id_project, $id_service, $date, $idSpace));
         } else {
             //echo "add service: p:" . $id_project . ", s" . $id_service . ", date:" . $date . "<br/>";
             $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice, id_space) VALUES (?,?,?,?,?,?,?)";
-            $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $id_space));
+            $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $idSpace));
         }
     }
 
-    public function addService($id_space, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
+    public function addService($idSpace, $id_project, $id_service, $date, $quantity, $comment, $id_invoice = 0)
     {
         if ($date == "") {
             $date = null;
         }
         $sql = "INSERT INTO se_project_service (id_project, id_service, date, quantity, comment, id_invoice, id_space) VALUES (?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $id_space));
+        $this->runRequest($sql, array($id_project, $id_service, $date, $quantity, $comment, $id_invoice, $idSpace));
     }
 
-    public function removeUnsetServices($id_space, $id_project, $servicesIds, $servicesDates)
+    public function removeUnsetServices($idSpace, $id_project, $servicesIds, $servicesDates)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_project, $id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($id_project, $idSpace))->fetchAll();
         foreach ($data as $d) {
             $found = false;
             for ($i = 0; $i < count($servicesIds); $i++) {
@@ -405,45 +405,45 @@ class SeProject extends Model
             if (!$found) {
                 //echo "delete service id: " . $d["id_service"] . ", date: " . $d["date"] . "<br/>";
                 $sql = "DELETE FROM se_project_service WHERE id_project=? AND id_service=? AND date=? AND id_space=?";
-                $this->runRequest($sql, array($id_project, $d["id_service"], $d["date"], $id_space));
+                $this->runRequest($sql, array($id_project, $d["id_service"], $d["date"], $idSpace));
             }
         }
     }
 
-    public function isProjectService($id_space, $id_project, $id_service, $date)
+    public function isProjectService($idSpace, $id_project, $id_service, $date)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_service=? AND date=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_project, $id_service, $date, $id_space));
+        $req = $this->runRequest($sql, array($id_project, $id_service, $date, $idSpace));
         if ($req->rowCount() >= 1) {
             return true;
         }
         return false;
     }
 
-    public function getProjectServicesDefault($id_space, $id_project)
+    public function getProjectServicesDefault($idSpace, $id_project)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_space=? AND deleted=0 ORDER BY date ASC";
-        return $this->runRequest($sql, array($id_project, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_project, $idSpace))->fetchAll();
     }
 
-    public function getProjectServicesBase($id_space, $id_project)
+    public function getProjectServicesBase($idSpace, $id_project)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_project, $id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($id_project, $idSpace))->fetchAll();
         return $data;
     }
 
-    public function getAllServices($id_space)
+    public function getAllServices($idSpace)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         return $req->fetchAll();
     }
 
-    public function getProjectServices($id_space, $id_project)
+    public function getProjectServices($idSpace, $id_project)
     {
         $sql = "SELECT * FROM se_project_service WHERE id_project=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_project, $id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($id_project, $idSpace))->fetchAll();
         $dates = array();
         $services = array();
         $quantities = array();
@@ -457,18 +457,18 @@ class SeProject extends Model
         return array("services" => $services, "quantities" => $quantities, "dates" => $dates, "comments" => $comments);
     }
 
-    public function getProjectServiceQuantity($id_space, $id_project, $id_service)
+    public function getProjectServiceQuantity($idSpace, $id_project, $id_service)
     {
         $sql = "SELECT quantity FROM se_project_service WHERE id_project=? AND id_service=? AND id_space=? AND deleted=0";
 
-        $req = $this->runRequest($sql, array($id_project, $id_service, $id_space));
+        $req = $this->runRequest($sql, array($id_project, $id_service, $idSpace));
         if ($req->rowCount() == 1) {
             return $req->fetch();
         }
         return 0;
     }
 
-    public function setProject($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit)
+    public function setProject($id, $idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit)
     {
         if ($date_open == "") {
             $date_open = null;
@@ -476,25 +476,25 @@ class SeProject extends Model
         if ($date_close == "") {
             $date_close = null;
         }
-        if ($this->isProject($id_space, $id)) {
-            $this->updateEntry($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit);
+        if ($this->isProject($idSpace, $id)) {
+            $this->updateEntry($id, $idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit);
             return $id;
         } else {
-            return $this->addEntry($id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit);
+            return $this->addEntry($idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit);
         }
     }
 
-    public function isProject($id_space, $id)
+    public function isProject($idSpace, $id)
     {
         $sql = "SELECT * FROM se_project WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function addEntry($id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit)
+    public function addEntry($idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit)
     {
         if ($date_open == "") {
             $date_open = null;
@@ -505,12 +505,12 @@ class SeProject extends Model
         $sql = "INSERT INTO se_project (id_space, name, id_resp, id_user, date_open, date_close, new_team, new_project, time_limit)
 				 VALUES(?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
-            $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit
+            $idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit
         ));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateEntry($id, $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit)
+    public function updateEntry($id, $idSpace, $name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit)
     {
         if ($date_open == "") {
             $date_open = null;
@@ -520,10 +520,10 @@ class SeProject extends Model
         }
         $sql = "update se_project set name=?, id_resp=?, id_user=?, date_open=?, date_close=?, new_team=?, new_project=?, time_limit=?
 		        where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit, $id, $id_space));
+        $this->runRequest($sql, array($name, $id_resp, $idUser, $date_open, $date_close, $new_team, $new_project, $time_limit, $id, $idSpace));
     }
 
-    public function entries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id')
+    public function entries($idSpace, $yearBegin = "", $yearEnd = "", $sortentry = 'id')
     {
         $sql = "SELECT * FROM se_project WHERE id_space=? AND deleted=0 ";
         if ($yearBegin != "" && $yearEnd != "") {
@@ -531,7 +531,7 @@ class SeProject extends Model
         }
         $sql .= " ORDER BY " . $sortentry . " ASC;";
 
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
 
@@ -542,10 +542,10 @@ class SeProject extends Model
         return $entries;
     }
 
-    public function openedEntries($id_space, $sortentry = 'id')
+    public function openedEntries($idSpace, $sortentry = 'id')
     {
         $sql = "select * from se_project WHERE date_close is null AND deleted=0 AND id_space=? order by " . $sortentry . " ASC;";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
 
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
@@ -557,7 +557,7 @@ class SeProject extends Model
         return $entries;
     }
 
-    public function closedEntries($id_space, $yearBegin = "", $yearEnd = "", $sortentry = 'id')
+    public function closedEntries($idSpace, $yearBegin = "", $yearEnd = "", $sortentry = 'id')
     {
         $sql = "SELECT * FROM se_project WHERE date_close is not null AND id_space=? AND deleted=0 ";
         if ($yearBegin != "" && $yearEnd != "") {
@@ -567,7 +567,7 @@ class SeProject extends Model
         //echo "yearBegin = " . $yearBegin . "<br/>";
         //echo "yearEnd = " . $yearEnd . "<br/>";
         //echo "sql = " . $sql . "<br/>";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
 
         $entries = $req->fetchAll();
         $modelUser = new CoreUser();
@@ -596,44 +596,44 @@ class SeProject extends Model
         return $entry;
     }
 
-    public function getProjectEntry($id_space, $id)
+    public function getProjectEntry($idSpace, $id)
     {
         $sql = "SELECT * from se_project_service where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         $entry = $req->fetch();
 
         return $entry;
     }
 
-    public function getEntry($id_space, $id)
+    public function getEntry($idSpace, $id)
     {
         $sql = "SELECT * from se_project where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         $entry = $req->fetch();
 
         return $entry;
     }
 
-    public function setEntryClosed($id_space, $id, $date_close)
+    public function setEntryClosed($idSpace, $id, $date_close)
     {
         if ($date_close == "") {
             $date_close = null;
         }
         $sql = "UPDATE se_project set date_close=?
 		        where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($date_close, $id, $id_space));
+        $this->runRequest($sql, array($date_close, $id, $idSpace));
     }
 
-    public function getInfoFromInvoice($id_invoice, $id_space)
+    public function getInfoFromInvoice($id_invoice, $idSpace)
     {
         $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
-        $invoiceItem = $this->runRequest($sql, array($id_invoice, $id_space))->fetch();
+        $invoiceItem = $this->runRequest($sql, array($id_invoice, $idSpace))->fetch();
         $details = explode(";", $invoiceItem["details"]);
         $proj = explode("=", $details[count($details) - 2]);
         $projUrl = explode("/", $proj[1]);
         $projID = $projUrl[2];
         $sqlp = "SELECT * FROM se_project WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sqlp, array($projID, $id_space));
+        $req = $this->runRequest($sqlp, array($projID, $idSpace));
         if ($req->rowCount() > 0) {
             $info = $req->fetch();
         } else {
@@ -645,9 +645,9 @@ class SeProject extends Model
         if ($info['closed_by']) {
             $modelUser = new CoreUser();
             $sql2 = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
-            $id_user = $this->runRequest($sql2, array($info['closed_by'], $id_space))->fetch();
-            $info['closed_by'] = $modelUser->getUserFullName($id_user[0]);
-            $info['closed_by_in'] = $modelUser->getUserInitials($id_user[0]);
+            $idUser = $this->runRequest($sql2, array($info['closed_by'], $idSpace))->fetch();
+            $info['closed_by'] = $modelUser->getUserFullName($idUser[0]);
+            $info['closed_by_in'] = $modelUser->getUserInitials($idUser[0]);
         } else {
             $info['closed_by'] = "";
             $info['closed_by_in'] = "";
@@ -655,37 +655,37 @@ class SeProject extends Model
         return $info;
     }
 
-    public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $id_space)
+    public function getProjectsOpenedPeriod($beginPeriod, $endPeriod, $idSpace)
     {
         $sql = "SELECT * FROM se_project WHERE date_open>=? AND date_open<=? AND id_space=? AND deleted=0";
-        $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod, $id_space))->fetchAll();
+        $projects = $this->runRequest($sql, array($beginPeriod, $endPeriod, $idSpace))->fetchAll();
         $modelUser = new CoreUser();
         $modelSampleCabinet = new StockShelf();
         foreach ($projects as $project) {
             $sql = "SELECT id_user FROM se_visa WHERE id=? AND id_space=? AND deleted=0";
-            $requestResult = $this->runRequest($sql, array($project['closed_by'], $id_space))->fetchAll();
-            $id_user = empty($requestResult) ?: $requestResult[0];
-            $project['closed_by'] = !empty($requestResult) ? $modelUser->getUserFullName($id_user[0]) : "";
-            $project['closed_by_in'] = !empty($requestResult) ? $modelUser->getUserInitials($id_user[0]) : "";
-            $project["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $project["id_sample_cabinet"]);
+            $requestResult = $this->runRequest($sql, array($project['closed_by'], $idSpace))->fetchAll();
+            $idUser = empty($requestResult) ?: $requestResult[0];
+            $project['closed_by'] = !empty($requestResult) ? $modelUser->getUserFullName($idUser[0]) : "";
+            $project['closed_by_in'] = !empty($requestResult) ? $modelUser->getUserInitials($idUser[0]) : "";
+            $project["sample_cabinet"] = $modelSampleCabinet->getFullName($idSpace, $project["id_sample_cabinet"]);
         }
         return $projects;
     }
 
-    public function getPeriodeServicesBalances($id_space, $beginPeriod, $endPeriod)
+    public function getPeriodeServicesBalances($idSpace, $beginPeriod, $endPeriod)
     {
         $sql = "select * from se_project where id_space=? AND deleted=0 AND (date_close>=? OR date_close is null)";
-        $req = $this->runRequest($sql, array($id_space, $beginPeriod));
+        $req = $this->runRequest($sql, array($idSpace, $beginPeriod));
         $projects = $req->fetchAll();
 
 
         $modelClient = new ClClient();
         $modelServices = new SeService();
-        $items = $modelServices->getBySpace($id_space);
+        $items = $modelServices->getBySpace($idSpace);
         //print_r($items);
 
         for ($i = 0; $i < count($projects); $i++) {
-            $projectEntries = $this->getPeriodProjectEntries($id_space, $projects[$i]["id"], $beginPeriod, $endPeriod);
+            $projectEntries = $this->getPeriodProjectEntries($idSpace, $projects[$i]["id"], $beginPeriod, $endPeriod);
 
 
             // get active items
@@ -693,24 +693,24 @@ class SeProject extends Model
             $itemsSummary = $this->getProjectItemsSymmary($projectEntries, $activeItems);
 
             $projects[$i]["entries"] = $itemsSummary;
-            $LABpricingid = $modelClient->getPricingID($id_space, $projects[$i]["id_resp"]);
-            $projects[$i]["total"] = $this->calculateProjectTotal($id_space, $itemsSummary, $LABpricingid);
+            $LABpricingid = $modelClient->getPricingID($idSpace, $projects[$i]["id_resp"]);
+            $projects[$i]["total"] = $this->calculateProjectTotal($idSpace, $itemsSummary, $LABpricingid);
         }
 
         return array("items" => $items, "projects" => $projects);
     }
 
-    public function getPeriodeBilledServicesBalances($id_space, $beginPeriod, $endPeriod)
+    public function getPeriodeBilledServicesBalances($idSpace, $beginPeriod, $endPeriod)
     {
         // get the projects
         $sql1 = "select * from se_project where deleted=0 AND id IN (SELECT DISTINCT id_project FROM se_project_service WHERE deleted=0 AND id_invoice IN(SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=? AND id_space=? AND deleted=0))";
-        $req1 = $this->runRequest($sql1, array($beginPeriod, $endPeriod, $id_space));
+        $req1 = $this->runRequest($sql1, array($beginPeriod, $endPeriod, $idSpace));
         $projects = $req1->fetchAll();
 
         $items = array();
         $modelClient = new ClClient();
         for ($i = 0; $i < count($projects); $i++) {
-            $projectEntries = $this->getPeriodBilledProjectEntries($id_space, $projects[$i]["id"], $beginPeriod, $endPeriod);
+            $projectEntries = $this->getPeriodBilledProjectEntries($idSpace, $projects[$i]["id"], $beginPeriod, $endPeriod);
 
             // get active items
             $activeItems = $this->getProjectItems($projectEntries);
@@ -725,35 +725,35 @@ class SeProject extends Model
                 }
             }
 
-            $LABpricingid = $modelClient->getPricingID($id_space, $projects[$i]["id_resp"]);
-            $projects[$i]["total"] = $this->calculateProjectTotal($id_space, $itemsSummary, $LABpricingid);
+            $LABpricingid = $modelClient->getPricingID($idSpace, $projects[$i]["id_resp"]);
+            $projects[$i]["total"] = $this->calculateProjectTotal($idSpace, $itemsSummary, $LABpricingid);
         }
 
         return array("items" => $items, "projects" => $projects);
     }
 
-    protected function getPeriodBilledProjectEntries($id_space, $id_proj, $beginPeriod, $endPeriod)
+    protected function getPeriodBilledProjectEntries($idSpace, $id_proj, $beginPeriod, $endPeriod)
     {
         $sql = "select * from se_project_service where id_project=? AND deleted=0 AND id_invoice IN (SELECT id FROM in_invoice WHERE date_generated>=? AND date_generated<=? AND module='services' AND deleted=0 and id_space=?)";
         $req = $this->runRequest($sql, array(
-            $id_proj, $beginPeriod, $endPeriod, $id_space
+            $id_proj, $beginPeriod, $endPeriod, $idSpace
         ));
         $entries = $req->fetchAll();
 
         $modelBill = new InInvoice();
         for ($i = 0; $i < count($entries); $i++) {
             if ($entries[$i]["id_invoice"] > 0) {
-                $entries[$i]["invoice"] = $modelBill->getInvoiceNumber($id_space, $entries[$i]["id_invoice"]);
+                $entries[$i]["invoice"] = $modelBill->getInvoiceNumber($idSpace, $entries[$i]["id_invoice"]);
             }
         }
         return $entries;
     }
 
-    public function getPeriodProjectEntries($id_space, $id_proj, $beginPeriod, $endPeriod)
+    public function getPeriodProjectEntries($idSpace, $id_proj, $beginPeriod, $endPeriod)
     {
         $sql = "select * from se_project_service where id_project=? AND date>=? AND date<=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array(
-            $id_proj, $beginPeriod, $endPeriod, $id_space
+            $id_proj, $beginPeriod, $endPeriod, $idSpace
         ));
         $entries = $req->fetchAll();
 
@@ -761,7 +761,7 @@ class SeProject extends Model
         for ($i = 0; $i < count($entries); $i++) {
             //print_r($entries[$i]);
             if ($entries[$i]["id_invoice"] > 0) {
-                $entries[$i]["invoice"] = $modelBill->getInvoiceNumber($id_space, $entries[$i]["id_invoice"]);
+                $entries[$i]["invoice"] = $modelBill->getInvoiceNumber($idSpace, $entries[$i]["id_invoice"]);
             }
         }
 
@@ -808,13 +808,13 @@ class SeProject extends Model
         return $activeItemsSummary;
     }
 
-    protected function calculateProjectTotal($id_space, $activeItems, $LABpricingid)
+    protected function calculateProjectTotal($idSpace, $activeItems, $LABpricingid)
     {
         $totalHT = 0;
         $itemPricing = new SePrice();
         foreach ($activeItems as $item) {
             if ($item["pos"] > 0) {
-                $unitaryPrice = $itemPricing->getPrice($id_space, $item["id"], $LABpricingid);
+                $unitaryPrice = $itemPricing->getPrice($idSpace, $item["id"], $LABpricingid);
                 //print_r($unitaryPrice);
                 $totalHT += (float) $item["sum"] * (float) $unitaryPrice;
             }
@@ -822,20 +822,20 @@ class SeProject extends Model
         return $totalHT;
     }
 
-    public function getReturnedSamples($id_space)
+    public function getReturnedSamples($idSpace)
     {
         $sql = "SELECT * FROM se_project WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelSampleCabinet = new StockShelf();
         for ($i = 0; $i < count($data); $i++) {
-            $clientInfo = $modelClient->get($id_space, $data[$i]['id_resp']);
+            $clientInfo = $modelClient->get($idSpace, $data[$i]['id_resp']);
 
             $data[$i]['resp'] = $clientInfo["contact_name"];
             $data[$i]['user'] = $modelUser->getUserFullName($data[$i]['id_user']);
-            $data[$i]['unit'] = $modelClient->getInstitution($id_space, $data[$i]['id_resp']);
-            $data[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $data[$i]["id_sample_cabinet"]);
+            $data[$i]['unit'] = $modelClient->getInstitution($idSpace, $data[$i]['id_resp']);
+            $data[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($idSpace, $data[$i]["id_sample_cabinet"]);
         }
         return $data;
     }
@@ -844,23 +844,23 @@ class SeProject extends Model
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE se_project SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 
      /**
      * Get user future bookings
      */
-    public function getUserProjects($id_space, $id_user): array
+    public function getUserProjects($idSpace, $idUser): array
     {
-        $q = array('id_user' => $id_user);
+        $q = array('id_user' => $idUser);
         $sql = 'SELECT se_project.*, spaces.name as space FROM se_project';
         $sql .= ' INNER JOIN core_spaces AS spaces ON spaces.id = se_project.id_space';
         $sql .= ' WHERE se_project.closed_by = 0 AND se_project.deleted = 0 AND se_project.in_charge IN (SELECT id FROM se_visa WHERE id_user=:id_user)';
-        if ($id_space && intval($id_space) > 0) {
-            $q['id_space'] = $id_space;
+        if ($idSpace && intval($idSpace) > 0) {
+            $q['id_space'] = $idSpace;
             $sql .= ' AND se_project.id_space = :id_space';
         }
         $sql .= ' ORDER BY se_project.date_open DESC';
@@ -871,20 +871,20 @@ class SeProject extends Model
         return [];
     }
 
-    public function closedProjectsByPeriod($id_space, $id_user, $date_from, $date_end)
+    public function closedProjectsByPeriod($idSpace, $idUser, $date_from, $date_end)
     {
         $sql = 'SELECT * FROM se_project WHERE deleted=0 AND date_close is not null AND (date_close>=? AND date_close<=?) AND id_space=? AND id_user=?';
-        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space, $id_user]);
+        $req = $this->runRequest($sql, [$date_from, $date_end, $idSpace, $idUser]);
         if ($req->rowCount() > 0) {
             return $req->fetchAll();
         }
         return [];
     }
 
-    public function getEmailsForClosedProjectsByPeriod($id_space, $date_from, $date_end)
+    public function getEmailsForClosedProjectsByPeriod($idSpace, $date_from, $date_end)
     {
         $sql = 'SELECT DISTINCT core_users.email AS email FROM core_users INNER JOIN se_project on se_project.id_user=core_users.id WHERE se_project.deleted=0 AND se_project.date_close is not null AND (se_project.date_close>=? AND se_project.date_close<=?) AND se_project.id_space=?';
-        $req = $this->runRequest($sql, [$date_from, $date_end, $id_space]);
+        $req = $this->runRequest($sql, [$date_from, $date_end, $idSpace]);
         if ($req->rowCount() > 0) {
             return $req->fetchAll();
         }
@@ -892,53 +892,53 @@ class SeProject extends Model
     }
     ///// SE_PROJECT_USER METHODS /////
 
-    public function getProjectUsers($id_space, $id_project)
+    public function getProjectUsers($idSpace, $id_project)
     {
         $sql = "SELECT * FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_space, $id_project));
+        $req = $this->runRequest($sql, array($idSpace, $id_project));
         return $req->fetchAll();
     }
 
-    public function getProjectUsersIds($id_space, $id_project)
+    public function getProjectUsersIds($idSpace, $id_project)
     {
         $sql = "SELECT id_user FROM se_project_user WHERE id_space=? AND id_project=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_space, $id_project));
+        $req = $this->runRequest($sql, array($idSpace, $id_project));
         return $req->fetchAll();
     }
 
-    public function setProjectUser($id_space, $id_user, $id_project)
+    public function setProjectUser($idSpace, $idUser, $id_project)
     {
-        if (!$this->isProjectUser($id_space, $id_user, $id_project)) {
+        if (!$this->isProjectUser($idSpace, $idUser, $id_project)) {
             $sql = "INSERT INTO se_project_user (id_space, id_user, id_project) VALUES (?, ?, ?)";
-            $this->runRequest($sql, array($id_space, $id_user, $id_project));
+            $this->runRequest($sql, array($idSpace, $idUser, $id_project));
             return $this->getDatabase()->lastInsertId();
         } else {
             return null;
         }
     }
 
-    public function isProjectUser($id_space, $id_user, $id_project)
+    public function isProjectUser($idSpace, $idUser, $id_project)
     {
         $sql = "SELECT * FROM se_project_user WHERE id_user=? AND id_project=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_user, $id_project, $id_space));
+        $req = $this->runRequest($sql, array($idUser, $id_project, $idSpace));
         if ($req->rowCount() >= 1) {
             return true;
         }
         return false;
     }
 
-    public function deleteProjectUser($id_space, $id_user, $id_project)
+    public function deleteProjectUser($idSpace, $idUser, $id_project)
     {
         $sql = "UPDATE se_project_user SET deleted=1,deleted_at=NOW() WHERE id_user=? AND id_project=? AND id_space=?";
-        $this->runRequest($sql, array($id_user, $id_project, $id_space));
+        $this->runRequest($sql, array($idUser, $id_project, $idSpace));
     }
 
-    public function deleteAllProjectUsers($id_space, $id_user)
+    public function deleteAllProjectUsers($idSpace, $idUser)
     {
-        $project_users = $this->getProjectUsers($id_space, $id_user);
+        $project_users = $this->getProjectUsers($idSpace, $idUser);
         if (!empty($project_users)) {
             foreach ($project_users as $project_user) {
-                $this->deleteProjectUser($id_space, $id_user, $project_user['id']);
+                $this->deleteProjectUser($idSpace, $idUser, $project_user['id']);
             }
         }
     }

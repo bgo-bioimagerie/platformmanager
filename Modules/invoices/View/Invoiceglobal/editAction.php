@@ -13,7 +13,7 @@
     
     <h3><?php echo InvoicesTranslator::Edit_invoice($lang) ?> : <?php echo $invoice["number"] ?> </h3>
 
-    <h4><a href="invoices/<?php echo $id_space ?>/<?php echo $invoice['id'] ?>/details">Details</a></h4>
+    <h4><a href="invoices/<?php echo $idSpace ?>/<?php echo $invoice['id'] ?>/details">Details</a></h4>
 
     <form class="form-horizontal">
         <div id="invoiceform" class="col-12">
@@ -48,8 +48,8 @@
         <div class="col-12">
             <div class="col-12 text-right">
                 <button id="invoicevalidate" class="btn btn-primary"><?php echo CoreTranslator::Save($lang) ?></button>
-                <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/0" class="btn btn-danger"><?php echo InvoicesTranslator::PDF($lang) ?></a>
-                <a href="invoiceglobalpdf/<?php echo $id_space ?>/<?php echo $invoice["id"] ?>/1" class="btn btn-danger"><?php echo InvoicesTranslator::PDFDetails($lang) ?></a>
+                <a href="invoiceglobalpdf/<?php echo $idSpace ?>/<?php echo $invoice["id"] ?>/0" class="btn btn-danger"><?php echo InvoicesTranslator::PDF($lang) ?></a>
+                <a href="invoiceglobalpdf/<?php echo $idSpace ?>/<?php echo $invoice["id"] ?>/1" class="btn btn-danger"><?php echo InvoicesTranslator::PDFDetails($lang) ?></a>
             </div>
         </div> 
     </form>

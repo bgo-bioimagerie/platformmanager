@@ -38,7 +38,7 @@
                         <td><span v-if="!doc.folder">{{doc.user}}</span></td>
                         <td><?php if ($context['role'] > CoreSpace::$USER) { ?>
                             <div v-if="!doc.folder">
-                                <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + doc.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
+                                <a v-bind:href="'documentsedit/<?php echo $idSpace ?>/' + doc.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                 <button v-on:click="confirmDelete(doc)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
                                 <button v-on:click="copyLink(doc)" type="button" class="btn btn-sm">Copy link</button>
                             </div>
@@ -63,7 +63,7 @@
                             <td>{{match.title}}</td>
                             <td><?php if ($context['role'] > CoreSpace::$USER) { ?>
                                 <div>
-                                    <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + match.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
+                                    <a v-bind:href="'documentsedit/<?php echo $idSpace ?>/' + match.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                     <button v-on:click="confirmDelete(match)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
                                 </div>
                                 <?php } ?>
@@ -111,7 +111,7 @@ Vue.createApp({
     },
     methods: {
         copyLink(doc) {
-            let link = `<?php echo Configuration::get('public_url') ?>/documentsopen/<?php echo $id_space?>/${doc.id}`;
+            let link = `<?php echo Configuration::get('public_url') ?>/documentsopen/<?php echo $idSpace?>/${doc.id}`;
             navigator.clipboard.writeText(link);
         },
         findDocs() {
@@ -131,15 +131,15 @@ Vue.createApp({
             this.matches = found;
         },
         create() {
-            window.location.href = 'documentsedit/<?php echo $id_space ?>/0/?dir='+this.path.join('/')
+            window.location.href = 'documentsedit/<?php echo $idSpace ?>/0/?dir='+this.path.join('/')
         },
         confirmDelete(doc) {
             if (confirm(`Delete ${doc.display} ?`)) {
-                window.location.href = 'documentsdelete/<?php echo $id_space ?>/' + doc.id;
+                window.location.href = 'documentsdelete/<?php echo $idSpace ?>/' + doc.id;
             }
         },
         download(id) {
-            window.open(`documentsopen/<?php echo $id_space?>/${id}`)
+            window.open(`documentsopen/<?php echo $idSpace?>/${id}`)
         },
         up() {
             if(this.level<1) {

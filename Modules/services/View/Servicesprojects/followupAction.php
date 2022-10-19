@@ -18,8 +18,8 @@
     <?php echo $tableHtml ?>
     
     <div class="col-12 text-right">
-        <a class="btn btn-primary" href="servicesprojectexport/<?php echo $id_space ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::ExportCsv($lang) ?> </a>
-        <a class="btn btn-primary" href="servicesinvoiceprojectquery/<?php echo $id_space ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::InvoiceIt($lang) ?> </a>
+        <a class="btn btn-primary" href="servicesprojectexport/<?php echo $idSpace ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::ExportCsv($lang) ?> </a>
+        <a class="btn btn-primary" href="servicesinvoiceprojectquery/<?php echo $idSpace ?>/<?php echo $id_project ?>" > <?php echo ServicesTranslator::InvoiceIt($lang) ?> </a>
     </div>
 </div>
 
@@ -41,7 +41,7 @@
         <script type="module">
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
-            let spaceId = <?php echo $id_space?>;
+            let spaceId = <?php echo $idSpace?>;
             let sourceId = "formserviceid";
             let targets = [
                 {
@@ -61,7 +61,7 @@
 
     function editentry(id) {
         var arrayid = id.split("_");
-        showEditEntryForm(<?php echo $id_space ?>, arrayid[1]);
+        showEditEntryForm(<?php echo $idSpace ?>, arrayid[1]);
     }
 
     function showEditEntryForm(id_space, id) {

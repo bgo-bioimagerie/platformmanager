@@ -396,35 +396,35 @@ abstract class Model
         $this->runRequest($sql);
     }
 
-    public function admGetBy($key, $value, $id_space=0)
+    public function admGetBy($key, $value, $idSpace=0)
     {
         $sql = "SELECT * from $this->tableName WHERE $key=?";
         $params = array($value);
-        if ($id_space) {
+        if ($idSpace) {
             $sql .= " AND id_space=?";
-            $params[] = $id_space;
+            $params[] = $idSpace;
         }
         return $this->runRequest($sql, $params)->fetch();
     }
 
-    public function admGetAll($id_space=0)
+    public function admGetAll($idSpace=0)
     {
         $sql = "SELECT * from $this->tableName";
         $params = array();
-        if ($id_space) {
+        if ($idSpace) {
             $sql .= " WHERE id_space=?";
-            $params = [$id_space];
+            $params = [$idSpace];
         }
         return $this->runRequest($sql, $params)->fetchAll();
     }
 
-    public function admCount($id_space=0)
+    public function admCount($idSpace=0)
     {
         $sql = "SELECT count(*) as total from $this->tableName where deleted=0";
         $params = array();
-        if ($id_space) {
+        if ($idSpace) {
             $sql .= " AND id_space=?";
-            $params = [$id_space];
+            $params = [$idSpace];
         }
         return $this->runRequest($sql, $params)->fetch();
     }
@@ -490,18 +490,18 @@ abstract class Model
     /**
      * Load an object from db based on its id, returns false if not found
      *
-     * @param int $id_space optional control on id_space
+     * @param int $idSpace optional control on id_space
      */
-    public function from(int $id_space=0): int
+    public function from(int $idSpace=0): int
     {
         if (!$this->tableName) {
             throw new PfmDbException('No table name defined');
         }
         $sql = "SELECT * FROM ".$this->tableName." WHERE id=?";
         $params = array($this->id);
-        if ($id_space) {
+        if ($idSpace) {
             $sql .= " AND id_space=?";
-            $params[] = $id_space;
+            $params[] = $idSpace;
         }
         $res = $this->runRequest($sql, $params);
         if ($res->rowCount() == 0) {
@@ -528,9 +528,9 @@ abstract class Model
     /**
      * Create/update object in db
      *
-     * @param int $id_space optional control on id_space
+     * @param int $idSpace optional control on id_space
      */
-    public function save(int $id_space=0)
+    public function save(int $idSpace=0)
     {
         if (!$this->tableName) {
             throw new PfmDbException('No table name defined');
@@ -559,9 +559,9 @@ abstract class Model
             }
             $sql = "UPDATE ".$this->tableName." SET ".implode(',', $update)." WHERE id=?";
             $values[] = $this->id;
-            if ($id_space) {
+            if ($idSpace) {
                 $sql .= " AND id_space=?";
-                $values[] = $id_space;
+                $values[] = $idSpace;
             }
             $this->runRequest($sql, $values);
         } else {

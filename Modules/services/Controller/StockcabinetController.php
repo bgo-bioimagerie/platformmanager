@@ -36,19 +36,19 @@ class StockcabinetController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         // get the user list
-        $unitsArray = $this->model->getAll($id_space);
+        $unitsArray = $this->model->getAll($idSpace);
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Cabinets($lang), 3);
-        $table->addLineEditButton("stockcabinetedit/" . $id_space);
-        $table->addDeleteButton("stockcabinetdelete/" . $id_space);
+        $table->addLineEditButton("stockcabinetedit/" . $idSpace);
+        $table->addDeleteButton("stockcabinetdelete/" . $idSpace);
         $tableHtml = $table->view($unitsArray, array(
             "room_number" => ServicesTranslator::RoomNumber($lang),
             "name" => ServicesTranslator::Cabinet($lang),
@@ -56,7 +56,7 @@ class StockcabinetController extends ServicesController
         ));
 
         $this->render(array(
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'lang' => $lang,
             'tableHtml' => $tableHtml
         ));
@@ -65,14 +65,14 @@ class StockcabinetController extends ServicesController
     /**
      * Edit an unit form
      */
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
 
         // get belonging info
         $unit = array("id" => 0, "name" => "", "room_number" => "");
         if ($id > 0) {
-            $unit = $this->model->getOne($id_space, $id);
+            $unit = $this->model->getOne($idSpace, $id);
         }
 
         // lang
@@ -86,19 +86,19 @@ class StockcabinetController extends ServicesController
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addText("room_number", ServicesTranslator::RoomNumber($lang), false, $unit["room_number"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "stockcabinetedit/" . $id_space . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "stockcabinets/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "stockcabinetedit/" . $idSpace . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "stockcabinets/" . $idSpace);
 
         if ($form->check()) {
             // run the database query
-            $cab_id = $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number"));
-            return $this->redirect("stockcabinets/" . $id_space, [], ['cabinet' => ['id' => $cab_id]]);
+            $cab_id = $this->model->set($idSpace, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number"));
+            return $this->redirect("stockcabinets/" . $idSpace, [], ['cabinet' => ['id' => $cab_id]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
             return $this->render(array(
-                'id_space' => $id_space,
+                'id_space' => $idSpace,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'data' => ['cabinet' => $unit]
@@ -109,11 +109,11 @@ class StockcabinetController extends ServicesController
     /**
      * Remove an unit query to database
      */
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
 
-        $this->model->delete($id_space, $id);
-        $this->redirect("stockcabinets/" . $id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("stockcabinets/" . $idSpace);
     }
 }

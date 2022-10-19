@@ -43,19 +43,19 @@ class UseraccountController extends CoresecureController
     public function indexAction()
     {
         $lang = $this->getLanguage();
-        $id_user =  $_SESSION["id_user"];
+        $idUser =  $_SESSION["id_user"];
 
 
         // Query to the database
         $modelUsersInfo = new UsersInfo();
-        $userInfo = $modelUsersInfo->get($id_user);
+        $userInfo = $modelUsersInfo->get($idUser);
 
         $modelCoreUser = new CoreUser();
-        $userCore = $modelCoreUser->getUser($id_user);
+        $userCore = $modelCoreUser->getUser($idUser);
 
         $form = new Form($this->request, "usermyaccountedit");
         $form->setTitle(UsersTranslator::Informations($lang));
-        $form->addHidden("id", $id_user);
+        $form->addHidden("id", $idUser);
         $form->addText("firstname", CoreTranslator::Firstname($lang), true, $userCore["firstname"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $userCore["name"]);
         $form->addEmail("email", CoreTranslator::Email($lang), true, $userCore["email"], true);
@@ -120,24 +120,24 @@ class UseraccountController extends CoresecureController
 
         if ($form->check()) {
             $modelCoreUser->editBaseInfo(
-                $id_user,
+                $idUser,
                 $form->getParameter("name"),
                 $form->getParameter("firstname"),
                 $form->getParameter("email")
             );
-            $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
-            $modelUsersInfo->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
-            $modelUsersInfo->setBio($id_user, $form->getParameter("bio"));
+            $modelCoreUser->setPhone($idUser, $form->getParameter("phone"));
+            $modelUsersInfo->set($idUser, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
+            $modelUsersInfo->setBio($idUser, $form->getParameter("bio"));
 
             // upload avatar
             $target_dir = "data/users/avatar/";
             if ($_FILES["avatar"]["name"] != "") {
                 $ext = pathinfo($_FILES["avatar"]["name"], PATHINFO_EXTENSION);
 
-                $url = $id_user . "." . $ext;
+                $url = $idUser . "." . $ext;
                 FileUpload::uploadFile($target_dir, "avatar", $url);
 
-                $modelUsersInfo->setAvatar($id_user, $target_dir . $url);
+                $modelUsersInfo->setAvatar($idUser, $target_dir . $url);
             }
 
             $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);

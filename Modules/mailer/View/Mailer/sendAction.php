@@ -15,7 +15,7 @@
     </div>
 
     <div class="col-lg-2 col-lg-offset-10">
-        <button type="button" onclick="location.href = 'mailer/<?php echo $id_space ?>'" class="btn btn-outline-dark"><?php echo CoreTranslator::Ok($lang) ?></button>
+        <button type="button" onclick="location.href = 'mailer/<?php echo $idSpace ?>'" class="btn btn-outline-dark"><?php echo CoreTranslator::Ok($lang) ?></button>
     </div>
 </div>
 

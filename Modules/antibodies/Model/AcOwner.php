@@ -36,32 +36,32 @@ class AcOwner extends Model
         $this->addColumn("ac_j_user_anticorps", "id_space", "INT(11)", 0);
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM ac_j_user_anticorps WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function setOwner($id_space, $id, $id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier)
+    public function setOwner($idSpace, $id, $id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier)
     {
         if (!$id) {
             $sql = "INSERT INTO ac_j_user_anticorps (id_anticorps, id_utilisateur, disponible, date_recept, no_dossier, id_space) VALUES (?,?,?,?,?, ?);";
-            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id_space));
+            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $idSpace));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE ac_j_user_anticorps SET id_anticorps=?, id_utilisateur=?, disponible=?, date_recept=?, no_dossier=? WHERE id=? AND id_space=?";
-            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id, $id_space));
+            $this->runRequest($sql, array($id_antibody, $id_utilisateur, $disponible, $date_recept, $no_dossier, $id, $idSpace));
         }
         return $id;
     }
 
-    public function getInfoForAntibody($id_space, $id_antibody)
+    public function getInfoForAntibody($idSpace, $id_antibody)
     {
         if ($id_antibody == 0) {
             return array();
         }
         $sql = "SELECT * FROM ac_j_user_anticorps WHERE id_anticorps=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_antibody, $id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($id_antibody, $idSpace))->fetchAll();
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
             $data[$i]["user"] = $modelUser->getUserFullName($data[$i]["id_utilisateur"]);
@@ -69,9 +69,9 @@ class AcOwner extends Model
         return $data;
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "DELETE FROM ac_j_user_anticorps WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

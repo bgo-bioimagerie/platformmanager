@@ -37,14 +37,14 @@ class AntibodiesController extends CoresecureController
         $this->antibody = new Anticorps();
     }
 
-    public function dropdownMenu($id_space)
+    public function dropdownMenu($idSpace)
     {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $idSpace);
 
         $dataView = [
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'title' => AntibodiesTranslator::antibodies($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -58,13 +58,13 @@ class AntibodiesController extends CoresecureController
         if ($this->noSideMenu) {
             return null;
         }
-        $id_space = $this->args['id_space'];
+        $idSpace = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $idSpace);
 
         $dataView = [
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'title' => AntibodiesTranslator::antibodies($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -73,15 +73,15 @@ class AntibodiesController extends CoresecureController
         return $this->twig->render("Modules/antibodies/View/Antibodies/navbar.twig", $dataView);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
         $html = file_get_contents('Modules/antibodies/View/Antibodies/navbar.php');
-        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{id_space}}', $idSpace, $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $idSpace);
 
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);

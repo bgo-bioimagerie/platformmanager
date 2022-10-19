@@ -19,9 +19,9 @@ class BookingaccessibilitiesController extends BookingsettingsController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bookingsettings", $idSpace, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -38,7 +38,7 @@ class BookingaccessibilitiesController extends BookingsettingsController
         $choices[] = BookingTranslator::Admin($lang);
 
         $modelResources = new ResourceInfo();
-        $resources = $modelResources->getForSpace($id_space);
+        $resources = $modelResources->getForSpace($idSpace);
 
         if (empty($resources)) {
             $_SESSION['flash'] = ResourcesTranslator::Resource_Needed($lang);
@@ -47,13 +47,13 @@ class BookingaccessibilitiesController extends BookingsettingsController
 
         $bkaccess = [];
         foreach ($resources as $resource) {
-            $accessId = $model->getAccessId($id_space, $resource["id"]);
+            $accessId = $model->getAccessId($idSpace, $resource["id"]);
             $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             $form->addSelect("r_" . $resource["id"], $resource["name"], $choices, $choicesid, $accessId);
         }
 
         $todo = $this->request->getParameterNoException('redirect');
-        $validationUrl = "bookingaccessibilities/".$id_space;
+        $validationUrl = "bookingaccessibilities/".$idSpace;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
@@ -64,7 +64,7 @@ class BookingaccessibilitiesController extends BookingsettingsController
             $bkaccess = [];
             foreach ($resources as $resource) {
                 $id_access = $this->request->getParameterNoException("r_" . $resource["id"]);
-                $model->set($id_space, $resource["id"], $id_access);
+                $model->set($idSpace, $resource["id"], $id_access);
                 $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             }
 
@@ -72,14 +72,14 @@ class BookingaccessibilitiesController extends BookingsettingsController
             $_SESSION["flashClass"] = "success";
 
             if ($todo) {
-                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                return $this->redirect("spaceadminedit/" . $idSpace, ["showTodo" => true]);
             } else {
-                return $this->redirect("bookingaccessibilities/".$id_space, [], ["bkaccess" => $bkaccess]);
+                return $this->redirect("bookingaccessibilities/".$idSpace, [], ["bkaccess" => $bkaccess]);
             }
         }
 
         // view
         $formHtml = $form->getHtml($lang);
-        return $this->render(array("data" => ["bkaccess" => $bkaccess],"id_space" => $id_space, "formHtml" => $formHtml, "lang" => $lang));
+        return $this->render(array("data" => ["bkaccess" => $bkaccess],"id_space" => $idSpace, "formHtml" => $formHtml, "lang" => $lang));
     }
 }

@@ -37,21 +37,21 @@ class InvoiceglobalController extends InvoiceAbstractController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $formAll = $this->createAllForm($id_space, $lang);
+        $formAll = $this->createAllForm($idSpace, $lang);
         if ($formAll->check()) {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
             $cv = new CoreVirtual();
-            $rid = $cv->newRequest($id_space, "invoices", "global:$beginPeriod => $endPeriod");
+            $rid = $cv->newRequest($idSpace, "invoices", "global:$beginPeriod => $endPeriod");
             Events::send([
                 "action" => Events::ACTION_INVOICE_REQUEST,
-                "space" => ["id" => intval($id_space)],
+                "space" => ["id" => intval($idSpace)],
                 "user" => ["id" => $_SESSION['id_user']],
                 "type" => GlobalInvoice::$INVOICES_GLOBAL_ALL,
                 "period_begin" => $beginPeriod,
@@ -59,21 +59,21 @@ class InvoiceglobalController extends InvoiceAbstractController
                 "request" => ["id" => $rid]
             ]);
 
-            $this->redirect("invoices/" . $id_space);
+            $this->redirect("invoices/" . $idSpace);
             return;
         }
 
-        $formByPeriod = $this->createByPeriodForm($id_space, $lang);
+        $formByPeriod = $this->createByPeriodForm($idSpace, $lang);
         if ($formByPeriod->check()) {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
                 $cv = new CoreVirtual();
-                $rid = $cv->newRequest($id_space, "invoices", "global[$id_resp]:$beginPeriod => $endPeriod");
+                $rid = $cv->newRequest($idSpace, "invoices", "global[$id_resp]:$beginPeriod => $endPeriod");
                 Events::send([
                     "action" => Events::ACTION_INVOICE_REQUEST,
-                    "space" => ["id" => intval($id_space)],
+                    "space" => ["id" => intval($idSpace)],
                     "user" => ["id" => $_SESSION['id_user']],
                     "type" => GlobalInvoice::$INVOICES_GLOBAL_CLIENT,
                     "period_begin" => $beginPeriod,
@@ -82,34 +82,34 @@ class InvoiceglobalController extends InvoiceAbstractController
                     "request" => ["id" => $rid]
                 ]);
 
-                $this->redirect("invoices/" . $id_space);
+                $this->redirect("invoices/" . $idSpace);
                 return;
             }
         }
 
         $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "formByPeriod" => $formByPeriod->getHtml($lang),
             "formAll" => $formAll->getHtml($lang)
         ));
     }
 
-    public function editAction($id_space, $id_invoice, $pdf = false)
+    public function editAction($idSpace, $id_invoice, $pdf = false)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_space, $id_invoice);
+        $invoice = $modelInvoice->get($idSpace, $id_invoice);
 
         $modelItem = new InInvoiceItem();
-        $invoiceitem = $modelItem->getForInvoice($id_space, $id_invoice);
+        $invoiceitem = $modelItem->getForInvoice($idSpace, $id_invoice);
 
-        $validateURL = "invoiceglobaledit/" . $id_space . "/" . $id_invoice;
+        $validateURL = "invoiceglobaledit/" . $idSpace . "/" . $id_invoice;
 
         $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "invoice" => $invoice,
             "invoiceitem" => $invoiceitem,
@@ -117,28 +117,28 @@ class InvoiceglobalController extends InvoiceAbstractController
         ));
     }
 
-    public function detailsAction($id_space, $id_invoice)
+    public function detailsAction($idSpace, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_space, $id_invoice);
+        $invoice = $modelInvoice->get($idSpace, $id_invoice);
         if (!$invoice) {
             throw new PfmParamException('invoice not found');
         }
         $modelItem = new InInvoiceItem();
-        $invoiceitem = $modelItem->getForInvoice($id_space, $id_invoice);
+        $invoiceitem = $modelItem->getForInvoice($idSpace, $id_invoice);
         $details = json_decode($invoiceitem['content'], true);
 
         $mres = new ResourceInfo();
         $musers = new CoreSpace();
-        $resources = $mres->getForSpace($id_space);
+        $resources = $mres->getForSpace($idSpace);
         $rmap = [];
         foreach ($resources as $r) {
             $rmap[$r['id']] = $r['name'];
         }
-        $users= $musers->getUsers($id_space);
+        $users= $musers->getUsers($idSpace);
         $umap = [];
         foreach ($users as $u) {
             $umap[$u['id']] = $u['firstname'].' '.$u['name'];
@@ -159,7 +159,7 @@ class InvoiceglobalController extends InvoiceAbstractController
                         'day' => $d['nb_hours_day'],
                         'night' => $d['nb_hours_night'],
                         'we' => $d['nb_hours_we'],
-                        'url' => 'bookingeditreservation/'.$id_space.'/r_'.$d['id'],
+                        'url' => 'bookingeditreservation/'.$idSpace.'/r_'.$d['id'],
                         'user' => $umap[$d['user']] ?? '',
                         'resource' => $rmap[$d['resource']] ?? ''
                     ];
@@ -195,40 +195,40 @@ class InvoiceglobalController extends InvoiceAbstractController
         $headers2 = array("module" => "Module", "id" => "Id", "resource" => "Resource", "quantity" => "Quantity", "info" => "Info");
         $tableHtml2 = $table2->view($others, $headers2);
 
-        $this->render(['lang' => $lang, 'id_space' => $id_space, 'table' => $tableHtml, 'table2' => $tableHtml2, 'invoice' => $invoice, 'data' => ['invoicedetails' => $details]]);
+        $this->render(['lang' => $lang, 'id_space' => $idSpace, 'table' => $tableHtml, 'table2' => $tableHtml2, 'invoice' => $invoice, 'data' => ['invoicedetails' => $details]]);
     }
 
-    public function pdfAction($id_space, $id_invoice, $details = 0)
+    public function pdfAction($idSpace, $id_invoice, $details = 0)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($id_space, $id_invoice);
+        $invoice = $modelInvoice->get($idSpace, $id_invoice);
 
         $modelItem = new InInvoiceItem();
-        $invoiceItem = $modelItem->getForInvoice($id_space, $id_invoice);
+        $invoiceItem = $modelItem->getForInvoice($idSpace, $id_invoice);
 
         $modelClient = new ClClient();
 
         // $number = $invoice["number"];
         $date = $invoice["date_generated"];
         $unit = "";
-        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($idSpace, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($idSpace, $invoice["id_responsible"]);
         $content = json_decode($invoiceItem["content"], true);
         $table = $this->invoiceTable($content, $invoice, $lang);
         $detailsTable = "";
         if ($details > 0) {
-            $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
+            $detailsTable = $this->generateDetailsTable($idSpace, $id_invoice);
         }
-        $this->generatePDF($id_space, $id_invoice, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos, lang: $lang);
+        $this->generatePDF($idSpace, $id_invoice, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos, lang: $lang);
     }
 
-    public function editqueryAction($id_space, $id_invoice)
+    public function editqueryAction($idSpace, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $discount = $_POST["discount"];
@@ -236,25 +236,25 @@ class InvoiceglobalController extends InvoiceAbstractController
         $content = $_POST["content"];
 
         $modelInvoice = new InInvoice();
-        $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
-        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setDiscount($idSpace, $id_invoice, $discount);
+        $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
 
         Events::send([
             "action" => Events::ACTION_INVOICE_EDIT,
-            "space" => ["id" => intval($id_space)],
+            "space" => ["id" => intval($idSpace)],
             "invoice" => ["id" => intval($id_invoice)]
         ]);
 
 
         $modelItem = new InInvoiceItem();
-        $modelItem->setItemContent($id_space, $id_invoice, $content);
+        $modelItem->setItemContent($idSpace, $id_invoice, $content);
 
         echo json_encode(array("status" => "success", "message" => InvoicesTranslator::InvoiceHasBeenSaved($lang)));
     }
 
-    public function deleteAction($id_space, $id_invoice)
+    public function deleteAction($idSpace, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
 
         $modules = Configuration::get("modules");
         foreach ($modules as $module) {
@@ -263,12 +263,12 @@ class InvoiceglobalController extends InvoiceAbstractController
                 require_once $invoiceModelFile;
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();
-                $model->delete($id_space, $id_invoice);
+                $model->delete($idSpace, $id_invoice);
             }
         }
         Events::send([
             "action" => Events::ACTION_INVOICE_DELETE,
-            "space" => ["id" => intval($id_space)],
+            "space" => ["id" => intval($idSpace)],
             "invoice" => ["id" => intval($id_invoice)]
         ]);
     }
@@ -321,7 +321,7 @@ class InvoiceglobalController extends InvoiceAbstractController
         return array("table" => $table, "total" => $total);
     }
 
-    protected function createAllForm($id_space, $lang)
+    protected function createAllForm($idSpace, $lang)
     {
         $form = new Form($this->request, "GlobalInvoiceAllForm");
         $form->addSeparator(InvoicesTranslator::Invoice_All($lang));
@@ -331,11 +331,11 @@ class InvoiceglobalController extends InvoiceAbstractController
 
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $idSpace);
         return $form;
     }
 
-    protected function createByPeriodForm($id_space, $lang)
+    protected function createByPeriodForm($idSpace, $lang)
     {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(InvoicesTranslator::Invoice_Responsible($lang));
@@ -345,16 +345,16 @@ class InvoiceglobalController extends InvoiceAbstractController
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClients = new ClClient();
-        $resps = $modelClients->getForList($id_space);
+        $resps = $modelClients->getForList($idSpace);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceglobal/" . $idSpace);
         return $form;
     }
 
-    protected function generateDetailsTable($id_space, $invoice_id)
+    protected function generateDetailsTable($idSpace, $invoice_id)
     {
         $lang = $this->getLanguage();
 
@@ -367,7 +367,7 @@ class InvoiceglobalController extends InvoiceAbstractController
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();
 
-                $details = $model->details($id_space, $invoice_id, $lang);
+                $details = $model->details($idSpace, $invoice_id, $lang);
                 if (isset($details["title"])) {
                     $html .= $this->detailsArrayToHtmlTable($details, $lang);
                 }

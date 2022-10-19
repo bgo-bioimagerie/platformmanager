@@ -19,7 +19,7 @@
         <tbody>
         <?php foreach ($entries as $entry) { ?>
             <tr>
-                <td><a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry['id'] ?>"><?php echo $entry['id'] ?></a></td>
+                <td><a href="bookingeditreservation/<?php echo $idSpace ?>/r_<?php echo $entry['id'] ?>"><?php echo $entry['id'] ?></a></td>
                 <td><?php echo CoreTranslator::dateFromEn(date('Y-m-d', $entry['start_time']), $lang).' '.date('h:i', $entry['start_time']) ?></td>
                 <td><?php echo CoreTranslator::dateFromEn(date('Y-m-d', $entry['end_time']), $lang).' '.date('h:i', $entry['end_time']) ?></td>
                 <td><?php echo $resources[$entry['resource_id']] ?></td>

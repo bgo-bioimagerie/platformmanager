@@ -21,7 +21,7 @@ require_once 'Framework/Constants.php';
                 $activeYear = "active";
             }
             ?>
-            <a class="btn btn-outline-dark <?php echo $activeYear ?>" href="<?php echo "invoices/" .$id_space ."/". $sent . "/" . $yea ?>"><?php echo $yea ?></a>
+            <a class="btn btn-outline-dark <?php echo $activeYear ?>" href="<?php echo "invoices/" .$idSpace ."/". $sent . "/" . $yea ?>"><?php echo $yea ?></a>
            <?php
         }
         ?>

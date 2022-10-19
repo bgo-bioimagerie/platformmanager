@@ -99,14 +99,14 @@ class BookingabstractController extends CoresecureController
      * Check if a given user is allowed to book a ressource
      * @param number $id_resourcecategory ID of the resource category
      * @param number $resourceAccess Type of users who can access the resource
-     * @param number $id_user User ID
+     * @param number $idUser User ID
      * @param number $curentDateUnix resa date in unix format, skip check if 0
      * @return boolean
      */
-    protected function hasAuthorization($id_resourcecategory, $resourceAccess, $id_space, $id_user, $curentDateUnix)
+    protected function hasAuthorization($id_resourcecategory, $resourceAccess, $idSpace, $idUser, $curentDateUnix)
     {
         $modelSpace = new CoreSpace();
-        $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
+        $userSpaceRole = $modelSpace->getUserSpaceRole($idSpace, $idUser);
 
 
         if ($userSpaceRole > CoreSpace::$MANAGER) {
@@ -133,7 +133,7 @@ class BookingabstractController extends CoresecureController
                 //echo "pass </Br>";
                 // check if the user has been authorized
                 $modelAuth = new BkAuthorization();
-                $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $id_resourcecategory, $id_user);
+                $isUserAuthorizedToBook = $modelAuth->hasAuthorization($idSpace, $id_resourcecategory, $idUser);
                 //echo "authorized user = " . $isUserAuthorizedToBook . "";
             }
         } elseif ($resourceAccess == 3) {

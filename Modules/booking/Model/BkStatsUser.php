@@ -17,11 +17,11 @@ require_once 'Modules/clients/Model/ClClient.php';
  */
 class BkStatsUser extends Model
 {
-    public function authorizedUsersMail($file, $resource_id, $id_space)
+    public function authorizedUsersMail($file, $resource_id, $idSpace)
     {
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($id_space, $resource_id);
+        $resourceInfo = $modelResource->getName($idSpace, $resource_id);
 
         // header
         $today = date('d/m/Y');
@@ -39,7 +39,7 @@ class BkStatsUser extends Model
 
 
         $modelAuthorisation = new BkAuthorization();
-        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, "");
+        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($idSpace, $resource_id, "");
 
         // Création de l'objet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -132,7 +132,7 @@ class BkStatsUser extends Model
 
         // Header
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
-        $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
+        $reqIcon = $this->runRequest($sqlIcon, array($idSpace))->fetch();
         if ($reqIcon && $reqIcon['image']) {
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
             $objDrawing->setName('PHPExcel logo');
@@ -315,11 +315,11 @@ class BkStatsUser extends Model
      * Statistics of the users allowed to book a resource
      * @param number $resource_id
      */
-    public function authorizedUsers($file, $resource_id, $id_space, $lang='en')
+    public function authorizedUsers($file, $resource_id, $idSpace, $lang='en')
     {
         // get resource category
         $modelResource = new ReCategory();
-        $resourceInfo = $modelResource->getName($id_space, $resource_id);
+        $resourceInfo = $modelResource->getName($idSpace, $resource_id);
         if (!$resourceInfo) {
             throw new PfmParamException('resource not found');
         }
@@ -338,7 +338,7 @@ class BkStatsUser extends Model
         $footer = "platform-manager/" . $teamName . "/exportFiles/" . $nom;
 
         $modelAuthorisation = new BkAuthorization();
-        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($id_space, $resource_id, $lang);
+        $res = $modelAuthorisation->getActiveAuthorizationSummaryForResourceCategory($idSpace, $resource_id, $lang);
 
         // Création de l'objet
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
@@ -432,7 +432,7 @@ class BkStatsUser extends Model
 
 
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
-        $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
+        $reqIcon = $this->runRequest($sqlIcon, array($idSpace))->fetch();
 
         if ($reqIcon && $reqIcon['image']) {
             // Header
@@ -629,7 +629,7 @@ class BkStatsUser extends Model
         $writer->save($file);
     }
 
-    public function bookingUsers($id_space, $startdate, $enddate)
+    public function bookingUsers($idSpace, $startdate, $enddate)
     {
         // convert start date to unix date
         if ($startdate == "") {
@@ -646,7 +646,7 @@ class BkStatsUser extends Model
         $searchDate_end = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]) + 1, intval($tabDate[0]));
 
         //  get all the booking users
-        $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $id_space);
+        $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $idSpace);
         $sql = 'SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE
 				(start_time >=:start AND start_time <= :end)
                 AND deleted=0 AND id_space=:space';
@@ -668,7 +668,7 @@ class BkStatsUser extends Model
                 'email' => $modelUser->getEmail($recs[$i]['recipient_id']));
         }
         for ($i = 0; $i < count($recresps); $i++) {
-            $clientInfo = $modelClient->get($id_space, $recresps[$i]['responsible_id']);
+            $clientInfo = $modelClient->get($idSpace, $recresps[$i]['responsible_id']);
             $recss[] = array(
                 'name' => $clientInfo["contact_name"],
                 'email' => $clientInfo["email"]

@@ -12,7 +12,7 @@
 </div>
 <div class="row">
     <div class="col-12">
-        <a href="corespaceaccess/<?php echo $id_space ?>/user/expire/run"><button type="button" class="btn btn-primary">Run</button></a>
+        <a href="corespaceaccess/<?php echo $idSpace ?>/user/expire/run"><button type="button" class="btn btn-primary">Run</button></a>
     </div>
 </div>
 <?php endblock(); ?>

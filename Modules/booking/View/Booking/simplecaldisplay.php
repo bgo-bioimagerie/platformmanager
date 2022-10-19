@@ -96,7 +96,7 @@ foreach ($calResources as $resId => $resource) {
 		<?php
     echo $resource['name'];
     if ($resource['last_state'] != "") {
-        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$idSpace.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
     }
     ?>
 		</th>
@@ -131,14 +131,14 @@ foreach ($calResources as $resId => $resource) {
             if ($hcalEntry['id'] == 0) {
                 $text = date('H:i', $hcalEntry['start_time']).' - '.date('H:i', $hcalEntry['end_time']);
             }
-            $extra = $modelBookingSetting->getSummary($id_space, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['client_name'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
-            $extra .= $modelBookingSupplemetary->getSummary($id_space, $hcalEntry["id"]);
+            $extra = $modelBookingSetting->getSummary($idSpace, $hcalEntry["recipient_fullname"], $hcalEntry['phone'], $hcalEntry['client_name'], $hcalEntry['short_description'], $hcalEntry['full_description'], false, $context['role']);
+            $extra .= $modelBookingSupplemetary->getSummary($idSpace, $hcalEntry["id"]);
             if ($extra && $context['role'] >= CoreSpace::$USER) {
                 $text .= '<br/>'.$extra;
             }
             $hcalEntry['text'] = $text;
             if ($hcalEntry['id']) {
-                $hcalEntry['link'] = "bookingeditreservation/". $id_space ."/r_" . $hcalEntry['id'].$q;
+                $hcalEntry['link'] = "bookingeditreservation/". $idSpace ."/r_" . $hcalEntry['id'].$q;
             } else {
                 $hcalEntry['link'] = '';
             }
@@ -153,7 +153,7 @@ foreach ($calResources as $resId => $resource) {
 						</div>
 					<?php } ?>
 					<?php
-            $linkAdress = "bookingeditreservation/". $id_space ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
+            $linkAdress = "bookingeditreservation/". $idSpace ."/t_" . $calDays[$calDay]."_".date('H-i', $last_end_time)."_".$resId.$q;
         ?>
 						<?php if ($context['role'] >= CoreSpace::$USER) { ?>
 						<div><a data-status="free" aria-label="book " class="bi-plus" href="<?php echo $linkAdress ?>"></a></div>

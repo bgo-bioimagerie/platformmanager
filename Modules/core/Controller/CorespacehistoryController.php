@@ -24,9 +24,9 @@ class CorespacehistoryController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
+        $userSpaceStatus = $this->getUserSpaceStatus($idSpace, $_SESSION["id_user"]);
         if ($userSpaceStatus < CoreSpace::$MANAGER) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -34,10 +34,10 @@ class CorespacehistoryController extends CoresecureController
         $m = new CoreHistory();
         $startFilter = $_GET["start"] ?? null;
         $endFilter = $_GET["end"] ?? null;
-        $logs = $m->list($id_space, $startFilter, $endFilter);
+        $logs = $m->list($idSpace, $startFilter, $endFilter);
         $this->render(array(
             "lang" => $lang,
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "logs" => $logs,
             "data" => ["logs" => $logs]
         ));

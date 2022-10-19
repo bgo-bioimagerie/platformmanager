@@ -21,13 +21,13 @@ class CatalogpublicController extends Controller
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $idCategory = 0)
+    public function indexAction($idSpace, $idCategory = 0)
     {
         $lang = $this->getLanguage();
 
         // get all the categories
         $modelCategory = new CaCategory();
-        $categories = $modelCategory->getAll($id_space);
+        $categories = $modelCategory->getAll($idSpace);
 
         // get the entries
         if ($idCategory == 0 && count($categories) > 0) {
@@ -35,26 +35,26 @@ class CatalogpublicController extends Controller
         }
 
         $modelEntry = new CaEntry();
-        $entries = $modelEntry->getCategoryEntries($id_space, $idCategory);
+        $entries = $modelEntry->getCategoryEntries($idSpace, $idCategory);
 
         $modelCoreConfig = new CoreConfig();
 
 
-        $useAntibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space);
+        $useAntibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $idSpace);
         if ($useAntibodies == 1) {
             $categories[count($categories)]["id"] = -12;
             $categories[count($categories) - 1]["name"] = CatalogTranslator::Antibodies($lang);
         }
 
         if ($idCategory == -12 || ($idCategory == 0 && $categories[0]["id"] == -12)) {
-            return $this->antibodiesAction($id_space, $categories);
+            return $this->antibodiesAction($idSpace, $categories);
         }
         // header
-        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
-        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $id_space);
+        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $idSpace);
+        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $idSpace);
 
         // view
-        $this->render(array("id_space" => $id_space, "lang" => $lang,
+        $this->render(array("id_space" => $idSpace, "lang" => $lang,
             'categories' => $categories,
             'entries' => $entries,
             'lang' => $this->getLanguage(),
@@ -64,23 +64,23 @@ class CatalogpublicController extends Controller
          ));
     }
 
-    public function antibodiesAction($id_space, $categories)
+    public function antibodiesAction($idSpace, $categories)
     {
         $lang = $this->getLanguage();
 
         $modelAntibody = new Anticorps();
-        $entries = $modelAntibody->getAnticorpsInfoCatalog($id_space);
+        $entries = $modelAntibody->getAnticorpsInfoCatalog($idSpace);
 
         $statusModel = new Status();
-        $status = $statusModel->getBySpace($id_space);
+        $status = $statusModel->getBySpace($idSpace);
 
         $modelCoreConfig = new CoreConfig();
-        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
-        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $id_space);
+        $pageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $idSpace);
+        $pageLogo = $modelCoreConfig->getParamSpace("CaPublicPageLogo", $idSpace);
 
         // view
         return $this->render(array(
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'categories' => $categories,
             'entries' => $entries,
             'lang' => $lang,

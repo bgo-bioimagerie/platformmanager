@@ -23,42 +23,42 @@ class ReRespsStatus extends Model
         $this->primaryKey = "id";
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM re_resps_status WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function getName($id_space, $id)
+    public function getName($idSpace, $id)
     {
         $sql = "SELECT name FROM re_resps_status WHERE id=? AND id_space=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $tmp ? $tmp[0] : null;
     }
 
-    public function getForSpace($id_space)
+    public function getForSpace($idSpace)
     {
         $sql = "SELECT * FROM re_resps_status WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function set($id, $name, $id_space)
+    public function set($id, $name, $idSpace)
     {
-        if ($this->exists($id_space, $id)) {
+        if ($this->exists($idSpace, $id)) {
             $sql = "UPDATE re_resps_status SET name=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($name, $id, $id_space));
+            $this->runRequest($sql, array($name, $id, $idSpace));
         } else {
             $sql = "INSERT INTO re_resps_status (name, id_space) VALUES (?, ?)";
-            $this->runRequest($sql, array($name, $id_space));
+            $this->runRequest($sql, array($name, $idSpace));
             $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }
 
-    public function exists($id_space, $id)
+    public function exists($idSpace, $id)
     {
         $sql = "SELECT id from re_resps_status WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -69,9 +69,9 @@ class ReRespsStatus extends Model
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE re_resps SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

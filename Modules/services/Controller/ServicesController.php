@@ -21,8 +21,8 @@ class ServicesController extends CoresecureController
 
     public function sideMenu()
     {
-        $id_space = $this->args['id_space'];
-        return $this->navbar($id_space);
+        $idSpace = $this->args['id_space'];
+        return $this->navbar($idSpace);
     }
 
     /**
@@ -40,38 +40,38 @@ class ServicesController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
         $modelCoreConfig = new CoreConfig();
-        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $idSpace);
         if ($servicesuseproject == 1) {
-            return $this->redirect('servicesprojectsopened/' . $id_space);
+            return $this->redirect('servicesprojectsopened/' . $idSpace);
         }
-        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $idSpace);
         if ($servicesusecommand == 1) {
-            return $this->redirect('servicesorders/' . $id_space);
+            return $this->redirect('servicesorders/' . $idSpace);
         }
 
-        return $this->redirect('serviceslisting/' . $id_space);
+        return $this->redirect('serviceslisting/' . $idSpace);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="serviceslisting/'.$id_space.'"> {{title}}';
+        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="serviceslisting/'.$idSpace.'"> {{title}}';
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
         $modelCoreConfig = new CoreConfig();
-        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+        $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $idSpace);
         if ($servicesuseproject == 1) {
             $htmlprojet = file_get_contents("Modules/services/View/Services/navbarproject.php");
 
-            $htmlprojet = str_replace("{{id_space}}", $id_space, $htmlprojet);
+            $htmlprojet = str_replace("{{id_space}}", $idSpace, $htmlprojet);
             $htmlprojet = str_replace("{{Opened_projects}}", ServicesTranslator::Opened_projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Closed_projects}}", ServicesTranslator::Closed_projects($lang), $htmlprojet);
             $htmlprojet = str_replace("{{Period_projects}}", ServicesTranslator::Period_projects($lang), $htmlprojet);
@@ -91,11 +91,11 @@ class ServicesController extends CoresecureController
             $html .= $htmlprojet;
         }
 
-        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $idSpace);
         if ($servicesusecommand == 1) {
             $htmlOrder = file_get_contents("Modules/services/View/Services/navbarorder.php");
 
-            $htmlOrder = str_replace("{{id_space}}", $id_space, $htmlOrder);
+            $htmlOrder = str_replace("{{id_space}}", $idSpace, $htmlOrder);
             $htmlOrder = str_replace("{{Opened_orders}}", ServicesTranslator::Opened_orders($lang), $htmlOrder);
             $htmlOrder = str_replace("{{Closed_orders}}", ServicesTranslator::Closed_orders($lang), $htmlOrder);
             $htmlOrder = str_replace("{{All_orders}}", ServicesTranslator::All_orders($lang), $htmlOrder);
@@ -105,11 +105,11 @@ class ServicesController extends CoresecureController
             $html .= $htmlOrder;
         }
 
-        $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
+        $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $idSpace);
         if ($servicesusestock == 1) {
             $htmlStock = file_get_contents("Modules/services/View/Services/navbarstock.php");
 
-            $htmlStock = str_replace("{{id_space}}", $id_space, $htmlStock);
+            $htmlStock = str_replace("{{id_space}}", $idSpace, $htmlStock);
             $htmlStock = str_replace("{{Stock}}", strtoupper(ServicesTranslator::Stock($lang)), $htmlStock);
             $htmlStock = str_replace("{{Stocks}}", ServicesTranslator::Stock($lang), $htmlStock);
             $htmlStock = str_replace("{{New_Purchase}}", ServicesTranslator::New_Purchase($lang), $htmlStock);
@@ -119,7 +119,7 @@ class ServicesController extends CoresecureController
         }
 
         $htmlListing = file_get_contents("Modules/services/View/Services/navbarlisting.php");
-        $htmlListing = str_replace("{{id_space}}", $id_space, $htmlListing);
+        $htmlListing = str_replace("{{id_space}}", $idSpace, $htmlListing);
         $htmlListing = str_replace("{{Listing}}", strtoupper(ServicesTranslator::Listing($lang)), $htmlListing);
         $htmlListing = str_replace("{{services}}", ServicesTranslator::services($lang), $htmlListing);
 
@@ -128,7 +128,7 @@ class ServicesController extends CoresecureController
         $html.= "</div>";
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("services", $idSpace);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{color}}', $menuInfo['txtcolor'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
@@ -137,13 +137,13 @@ class ServicesController extends CoresecureController
         return $html;
     }
 
-    public function getServiceTypeAction($id_space, $id_service)
+    public function getServiceTypeAction($idSpace, $id_service)
     {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelService = new SeService();
         $modelType = new SeServiceType();
-        $serviceTypeName = $modelType->getType($modelService->getItemType($id_space, $id_service));
+        $serviceTypeName = $modelType->getType($modelService->getItemType($idSpace, $id_service));
         $this->render(['data' => ['elements' => ServicesTranslator::ServicesTypes($serviceTypeName, $lang)]]);
     }
 }

@@ -34,22 +34,22 @@ class ResourcesconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'resources', $lang);
+        $formMenusactivation = $this->menusactivationForm($idSpace, 'resources', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'resources', 'truck');
-            return $this->redirect("resourcesconfig/".$id_space);
+            $this->menusactivation($idSpace, 'resources', 'truck');
+            return $this->redirect("resourcesconfig/".$idSpace);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang)
                 );
 
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
     }
 }

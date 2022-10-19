@@ -54,7 +54,7 @@ for ($d = 0 ; $d < $nbDays ; $d++) {
                 }
                 $cals[] = $c;
             }
-            $colResHeader = compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
+            $colResHeader = compute($idSpace, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $cals, $isUserAuthorizedToBook[$r], $isAvailableDay, $agendaStyle, $resourcesBase[$r]['id'], $from, $context['role']);
             foreach ($colResHeader as $h => $colData) {
                 if (!key_exists($h, $calData)) {
                     $calData[$h] = [];
@@ -109,7 +109,7 @@ if (!empty($calh)) {
 		<?php
     echo $resource['name'];
 		    if ($resource['last_state'] != "") {
-		        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+		        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$idSpace.'/'.$resource['id'].'" style="background-color:'.$resource['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
 		    }
 		    ?>
 		</th>

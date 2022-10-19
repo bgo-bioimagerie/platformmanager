@@ -13,13 +13,13 @@ class GlobalInvoice extends Model
     public static string $INVOICES_GLOBAL_ALL = 'invoices_global_all';
     public static string $INVOICES_GLOBAL_CLIENT = 'invoices_global_client';
 
-    public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en')
+    public function invoiceAll($idSpace, $beginPeriod, $endPeriod, $idUser, $lang='en')
     {
         $clm = new ClClient();
-        $resps = $clm->getAll($id_space);
+        $resps = $clm->getAll($idSpace);
         $found = false;
         foreach ($resps as $resp) {
-            $respFound  =  $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $id_user, $lang);
+            $respFound  =  $this->invoice($idSpace, $beginPeriod, $endPeriod, $resp["id"], $idUser, $lang);
             if ($respFound) {
                 $found = true;
                 break;
@@ -28,7 +28,7 @@ class GlobalInvoice extends Model
         return $found;
     }
 
-    public function invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en')
+    public function invoice($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $lang='en')
     {
         $modules = Configuration::get("modules");
         $found = false;
@@ -39,7 +39,7 @@ class GlobalInvoice extends Model
                 $modelName = ucfirst(strtolower($module)) . "Invoice";
                 $model = new $modelName();
 
-                if ($model->hasActivity($id_space, $beginPeriod, $endPeriod, $id_client)) {
+                if ($model->hasActivity($idSpace, $beginPeriod, $endPeriod, $id_client)) {
                     $found = true;
                     break;
                 }
@@ -52,10 +52,10 @@ class GlobalInvoice extends Model
 
         // create invoice in the database
         $modelInvoice = new InInvoice();
-        $invoiceNumber = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
-        $modelInvoice->setTitle($id_space, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
+        $invoiceNumber = $modelInvoice->getNextNumber($idSpace);
+        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $idSpace, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
+        $modelInvoice->setEditedBy($idSpace, $id_invoice, $idUser);
+        $modelInvoice->setTitle($idSpace, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         // get invoice content
         $invoiceDataArray = array();
@@ -72,22 +72,22 @@ class GlobalInvoice extends Model
 
                     $moduleArray = array();
                     $moduleArray["module"] = $module;
-                    $moduleArray["data"] = $model->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang);
+                    $moduleArray["data"] = $model->invoice($idSpace, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang);
                     $invoiceDataArray[] = $moduleArray;
 
                     $total_ht += floatval($moduleArray["data"]["total_ht"]);
                 }
             }
         } catch(Exception $e) {
-            $modelInvoice->setNumber($id_space, $id_invoice, 'error');
+            $modelInvoice->setNumber($idSpace, $id_invoice, 'error');
             throw $e;
         }
 
         // set invoice content to the database
-        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
-        $modelInvoice->setNumber($id_space, $id_invoice, $invoiceNumber);
+        $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
+        $modelInvoice->setNumber($idSpace, $id_invoice, $invoiceNumber);
         $modelInvoiceItem = new InInvoiceItem();
-        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
+        $modelInvoiceItem->setItem($idSpace, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
 
         return true;
     }

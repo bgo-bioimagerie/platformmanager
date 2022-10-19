@@ -156,28 +156,28 @@ class CoreFiles extends Model
     /**
      * Create/update a new file entry
      */
-    public function set($id, $id_space, $name, $role, $module, $id_user)
+    public function set($id, $idSpace, $name, $role, $module, $idUser)
     {
         if (!$id) {
             $sql = 'INSERT INTO core_files (id_space, `name`, module, `role`, id_user) VALUES (?,?,?,?,?)';
-            $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
+            $this->runRequest($sql, array($idSpace, $name, $module, $role, $idUser));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE core_files SET id_space=?, `name`=?, module=?, `role`=?, id_user=? WHERE id=?';
-            $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user, $id));
+            $this->runRequest($sql, array($idSpace, $name, $module, $role, $idUser, $id));
             return $id;
         }
     }
 
-    public function status(int $id_space, int $id, int $status, string $msg)
+    public function status(int $idSpace, int $id, int $status, string $msg)
     {
         $sql = 'UPDATE core_files SET status=?,msg=? WHERE id=? AND id_space=? AND deleted=0';
-        $this->runRequest($sql, array($status, $msg, $id, $id_space));
+        $this->runRequest($sql, array($status, $msg, $id, $idSpace));
     }
 
-    public function getByModule(int $id_space, string $module, int $role)
+    public function getByModule(int $idSpace, string $module, int $role)
     {
         $sql = "SELECT core_files.*, core_users.login as login FROM core_files INNER JOIN core_users ON core_users.id=core_files.id_user WHERE core_files.id_space=? AND core_files.module=? and core_files.role>=? ORDER BY core_files.id DESC";
-        return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
+        return $this->runRequest($sql, array($idSpace, $module, $role))->fetchAll();
     }
 }

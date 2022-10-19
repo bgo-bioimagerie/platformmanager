@@ -15,61 +15,61 @@ class BkRestrictions extends Model
         $this->primaryKey = "id";
     }
 
-    public function init($id_space)
+    public function init($idSpace)
     {
         $sql = "SELECT id FROM re_info WHERE id_space=?";
-        $resources = $this->runRequest($sql, array($id_space))->fetchAll();
+        $resources = $this->runRequest($sql, array($idSpace))->fetchAll();
 
         foreach ($resources as $r) {
-            $this->add($id_space, $r["id"], 0, 0);
+            $this->add($idSpace, $r["id"], 0, 0);
         }
     }
 
-    public function getBookingDelayUserCanEdit($id_space, $id_resource)
+    public function getBookingDelayUserCanEdit($idSpace, $id_resource)
     {
         $sql = "SELECT bookingdelayusercanedit FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
-        $tmp = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id_resource, $idSpace))->fetch();
         return $tmp ? $tmp[0] : 0;
     }
 
-    public function getMaxBookingPerDay($id_space, $id_resource)
+    public function getMaxBookingPerDay($idSpace, $id_resource)
     {
         $sql = "SELECT maxbookingperday FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
-        $tmp = $this->runRequest($sql, array($id_resource, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id_resource, $idSpace))->fetch();
         return $tmp ? $tmp[0] : 0;
     }
 
-    public function getForSpace($id_space)
+    public function getForSpace($idSpace)
     {
         $sql = "SELECT * FROM bk_restrictions WHERE deleted=0 AND id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM bk_restrictions WHERE id=? AND deleted=0 AND id_space=?";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit)
+    public function add($idSpace, $id_resource, $maxbookingperday, $bookingdelayusercanedit)
     {
-        $id = $this->exists($id_space, $id_resource);
+        $id = $this->exists($idSpace, $id_resource);
         if (!$id) {
             $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit, id_space) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $id_space));
+            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $idSpace));
         }
     }
 
-    public function set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit)
+    public function set($idSpace, $id, $maxbookingperday, $bookingdelayusercanedit)
     {
         $sql = "UPDATE bk_restrictions SET maxbookingperday=?, bookingdelayusercanedit=? WHERE id=? AND deleted=0 AND id_space=?";
-        $this->runRequest($sql, array($maxbookingperday, $bookingdelayusercanedit, $id, $id_space));
+        $this->runRequest($sql, array($maxbookingperday, $bookingdelayusercanedit, $id, $idSpace));
     }
 
-    public function exists($id_space, $id_resource)
+    public function exists($idSpace, $id_resource)
     {
         $sql = "SELECT id FROM bk_restrictions WHERE id_resource=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_space));
+        $req = $this->runRequest($sql, array($id_resource, $idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -77,9 +77,9 @@ class BkRestrictions extends Model
         return 0;
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE bk_restrictions SET deleted=1, deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

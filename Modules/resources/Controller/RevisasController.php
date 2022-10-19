@@ -32,28 +32,28 @@ class RevisasController extends ResourcesBaseController
     /**
      * List of Visa
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get the user list
         $visaModel = new ReVisa();
-        $visaTable = $visaModel->getVisasBySpace($id_space);
+        $visaTable = $visaModel->getVisasBySpace($idSpace);
         $revisas = $visaTable;
 
         $table = new TableView();
 
         $table->setTitle(ResourcesTranslator::Visa($lang), 3);
         //$table->ignoreEntry("id", 1);
-        $table->addLineEditButton("resourceseditvisa/" . $id_space);
-        $table->addDeleteButton("resourcesdeletevisa/" . $id_space, "id", "id");
+        $table->addLineEditButton("resourceseditvisa/" . $idSpace);
+        $table->addDeleteButton("resourcesdeletevisa/" . $idSpace, "id", "id");
         //$table->addPrintButton("sygrrifauthorisations/visa/");
 
         $modelResourceCategory = new ReCategory();
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($visaTable); $i++) {
-            $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($id_space, $visaTable[$i]["id_resource_category"]);
+            $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($idSpace, $visaTable[$i]["id_resource_category"]);
             $visaTable[$i]["id_instructor"] = $modelUser->getUserFullName($visaTable[$i]["id_instructor"]);
             if ($visaTable[$i]["instructor_status"] == 1) {
                 $visaTable[$i]["instructor_status"] = ResourcesTranslator::Instructor($lang);
@@ -73,7 +73,7 @@ class RevisasController extends ResourcesBaseController
         return $this->render(array(
             'data' => ['revisas' => $revisas],
             'lang' => $lang,
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
@@ -81,15 +81,15 @@ class RevisasController extends ResourcesBaseController
     /**
      * Form to add a visa
      */
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $visaInfo = array("id" => 0, "is_active" => 1, "id_resource_category" => 0, "id_instructor" => 0, "instructor_status" => 1);
         if ($id > 0) {
             $modelVisa = new ReVisa();
-            $visaInfo = $modelVisa->getVisa($id_space, $id);
+            $visaInfo = $modelVisa->getVisa($idSpace, $id);
         }
         //print_r($visaInfo);
 
@@ -98,7 +98,7 @@ class RevisasController extends ResourcesBaseController
         $form->setTitle(ResourcesTranslator::Edit_Visa($lang), 3);
 
         $modelResourcesCategory = new ReCategory();
-        $resourcesCategories = $modelResourcesCategory->getBySpace($id_space);
+        $resourcesCategories = $modelResourcesCategory->getBySpace($idSpace);
         $rcchoices = array();
         $rcchoicesid = array();
         foreach ($resourcesCategories as $rc) {
@@ -108,7 +108,7 @@ class RevisasController extends ResourcesBaseController
         $form->addSelect("id_resource_category", ResourcesTranslator::Categories($lang), $rcchoices, $rcchoicesid, $visaInfo["id_resource_category"]);
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($idSpace, "name");
 
         if (empty($users['ids']) || empty($resourcesCategories)) {
             $_SESSION['flash'] = ResourcesTranslator::User_category_Needed($lang);
@@ -122,31 +122,31 @@ class RevisasController extends ResourcesBaseController
         $form->addSelect("instructor_status", ResourcesTranslator::Instructor_status($lang), $ischoices, $ischoicesid, $visaInfo["instructor_status"]);
 
         $todo = $this->request->getParameterNoException('redirect');
-        $validationUrl = "resourceseditvisa/".$id_space."/".$id;
+        $validationUrl = "resourceseditvisa/".$idSpace."/".$id;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "resourcesvisa/" . $id_space);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "resourcesvisa/" . $idSpace);
 
         if ($form->check()) {
             // run the database query
             $modelVisa = new ReVisa();
             if ($id > 0) {
-                $modelVisa->editVisa($id_space, $id, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
+                $modelVisa->editVisa($idSpace, $id, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             } else {
-                $id = $modelVisa->addVisa($id_space, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
+                $id = $modelVisa->addVisa($idSpace, $form->getParameter("id_resource_category"), $form->getParameter("id_instructor"), $form->getParameter("instructor_status"));
             }
-            $modelVisa->setActive($id_space, $id, $form->getParameter("is_active"));
+            $modelVisa->setActive($idSpace, $id, $form->getParameter("is_active"));
 
             $_SESSION["flash"] = ResourcesTranslator::Item_created("visa", $lang);
             $_SESSION["flashClass"] = "success";
 
             if ($todo) {
-                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                return $this->redirect("spaceadminedit/" . $idSpace, ["showTodo" => true]);
             } else {
-                return $this->redirect("resourcesvisa/".$id_space, [], ['revisa' => ['id' => $id]]);
+                return $this->redirect("resourcesvisa/".$idSpace, [], ['revisa' => ['id' => $id]]);
             }
         } else {
             // set the view
@@ -154,7 +154,7 @@ class RevisasController extends ResourcesBaseController
             // view
             $this->render(array(
                 'lang' => $lang,
-                'id_space' => $id_space,
+                'id_space' => $idSpace,
                 'formHtml' => $formHtml
             ));
         }
@@ -163,22 +163,22 @@ class RevisasController extends ResourcesBaseController
     /**
      * Export the visas in an xls file
      */
-    public function exportAction($id_space)
+    public function exportAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get all the resources categories
         $modelResources = new ReCategory();
-        $resources = $modelResources->getBySpace($id_space);
+        $resources = $modelResources->getBySpace($idSpace);
 
         // get all the instructors
         $modelVisa = new ReVisa();
-        $instructors = $modelVisa->getSpaceInstructors($id_space);
+        $instructors = $modelVisa->getSpaceInstructors($idSpace);
 
         //print_r($instructors);
 
-        $visas = $modelVisa->getForSpace($id_space);
+        $visas = $modelVisa->getForSpace($idSpace);
 
         header("Content-Type: application/csv-tab-delimited-table");
         header("Content-disposition: filename=visas.csv");
@@ -217,20 +217,20 @@ class RevisasController extends ResourcesBaseController
         echo $content;
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
-        $modelVisa->delete($id_space, $id);
+        $modelVisa->delete($idSpace, $id);
 
-        $this->redirect("resourcesvisa/" . $id_space);
+        $this->redirect("resourcesvisa/" . $idSpace);
     }
 
-    public function getCategoryvisasAction($id_space, $id_category)
+    public function getCategoryvisasAction($idSpace, $id_category)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
         $modelReVisa = new ReVisa();
-        $visas = $modelReVisa->getForListByCategory($id_space, $id_category);
+        $visas = $modelReVisa->getForListByCategory($idSpace, $id_category);
         $data = array();
         for ($i=0; $i<count($visas['ids']); $i++) {
             $data[$i] = ["id" => $visas["ids"][$i], "name" => $visas["names"][$i]];

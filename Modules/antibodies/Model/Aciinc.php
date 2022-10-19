@@ -32,10 +32,10 @@ class Aciinc extends Model
         return $pdo;
     }
 
-    public function getBySpace($id_space)
+    public function getBySpace($idSpace)
     {
         $sql = "SELECT * from ac_aciincs WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -45,10 +45,10 @@ class Aciinc extends Model
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getAciincs($id_space, $sortentry = 'id')
+    public function getAciincs($idSpace, $sortentry = 'id')
     {
         $sql = "SELECT * from ac_aciincs WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -59,14 +59,14 @@ class Aciinc extends Model
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         if (!$id) {
             return array("id" => 0, "nom" => "");
         }
 
         $sql = "SELECT * from ac_aciincs where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -80,11 +80,11 @@ class Aciinc extends Model
      * @param string $name name of the espece
      *
      */
-    public function add($name, $id_space)
+    public function add($name, $idSpace)
     {
         $sql = "insert into ac_aciincs(nom, id_space)"
                 . " values(?,?)";
-        $this->runRequest($sql, array($name, $id_space));
+        $this->runRequest($sql, array($name, $idSpace));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -94,16 +94,16 @@ class Aciinc extends Model
      * @param int $id Id of the  to update
      * @param string $name New name of the
      */
-    public function edit($id, $name, $id_space)
+    public function edit($id, $name, $idSpace)
     {
         $sql = "update ac_aciincs set nom=? where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
+        $this->runRequest($sql, array("" . $name . "", $id, $idSpace));
     }
 
-    public function getIdFromName($name, $id_space)
+    public function getIdFromName($name, $idSpace)
     {
         $sql = "select id from ac_aciincs where nom=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($name, $id_space));
+        $unit = $this->runRequest($sql, array($name, $idSpace));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -112,10 +112,10 @@ class Aciinc extends Model
         }
     }
 
-    public function getNameFromId($id_space, $id)
+    public function getNameFromId($idSpace, $id)
     {
         $sql = "SELECT nom from ac_aciincs where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -124,9 +124,9 @@ class Aciinc extends Model
         }
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE ac_aciincs SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

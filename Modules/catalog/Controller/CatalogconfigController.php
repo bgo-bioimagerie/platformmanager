@@ -36,62 +36,62 @@ class CatalogconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // menu activation form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'catalog', $lang);
+        $formMenusactivation = $this->menusactivationForm($idSpace, 'catalog', $lang);
 
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'catalog', 'list');
-            return $this->redirect("catalogconfig/" . $id_space);
+            $this->menusactivation($idSpace, 'catalog', 'list');
+            return $this->redirect("catalogconfig/" . $idSpace);
         }
 
-        $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
+        $formSettingsMenusactivation = $this->menusactivationForm($idSpace, 'catalogsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'catalogsettings', 'list', 'catalog');
-            return $this->redirect("catalogconfig/" . $id_space);
+            $this->menusactivation($idSpace, 'catalogsettings', 'list', 'catalog');
+            return $this->redirect("catalogconfig/" . $idSpace);
         }
 
 
-        $formMenuName = $this->menuNameForm($id_space, 'catalog', $lang);
+        $formMenuName = $this->menuNameForm($idSpace, 'catalog', $lang);
         if ($formMenuName->check()) {
-            $this->setMenuName($id_space, 'catalog');
-            return $this->redirect("catalogconfig/".$id_space);
+            $this->setMenuName($idSpace, 'catalog');
+            return $this->redirect("catalogconfig/".$idSpace);
         }
-        $formSettingsMenuName = $this->menuNameForm($id_space, 'catalogsettings', $lang);
+        $formSettingsMenuName = $this->menuNameForm($idSpace, 'catalogsettings', $lang);
         if ($formSettingsMenuName->check()) {
-            $this->setMenuName($id_space, 'catalogsettings');
-            return $this->redirect("catalogconfig/".$id_space);
+            $this->setMenuName($idSpace, 'catalogsettings');
+            return $this->redirect("catalogconfig/".$idSpace);
         }
 
 
 
-        $formUseAntibodies = $this->antibodiesForm($id_space, $lang);
+        $formUseAntibodies = $this->antibodiesForm($idSpace, $lang);
         if ($formUseAntibodies->check()) {
             $modelConfig = new CoreConfig();
             $antibody_pluginR = $this->request->getParameterNoException("ca_use_antibodies");
-            $modelConfig->setParam("ca_use_antibodies", $antibody_pluginR, $id_space);
+            $modelConfig->setParam("ca_use_antibodies", $antibody_pluginR, $idSpace);
         }
-        $formUseResources = $this->resourcesForm($id_space, $lang);
+        $formUseResources = $this->resourcesForm($idSpace, $lang);
         if ($formUseResources->check()) {
             $modelConfig = new CoreConfig();
             $resources_pluginR = $this->request->getParameterNoException("ca_use_resources");
-            $modelConfig->setParam("ca_use_resources", $resources_pluginR, $id_space);
+            $modelConfig->setParam("ca_use_resources", $resources_pluginR, $idSpace);
         }
 
-        $formPublicPageHeader = $this->publicPageHeaderForm($id_space, $lang);
+        $formPublicPageHeader = $this->publicPageHeaderForm($idSpace, $lang);
         if ($formPublicPageHeader->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("CaPublicPageTitle", $this->request->getParameter("CaPublicPageTitle"), $id_space);
+            $modelConfig->setParam("CaPublicPageTitle", $this->request->getParameter("CaPublicPageTitle"), $idSpace);
 
             $target_dir = "data/catalog/logos/";
             if ($_FILES["CaPublicPageLogo"]["name"] != "") {
                 $ext = pathinfo($_FILES["CaPublicPageLogo"]["name"], PATHINFO_EXTENSION);
-                FileUpload::uploadFile($target_dir, "CaPublicPageLogo", $id_space . "." . $ext);
-                $modelConfig->setParam("CaPublicPageLogo", $target_dir . $id_space . "." . $ext, $id_space);
+                FileUpload::uploadFile($target_dir, "CaPublicPageLogo", $idSpace . "." . $ext);
+                $modelConfig->setParam("CaPublicPageLogo", $target_dir . $idSpace . "." . $ext, $idSpace);
             }
         }
 
@@ -105,45 +105,45 @@ class CatalogconfigController extends CoresecureController
             $formUseResources->getHtml($lang),
             $formPublicPageHeader->getHtml($lang)
         );
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function antibodiesForm($id_space, $lang)
+    protected function antibodiesForm($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_antibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space, 0);
+        $ca_use_antibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $idSpace, 0);
 
         $form = new Form($this->request, "ca_use_antibodiesForm");
         $form->addSeparator(CatalogTranslator::Antibody($lang));
 
         $form->addSelect("ca_use_antibodies", CatalogTranslator::Antibody_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_antibodies);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $idSpace);
 
 
         return $form;
     }
 
-    protected function resourcesForm($id_space, $lang)
+    protected function resourcesForm($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $ca_use_resources = $modelCoreConfig->getParamSpace("ca_use_resources", $id_space, 0);
+        $ca_use_resources = $modelCoreConfig->getParamSpace("ca_use_resources", $idSpace, 0);
 
         $form = new Form($this->request, "ca_use_resourcesForm");
         $form->addSeparator(CatalogTranslator::Resources($lang));
 
         $form->addSelect("ca_use_resources", CatalogTranslator::Resources_plugin($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $ca_use_resources);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $idSpace);
 
 
         return $form;
     }
 
-    protected function publicPageHeaderForm($id_space, $lang)
+    protected function publicPageHeaderForm($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $CaPublicPageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $id_space);
+        $CaPublicPageTitle = $modelCoreConfig->getParamSpace("CaPublicPageTitle", $idSpace);
 
         $form = new Form($this->request, "publicPageHeaderForm");
         $form->addSeparator(CatalogTranslator::PublicPageHeader($lang));
@@ -151,7 +151,7 @@ class CatalogconfigController extends CoresecureController
         $form->addText("CaPublicPageTitle", CatalogTranslator::Title($lang), false, $CaPublicPageTitle);
         $form->addUpload("CaPublicPageLogo", CatalogTranslator::Logo($lang));
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "catalogconfig/" . $idSpace);
 
 
         return $form;

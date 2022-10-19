@@ -32,16 +32,16 @@ class BjcollectionsApi extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function notecollectionsAction($id_space, $id)
+    public function notecollectionsAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         //$lang = $this->getLanguage();
 
         $modelCollection = new BjCollectionNote();
-        $collections = $modelCollection->getNoteCollections($id_space, $id);
+        $collections = $modelCollection->getNoteCollections($idSpace, $id);
 
         $model = new BjNote();
-        $noteName = $model->getName($id_space, $id);
+        $noteName = $model->getName($idSpace, $id);
 
         $data = array("collections" => $collections, "id_note" => $id, "noteName" => $noteName);
         echo json_encode($data);

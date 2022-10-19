@@ -36,31 +36,31 @@ class CoreStar extends Model
         $this->runRequest($sql);
     }
 
-    public function stars($id_user)
+    public function stars($idUser)
     {
         $sql = "SELECT * FROM core_star WHERE id_user=?";
-        return $this->runRequest($sql, array($id_user))->fetchAll();
+        return $this->runRequest($sql, array($idUser))->fetchAll();
     }
 
-    public function star($id_user, $id_space)
+    public function star($idUser, $idSpace)
     {
         $sql = "SELECT * FROM core_star WHERE id_user=? AND id_space=?";
-        $exists = $this->runRequest($sql, array($id_user, $id_space))->fetch();
+        $exists = $this->runRequest($sql, array($idUser, $idSpace))->fetch();
         if (!$exists) {
             $sql = "INSERT INTO core_star (id_user, id_space) VALUES (?,?)";
-            $this->runRequest($sql, array($id_user, $id_space));
+            $this->runRequest($sql, array($idUser, $idSpace));
         }
     }
 
-    public function delete($id_user, $id_space)
+    public function delete($idUser, $idSpace)
     {
         $sql = "DELETE FROM core_star WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($id_user, $id_space));
+        $this->runRequest($sql, array($idUser, $idSpace));
     }
 
-    public function deleteSpace($id_space)
+    public function deleteSpace($idSpace)
     {
         $sql = "DELETE FROM core_star WHERE id_space=?";
-        $this->runRequest($sql, array($id_space));
+        $this->runRequest($sql, array($idSpace));
     }
 }

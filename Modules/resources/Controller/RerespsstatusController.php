@@ -32,28 +32,28 @@ class RerespsstatusController extends ResourcesBaseController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Resps_Status($lang), 3);
-        $table->addLineEditButton("rerespsstatusedit/".$id_space);
-        $table->addDeleteButton("rerespsstatusdelete/".$id_space);
+        $table->addLineEditButton("rerespsstatusedit/".$idSpace);
+        $table->addDeleteButton("rerespsstatusdelete/".$idSpace);
 
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
 
-        $data = $this->model->getForSpace($id_space);
+        $data = $this->model->getForSpace($idSpace);
 
         $tableHtml = $table->view($data, $headers);
 
         $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "htmlTable" => $tableHtml,
             "data" => ["rerespsstatus" => $data]
@@ -63,14 +63,14 @@ class RerespsstatusController extends ResourcesBaseController
     /**
      * Edit form
      */
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
 
         // get belonging info
-        $data = array("id" => 0, "name" => "", "id_space" => $id_space);
+        $data = array("id" => 0, "name" => "", "id_space" => $idSpace);
         if ($id > 0) {
-            $data = $this->model->get($id_space, $id);
+            $data = $this->model->get($idSpace, $id);
         }
 
         // lang
@@ -83,19 +83,19 @@ class RerespsstatusController extends ResourcesBaseController
         $form->addHidden("id", $data["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "rerespsstatusedit/".$id_space. "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "rerespsstatus/".$id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "rerespsstatusedit/".$idSpace. "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "rerespsstatus/".$idSpace);
 
         if ($form->check()) {
             // run the database query
-            $id_status = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
-            return $this->redirect("rerespsstatus/".$id_space, [], ['rerespsstatus' => ['id' => $id_status]]);
+            $id_status = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $idSpace);
+            return $this->redirect("rerespsstatus/".$idSpace, [], ['rerespsstatus' => ['id' => $id_status]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
             return $this->render(array(
-                "id_space" => $id_space,
+                "id_space" => $idSpace,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'rerespsstatus' => $data
@@ -103,11 +103,11 @@ class RerespsstatusController extends ResourcesBaseController
         }
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
 
-        $this->model->delete($id_space, $id);
-        $this->redirect("rerespsstatus/".$id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("rerespsstatus/".$idSpace);
     }
 }

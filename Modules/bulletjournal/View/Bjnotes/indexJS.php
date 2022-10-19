@@ -95,7 +95,7 @@
 
         function showeditNoteForm(id) {
             $.post(
-                    'bjgetnote/<?php echo $id_space ?>/' + id,
+                    'bjgetnote/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
                         $('#formnotedate').val(data.date);
@@ -113,7 +113,7 @@
 
         function showeditTaskForm(id) {
             $.post(
-                    'bjgettask/<?php echo $id_space ?>/' + id,
+                    'bjgettask/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
                         $('#formtaskdate').val(data.date);
@@ -133,7 +133,7 @@
 
         function showeditEventForm(id) {
             $.post(
-                    'bjgetevent/<?php echo $id_space ?>/' + id,
+                    'bjgetevent/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
                         $('#formeventdatestart').val(data.startdate);
@@ -228,7 +228,7 @@
         function closeTask(id) {
             //alert("close task clicked " + id);
             $.post(
-                    'bjclosetask/<?php echo $id_space ?>/' + id,
+                    'bjclosetask/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
                         //alert("update task to " + data.status);
@@ -248,7 +248,7 @@
         function cancelTask(id) {
             //alert("close task clicked " + id);
             $.post(
-                    'bjcanceltask/<?php echo $id_space ?>/' + id,
+                    'bjcanceltask/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
                         //alert("update task to " + data.status);
@@ -286,7 +286,7 @@
         $('#editNoteFormsubmit').click(function (e) {
             e.preventDefault();
             $.post(
-                    'bjeditnotequery/<?php echo $id_space ?>',
+                    'bjeditnotequery/<?php echo $idSpace ?>',
                     $('#editNoteForm').serialize(),
                     function (data) {
                         if (data.isedit === 0) {
@@ -303,7 +303,7 @@
         $('#editTaskFormsubmit').click(function (e) {
             e.preventDefault();
             $.post(
-                    'bjedittask/<?php echo $id_space ?>',
+                    'bjedittask/<?php echo $idSpace ?>',
                     $('#editTaskForm').serialize(),
                     function (data) {
                         if (data.isedit === 0) {
@@ -320,7 +320,7 @@
         $('#editEventFormsubmit').click(function (e) {
             e.preventDefault();
             $.post(
-                    'bjeditevent/<?php echo $id_space ?>',
+                    'bjeditevent/<?php echo $idSpace ?>',
                     $('#editEventForm').serialize(),
                     function (data) {
                         if (data.isedit === 0) {

@@ -15,13 +15,13 @@ class UsersController extends CoresecureController
 {
     public function sideMenu()
     {
-        $id_space = $this->args['id_space'];
+        $idSpace = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("users", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("users", $idSpace);
 
         $dataView = [
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'title' =>  ComTranslator::Com($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -30,13 +30,13 @@ class UsersController extends CoresecureController
         return $this->twig->render("Modules/users/View/Users/navbar.twig", $dataView);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
         $html = file_get_contents('Modules/users/View/Users/navbar.php');
 
-        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{id_space}}', $idSpace, $html);
         //$html = str_replace('{{Providers}}', UsersTranslator::Providers($lang), $html);
         //$html = str_replace('{{NewProvider}}', UsersTranslator::NewProvider($lang), $html);
 

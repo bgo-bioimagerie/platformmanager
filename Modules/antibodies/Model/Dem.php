@@ -33,10 +33,10 @@ class Dem extends Model
     }
 
 
-    public function getBySpace($id_space)
+    public function getBySpace($idSpace)
     {
         $sql = "SELECT * from ac_dems WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -46,10 +46,10 @@ class Dem extends Model
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getDems($id_space, $sortentry = 'id')
+    public function getDems($idSpace, $sortentry = 'id')
     {
         $sql = "select * from ac_dems WHERE id_space=? AND deleted=0 ORDER BY " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -60,14 +60,14 @@ class Dem extends Model
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         if (!$id) {
             return array("nom" => "");
         }
 
         $sql = "SELECT * from ac_dems where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -81,11 +81,11 @@ class Dem extends Model
      * @param string $name name of the espece
      *
      */
-    public function add($name, $id_space)
+    public function add($name, $idSpace)
     {
         $sql = "insert into ac_dems(nom, id_space)"
                 . " values(?,?)";
-        $this->runRequest($sql, array($name, $id_space));
+        $this->runRequest($sql, array($name, $idSpace));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -95,16 +95,16 @@ class Dem extends Model
      * @param int $id Id of the  to update
      * @param string $name New name of the
      */
-    public function edit($id, $name, $id_space)
+    public function edit($id, $name, $idSpace)
     {
         $sql = "update ac_dems set nom=? where id=? AND id_space=?";
-        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
+        $this->runRequest($sql, array("" . $name . "", $id, $idSpace));
     }
 
-    public function getIdFromName($name, $id_space)
+    public function getIdFromName($name, $idSpace)
     {
         $sql = "select id from ac_dems where nom=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($name, $id_space));
+        $unit = $this->runRequest($sql, array($name, $idSpace));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -113,10 +113,10 @@ class Dem extends Model
         }
     }
 
-    public function getNameFromId($id_space, $id)
+    public function getNameFromId($idSpace, $id)
     {
         $sql = "select nom from ac_dems where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -125,9 +125,9 @@ class Dem extends Model
         }
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE ac_dems SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

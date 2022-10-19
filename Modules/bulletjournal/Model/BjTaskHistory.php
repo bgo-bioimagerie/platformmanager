@@ -32,42 +32,42 @@ class BjTaskHistory extends Model
         $this->primaryKey = "id";
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM bj_tasks_history WHERE id=? AND id_space=?";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function getLastStatus($id_space, $id_note)
+    public function getLastStatus($idSpace, $id_note)
     {
         $sql = "SELECT * FROM bj_tasks_history WHERE id_note=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id_note, $id_space));
+        $req = $this->runRequest($sql, array($id_note, $idSpace));
         if ($req->rowCount() > 0) {
             return $req->fetch();
         }
         return array();
     }
 
-    public function getForNote($id_space, $id_note)
+    public function getForNote($idSpace, $id_note)
     {
         $sql = "SELECT * FROM bj_tasks_history WHERE id_note=? AND id_space=? ORDER BY date DESC;";
-        return $this->runRequest($sql, array($id_note, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_note, $idSpace))->fetchAll();
     }
 
-    public function addHist($id_space, $id_note, $status, $date)
+    public function addHist($idSpace, $id_note, $status, $date)
     {
         $sql = "INSERT INTO bj_tasks_history (id_note, status, date, id_space) VALUES (?,?,?,?)";
-        $this->runRequest($sql, array($id_note, $status, $date, $id_space));
+        $this->runRequest($sql, array($id_note, $status, $date, $idSpace));
     }
 
-    public function set($id_space, $id_note, $status, $date)
+    public function set($idSpace, $id_note, $status, $date)
     {
-        if ($this->exists($id_space, $id_note)) {
+        if ($this->exists($idSpace, $id_note)) {
             $sql = "UPDATE bj_tasks_history SET status=?, date=? WHERE id_note=? AND id_space=?";
             $this->runRequest($sql, array($status, $date, $id_note));
         } else {
             $sql = "INSERT INTO bj_tasks_history (id_note, status, date, id_space) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($id_note, $status, $date, $id_space));
+            $this->runRequest($sql, array($id_note, $status, $date, $idSpace));
             $id_note = $this->getDatabase()->lastInsertId();
         }
         return $id_note;

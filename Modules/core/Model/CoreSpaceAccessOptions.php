@@ -26,42 +26,42 @@ class CoreSpaceAccessOptions extends Model
         $this->primaryKey = "id";
     }
 
-    public function getAll($id_space)
+    public function getAll($idSpace)
     {
         $sql = "SELECT * FROM core_space_access_options WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function set($id_space, $toolname, $module, $url)
+    public function set($idSpace, $toolname, $module, $url)
     {
-        if (!$this->exists($id_space, $toolname)) {
+        if (!$this->exists($idSpace, $toolname)) {
             $sql = "INSERT INTO core_space_access_options (id_space, toolname, module, url) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($id_space, $toolname, $module, $url));
+            $this->runRequest($sql, array($idSpace, $toolname, $module, $url));
         } else {
             $sql = "UPDATE core_space_access_options SET module=?, url=? WHERE id_space=? AND toolname=?";
-            $this->runRequest($sql, array($module, $url, $id_space, $toolname));
+            $this->runRequest($sql, array($module, $url, $idSpace, $toolname));
         }
     }
 
-    public function exists($id_space, $toolname)
+    public function exists($idSpace, $toolname)
     {
         $sql = "SELECT id FROM core_space_access_options WHERE id_space=? AND toolname=?";
-        $req = $this->runRequest($sql, array($id_space, $toolname));
+        $req = $this->runRequest($sql, array($idSpace, $toolname));
         if ($req->rowCount() > 0) {
             return true;
         }
         return false;
     }
 
-    public function delete($id_space, $toolname)
+    public function delete($idSpace, $toolname)
     {
         $sql = "UPDATE core_space_access_options SET deleted=1,deleted_at=NOW() WHERE toolname=? AND id_space=?";
-        $this->runRequest($sql, array($toolname, $id_space));
+        $this->runRequest($sql, array($toolname, $idSpace));
     }
 
-    public function reactivate($id_space, $toolname)
+    public function reactivate($idSpace, $toolname)
     {
         $sql = "UPDATE core_space_access_options SET deleted=0, deleted_at=NULL WHERE toolname=? AND id_space=?";
-        $this->runRequest($sql, array($toolname, $id_space));
+        $this->runRequest($sql, array($toolname, $idSpace));
     }
 }

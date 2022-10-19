@@ -158,10 +158,10 @@ class UsersPatch extends Model
         }
     }
 
-    protected function getEcUnitBelonging($id_unit, $id_space)
+    protected function getEcUnitBelonging($id_unit, $idSpace)
     {
         $sql = "SELECT id_belonging FROM ec_j_belonging_units WHERE id_unit=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id_unit, $id_space));
+        $req = $this->runRequest($sql, array($id_unit, $idSpace));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -206,10 +206,10 @@ class UsersPatch extends Model
         Configuration::getLogger()->info('[user][patch] join users to clients done');
     }
 
-    protected function getEcResponsibles($id_user)
+    protected function getEcResponsibles($idUser)
     {
         $sql = "SELECT id_resp FROM ec_j_user_responsible WHERE id_user = ?";
-        $req = $this->runRequest($sql, array($id_user));
+        $req = $this->runRequest($sql, array($idUser));
         $userr = $req->fetchAll();
 
         $modelUser = new CoreUser();
@@ -221,17 +221,17 @@ class UsersPatch extends Model
         return $userr;
     }
 
-    protected function getResponsibleNewClientId($resp_fullname, $id_space)
+    protected function getResponsibleNewClientId($resp_fullname, $idSpace)
     {
-        if ($resp_fullname != "" && $id_space != 0) {
+        if ($resp_fullname != "" && $idSpace != 0) {
             $sql = "SELECT * FROM cl_clients WHERE name=? AND id_space=?";
 
-            $req = $this->runRequest($sql, array($resp_fullname, $id_space));
+            $req = $this->runRequest($sql, array($resp_fullname, $idSpace));
             if ($req->rowCount() > 0) {
                 $tmp = $req->fetch();
                 return $tmp[0];
             }
-            Configuration::getLogger()->debug('[users][patch] getResponsibleNewClientId: no id', ['responsible' => $resp_fullname, 'space' => $id_space]);
+            Configuration::getLogger()->debug('[users][patch] getResponsibleNewClientId: no id', ['responsible' => $resp_fullname, 'space' => $idSpace]);
             return 0;
         }
         return 0;
@@ -314,9 +314,9 @@ class UsersPatch extends Model
         $invoices = $this->runRequest($sql)->fetchAll();
         $modelUser = new CoreUser();
         foreach ($invoices as $invoice) {
-            $id_space = $invoice["id_space"];
+            $idSpace = $invoice["id_space"];
             $resp_fullname = $modelUser->getUserFullName($invoice["id_responsible"]);
-            $newRespID = $this->getResponsibleNewClientId($resp_fullname, $id_space);
+            $newRespID = $this->getResponsibleNewClientId($resp_fullname, $idSpace);
 
             $sql = "UPDATE in_invoice SET id_responsible=? WHERE id=?";
             $this->runRequest($sql, array($newRespID, $invoice["id"]));
@@ -325,9 +325,9 @@ class UsersPatch extends Model
         $sqlnwes = "SELECT * FROM bk_nightwe";
         $nwes = $this->runRequest($sqlnwes)->fetchAll();
         foreach ($nwes as $nwe) {
-            $id_space = $nwe["id_space"];
+            $idSpace = $nwe["id_space"];
             $belongingName = $this->getEcBelongingName($nwe["id_belonging"]);
-            $newBelID = $this->getNewBelongingID($belongingName, $id_space);
+            $newBelID = $this->getNewBelongingID($belongingName, $idSpace);
 
             $sql = "UPDATE bk_nightwe SET id_belonging=? WHERE id=?";
             $this->runRequest($sql, array($newBelID, $nwe["id"]));
@@ -341,9 +341,9 @@ class UsersPatch extends Model
 
             // get id_space
             $sql = "SELECT id_space FROM re_info WHERE id=?";
-            $id_space = $this->runRequest($sql, array($price["id_resource"]))->fetch();
-            if ($id_space) {
-                $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
+            $idSpace = $this->runRequest($sql, array($price["id_resource"]))->fetch();
+            if ($idSpace) {
+                $newBelID = $this->getNewBelongingID($belongingName, $idSpace[0]);
                 $sql2 = "UPDATE bk_prices SET id_belonging=? WHERE id=?";
                 $this->runRequest($sql2, array($newBelID, $price["id"]));
             }
@@ -357,9 +357,9 @@ class UsersPatch extends Model
 
             // get id_space
             $sql = "SELECT id_space FROM se_services WHERE id=?";
-            $id_space = $this->runRequest($sql, array($price["id_service"]))->fetch();
-            if ($id_space) {
-                $newBelID = $this->getNewBelongingID($belongingName, $id_space[0]);
+            $idSpace = $this->runRequest($sql, array($price["id_service"]))->fetch();
+            if ($idSpace) {
+                $newBelID = $this->getNewBelongingID($belongingName, $idSpace[0]);
                 $sql2 = "UPDATE se_prices SET id_belonging=? WHERE id=?";
                 $this->runRequest($sql2, array($newBelID, $price["id"]));
             } else {
@@ -370,10 +370,10 @@ class UsersPatch extends Model
         Configuration::getLogger()->info('[user][patch] updateInvoicesRespIDs done');
     }
 
-    protected function getNewBelongingID($name, $id_space)
+    protected function getNewBelongingID($name, $idSpace)
     {
         $sql = "SELECT id FROM cl_pricings WHERE name=? AND id_space=?";
-        $req = $this->runRequest($sql, array($name, $id_space));
+        $req = $this->runRequest($sql, array($name, $idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];

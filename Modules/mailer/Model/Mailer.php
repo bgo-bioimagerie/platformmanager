@@ -16,7 +16,7 @@ class Mailer extends Model
     public static $SPACES_ADMINS = 3;
 
     public function __construct(
-        public int $id_space=0,
+        public int $idSpace=0,
         public string $subject='',
         public string $message='',
         public int $type=0
@@ -37,23 +37,23 @@ class Mailer extends Model
         $this->runRequest($sql);
     }
 
-    public function create(int $id_space, string $subject, string $message, int $type)
+    public function create(int $idSpace, string $subject, string $message, int $type)
     {
         $sql = "INSERT INTO mailer_mails (id_space, subject, message, type) VALUES (?, ?, ?, ?)";
-        $this->runRequest($sql, [$id_space, $subject, $message, $type]);
+        $this->runRequest($sql, [$idSpace, $subject, $message, $type]);
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function delete(int $id_space, int $id)
+    public function delete(int $idSpace, int $id)
     {
         $sql = "DELETE FROM mailer_mails WHERE id_space=? AND id=?";
-        $this->runRequest($sql, [$id_space, $id]);
+        $this->runRequest($sql, [$idSpace, $id]);
     }
 
-    public function getMails($id_space, $type=0)
+    public function getMails($idSpace, $type=0)
     {
         $sql = "SELECT * FROM mailer_mails WHERE id_space=?";
-        $params = array($id_space);
+        $params = array($idSpace);
         if ($type) {
             $params[] = $type;
             $sql .= " AND type=?";
@@ -65,15 +65,15 @@ class Mailer extends Model
     /**
      * count number of tickets per status per space
      */
-    public function count($id_space)
+    public function count($idSpace)
     {
         $sql = "SELECT count(*) as total FROM mailer_mails WHERE id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function recent($id_space, $type=1)
+    public function recent($idSpace, $type=1)
     {
         $sql = "SELECT count(*) as total FROM mailer_mails WHERE id_space=? AND type<=? AND created_at > now() - INTERVAL 7 DAY";
-        return $this->runRequest($sql, array($id_space, $type))->fetch();
+        return $this->runRequest($sql, array($idSpace, $type))->fetch();
     }
 }

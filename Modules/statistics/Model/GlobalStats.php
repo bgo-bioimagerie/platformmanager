@@ -11,13 +11,13 @@ class GlobalStats
     public const STATS_GLOBAL = 'global';
 
 
-    public function generateStats($filepath, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $id_space, $lang='en')
+    public function generateStats($filepath, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $idSpace, $lang='en')
     {
         $sk = new SeStats();
-        $spreadsheet = $sk->getBalance($dateBegin, $dateEnd, $id_space, true, null, $lang);
+        $spreadsheet = $sk->getBalance($dateBegin, $dateEnd, $idSpace, true, null, $lang);
 
         $bk = new BkStats();
-        $spreadsheet = $bk->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang);
+        $spreadsheet = $bk->getBalance($dateBegin, $dateEnd, $idSpace, $excludeColorCode, $generateclientstats, $spreadsheet, $lang);
         $spreadsheet->setActiveSheetIndex(1);
 
         // write excel file

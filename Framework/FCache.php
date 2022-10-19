@@ -119,28 +119,28 @@ class FCache extends Model
 
     /**
      * Request to add a route get parameters to the database
-     * @param type $id_url
+     * @param type $idUrl
      * @param type $name
      * @param type $regexp
      * @return type
      */
-    protected function setCacheUrlGetDB($id_url, $name, $regexp)
+    protected function setCacheUrlGetDB($idUrl, $name, $regexp)
     {
         //echo "name = " . $name; echo "<br/>";
         //echo "regexp = " . $regexp; echo "<br/>";
-        //echo "id_url = " . $id_url; echo "<br/>";
+        //echo "id_url = " . $idUrl; echo "<br/>";
 
-        $id = $this->getChacheUrlGetID($id_url, $name);
+        $id = $this->getChacheUrlGetID($idUrl, $name);
         //echo "id = "; print_r($id); echo "<br/>";
         if ($id > 0) {
             //echo "UPDATE cache_urls_gets begin <br/>";
             $sql = "UPDATE cache_urls_gets SET `url_id`=?, `name`=?, `regexp`=? WHERE id=?";
-            $this->runRequest($sql, array($id_url, $name, $regexp, $id));
+            $this->runRequest($sql, array($idUrl, $name, $regexp, $id));
         //echo "UPDATE cache_urls_gets end <br/>";
         } else {
             //echo "INSERT cache_urls_gets begin <br/>";
             $sql = "INSERT INTO cache_urls_gets (`url_id`, `name`, `regexp`) VALUES(?,?,?) ";
-            $this->runRequest($sql, array($id_url, $name, $regexp));
+            $this->runRequest($sql, array($idUrl, $name, $regexp));
             $id = $this->getDatabase()->lastInsertId();
             //echo "INSERT cache_urls_gets end <br/>";
         }
@@ -149,14 +149,14 @@ class FCache extends Model
 
     /**
      * get a get parameter cache route id
-     * @param type $id_url
+     * @param type $idUrl
      * @param type $name
      * @return boolean
      */
-    protected function getChacheUrlGetID($id_url, $name)
+    protected function getChacheUrlGetID($idUrl, $name)
     {
         $sql = "SELECT id FROM cache_urls_gets WHERE url_id=? AND name=?";
-        $req = $this->runRequest($sql, array($id_url, $name));
+        $req = $this->runRequest($sql, array($idUrl, $name));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];

@@ -26,12 +26,12 @@ class AntibodiesApi extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::tissusAction()
      */
-    public function tissusAction($id_space, $id_tissus)
+    public function tissusAction($idSpace, $id_tissus)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
 
         $modelTissus = new Tissus();
-        $data = $modelTissus->getTissusById($id_space, $id_tissus);
+        $data = $modelTissus->getTissusById($idSpace, $id_tissus);
 
         echo json_encode($data);
     }
@@ -40,12 +40,12 @@ class AntibodiesApi extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::ownerAction()
      */
-    public function ownerAction($id_space, $id_owner)
+    public function ownerAction($idSpace, $id_owner)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
 
         $model = new AcOwner();
-        $data = $model->get($id_space, $id_owner);
+        $data = $model->get($idSpace, $id_owner);
 
         echo json_encode($data);
     }

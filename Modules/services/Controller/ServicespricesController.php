@@ -38,15 +38,15 @@ class ServicespricesController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelBelonging = new ClPricing();
         $modelPrice = new SePrice();
-        $services = $this->serviceModel->getAll($id_space);
-        $belongings = $modelBelonging->getAll($id_space);
+        $services = $this->serviceModel->getAll($idSpace);
+        $belongings = $modelBelonging->getAll($idSpace);
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Prices($lang), 3);
@@ -62,7 +62,7 @@ class ServicespricesController extends ServicesController
         for ($i = 0 ; $i < count($services) ; $i++) {
             $data = array();
             for ($b = 0 ; $b < count($belongings) ; $b++) {
-                $data[$belongings[$b]["id"]] = $modelPrice->getPrice($id_space, $services[$i]["id"], $belongings[$b]["id"]);
+                $data[$belongings[$b]["id"]] = $modelPrice->getPrice($idSpace, $services[$i]["id"], $belongings[$b]["id"]);
                 $data['service'] = $services[$i]['name'];
                 $data['id_service'] = $services[$i]['id'];
             }
@@ -80,26 +80,26 @@ class ServicespricesController extends ServicesController
             $form->addText('bel_'.$belongings[$b]['id'], $belongings[$b]['name'], true, 0);
         }
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicespriceseditquery/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicespriceseditquery/".$idSpace);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml,
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "tableHtml" => $tableHtml,
                         'formedit' => $form->getHtml($lang), 'services' => $services,
                         'belongings' => $belongings));
     }
 
-    public function editqueryAction($id_space)
+    public function editqueryAction($idSpace)
     {
         $modelPricing = new ClPricing();
         $modelPrice = new SePrice();
-        $belongings = $modelPricing->getAll($id_space);
+        $belongings = $modelPricing->getAll($idSpace);
 
         $id_service = $this->request->getParameter('service_id');
 
         foreach ($belongings as $belonging) {
             $price = $this->request->getParameter('bel_' . $belonging['id']);
-            $modelPrice->setPrice($id_space, $id_service, $belonging['id'], $price);
+            $modelPrice->setPrice($idSpace, $id_service, $belonging['id'], $price);
         }
 
-        $this->redirect('servicesprices/' . $id_space);
+        $this->redirect('servicesprices/' . $idSpace);
     }
 }

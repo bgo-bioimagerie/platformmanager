@@ -4,8 +4,8 @@ require_once 'Framework/Constants.php';
 
 $modelMenu = new CoreSpace();
 
-$menucolor = $modelMenu->getSpaceMenusColor($id_space, "booking");
-$menucolortxt = $modelMenu->getSpaceMenusTxtColor($id_space, "booking");
+$menucolor = $modelMenu->getSpaceMenusColor($idSpace, "booking");
+$menucolortxt = $modelMenu->getSpaceMenusTxtColor($idSpace, "booking");
 if ($menucolor == "") {
     $menucolor = "#428bca";
 }
@@ -59,7 +59,7 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 
     <div class="bs-docs-header col-12" id="mainmenu">
         
-            <form role="form" class="form-horizontal" action="booking/<?php echo $id_space ?>" method="post" id="navform">
+            <form role="form" class="form-horizontal" action="booking/<?php echo $idSpace ?>" method="post" id="navform">
             <div class="row">
                 <div class="col-12 col-md-2" id="area">
                     <fieldset>
@@ -144,12 +144,12 @@ if (isset($users) && count($users) > 1) {
                             <div class='input-group'>
                                 <?php
                 $curUser = "all:0";
-                    if (!isset($id_user)) {
-                        $id_user = '';
+                    if (!isset($idUser)) {
+                        $idUser = '';
                     }
-                    if ($id_user) {
+                    if ($idUser) {
                         for ($i=0;$i<count($users);$i++) {
-                            if ($users[$i]['id'] == $id_user) {
+                            if ($users[$i]['id'] == $idUser) {
                                 $curUser = ($users[$i]['firstname'] ? $users[$i]['name'].' '.$users[$i]['firstname'] : $users[$i]['name']).':'.$users[$i]['id'];
                             }
                         }
@@ -160,23 +160,23 @@ if (isset($users) && count($users) > 1) {
                     if ($context['role']<CoreSpace::$MANAGER) { ?>
                                     <select class="form-select" id="id_user" name="id_user" onchange="$('#navform').submit();">
                                         <option value="0"><?php echo BookingTranslator::ShowAll($lang); ?></option>
-                                        <option <?php if ($id_user) {
+                                        <option <?php if ($idUser) {
                                             echo "selected";
                                         } ?> value="<?php echo $users[1]['id'] ?>"><?php echo BookingTranslator::ShowMine($lang); ?></option>
                                     </select>
                                 <?php } else {
                                     ?>
-                                <input type="hidden" id="id_user" name="id_user" value="<?php echo $id_user ?>"/>
+                                <input type="hidden" id="id_user" name="id_user" value="<?php echo $idUser ?>"/>
                                 <input class="form-control" list="user_list" value="<?php echo $curUser?>" onchange="getuserval(this.value)"/>
 
                                 <datalist id="user_list">
                                 <?php
                                         foreach ($users as $i => $user) {
                                             $selected = "";
-                                            if ($i == 0 && !$id_user) {
+                                            if ($i == 0 && !$idUser) {
                                                 $selected = 'selected';
                                             }
-                                            if ($id_user == $user['id']) {
+                                            if ($idUser == $user['id']) {
                                                 $selected = 'selected';
                                             }
                                             ?>

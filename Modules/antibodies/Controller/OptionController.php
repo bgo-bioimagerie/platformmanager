@@ -22,62 +22,62 @@ class OptionController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get the user list
-        $optionssArray = $this->model->getBySpace($id_space);
+        $optionssArray = $this->model->getBySpace($idSpace);
 
         $table = new TableView();
         $table->setTitle("Option", 3);
-        $table->addLineEditButton("optionedit/".$id_space."/");
-        $table->addDeleteButton("optiondelete/".$id_space."/", "id", "nom");
+        $table->addLineEditButton("optionedit/".$idSpace."/");
+        $table->addDeleteButton("optiondelete/".$idSpace."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($optionssArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $options = $this->model->get($id_space, $id);
+        $options = $this->model->get($idSpace, $id);
 
         $form = new Form($this->request, "optionseditform");
         $form->setTitle("Modifier options");
         $form->addText("nom", "nom", true, $options["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "optionedit/".$id_space.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "optionedit/".$idSpace.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $idSpace);
             } else {
-                $this->model->edit($id, $name, $id_space);
+                $this->model->edit($id, $name, $idSpace);
             }
 
-            return $this->redirect("option/".$id_space, [], ['option' => ['id' => $id]]);
+            return $this->redirect("option/".$idSpace, [], ['option' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($id_space, $id);
-        $this->redirect("option/" . $id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("option/" . $idSpace);
     }
 }

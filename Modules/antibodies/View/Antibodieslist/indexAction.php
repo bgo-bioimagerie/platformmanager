@@ -34,7 +34,7 @@
                     <div class="dropdown-menu col-12" aria-labelledby="antibodiesmenu" style="background-color: transparent; border: none; box-shadow:none;">
                         <?php
                         $c = new AntibodiesController(new Request([], false));
-echo $c->dropDownMenu($id_space);
+echo $c->dropDownMenu($idSpace);
 ?>
                     </div>
                 </div>
@@ -42,7 +42,7 @@ echo $c->dropDownMenu($id_space);
 
             <div class="col-2">
                 
-                <form action="anticorpscsv/<?php echo $id_space?>" method="post">
+                <form action="anticorpscsv/<?php echo $idSpace?>" method="post">
                     <textarea style="display:none;" name="anticorpsArray"><?php echo json_encode($anticorpsArray)?></textarea>
                     <button type="submit" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
                 </form> 
@@ -55,137 +55,137 @@ echo $c->dropDownMenu($id_space);
             if ($letter == "All") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "A") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/A';">A</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "B") {
             echo "active";
         }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/B';">B</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "C") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/C';">C</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "D") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/D';">D</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "E") {
             echo "active";
         }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/E';">E</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "F") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/F';">F</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "G") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/G';">G</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "H") {
             echo "active";
         }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/H';">H</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "I") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/I';">I</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "J") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/J';">J</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/J';">J</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "K") {
             echo "active";
         }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/K';">K</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/K';">K</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "L") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/L';">L</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "M") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/M';">M</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "N") {
             echo "active";
         }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/N';">N</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "O") {
                 echo "active";
             }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/O';">O</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "P") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/P';">P</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "Q") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/Q';">Q</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "R") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/R';">R</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "S") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/S';">S</button>
             <button class="btn btn-outline-dark <?php
     if ($letter == "T") {
         echo "active";
     }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/T';">T</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "U") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/U';">U</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "V") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/V';">V</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "W") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/W';">W</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "X") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/X';">X</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "Y") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/Y';">Y</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "Z") {
     echo "active";
 }
-?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
+?>" onclick="location.href = 'antibodies/<?php echo $idSpace ?>/Z';">Z</button>
         </div>
 
     </div>
@@ -202,7 +202,7 @@ if ($letter == "Z") {
         <div class="container">
 
         <div class="row">
-                <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $id_space ?>"
+                <form role="form" class="form-horizontal" action="anticorpsadvsearchquery/<?php echo $idSpace ?>"
                     method="get">
 
                 <?php
@@ -351,8 +351,8 @@ if (!isset($searchCom)) {
     }
     ?>
 
-                            <td headers="antibody number"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
-                            <td headers="antibody name"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
+                            <td headers="antibody number"  class="text-left"><a href="anticorpsedit/<?php echo $idSpace ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
+                            <td headers="antibody name"  class="text-left"><a href="anticorpsedit/<?php echo $idSpace ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
                             <td headers="antibody temperature"  class="text-left"><?php echo $this->clean($anticorps ['stockage']); ?></td>
                             <td headers="antibody provider"  class="text-left"><?php echo $this->clean($anticorps ['fournisseur']); ?></td>
                             <td headers="antibody source"  class="text-left"><?php echo $this->clean($anticorps ['source']); ?></td>
@@ -372,7 +372,7 @@ if (!isset($searchCom)) {
         if ($tissus[$i]['ref_protocol'] == "0") {
             $val .= "<p>Manuel</p>";
         } else {
-            $val .= "<p><a href=\"protocolsedit/".$id_space. "/". $tissus[$i]['id_protocol'] . "\">"
+            $val .= "<p><a href=\"protocolsedit/".$idSpace. "/". $tissus[$i]['id_protocol'] . "\">"
                     . $tissus[$i]['ref_protocol'] . "</a></p>";
         }
     }

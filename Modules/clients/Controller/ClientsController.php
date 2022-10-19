@@ -15,17 +15,17 @@ class ClientsController extends CoresecureController
 {
     public function sideMenu()
     {
-        $id_space = $this->args['id_space'];
+        $idSpace = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $idSpace);
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
+        $title = $modelConfig->getParamSpace("clientsMenuName", $idSpace);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }
         $dataView = [
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'title' => $title,
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -38,7 +38,7 @@ class ClientsController extends CoresecureController
         return $this->twig->render("Modules/clients/View/Clients/navbar.twig", $dataView);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
@@ -48,13 +48,13 @@ class ClientsController extends CoresecureController
         $html = str_replace('{{Pricings}}', ClientsTranslator::Pricings($lang), $html);
         $html = str_replace('{{CompanyInfo}}', ClientsTranslator::CompanyInfo($lang), $html);
 
-        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{id_space}}', $idSpace, $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $idSpace);
 
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
+        $title = $modelConfig->getParamSpace("clientsMenuName", $idSpace);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }

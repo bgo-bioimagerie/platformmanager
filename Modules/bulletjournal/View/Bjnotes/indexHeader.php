@@ -1,9 +1,9 @@
 <div class="col-12 col-10" id="pm-form">
     <div class="col-4 text-left">
         <div class="btn-group" role="group" aria-label="...">
-            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotesmonthbefore/<?php echo $id_space ?>/<?php echo $year ?>/<?php echo $month ?>'"> &lt; </button>
-            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotesmonthafter/<?php echo $id_space ?>/<?php echo $year ?>/<?php echo $month ?>'"> > </button>
-            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotes/<?php echo $id_space ?>/0/0'"><?php echo BulletjournalTranslator::ThisMonth($lang) ?></button>
+            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotesmonthbefore/<?php echo $idSpace ?>/<?php echo $year ?>/<?php echo $month ?>'"> &lt; </button>
+            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotesmonthafter/<?php echo $idSpace ?>/<?php echo $year ?>/<?php echo $month ?>'"> > </button>
+            <button type="submit" class="btn btn-outline-dark" onclick="location.href = 'bjnotes/<?php echo $idSpace ?>/0/0'"><?php echo BulletjournalTranslator::ThisMonth($lang) ?></button>
         </div>
     </div>  
 

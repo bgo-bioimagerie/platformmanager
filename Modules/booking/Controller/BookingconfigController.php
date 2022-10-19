@@ -35,118 +35,118 @@ class BookingconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // menu activation form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'booking', $lang);
+        $formMenusactivation = $this->menusactivationForm($idSpace, 'booking', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($id_space, 'booking', 'calendar3');
-            return $this->redirect("bookingconfig/".$id_space);
+            $this->menusactivation($idSpace, 'booking', 'calendar3');
+            return $this->redirect("bookingconfig/".$idSpace);
         }
-        $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'bookingsettings', $lang);
+        $formSettingsMenusactivation = $this->menusactivationForm($idSpace, 'bookingsettings', $lang);
         if ($formSettingsMenusactivation->check()) {
-            $this->menusactivation($id_space, 'bookingsettings', 'calendar3', 'booking');
+            $this->menusactivation($idSpace, 'bookingsettings', 'calendar3', 'booking');
 
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "bookingauthorisations";
             if ($this->request->getParameter("bookingsettingsMenustatus") > 0) {
-                $modelAccess->exists($id_space, $toolname)
-                    ? $modelAccess->reactivate($id_space, $toolname)
-                    : $modelAccess->set($id_space, $toolname, "booking", $toolname);
+                $modelAccess->exists($idSpace, $toolname)
+                    ? $modelAccess->reactivate($idSpace, $toolname)
+                    : $modelAccess->set($idSpace, $toolname, "booking", $toolname);
             } else {
-                $modelAccess->delete($id_space, $toolname);
+                $modelAccess->delete($idSpace, $toolname);
             }
-            return $this->redirect("bookingconfig/".$id_space);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
         /*
-        $formAuth = $this->bookingAuthorisationUseVisa($id_space, $lang);
+        $formAuth = $this->bookingAuthorisationUseVisa($idSpace, $lang);
         if($formAuth->check()){
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkAuthorisationUseVisa", $this->request->getParameter("BkAuthorisationUseVisa"), $id_space);
+            $modelConfig->setParam("BkAuthorisationUseVisa", $this->request->getParameter("BkAuthorisationUseVisa"), $idSpace);
 
-            $this->redirect("bookingconfig/".$id_space);
+            $this->redirect("bookingconfig/".$idSpace);
             return;
         }
         */
 
-        $formMenuName = $this->menuNameForm($id_space, 'booking', $lang);
+        $formMenuName = $this->menuNameForm($idSpace, 'booking', $lang);
         if ($formMenuName->check()) {
-            $this->setMenuName($id_space, 'booking');
-            return $this->redirect("bookingconfig/".$id_space);
+            $this->setMenuName($idSpace, 'booking');
+            return $this->redirect("bookingconfig/".$idSpace);
         }
-        $formSettingsMenuName = $this->menuNameForm($id_space, 'bookingsettings', $lang);
+        $formSettingsMenuName = $this->menuNameForm($idSpace, 'bookingsettings', $lang);
         if ($formSettingsMenuName->check()) {
-            $this->setMenuName($id_space, 'bookingsettings');
-            return $this->redirect("bookingconfig/".$id_space);
+            $this->setMenuName($idSpace, 'bookingsettings');
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
-        $formeditReservation = $this->editReservationPlugin($id_space, $lang);
+        $formeditReservation = $this->editReservationPlugin($idSpace, $lang);
         if ($formeditReservation->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("bkReservationPlugin", $this->request->getParameter("bkReservationPlugin"), $id_space);
+            $modelConfig->setParam("bkReservationPlugin", $this->request->getParameter("bkReservationPlugin"), $idSpace);
 
-            return $this->redirect("bookingconfig/".$id_space);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
 
-        $formbookingUseRecurentBooking = $this->bookingUseRecurentBooking($id_space, $lang);
+        $formbookingUseRecurentBooking = $this->bookingUseRecurentBooking($idSpace, $lang);
         if ($formbookingUseRecurentBooking->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkUseRecurentBooking", $this->request->getParameter("BkUseRecurentBooking"), $id_space);
+            $modelConfig->setParam("BkUseRecurentBooking", $this->request->getParameter("BkUseRecurentBooking"), $idSpace);
 
-            return $this->redirect("bookingconfig/".$id_space);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
-        $formbookingSetDefaultView = $this->bookingSetDefaultView($id_space, $lang);
+        $formbookingSetDefaultView = $this->bookingSetDefaultView($idSpace, $lang);
         if ($formbookingSetDefaultView->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkSetDefaultView", $this->request->getParameter("BkSetDefaultView"), $id_space);
-            $modelConfig->setParam("BkDefaultViewType", $this->request->getParameter("BkDefaultViewType"), $id_space);
-            return $this->redirect("bookingconfig/".$id_space);
+            $modelConfig->setParam("BkSetDefaultView", $this->request->getParameter("BkSetDefaultView"), $idSpace);
+            $modelConfig->setParam("BkDefaultViewType", $this->request->getParameter("BkDefaultViewType"), $idSpace);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
         /*
-        $formBookingCanUserEditStartedResa = $this->bookingCanUserEditStartedResa($id_space, $lang);
+        $formBookingCanUserEditStartedResa = $this->bookingCanUserEditStartedResa($idSpace, $lang);
         if ($formBookingCanUserEditStartedResa->check()){
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkCanUserEditStartedResa", $this->request->getParameter("BkCanUserEditStartedResa"), $id_space);
+            $modelConfig->setParam("BkCanUserEditStartedResa", $this->request->getParameter("BkCanUserEditStartedResa"), $idSpace);
 
-            $this->redirect("bookingconfig/".$id_space);
+            $this->redirect("bookingconfig/".$idSpace);
             return;
         }
         */
 
 
-        $formBookingOption = $this->bookingOptionForm($id_space, $lang);
+        $formBookingOption = $this->bookingOptionForm($idSpace, $lang);
         if ($formBookingOption->check()) {
             $editBookingDescriptionSettings = $this->request->getParameterNoException("BkDescriptionFields");
             $modelCoreConfig = new CoreConfig();
-            $modelCoreConfig->setParam("BkDescriptionFields", $editBookingDescriptionSettings, $id_space);
-            return $this->redirect("bookingconfig/".$id_space);
+            $modelCoreConfig->setParam("BkDescriptionFields", $editBookingDescriptionSettings, $idSpace);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
-        $formEditBookingMailing = $this->editBookingMailingForm($id_space, $lang);
+        $formEditBookingMailing = $this->editBookingMailingForm($idSpace, $lang);
         if ($formEditBookingMailing->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $id_space);
-            $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $id_space);
-            $modelConfig->setParam("BkBookingMailingDelete", $this->request->getParameter("BkBookingMailingDelete"), $id_space);
+            $modelConfig->setParam("BkEditBookingMailing", $this->request->getParameter("BkEditBookingMailing"), $idSpace);
+            $modelConfig->setParam("BkBookingMailingAdmins", $this->request->getParameter("BkBookingMailingAdmins"), $idSpace);
+            $modelConfig->setParam("BkBookingMailingDelete", $this->request->getParameter("BkBookingMailingDelete"), $idSpace);
 
-            return $this->redirect("bookingconfig/".$id_space);
+            return $this->redirect("bookingconfig/".$idSpace);
         }
 
         $setbookingoptionsquery = $this->request->getParameterNoException("setbookingoptionsquery");
         if ($setbookingoptionsquery == "yes") {
-            $this->optionsQuery($id_space);
+            $this->optionsQuery($idSpace);
 
-            return $this->redirect("bookingconfig/".$id_space);
+            return $this->redirect("bookingconfig/".$idSpace);
         } else {
             $modelBookingSettings = new BkBookingSettings();
-            $bookingSettings = $modelBookingSettings->entries($id_space, "display_order");
+            $bookingSettings = $modelBookingSettings->entries($idSpace, "display_order");
         }
 
         // view
@@ -163,22 +163,22 @@ class BookingconfigController extends CoresecureController
             $formBookingOption->getHtml($lang),
             $formeditReservation->getHtml($lang),
             $formEditBookingMailing->getHtml($lang));
-        $this->render(array("id_space" => $id_space, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
+        $this->render(array("id_space" => $idSpace, "forms" => $forms, "bookingSettings" => $bookingSettings, "lang" => $lang));
     }
 
     /**
      * @deprecated  unused
      */
-    protected function bookingAuthorisationUseVisa($id_space, $lang)
+    protected function bookingAuthorisationUseVisa($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $id_space);
+        $BkAuthorisationUseVisa = $modelCoreConfig->getParamSpace("BkAuthorisationUseVisa", $idSpace);
         $form = new Form($this->request, "BkAuthorisationUseVisaForm");
         $form->addSeparator(BookingTranslator::Use_Auth_Visa($lang));
 
         $form->addSelect("BkAuthorisationUseVisa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkAuthorisationUseVisa);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
@@ -186,41 +186,41 @@ class BookingconfigController extends CoresecureController
     /**
      * @deprecated  unused
      */
-    protected function bookingCanUserEditStartedResa($id_space, $lang)
+    protected function bookingCanUserEditStartedResa($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkCanUserEditStartedResa = $modelCoreConfig->getParamSpace("BkCanUserEditStartedResa", $id_space);
+        $BkCanUserEditStartedResa = $modelCoreConfig->getParamSpace("BkCanUserEditStartedResa", $idSpace);
 
         $form = new Form($this->request, "bookingCanUserEditStartedResaForm");
         $form->addSeparator(BookingTranslator::CanUserEditStartedResa($lang));
 
         $form->addSelect("BkCanUserEditStartedResa", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkCanUserEditStartedResa);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
-    protected function bookingUseRecurentBooking($id_space, $lang)
+    protected function bookingUseRecurentBooking($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $id_space, 0);
+        $BkUseRecurentBooking = $modelCoreConfig->getParamSpace("BkUseRecurentBooking", $idSpace, 0);
 
         $form = new Form($this->request, "BkUseRecurentBookingForm");
         $form->addSeparator(BookingTranslator::Use_recurent_booking($lang));
 
         $form->addSelect("BkUseRecurentBooking", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkUseRecurentBooking);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
-    protected function bookingSetDefaultView($id_space, $lang)
+    protected function bookingSetDefaultView($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
-        $BkDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $id_space, "simple");
+        $BkSetDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $idSpace, "bookingweekarea");
+        $BkDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $idSpace, "simple");
 
         $form = new Form($this->request, "BkSetdefaultViewForm");
         $form->addSeparator(BookingTranslator::Set_default_booking_view($lang));
@@ -249,15 +249,15 @@ class BookingconfigController extends CoresecureController
             $BkDefaultViewType
         );
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
-    protected function bookingOptionForm($id_space, $lang)
+    protected function bookingOptionForm($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $id_space, 0);
+        $BkDescriptionFields = $modelCoreConfig->getParamSpace("BkDescriptionFields", $idSpace, 0);
 
         $form = new Form($this->request, "bookingOptionForm");
         $form->addSeparator(BookingTranslator::Edit_booking_options($lang));
@@ -269,31 +269,31 @@ class BookingconfigController extends CoresecureController
         BookingTranslator::Only_full_description($lang));
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(0,1,2,3), $BkDescriptionFields);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
-    protected function editReservationPlugin($id_space, $lang)
+    protected function editReservationPlugin($idSpace, $lang)
     {
         $modelConfig = new CoreConfig();
-        $bkReservationPlugin = $modelConfig->getParamSpace("bkReservationPlugin", $id_space);
+        $bkReservationPlugin = $modelConfig->getParamSpace("bkReservationPlugin", $idSpace);
 
         $form = new Form($this->request, "editReservationPluginForm");
         $form->addSeparator(BookingTranslator::EditReservationPlugin($lang));
         $form->addText("bkReservationPlugin", BookingTranslator::Url($lang), false, $bkReservationPlugin);
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
 
-    protected function editBookingMailingForm($id_space, $lang)
+    protected function editBookingMailingForm($idSpace, $lang)
     {
         $modelCoreConfig = new CoreConfig();
-        $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
-        $BkBookingMailingAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
-        $BkBookingMailingDelete = $modelCoreConfig->getParamSpace("BkBookingMailingDelete", $id_space);
+        $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $idSpace);
+        $BkBookingMailingAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $idSpace);
+        $BkBookingMailingDelete = $modelCoreConfig->getParamSpace("BkBookingMailingDelete", $idSpace);
         if ($BkBookingMailingDelete == "") {
             $BkBookingMailingDelete = 0;
         }
@@ -305,17 +305,17 @@ class BookingconfigController extends CoresecureController
         $form->addSelect('BkBookingMailingAdmins', BookingTranslator::EmailManagers($lang), array(BookingTranslator::Never($lang), BookingTranslator::WhenAUserBook($lang)), array(1,2), $BkBookingMailingAdmins);
         $form->addSelect('BkBookingMailingDelete', BookingTranslator::EmailWhenResaDelete($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $BkBookingMailingDelete);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$idSpace);
 
         return $form;
     }
 
-    protected function optionsQuery($id_space)
+    protected function optionsQuery($idSpace)
     {
         // set booking settings
         $modelBookingSettings = new BkBookingSettings();
 
-        $optionTags = $modelBookingSettings->getTagNames($id_space) ?? BkBookingSettings::DEFAULT_TAG_NAMES;
+        $optionTags = $modelBookingSettings->getTagNames($idSpace) ?? BkBookingSettings::DEFAULT_TAG_NAMES;
 
         foreach ($optionTags as $optTag) {
             $trimOptTag = str_replace(' ', '', $optTag);
@@ -331,9 +331,9 @@ class BookingconfigController extends CoresecureController
                 $tag_title_visible,
                 $tag_position,
                 $tag_font,
-                $id_space
+                $idSpace
             );
         }
-        return $modelBookingSettings->entries($id_space, "display_order");
+        return $modelBookingSettings->entries($idSpace, "display_order");
     }
 }

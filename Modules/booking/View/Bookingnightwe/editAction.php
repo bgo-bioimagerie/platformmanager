@@ -5,7 +5,7 @@
 
     <div class="container pm-form">
         <div class="col-12">
-            <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $id_space ?>"
+            <form role="form" class="form-horizontal" action="bookingnightweeditq/<?php echo $idSpace ?>"
                   method="post">
 
                 <div class="page-header">
@@ -193,7 +193,7 @@ if (count($list) < 7) {
 
                 <div class="col-4 offset-8" id="button-div">
                     <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
-                    <button type="button" onclick="location.href = 'bookingnightwe/'<?php echo $id_space ?>" class="btn btn-outline-dark"><?php echo CoreTranslator::Cancel($lang) ?></button>
+                    <button type="button" onclick="location.href = 'bookingnightwe/'<?php echo $idSpace ?>" class="btn btn-outline-dark"><?php echo CoreTranslator::Cancel($lang) ?></button>
                 </div>
             </form>
         </div>

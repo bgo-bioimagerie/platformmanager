@@ -50,11 +50,11 @@ class BkBookingSettings extends Model
      * @param string $sortEntry
      * @return array List of the entries
      */
-    public function entries($id_space, $sortEntry)
+    public function entries($idSpace, $sortEntry)
     {
         try {
             $sql = "select * from bk_booking_settings WHERE id_space=? AND deleted=0 order by " . $sortEntry;
-            $req = $this->runRequest($sql, array($id_space));
+            $req = $this->runRequest($sql, array($idSpace));
             if ($req->rowCount() > 0) {
                 return $req->fetchAll();
             } else {
@@ -80,10 +80,10 @@ class BkBookingSettings extends Model
         return $bookingSettings;
     }
 
-    public function getTagNames($id_space)
+    public function getTagNames($idSpace)
     {
         $sql = "SELECT tag_name FROM bk_booking_settings WHERE id_space=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $result = $req->fetchAll(PDO::FETCH_COLUMN);
         if (!empty($result)) {
             return $result;
@@ -100,13 +100,13 @@ class BkBookingSettings extends Model
      * @param string $font
      * @return string
      */
-    public function addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    public function addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $idSpace)
     {
         $sql = "insert into bk_booking_settings(tag_name, is_visible, is_tag_visible, 
 			                                    display_order, font, id_space)"
                 . " values(?,?,?,?,?,?)";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
-            $display_order, $font, $id_space));
+            $display_order, $font, $idSpace));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -115,11 +115,11 @@ class BkBookingSettings extends Model
      * @param string $tag_name
      * @return boolean
      */
-    public function isEntry1($tag_name, $id_space)
+    public function isEntry1($tag_name, $idSpace)
     {
         $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array(
-            $tag_name, $id_space
+            $tag_name, $idSpace
                 ));
         return ($data->rowCount() == 1);
     }
@@ -132,13 +132,13 @@ class BkBookingSettings extends Model
      * @param number $display_order
      * @param string $font
      */
-    public function setEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    public function setEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $idSpace)
     {
-        if (!$this->isEntry1($tag_name, $id_space)) {
-            $this->addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space);
+        if (!$this->isEntry1($tag_name, $idSpace)) {
+            $this->addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $idSpace);
         } else {
-            $id = $this->getEntryID($tag_name, $id_space);
-            $this->updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space);
+            $id = $this->getEntryID($tag_name, $idSpace);
+            $this->updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $idSpace);
         }
     }
 
@@ -147,10 +147,10 @@ class BkBookingSettings extends Model
      * @param string $tag_name
      * @return number
      */
-    public function getEntryID($tag_name, $id_space)
+    public function getEntryID($tag_name, $idSpace)
     {
         $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($tag_name, $id_space));
+        $req = $this->runRequest($sql, array($tag_name, $idSpace));
         $tmp = $req->fetch();
         return $tmp ? $tmp[0] : null;
     }
@@ -160,10 +160,10 @@ class BkBookingSettings extends Model
      * @param number $id
      * @return array entry info
      */
-    public function getEntry($id_space, $id)
+    public function getEntry($idSpace, $id)
     {
         $sql = "select * from bk_booking_settings where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         return $req->fetch();
     }
 
@@ -176,13 +176,13 @@ class BkBookingSettings extends Model
      * @param number $display_order
      * @param string $font
      */
-    public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $idSpace)
     {
         $sql = "update bk_booking_settings set tag_name=?, is_visible=?, is_tag_visible=?, 
 			                 display_order=?, font=?
 			                 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
-            $display_order, $font, $id, $id_space));
+            $display_order, $font, $id, $idSpace));
     }
 
     /**
@@ -194,14 +194,14 @@ class BkBookingSettings extends Model
      * @param boolean $displayHorizontal
      * @return string Summmary in HTML
      */
-    public function getSummary($id_space, $user, $phone, $client, $short_desc, $desc, $displayHorizontal = true, $role=0)
+    public function getSummary($idSpace, $user, $phone, $client, $short_desc, $desc, $displayHorizontal = true, $role=0)
     {
         $lang = "En";
         if (isset($_SESSION["user_settings"]["language"])) {
             $lang = $_SESSION["user_settings"]["language"];
         }
 
-        $entryList = $this->entries($id_space, "display_order");
+        $entryList = $this->entries($idSpace, "display_order");
         $summary = "";
         // user
         for ($i = 0; $i < count($entryList); $i++) {

@@ -19,10 +19,10 @@ class StockCabinet extends Model
         $this->primaryKey = "id";
     }
 
-    public function getForList($id_space)
+    public function getForList($idSpace)
     {
         $sql = "SELECT id, name, room_number FROM stock_cabinets WHERE id_space=? AND deleted=0 ORDER BY name ASC;";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
 
         $names = array();
         $ids = array();
@@ -33,36 +33,36 @@ class StockCabinet extends Model
         return array( "names" => $names, "ids" => $ids );
     }
 
-    public function getAll($id_space)
+    public function getAll($idSpace)
     {
         $sql = "SELECT * FROM stock_cabinets WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function getOne($id_space, $id)
+    public function getOne($idSpace, $id)
     {
         $sql = "SELECT * FROM stock_cabinets WHERE id=?  AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function set($id_space, $id, $name, $room_number)
+    public function set($idSpace, $id, $name, $room_number)
     {
         if ($id > 0) {
             $sql = "UPDATE stock_cabinets SET name=?, room_number=? WHERE id=?  AND id_space=? AND deleted=0";
             $this->runRequest($sql, array(
-                $name, $room_number, $id, $id_space
+                $name, $room_number, $id, $idSpace
             ));
             return $id;
         } else {
             $sql = "INSERT INTO stock_cabinets (id_space, name, room_number) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_space, $name, $room_number));
+            $this->runRequest($sql, array($idSpace, $name, $room_number));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE stock_cabinets SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

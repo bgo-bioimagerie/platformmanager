@@ -21,27 +21,27 @@ class CoreMail extends Model
         $this->runRequest($sql);
     }
 
-    public function unsubscribed($id_user, $id_space, $module)
+    public function unsubscribed($idUser, $idSpace, $module)
     {
         $sql = "SELECT id FROM core_mail_unsubscribe WHERE id_user=? AND id_space=? AND module=?";
-        $req = $this->runRequest($sql, array($id_user, $id_space, $module));
+        $req = $this->runRequest($sql, array($idUser, $idSpace, $module));
         if ($req && $req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function unsubscribe($id_user, $id_space, $module)
+    public function unsubscribe($idUser, $idSpace, $module)
     {
-        if (!$this->unsubscribed($id_user, $id_space, $module)) {
+        if (!$this->unsubscribed($idUser, $idSpace, $module)) {
             $sql = "INSERT INTO core_mail_unsubscribe (id_user, id_space, module) VALUES (?, ?, ?)";
-            $this->runRequest($sql, array($id_user, $id_space, $module));
+            $this->runRequest($sql, array($idUser, $idSpace, $module));
         }
     }
 
-    public function subscribe($id_user, $id_space, $module)
+    public function subscribe($idUser, $idSpace, $module)
     {
         $sql = "DELETE FROM core_mail_unsubscribe WHERE id_user=? AND id_space=? AND module=?";
-        $this->runRequest($sql, array($id_user, $id_space, $module));
+        $this->runRequest($sql, array($idUser, $idSpace, $module));
     }
 }

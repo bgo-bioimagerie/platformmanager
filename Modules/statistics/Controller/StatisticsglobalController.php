@@ -23,15 +23,15 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
  */
 class StatisticsglobalController extends StatisticsController
 {
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("date_begin");
         if ($date_begin == "") {
-            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
             if ($date_begin != "") {
                 $dateArray = explode("-", $date_begin);
                 $y = date("Y") - 1;
@@ -44,7 +44,7 @@ class StatisticsglobalController extends StatisticsController
         }
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
-            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
             if ($date_end != "") {
                 $dateArray = explode("-", $date_end);
                 $y = date("Y");
@@ -65,7 +65,7 @@ class StatisticsglobalController extends StatisticsController
         $form->addSelect("generateclientstats", BookingTranslator::GenerateStatsPerClient($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateclientstats"));
 
         $modelColorCode = new BkColorCode();
-        $colorCodes = $modelColorCode->getForList($id_space);
+        $colorCodes = $modelColorCode->getForList($idSpace);
         $formAdd = new FormAdd($this->request, 'generateGlobalStatFormAdd');
         $values = $this->request->getParameterNoException("exclude_color");
         if ($values == "") {
@@ -75,7 +75,7 @@ class StatisticsglobalController extends StatisticsController
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
-        $form->setValidationButton(CoreTranslator::Ok($lang), 'statisticsglobal/' . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), 'statisticsglobal/' . $idSpace);
 
 
         if ($form->check()) {
@@ -85,7 +85,7 @@ class StatisticsglobalController extends StatisticsController
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION["flash"] = ServicesTranslator::Dates_are_not_correct($lang);
-                $this->redirect('statisticsglobal/' . $id_space);
+                $this->redirect('statisticsglobal/' . $idSpace);
                 return;
             }
 
@@ -93,11 +93,11 @@ class StatisticsglobalController extends StatisticsController
 
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $name = 'stats_'.GlobalStats::STATS_GLOBAL.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
 
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
 
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
@@ -109,12 +109,12 @@ class StatisticsglobalController extends StatisticsController
                 "user" => ["id" => $_SESSION['id_user']],
                 "lang" => $lang,
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
 
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
-        $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
+        $this->render(array("id_space" => $idSpace, 'formHtml' => $form->getHtml($lang)));
     }
 }

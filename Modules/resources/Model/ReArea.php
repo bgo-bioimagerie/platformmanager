@@ -24,10 +24,10 @@ class ReArea extends Model
         $this->primaryKey = "id";
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM re_area WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
     public function getSpace($id)
@@ -37,16 +37,16 @@ class ReArea extends Model
         return $d ? $d[0] : 0;
     }
 
-    public function getDefaultArea($id_space)
+    public function getDefaultArea($idSpace)
     {
         $sql = "SELECT id FROM re_area WHERE id_space=? AND restricted=0 AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
         } else {
             $sql = "SELECT id FROM re_area WHERE id_space=? AND restricted=1 AND deleted=0";
-            $req = $this->runRequest($sql, array($id_space));
+            $req = $this->runRequest($sql, array($idSpace));
             if ($req->rowCount() > 0) {
                 $tmp = $req->fetch();
                 return $tmp[0];
@@ -55,10 +55,10 @@ class ReArea extends Model
         }
     }
 
-    public function getIdFromNameSpace($name, $id_space)
+    public function getIdFromNameSpace($name, $idSpace)
     {
         $sql = "SELECT id FROM re_area WHERE name=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($name, $id_space));
+        $req = $this->runRequest($sql, array($name, $idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -66,16 +66,16 @@ class ReArea extends Model
         return 0;
     }
 
-    public function getForSpace($id_space)
+    public function getForSpace($idSpace)
     {
         $sql = "SELECT * FROM re_area WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function getName($id_space, $id)
+    public function getName($idSpace, $id)
     {
         $sql = "SELECT name FROM re_area WHERE id=? AND id_space=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $tmp ? $tmp[0] : 0;
     }
 
@@ -86,23 +86,23 @@ class ReArea extends Model
         return $tmp ? $tmp[0] : 0;
     }
 
-    public function set($id, $name, $restricted, $id_space)
+    public function set($id, $name, $restricted, $idSpace)
     {
-        if ($this->exists($id_space, $id)) {
+        if ($this->exists($idSpace, $id)) {
             $sql = "UPDATE re_area SET name=?, restricted=?WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($name, $restricted, $id, $id_space));
+            $this->runRequest($sql, array($name, $restricted, $id, $idSpace));
             return $id;
         } else {
             $sql = "INSERT INTO re_area (name, restricted, id_space) VALUES (?,?,?)";
-            $this->runRequest($sql, array($name, $restricted, $id_space));
+            $this->runRequest($sql, array($name, $restricted, $idSpace));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function exists($id_space, $id)
+    public function exists($idSpace, $id)
     {
         $sql = "SELECT id from re_area WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -121,10 +121,10 @@ class ReArea extends Model
      * Get the smallest unrestricted area ID in the table
      * @return Number Smallest ID
      */
-    public function getSmallestUnrestrictedID($id_space)
+    public function getSmallestUnrestrictedID($idSpace)
     {
         $sql = "SELECT id FROM re_area WHERE restricted=0 AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $tmp = $req->fetch();
         return $tmp ? $tmp[0] : 0;
     }
@@ -133,10 +133,10 @@ class ReArea extends Model
      * Get the smallest area ID in the table
      * @return Number Smallest ID
      */
-    public function getSmallestID($id_space)
+    public function getSmallestID($idSpace)
     {
         $sql = "SELECT id FROM re_area WHERE id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $tmp = $req->fetch();
         return $tmp ? $tmp[0] : 0;
     }
@@ -146,24 +146,24 @@ class ReArea extends Model
      * Get ID and Name of areas of all areas
      * @return multitype: Areas info
      */
-    public function getAreasIDName($id_space)
+    public function getAreasIDName($idSpace)
     {
         $sql = "SELECT id, name FROM re_area WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_space));
+        $data = $this->runRequest($sql, array($idSpace));
         return $data->fetchAll();
     }
 
-    public function getUnrestrictedAreasIDNameForSite($id_space)
+    public function getUnrestrictedAreasIDNameForSite($idSpace)
     {
         $sql = "SELECT id, name from re_area where id_space=? AND restricted=0 AND deleted=0";
-        $data = $this->runRequest($sql, array($id_space));
+        $data = $this->runRequest($sql, array($idSpace));
         return $data->fetchAll();
     }
 
-    public function getAreasIDNameForSite($id_space)
+    public function getAreasIDNameForSite($idSpace)
     {
         $sql = "SELECT id, name from re_area where id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_space));
+        $data = $this->runRequest($sql, array($idSpace));
         return $data->fetchAll();
     }
 
@@ -171,9 +171,9 @@ class ReArea extends Model
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE re_area SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

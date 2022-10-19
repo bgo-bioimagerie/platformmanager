@@ -38,26 +38,26 @@ class BookingstatisticsController extends StatisticsController
     /**
      * @bug sends back stats as print_r, not a report
      */
-    public function statquantitiesAction($id_space)
+    public function statquantitiesAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "bookingStatQuantities");
         $form->setTitle(BookingTranslator::statQuantities($lang));
         $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
         $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
-        $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$idSpace);
 
         if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $dateBegin = $form->getParameter("datebegin");
             $dateEnd = $form->getParameter("dateend");
             $name = 'stats_'.BkStats::STATS_QUANTITIES.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_QUANTITIES,
@@ -65,39 +65,39 @@ class BookingstatisticsController extends StatisticsController
                 "dateEnd" => $dateEnd,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
 
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
         return $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
         ));
     }
 
-    public function statreservationrespAction($id_space)
+    public function statreservationrespAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $form = new Form($this->request, "bookingStatTimeResp");
         $form->setTitle(BookingTranslator::statResp($lang));
         $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
         $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
-        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$idSpace);
 
         if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $dateBegin = $form->getParameter("datebegin");
             $dateEnd = $form->getParameter("dateend");
             $name = 'stats_'.BkStats::STATS_BK_TIME.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_BK_TIME,
@@ -105,14 +105,14 @@ class BookingstatisticsController extends StatisticsController
                 "dateEnd" => $dateEnd,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
 
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
         return $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
         ));
@@ -121,15 +121,15 @@ class BookingstatisticsController extends StatisticsController
     /**
      * Statistics form pages
      */
-    public function statreservationsAction($id_space)
+    public function statreservationsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("date_begin");
         if ($date_begin == "") {
-            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
             $dateArray = explode("-", $date_begin);
             $y = date("Y") - 1;
             $m = $dateArray[1] ?? '01';
@@ -138,7 +138,7 @@ class BookingstatisticsController extends StatisticsController
         }
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
-            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
             $dateArray = explode("-", $date_end);
             $y = date("Y");
             $m = $dateArray[1] ?? '12';
@@ -155,7 +155,7 @@ class BookingstatisticsController extends StatisticsController
         $form->addSelect("generateclientstats", BookingTranslator::GenerateStatsPerClient($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $this->request->getParameterNoException("generateclientstats"));
 
         $modelColorCode = new BkColorCode();
-        $colorCodes = $modelColorCode->getForList($id_space);
+        $colorCodes = $modelColorCode->getForList($idSpace);
         $formAdd = new FormAdd($this->request, 'statreservationsFormAdd');
         $values = $this->request->getParameterNoException("exclude_color");
         if ($values == "") {
@@ -165,7 +165,7 @@ class BookingstatisticsController extends StatisticsController
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, StatisticsTranslator::Exclude_colorcodes($lang));
-        $form->setValidationButton(CoreTranslator::Ok($lang), 'bookingreservationstats/' . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), 'bookingreservationstats/' . $idSpace);
 
 
         if ($form->check()) {
@@ -176,10 +176,10 @@ class BookingstatisticsController extends StatisticsController
 
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $name = 'stats_'.BkStats::STATS_BK.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_BK,
@@ -189,14 +189,14 @@ class BookingstatisticsController extends StatisticsController
                 "generateclientstats" => $generateclientstats,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
@@ -204,9 +204,9 @@ class BookingstatisticsController extends StatisticsController
     /**
      * @deprecated
      */
-    public function statreservationsqueryAction($id_space)
+    public function statreservationsqueryAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $month_start = $this->request->getParameter("month_start");
         $year_start = $this->request->getParameter("year_start");
@@ -215,12 +215,12 @@ class BookingstatisticsController extends StatisticsController
 
         // get data
         $modelGraph = new BkGraph();
-        $graphArray = $modelGraph->getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
-        $graphTimeArray = $modelGraph->getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end);
+        $graphArray = $modelGraph->getYearNumResGraph($idSpace, $month_start, $year_start, $month_end, $year_end);
+        $graphTimeArray = $modelGraph->getYearNumHoursResGraph($idSpace, $month_start, $year_start, $month_end, $year_end);
 
         // render data
-        $camembertCount = $modelGraph->getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end);
-        $camembertTimeCount = $modelGraph->getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end);
+        $camembertCount = $modelGraph->getCamembertArray($idSpace, $month_start, $year_start, $month_end, $year_end);
+        $camembertTimeCount = $modelGraph->getCamembertTimeArray($idSpace, $month_start, $year_start, $month_end, $year_end);
 
         $content = "";
         // annual number
@@ -262,16 +262,16 @@ class BookingstatisticsController extends StatisticsController
         echo $content;
     }
 
-    public function statbookingusersAction($id_space)
+    public function statbookingusersAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
         $date_begin = $this->request->getParameterNoException("date_begin");
         if ($date_begin == "") {
             // if a default date is set, get it, if not, get actual date - 1 year
-            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
+            $date_begin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $idSpace);
             if ($date_begin === "") {
                 $date_begin = CoreTranslator::dateFromEn(date("Y-m-d", strtotime("-1 years")), $lang);
             } else {
@@ -284,7 +284,7 @@ class BookingstatisticsController extends StatisticsController
         }
         $date_end = $this->request->getParameterNoException("date_end");
         if ($date_end == "") {
-            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
+            $date_end = $modelCoreConfig->getParamSpace("statisticsperiodend", $idSpace);
             // if a default date is set, get it, if not, get actual date
             if ($date_end === "") {
                 $date_end = CoreTranslator::dateFromEn(date("Y-m-d"), $lang);
@@ -302,18 +302,18 @@ class BookingstatisticsController extends StatisticsController
         $form->setTitle(BookingTranslator::bookingusersstats($lang));
         $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $date_begin);
         $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $date_end);
-        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingusersstats/" . $id_space);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "statistics/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "bookingusersstats/" . $idSpace);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "statistics/" . $idSpace);
 
         if ($form->check()) {
             $period_begin = $form->getParameter("startdate");
             $period_end = $form->getParameter("enddate");
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
             $name = 'stats_'.BkStats::STATS_BK_USERS.'_'.str_replace('/', '-', $period_begin).'_'.str_replace('/', '-', $period_end).'.csv';
-            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_BK_USERS,
@@ -321,25 +321,25 @@ class BookingstatisticsController extends StatisticsController
                 "dateEnd" => $period_end,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
-                "space" => ["id" => $id_space]
+                "space" => ["id" => $idSpace]
             ]);
-            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
             $this->render(array(
                 'lang' => $lang,
-                'id_space' => $id_space,
+                'id_space' => $idSpace,
                 'formHtml' => $formHtml
             ));
         }
     }
 
-    public function grrAction($id_space)
+    public function grrAction($idSpace)
     {
         // table not file, do not async
-        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $isrequest = $this->request->getParameterNoException('is_request');
@@ -359,7 +359,7 @@ class BookingstatisticsController extends StatisticsController
                 $errormessage = "You must specify a start date and an end date";
                 $this->render(array(
                     'lang' => $lang,
-                    'id_space' => $id_space,
+                    'id_space' => $idSpace,
                     'errorMessage' => $errormessage
                 ));
                 return;
@@ -377,7 +377,7 @@ class BookingstatisticsController extends StatisticsController
                 $errormessage = "The start date must be before the end date";
                 $this->render(array(
                     'lang' => $lang,
-                    'id_space' => $id_space,
+                    'id_space' => $idSpace,
                     'errorMessage' => $errormessage,
                     'searchDate_start' => $searchDate_start,
                     'searchDate_end' => $searchDate_end
@@ -392,7 +392,7 @@ class BookingstatisticsController extends StatisticsController
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
             $reportModel = new BkReport();
-            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
+            $table = $reportModel->reportstats($idSpace, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
 
             $outputType = $this->request->getParameterNoException('output');
 
@@ -401,7 +401,7 @@ class BookingstatisticsController extends StatisticsController
             if ($outputType == 1) { // only details
                 $this->render(array(
                     'lang' => $lang,
-                    'id_space' => $id_space,
+                    'id_space' => $idSpace,
                     'searchDate_start' => $searchDate_start,
                     'searchDate_end' => $searchDate_end,
                     'champ' => $champ,
@@ -416,7 +416,7 @@ class BookingstatisticsController extends StatisticsController
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
                 $this->render(array(
                     'lang' => $lang,
-                    'id_space' => $id_space,
+                    'id_space' => $idSpace,
                     'searchDate_start' => $searchDate_start,
                     'searchDate_end' => $searchDate_end,
                     'champ' => $champ,
@@ -431,7 +431,7 @@ class BookingstatisticsController extends StatisticsController
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
                 $this->render(array(
                     'lang' => $lang,
-                    'id_space' => $id_space,
+                    'id_space' => $idSpace,
                     'searchDate_start' => $searchDate_start,
                     'searchDate_end' => $searchDate_end,
                     'champ' => $champ,
@@ -453,7 +453,7 @@ class BookingstatisticsController extends StatisticsController
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $id_space
+            'id_space' => $idSpace
         ));
     }
 

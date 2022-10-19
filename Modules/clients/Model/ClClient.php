@@ -21,17 +21,17 @@ class ClClient extends Model
         $this->primaryKey = "id";
     }
 
-    public function getInstitution($id_space, $id)
+    public function getInstitution($idSpace, $id)
     {
         $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=? AND id_space=? AND deleted=0)";
-        $address = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $address = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $address ? $address["institution"] : "";
     }
 
-    public function getAddressInvoice($id_space, $id)
+    public function getAddressInvoice($idSpace, $id)
     {
         $sql = "SELECT * FROM cl_addresses WHERE id=(SELECT address_invoice FROM cl_clients WHERE id=? AND id_space=? AND deleted=0)";
-        $address = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $address = $this->runRequest($sql, array($id, $idSpace))->fetch();
         if ($address) {
             $formattedAddress = "";
             $addressAttrToPrint = ['institution', 'building_floor', 'service', 'address', 'zip_code', 'city', 'country'];
@@ -49,70 +49,70 @@ class ClClient extends Model
         return $result;
     }
 
-    public function setAddressDelivery($id_space, $id, $id_addressdelivery)
+    public function setAddressDelivery($idSpace, $id, $id_addressdelivery)
     {
         $sql = "UPDATE cl_clients SET address_delivery=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_addressdelivery, $id, $id_space));
+        $this->runRequest($sql, array($id_addressdelivery, $id, $idSpace));
     }
 
-    public function setAddressInvoice($id_space, $id, $id_addressinvoice)
+    public function setAddressInvoice($idSpace, $id, $id_addressinvoice)
     {
         $sql = "UPDATE cl_clients SET address_invoice=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_addressinvoice, $id, $id_space));
+        $this->runRequest($sql, array($id_addressinvoice, $id, $idSpace));
     }
 
-    public function getPricingID($id_space, $id)
+    public function getPricingID($idSpace, $id)
     {
         $sql = "SELECT pricing FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
-        $tmp = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $tmp = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $tmp ? $tmp[0] : null;
     }
 
-    public function getAll($id_space, $sort='name')
+    public function getAll($idSpace, $sort='name')
     {
         $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 ORDER BY ".$sort." ASC";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
 
         $modelPricing = new ClPricing();
         for ($i = 0; $i < count($data); $i++) {
-            $data[$i]["pricing_name"] = $modelPricing->getName($id_space, $data[$i]["pricing"]);
+            $data[$i]["pricing_name"] = $modelPricing->getName($idSpace, $data[$i]["pricing"]);
         }
         return $data;
     }
 
-    public function count($id_space)
+    public function count($idSpace)
     {
         $sql = "SELECT count(*) FROM cl_clients WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id_space))->fetch();
+        $data = $this->runRequest($sql, array($idSpace))->fetch();
         return $data ? $data[0] : 0;
     }
 
-    public function getName($id_space, $id)
+    public function getName($idSpace, $id)
     {
         $sql = "SELECT name FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $data = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $data ? $data[0] : "";
     }
 
 
-    public function getContactName($id_space, $id)
+    public function getContactName($idSpace, $id)
     {
         $sql = "SELECT contact_name FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
+        $data = $this->runRequest($sql, array($id, $idSpace))->fetch();
         return $data ? $data[0] : "";
     }
 
-    public function getIdFromName($id_space, $name)
+    public function getIdFromName($idSpace, $name)
     {
         $sql = "SELECT id FROM cl_clients WHERE name=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($name, $id_space))->fetch();
+        $data = $this->runRequest($sql, array($name, $idSpace))->fetch();
         return $data ? $data[0] : null;
     }
 
-    public function getForList($id_space)
+    public function getForList($idSpace)
     {
         $sql = "SELECT * FROM cl_clients WHERE id_space=? AND deleted=0 ORDER BY name ASC;";
-        $data = $this->runRequest($sql, array($id_space))->fetchAll();
+        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
         $names = array();
         $ids = array();
         foreach ($data as $d) {
@@ -122,7 +122,7 @@ class ClClient extends Model
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         if (!$id) {
             return array(
@@ -139,35 +139,35 @@ class ClClient extends Model
         }
 
         $sql = "SELECT * FROM cl_clients WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function set($id, $id_space, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference)
+    public function set($id, $idSpace, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference)
     {
         if (!$id) {
             $sql = 'INSERT INTO cl_clients (id_space, name, contact_name, phone, email, pricing, invoice_send_preference) VALUES (?,?,?,?,?,?,?)';
-            $this->runRequest($sql, array($id_space, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference));
+            $this->runRequest($sql, array($idSpace, $name, $contact_name, $phone, $email, $pricing, $invoice_send_preference));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE cl_clients SET name=?, contact_name=?, phone=?, email=?, pricing=?, invoice_send_preference=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($name, $contact_name, $phone, $email, $pricing, $invoice_send_preference, $id, $id_space));
+            $this->runRequest($sql, array($name, $contact_name, $phone, $email, $pricing, $invoice_send_preference, $id, $idSpace));
         }
         Events::send([
             "action" => Events::ACTION_CUSTOMER_EDIT,
-            "space" => ["id" => intval($id_space)],
+            "space" => ["id" => intval($idSpace)],
             "client" => ["id" => $id]
         ]);
         return $id;
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE cl_clients SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=? AND deleted=0";
         //$sql = "DELETE FROM cl_clients WHERE id=?  AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
         Events::send([
             "action" => Events::ACTION_CUSTOMER_DELETE,
-            "space" => ["id" => intval($id_space)],
+            "space" => ["id" => intval($idSpace)],
             "client" => ["id" => $id]
         ]);
         return $id;

@@ -22,62 +22,62 @@ class LinkerController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get the user list
-        $linkerssArray = $this->model->getBySpace($id_space);
+        $linkerssArray = $this->model->getBySpace($idSpace);
 
         $table = new TableView();
         $table->setTitle("Linkers", 3);
-        $table->addLineEditButton("linkeredit/".$id_space."/");
-        $table->addDeleteButton("linkerdelete/".$id_space."/", "id", "nom");
+        $table->addLineEditButton("linkeredit/".$idSpace."/");
+        $table->addDeleteButton("linkerdelete/".$idSpace."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($linkerssArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $linkers = $this->model->get($id_space, $id);
+        $linkers = $this->model->get($idSpace, $id);
 
         $form = new Form($this->request, "linkereditform");
         $form->setTitle("Modifier linkers");
         $form->addText("nom", "nom", true, $linkers["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "linkeredit/".$id_space.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "linkeredit/".$idSpace.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $idSpace);
             } else {
-                $this->model->edit($id, $name, $id_space);
+                $this->model->edit($id, $name, $idSpace);
             }
 
-            return $this->redirect("linker/".$id_space, [], ['linker' => ['id' => $id]]);
+            return $this->redirect("linker/".$idSpace, [], ['linker' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($id_space, $id);
-        $this->redirect("linker/" . $id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("linker/" . $idSpace);
     }
 }

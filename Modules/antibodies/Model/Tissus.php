@@ -43,19 +43,19 @@ class Tissus extends Model
         $this->addColumn("ac_j_tissu_anticorps", "image_url", "varchar(512)", "");
     }
 
-    public function getTissusById($id_space, $id)
+    public function getTissusById($idSpace, $id)
     {
         $sql = "SELECT * FROM ac_j_tissu_anticorps WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function setImageUrl($id_space, $id, $url)
+    public function setImageUrl($idSpace, $id, $url)
     {
         $sql = "UPDATE ac_j_tissu_anticorps SET image_url=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($url, $id, $id_space));
+        $this->runRequest($sql, array($url, $id, $idSpace));
     }
 
-    public function setTissus($id_space, $id, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
+    public function setTissus($idSpace, $id, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
     {
         if (!$id) {
             $sql = "insert into ac_j_tissu_anticorps(id_space, id_anticorps, espece, 
@@ -64,18 +64,18 @@ class Tissus extends Model
                                                      ref_protocol, prelevement,
                                                      comment, image_url)"
                     . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
+            $this->runRequest($sql, array($idSpace, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE ac_j_tissu_anticorps SET id_anticorps=?, espece=?, organe=?, status=?, "
                     . "ref_bloc=?, dilution=?, temps_incubation=?, ref_protocol=?, prelevement=?, "
                     . "comment=? WHERE id=? AND id_space=?";
-            $this->runRequest($sql, array($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, $id, $id_space));
+            $this->runRequest($sql, array($id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, $id, $idSpace));
             return $id;
         }
     }
 
-    public function addTissus($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
+    public function addTissus($idSpace, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
     {
         $sql = "insert into ac_j_tissu_anticorps(id_space, id_anticorps, espece, 
 				                                    organe, status, ref_bloc,
@@ -83,21 +83,21 @@ class Tissus extends Model
 													ref_protocol, prelevement,
 													comment, image_url)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
+        $this->runRequest($sql, array($idSpace, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function importTissus($id, $id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
+    public function importTissus($id, $idSpace, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "")
     {
         $sql = "insert into ac_j_tissu_anticorps(id, id_space, id_anticorps, espece,
 				                                    organe, status, ref_bloc,
 													dilution, temps_incubation, 
 				                                    ref_protocol, prelevement, comment)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        $this->runRequest($sql, array($id, $id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
+        $this->runRequest($sql, array($id, $idSpace, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
     }
 
-    public function getTissusCatalog($id_space, $id_anticorps)
+    public function getTissusCatalog($idSpace, $id_anticorps)
     {
         $sql = "SELECT DISTINCT ac_j_tissu_anticorps.status AS status,
 				    ac_especes.nom AS espece,
@@ -109,11 +109,11 @@ class Tissus extends Model
 				WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
-        $res = $this->runRequest($sql, array($id_anticorps, $id_space));
+        $res = $this->runRequest($sql, array($id_anticorps, $idSpace));
         return $res->fetchAll();
     }
 
-    public function getInfoForAntibody($id_space, $id_anticorps)
+    public function getInfoForAntibody($idSpace, $id_anticorps)
     {
         if ($id_anticorps == 0) {
             return array();
@@ -137,11 +137,11 @@ class Tissus extends Model
                 WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
-        $res = $this->runRequest($sql, array($id_anticorps, $id_space));
+        $res = $this->runRequest($sql, array($id_anticorps, $idSpace));
         return $res->fetchAll();
     }
 
-    public function getTissus($id_space, $id_anticorps, $catalog = false)
+    public function getTissus($idSpace, $id_anticorps, $catalog = false)
     {
         $sql = "SELECT ac_j_tissu_anticorps.id AS id, 
                     ac_j_tissu_anticorps.id_anticorps AS id_anticorps,
@@ -168,12 +168,12 @@ class Tissus extends Model
         }
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
-        $res = $this->runRequest($sql, array($id_anticorps, $id_space));
+        $res = $this->runRequest($sql, array($id_anticorps, $idSpace));
         $tissuss = $res->fetchAll();
         $modelProtocol = new AcProtocol();
         /*
         for ($i = 0 ; $i < count($tissuss) ; $i++) {
-            $proto = $modelProtocol->getProtocolsByRef($id_space, $tissuss[$i]["ref_protocol"]);
+            $proto = $modelProtocol->getProtocolsByRef($idSpace, $tissuss[$i]["ref_protocol"]);
             if(isset($proto[0])){
                 $tissuss[$i]["id_protocol"] = $proto[0]["id"];
             }
@@ -185,16 +185,16 @@ class Tissus extends Model
         return $tissuss;
     }
 
-    public function removeTissus($id_space, $id)
+    public function removeTissus($idSpace, $id)
     {
         $sql = "UPDATE ac_j_tissu_anticorps SET deleted=1,deleted_at=NOW() WHERE id_anticorps=? AND id_space=?";
         //$sql = "DELETE FROM ac_j_tissu_anticorps WHERE id_anticorps = ?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE ac_j_tissu_anticorps SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

@@ -21,9 +21,9 @@ class BjnotesController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $year, $month)
+    public function indexAction($idSpace, $year, $month)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if ($month == "" || $month == 0) {
@@ -35,20 +35,20 @@ class BjnotesController extends CoresecureController
 
         $modelNote = new BjNote();
 
-        $notes = $modelNote->getAllForMonth($id_space, $month, $year);
+        $notes = $modelNote->getAllForMonth($idSpace, $month, $year);
 
         // edit note form
-        $noteForm = $this->createNoteForm($id_space, $lang);
-        $taskForm = $this->createTaskForm($id_space, $lang);
-        $eventForm = $this->createEventForm($id_space, $lang);
+        $noteForm = $this->createNoteForm($idSpace, $lang);
+        $taskForm = $this->createTaskForm($idSpace, $lang);
+        $eventForm = $this->createEventForm($idSpace, $lang);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "month" => $month,
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "month" => $month,
             "year" => $year,
             "notes" => $notes, "noteForm" => $noteForm,
             "taskForm" => $taskForm, "eventForm" => $eventForm), "indexAction");
     }
 
-    public function monthbeforeAction($id_space, $year, $month)
+    public function monthbeforeAction($idSpace, $year, $month)
     {
         if ($month == 1) {
             $year = $year-1;
@@ -57,10 +57,10 @@ class BjnotesController extends CoresecureController
             $month = $month -1;
         }
 
-        $this->indexAction($id_space, $year, $month);
+        $this->indexAction($idSpace, $year, $month);
     }
 
-    public function monthafterAction($id_space, $year, $month)
+    public function monthafterAction($idSpace, $year, $month)
     {
         if ($month == 12) {
             $year = $year+1;
@@ -69,11 +69,11 @@ class BjnotesController extends CoresecureController
             $month = $month + 1;
         }
 
-        $this->indexAction($id_space, $year, $month);
+        $this->indexAction($idSpace, $year, $month);
     }
 
 
-    public function createNoteForm($id_space, $lang)
+    public function createNoteForm($idSpace, $lang)
     {
         $form = new Form($this->request, "editNoteForm", true);
         $form->addHidden("formnoteid", 0);
@@ -83,11 +83,11 @@ class BjnotesController extends CoresecureController
         $form->addTextArea("formnotecontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bjeditnotequery/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bjeditnotequery/".$idSpace);
         return $form->getHtml($lang);
     }
 
-    public function createTaskForm($id_space, $lang)
+    public function createTaskForm($idSpace, $lang)
     {
         $form = new Form($this->request, "editTaskForm", true);
         $form->addHidden("formtaskid", 0);
@@ -99,11 +99,11 @@ class BjnotesController extends CoresecureController
         $form->addTextArea("formtaskcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bjedittask/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bjedittask/".$idSpace);
         return $form->getHtml($lang);
     }
 
-    public function createEventForm($id_space, $lang)
+    public function createEventForm($idSpace, $lang)
     {
         $form = new Form($this->request, "editEventForm", true);
         $form->addHidden("formeventid", 0);
@@ -116,19 +116,19 @@ class BjnotesController extends CoresecureController
         $form->addTextArea("formeventcontent", BulletjournalTranslator::Content($lang), false, "", false);
         $form->setColumnsWidth(2, 9);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bjeditevent/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bjeditevent/".$idSpace);
         return $form->getHtml($lang);
     }
 
-    public function deletenoteAction($id_space, $id)
+    public function deletenoteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         $modelNote = new BjNote();
-        $modelNote->delete($id_space, $id);
+        $modelNote->delete($idSpace, $id);
         $modelEvent = new BjEvent();
-        $modelEvent->delete($id_space, $id);
+        $modelEvent->delete($idSpace, $id);
         $modelTask = new BjTask();
-        $modelTask->delete($id_space, $id);
+        $modelTask->delete($idSpace, $id);
         return null;
     }
 }

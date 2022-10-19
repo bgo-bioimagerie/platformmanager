@@ -17,13 +17,13 @@ require_once 'Modules/com/Controller/ComController.php';
  */
 class ComnewsController extends ComController
 {
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("com", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelComNews = new ComNews();
-        $data = $modelComNews->getForSpace($id_space);
+        $data = $modelComNews->getForSpace($idSpace);
 
         $table = new TableView();
         $table->setTitle(ComTranslator::News($lang));
@@ -33,36 +33,36 @@ class ComnewsController extends ComController
             "expires" => ComTranslator::Expire($lang)
         );
         if ($this->role >= CoreSpace::$ADMIN) {
-            $table->addLineEditButton("comnewsedit/".$id_space, "id");
-            $table->addDeleteButton("comnewsdelete/".$id_space, "id", "title");
+            $table->addLineEditButton("comnewsedit/".$idSpace, "id");
+            $table->addDeleteButton("comnewsdelete/".$idSpace, "id", "title");
         }
         $tableHtml = $table->view($data, $headers);
 
         return $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "tableHtml" => $tableHtml,
             "data" => ["news" => $data]
         ));
     }
 
-    public function notifsAction($id_space)
+    public function notifsAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("helpdesk", $idSpace, $_SESSION["id_user"]);
         $modelComNews = new ComNews();
-        $news = $modelComNews->getByDate($id_space, 50);
+        $news = $modelComNews->getByDate($idSpace, 50);
         return $this->render(['data' => ['notifs' => count($news)]]);
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("com", $idSpace, $_SESSION["id_user"]);
         if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('admins only access');
         }
         $lang = $this->getLanguage();
 
         $modelComNews = new ComNews();
-        $data = $modelComNews->get($id_space, $id);
+        $data = $modelComNews->get($idSpace, $id);
 
         $form = new Form($this->request, "comneweditform");
         $form->setTitle(ComTranslator::NewsEdit($lang));
@@ -73,7 +73,7 @@ class ComnewsController extends ComController
         $form->addUpload("media", ComTranslator::Media($lang));
         $form->addTextArea("content", ComTranslator::Content($lang), false, $data["content"], true);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "comnewsedit/" . $id_space);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "comnewsedit/" . $idSpace);
         $form->setColumnsWidth(2, 10);
 
 
@@ -84,38 +84,38 @@ class ComnewsController extends ComController
             $content = $this->request->getParameter("content", false);
             $date = $this->request->getParameter("date");
             $expire = $this->request->getParameter("expire");
-            $idNew = $modelComNews->set($id, $id_space, $title, $content, $date, $expire);
+            $idNew = $modelComNews->set($id, $idSpace, $title, $content, $date, $expire);
             // upload
             $target_dir = "data/com/news/";
             if (isset($_FILES) && isset($_FILES['media']) && $_FILES["media"]["name"] != "") {
                 $ext = pathinfo($_FILES["media"]["name"], PATHINFO_BASENAME);
                 FileUpload::uploadFile($target_dir, "media", $idNew . "_" . $ext);
 
-                $modelComNews->setMedia($id_space, $idNew, $target_dir . $idNew . "_" . $ext);
+                $modelComNews->setMedia($idSpace, $idNew, $target_dir . $idNew . "_" . $ext);
             }
 
             // redirect
             $_SESSION["flash"] = ComTranslator::NewsHasBeenSaved($lang);
             $_SESSION["flashClass"] = "success";
-            return $this->redirect('comnews/' . $id_space, [], ['news' => ['id' => $idNew]]);
+            return $this->redirect('comnews/' . $idSpace, [], ['news' => ['id' => $idNew]]);
         }
 
         return $this->render(array(
-            "id_space" => $id_space,
+            "id_space" => $idSpace,
             "formHtml" => $form->getHtml($lang),
             "data" => ["news" => $data]
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("com", $idSpace, $_SESSION["id_user"]);
         if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('admins only access');
         }
         $model = new ComNews();
-        $model->delete($id_space, $id);
+        $model->delete($idSpace, $id);
 
-        return $this->redirect("comnews/" . $id_space);
+        return $this->redirect("comnews/" . $idSpace);
     }
 }

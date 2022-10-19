@@ -20,49 +20,49 @@ class SePurchase extends Model
         $this->primaryKey = "id";
     }
 
-    public function getForSpace($id_space)
+    public function getForSpace($idSpace)
     {
         $sql = "SELECT * FROM se_purchase WHERE id_space=? AND deleted=0 ORDER BY date DESC;";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         return $req->fetchAll();
     }
 
-    public function getItem($id_space, $id)
+    public function getItem($idSpace, $id)
     {
         $sql = "SELECT * FROM se_purchase WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         return $req->fetch();
     }
 
-    public function set($id, $comment, $id_space, $date)
+    public function set($id, $comment, $idSpace, $date)
     {
         if ($date == "") {
             $date = null;
         }
-        if ($this->ispurchase($id_space, $id)) {
+        if ($this->ispurchase($idSpace, $id)) {
             $sql = "UPDATE se_purchase SET comment=?,date=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($comment, $date, $id, $id_space));
+            $this->runRequest($sql, array($comment, $date, $id, $idSpace));
             return $id;
         } else {
             $sql = "INSERT INTO se_purchase (comment, id_space, date) VALUES (?,?,?)";
-            $this->runRequest($sql, array($comment, $id_space, $date));
+            $this->runRequest($sql, array($comment, $idSpace, $date));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function ispurchase($id_space, $id)
+    public function ispurchase($idSpace, $id)
     {
         $sql = "SELECT * FROM se_purchase WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE se_purchase SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

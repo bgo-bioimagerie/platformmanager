@@ -18,32 +18,32 @@ class InvoicesController extends CoresecureController
 {
     public function sideMenu()
     {
-        $id_space = $this->args['id_space'];
-        return $this->navbar($id_space);
+        $idSpace = $this->args['id_space'];
+        return $this->navbar($idSpace);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div class="" style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$id_space.'"> {{title}}';
+        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="invoices/'.$idSpace.'"> {{title}}';
         $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
-        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicestosend/' . $id_space . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicestosend/' . $idSpace . '">' . InvoicesTranslator::To_Send_invoices($lang) . '</a>';
         $html .= '</div>';
 
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicessent/' . $id_space . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicessent/' . $idSpace . '">' . InvoicesTranslator::Sent_invoices($lang) . '</a>';
         $html .= '</div>';
 
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
-        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisas/' . $id_space . '">' . InvoicesTranslator::Visas($lang) . '</a>';
-        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisaedit/' . $id_space . '/0"> + </a>';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisas/' . $idSpace . '">' . InvoicesTranslator::Visas($lang) . '</a>';
+        $html .= '<a style="color:{{color}}" id="menu-button" href="invoicesvisaedit/' . $idSpace . '/0"> + </a>';
         $html .= '</div>';
 
 
@@ -52,12 +52,12 @@ class InvoicesController extends CoresecureController
         $html .= '</div>';
 
         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
-        $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $id_space . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
+        $html .= '<a style="color:{{color}}" href="invoiceglobal/' . $idSpace . '">' . InvoicesTranslator::NewInvoice($lang) . '</a>';
         $html .= '</div>';
 
         $modelSpace = new CoreSpace();
         $configModel = new CoreConfig();
-        $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        $menus = $modelSpace->getDistinctSpaceMenusModules($idSpace);
 
         $count = -1;
         foreach ($menus as $menu) {
@@ -71,10 +71,10 @@ class InvoicesController extends CoresecureController
                 require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php";
                 $translator = new $classTranslator();
                 $model = new $className();
-                $model->setSpace($id_space);
+                $model->setSpace($idSpace);
                 $model->listRoutes();
                 if ($model->count() > 0) {
-                    $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
+                    $donfigTitle = $configModel->getParamSpace($module . "menuname", $idSpace);
                     if ($donfigTitle != "") {
                         $txt = $donfigTitle;
                     } else {
@@ -91,7 +91,7 @@ class InvoicesController extends CoresecureController
                     $txt = $translator->$url($lang);
 
                     $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};color:{{color}}">';
-                    $html .= '<a style="color:{{color}}" href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
+                    $html .= '<a style="color:{{color}}" href="' . $url . "/" . $idSpace . '">' . $txt . '</a>';
                     $html .= '</div>';
                 }
             }
@@ -99,7 +99,7 @@ class InvoicesController extends CoresecureController
 
         $html.= "</div>";
 
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("invoices", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("invoices", $idSpace);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{color}}', $menuInfo['txtcolor'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);

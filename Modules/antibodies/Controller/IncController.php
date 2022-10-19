@@ -22,62 +22,62 @@ class IncController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get the user list
-        $incssArray = $this->model->getBySpace($id_space);
+        $incssArray = $this->model->getBySpace($idSpace);
 
         $table = new TableView();
         $table->setTitle("Inc", 3);
-        $table->addLineEditButton("incedit/".$id_space."/");
-        $table->addDeleteButton("incdelete/".$id_space."/", "id", "nom");
+        $table->addLineEditButton("incedit/".$idSpace."/");
+        $table->addDeleteButton("incdelete/".$idSpace."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($incssArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $incs = $this->model->get($id_space, $id);
+        $incs = $this->model->get($idSpace, $id);
 
         $form = new Form($this->request, "incseditform");
         $form->setTitle("Modifier incs");
         $form->addText("nom", "nom", true, $incs["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "incedit/".$id_space.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "incedit/".$idSpace.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $idSpace);
             } else {
-                $this->model->edit($id, $name, $id_space);
+                $this->model->edit($id, $name, $idSpace);
             }
 
-            return $this->redirect("inc/".$id_space, [], ['inc' => ['id' => $id]]);
+            return $this->redirect("inc/".$idSpace, [], ['inc' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($id_space, $id);
-        $this->redirect("inc/" . $id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("inc/" . $idSpace);
     }
 }

@@ -24,11 +24,11 @@ abstract class BookingsupsabstractController extends BookingsettingsController
     protected bool $mandatoryFields;
     protected bool $hasDuration;
 
-    protected function getSupForm($id_space, $formTitle)
+    protected function getSupForm($idSpace, $formTitle)
     {
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->getForSpace($id_space);
+        $resources = $modelResource->getForSpace($idSpace);
         $choicesR = array();
         $choicesRid = array();
         foreach ($resources as $res) {
@@ -36,7 +36,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
             $choicesRid[] = $res["id"];
         }
 
-        $sups = $this->modelSups->getForSpace($id_space, "id_resource");
+        $sups = $this->modelSups->getForSpace($idSpace, "id_resource");
         $supsIds = array();
         $supsIdsRes = array();
         $supsNames = array();
@@ -78,12 +78,12 @@ abstract class BookingsupsabstractController extends BookingsettingsController
 
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd);
-        $form->setValidationButton(CoreTranslator::Save($lang), $this->formUrl . "/".$id_space);
+        $form->setValidationButton(CoreTranslator::Save($lang), $this->formUrl . "/".$idSpace);
 
         return $form;
     }
 
-    protected function supsFormCheck($id_space)
+    protected function supsFormCheck($idSpace)
     {
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
@@ -100,9 +100,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $supID = is_array($supID) ? $supID : [$supID];
         $supResources = is_array($supResources) ? $supResources : [$supResources];
 
-        if ($this->invoicable && $this->hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $id_space, $lang)) {
+        if ($this->invoicable && $this->hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $idSpace, $lang)) {
             // find out if multiple sups are used as invoicing units
-            return $this->redirect("booking" . $this->formUrl ."/".$id_space);
+            return $this->redirect("booking" . $this->formUrl ."/".$idSpace);
         }
 
         $supacks = [];
@@ -118,9 +118,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController
                 // If sup id not set, use from known sups
                 if (isset($supacks[$supName[$i]])) {
                     $supID[$i] = $supacks[$supName[$i]];
-                    if ($this->coupleSupResourceExists($supID[$i], $supResources[$i], $id_space)) {
+                    if ($this->coupleSupResourceExists($supID[$i], $supResources[$i], $idSpace)) {
                         $coupleSupResourceExists = [
-                            "resource" => $modelResource->get($id_space, $supResources[$i])['name'],
+                            "resource" => $modelResource->get($idSpace, $supResources[$i])['name'],
                             "sup" => $supName[$i]
                         ];
                     }
@@ -133,19 +133,19 @@ abstract class BookingsupsabstractController extends BookingsettingsController
                 }
             }
 
-            $this->modelSups->setSupplementary($id_space, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i] ?? 0, $supIsInvoicingUnit[$i] ?? 0, $supDuration[$i] ?? 0);
-            array_push($id_sups, $this->modelSups->getBySupID($id_space, $supID[$i], $supResources[$i])['id']);
+            $this->modelSups->setSupplementary($idSpace, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i] ?? 0, $supIsInvoicingUnit[$i] ?? 0, $supDuration[$i] ?? 0);
+            array_push($id_sups, $this->modelSups->getBySupID($idSpace, $supID[$i], $supResources[$i])['id']);
         }
 
         // If package in db is not listed in provided package list, delete them
-        $this->modelSups->removeUnlisted($id_space, $id_sups, false);
+        $this->modelSups->removeUnlisted($idSpace, $id_sups, false);
         $this->handleMessages($coupleSupResourceExists, $lang);
         return ['bksupids' => $id_sups];
     }
 
-    protected function coupleSupResourceExists($id_sup, $id_resource, $id_space)
+    protected function coupleSupResourceExists($id_sup, $id_resource, $idSpace)
     {
-        $dbSups = $this->modelSups->getByResource($id_space, $id_resource);
+        $dbSups = $this->modelSups->getByResource($idSpace, $id_resource);
         foreach ($dbSups as $dbSup) {
             if ($dbSup['id_' . $this->supsType] == $id_sup) {
                 return true;
@@ -154,7 +154,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         return false;
     }
 
-    protected function hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $id_space, $lang)
+    protected function hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $idSpace, $lang)
     {
         $result = false;
         $invoicingUnitsResources = [];

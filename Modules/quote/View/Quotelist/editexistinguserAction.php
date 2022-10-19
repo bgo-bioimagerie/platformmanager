@@ -15,7 +15,7 @@ if ($id_quote > 0) {
         <script type="module">
             import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
             let dynamicForms = new DynamicForms();
-            let spaceId = <?php echo $id_space?>;
+            let spaceId = <?php echo $idSpace?>;
             let sourceId = "id_user";
             let targets = [
                 {
@@ -33,7 +33,7 @@ if ($id_quote > 0) {
         <div class="col-12 pm-form">
             <br/>
             <a onclick="addItem()" class="btn btn-primary" id="additembutton"><?php echo QuoteTranslator::NewItem($lang) ?></a>
-            <a class="btn btn-danger" href="quotepdf/<?php echo $id_space.'/'.$id_quote ?>"><?php echo QuoteTranslator::PDF($lang) ?></a>
+            <a class="btn btn-danger" href="quotepdf/<?php echo $idSpace.'/'.$id_quote ?>"><?php echo QuoteTranslator::PDF($lang) ?></a>
 
             <?php echo $tableHtml ?>
             
@@ -76,7 +76,7 @@ if ($id_quote > 0) {
 
         function showEditForm(id) {
             $.post(
-                    'quotegetitem/<?php echo $id_space ?>/' + id,
+                    'quotegetitem/<?php echo $idSpace ?>/' + id,
                     {},
                     function (data) {
 

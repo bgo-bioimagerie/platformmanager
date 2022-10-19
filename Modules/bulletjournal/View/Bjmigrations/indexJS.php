@@ -8,7 +8,7 @@ foreach ($notes as $note) {
                 alert("<?php echo BulletjournalTranslator::migrate_task($lang) . " " . $note["name"] . " ?" ?>");
                 
                 $.post(
-                    'bjmigratetask/<?php echo $id_space . "/" .$note["id"] ?>',
+                    'bjmigratetask/<?php echo $idSpace . "/" .$note["id"] ?>',
                     {},
                     function (data) {
                         $('#tableline_<?php echo $note["id"] ?>').remove();

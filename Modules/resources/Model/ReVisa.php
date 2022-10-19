@@ -41,9 +41,9 @@ class ReVisa extends Model
         return $pdo;
     }
 
-    public function getForListByCategory($id_space, $id_resource_category)
+    public function getForListByCategory($idSpace, $id_resource_category)
     {
-        $data = $this->getByCategory($id_space, $id_resource_category);
+        $data = $this->getByCategory($idSpace, $id_resource_category);
         $names = array();
         $ids = array();
         foreach ($data as $d) {
@@ -54,10 +54,10 @@ class ReVisa extends Model
         return array("names" => $names, "ids" => $ids);
     }
 
-    public function getByCategory($id_space, $id_resource_category)
+    public function getByCategory($idSpace, $id_resource_category)
     {
         $sql = "SELECT * FROM re_visas WHERE id_resource_category=? AND is_active=1 AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_resource_category, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_resource_category, $idSpace))->fetchAll();
     }
 
     public function mergeUsers($users)
@@ -68,10 +68,10 @@ class ReVisa extends Model
         }
     }
 
-    public function getIdFromInfo($id_space, $id_resource_category, $id_instructor)
+    public function getIdFromInfo($idSpace, $id_resource_category, $id_instructor)
     {
         $sql = "SELECT id FROM re_visas WHERE id_resource_category=? AND id_instructor=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_resource_category, $id_instructor, $id_space));
+        $req = $this->runRequest($sql, array($id_resource_category, $id_instructor, $idSpace));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -79,10 +79,10 @@ class ReVisa extends Model
         return 0;
     }
 
-    public function setActive($id_space, $id, $active)
+    public function setActive($idSpace, $id, $active)
     {
         $sql = "UPDATE re_visas SET is_active=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($active, $id, $id_space));
+        $this->runRequest($sql, array($active, $id, $idSpace));
     }
 
     /**
@@ -90,31 +90,31 @@ class ReVisa extends Model
      *
      * @return PDOStatement
      */
-    public function createDefaultVisa($id_space)
+    public function createDefaultVisa($idSpace)
     {
         $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space, is_active)"
                 . " values(?,?,?, ?, 1)";
-        $this->runRequest($sql, array(0, 1, 1, $id_space));
+        $this->runRequest($sql, array(0, 1, 1, $idSpace));
     }
 
-    public function importVisa($id_space, $id, $id_cat, $id_instructor, $instructor_status)
+    public function importVisa($idSpace, $id, $id_cat, $id_instructor, $instructor_status)
     {
         $sql = "insert into re_visas(id, id_resource_category, id_instructor, instructor_status, id_space, is_active)"
                 . " values(?,?,?,?,?,1)";
-        $this->runRequest($sql, array($id, $id_cat, $id_instructor, $instructor_status, $id_space));
+        $this->runRequest($sql, array($id, $id_cat, $id_instructor, $instructor_status, $idSpace));
     }
 
-    public function getSpaceInstructors($id_space)
+    public function getSpaceInstructors($idSpace)
     {
         $sql = "SELECT DISTINCT id_instructor FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT DISTINCT id FROM re_category WHERE id_space=? AND deleted=0)";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         return $req->fetchAll();
     }
 
-    public function getForSpace($id_space)
+    public function getForSpace($idSpace)
     {
         $sql = "SELECT * FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT DISTINCT id FROM re_category WHERE id_space=? AND deleted=0)";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         return $req->fetchAll();
     }
 
@@ -131,17 +131,17 @@ class ReVisa extends Model
         return $user->fetchAll();
     }
 
-    public function getVisasBySpace($id_space, $sortentry = 'id')
+    public function getVisasBySpace($idSpace, $sortentry = 'id')
     {
         $sql = "SELECT * FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0) order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
-    public function getActiveBySpace($id_space, $sortentry = 'id')
+    public function getActiveBySpace($idSpace, $sortentry = 'id')
     {
         $sql = "SELECT * FROM re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0) AND is_active=1 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($id_space));
+        $user = $this->runRequest($sql, array($idSpace));
         return $user->fetchAll();
     }
 
@@ -150,11 +150,11 @@ class ReVisa extends Model
      *
      * @param string $name name of the visa
      */
-    public function addVisa($id_space, $id_resource_category, $id_instructor, $instructor_status)
+    public function addVisa($idSpace, $id_resource_category, $id_instructor, $instructor_status)
     {
         $sql = "insert into re_visas(id_resource_category, id_instructor, instructor_status, id_space, is_active)"
                 . " values(?,?,?,?,1)";
-        $this->runRequest($sql, array($id_resource_category, $id_instructor, $instructor_status, $id_space));
+        $this->runRequest($sql, array($id_resource_category, $id_instructor, $instructor_status, $idSpace));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -164,19 +164,19 @@ class ReVisa extends Model
      * @param int $id Id of the unit to update
      * @param string $name New name of the unit
      */
-    public function editVisa($id_space, $id, $id_resource_category, $id_instructor, $instructor_status)
+    public function editVisa($idSpace, $id, $id_resource_category, $id_instructor, $instructor_status)
     {
         $sql = "UPDATE re_visas set id_resource_category=?, id_instructor=?, instructor_status=? where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_resource_category, $id_instructor, $instructor_status, $id, $id_space));
+        $this->runRequest($sql, array($id_resource_category, $id_instructor, $instructor_status, $id, $idSpace));
     }
 
-    public function setVisas($id_space, $id, $id_resource_category, $id_instructor, $instructor_status)
+    public function setVisas($idSpace, $id, $id_resource_category, $id_instructor, $instructor_status)
     {
         if ($id > 0) {
-            $this->editVisa($id_space, $id, $id_resource_category, $id_instructor, $instructor_status);
+            $this->editVisa($idSpace, $id, $id_resource_category, $id_instructor, $instructor_status);
             return $id;
         } else {
-            return $this->addVisa($id_space, $id_resource_category, $id_instructor, $instructor_status);
+            return $this->addVisa($idSpace, $id_resource_category, $id_instructor, $instructor_status);
         }
     }
     /**
@@ -186,10 +186,10 @@ class ReVisa extends Model
      * @throws Exception id the unit is not found
      * @return mixed array
      */
-    public function getVisa($id_space, $id)
+    public function getVisa($idSpace, $id)
     {
         $sql = "SELECT * from re_visas where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $id_space));
+        $unit = $this->runRequest($sql, array($id, $idSpace));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();  // get the first line of the result
         } else {
@@ -197,10 +197,10 @@ class ReVisa extends Model
         }
     }
 
-    public function getVisaFromResourceAndInstructor($id_space, $resource_id, $id_AF)
+    public function getVisaFromResourceAndInstructor($idSpace, $resource_id, $id_AF)
     {
         $sql = "SELECT * from re_visas where id_resource_category=? and id_instructor=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($resource_id, $id_AF, $id_space));
+        $unit = $this->runRequest($sql, array($resource_id, $id_AF, $idSpace));
         if ($unit->rowCount() == 1) {
             $val = $unit->fetch();
             return $val[0];  // get the first line of the result
@@ -209,10 +209,10 @@ class ReVisa extends Model
         }
     }
 
-    public function getVisaShortDescription($id_space, $id, $lang)
+    public function getVisaShortDescription($idSpace, $id, $lang)
     {
         $sql = "SELECT * from re_visas where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             $visaInfo = $req->fetch();  // get the first line of the result
 
@@ -225,26 +225,26 @@ class ReVisa extends Model
         }
     }
 
-    public function getVisaDescription($id_space, $id, $lang)
+    public function getVisaDescription($idSpace, $id, $lang)
     {
         $sql = "SELECT * from re_visas where id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             $visaInfo = $req->fetch();  // get the first line of the result
 
-            return $this->getVisaDesc($id_space, $visaInfo, $lang);
+            return $this->getVisaDesc($idSpace, $visaInfo, $lang);
         } else {
             return "";
         }
     }
 
-    private function getVisaDesc($id_space, $visaInfo, $lang)
+    private function getVisaDesc($idSpace, $visaInfo, $lang)
     {
         $modelUser = new CoreUser();
         $instructor = $modelUser->getUserFullName($visaInfo["id_instructor"]);
 
         $modelResourceCat = new ReCategory();
-        $resourceName = $modelResourceCat->getName($id_space, $visaInfo["id_resource_category"]);
+        $resourceName = $modelResourceCat->getName($idSpace, $visaInfo["id_resource_category"]);
 
         $instructorStatus = ResourcesTranslator::Instructor($lang);
         if ($visaInfo["instructor_status"] == 2) {
@@ -254,16 +254,16 @@ class ReVisa extends Model
         return $instructor . " - " . $instructorStatus . " - " . $resourceName;
     }
 
-    public function getVisasDesc($id_space, $id_resource, $lang)
+    public function getVisasDesc($idSpace, $id_resource, $lang)
     {
         $sql = "SELECT * from re_visas where id_resource_category=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_resource, $id_space));
+        $req = $this->runRequest($sql, array($id_resource, $idSpace));
         $visasInfo = $req->fetchAll();  // get the first line of the result
 
         $visas = array();
         foreach ($visasInfo as $visaInfo) {
             $v["id"] = $visaInfo["id"];
-            $v["desc"] = $this->getVisaDesc($id_space, $visaInfo, $lang);
+            $v["desc"] = $this->getVisaDesc($idSpace, $visaInfo, $lang);
             $visas[] = $v;
         }
 
@@ -272,16 +272,16 @@ class ReVisa extends Model
         return $visas;
     }
 
-    public function getAllVisasDesc($id_space, $lang)
+    public function getAllVisasDesc($idSpace, $lang)
     {
         $sql = "SELECT * from re_visas WHERE id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $visasInfo = $req->fetchAll();  // get the first line of the result
 
         $visas = array();
         foreach ($visasInfo as $visaInfo) {
             $v["id"] = $visaInfo["id"];
-            $v["desc"] = $this->getVisaDesc($id_space, $visaInfo, $lang);
+            $v["desc"] = $this->getVisaDesc($idSpace, $visaInfo, $lang);
             $visas[] = $v;
         }
 
@@ -294,16 +294,16 @@ class ReVisa extends Model
      * Remove a visa
      * @param number $id
      */
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE re_visas SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 
-    public function getAllInstructors($id_space)
+    public function getAllInstructors($idSpace)
     {
         $sql = "select distinct id_instructor from re_visas WHERE deleted=0 AND id_resource_category IN (SELECT id FROM re_category WHERE id_space=? AND deleted=0)";
-        $req = $this->runRequest($sql, array($id_space));
+        $req = $this->runRequest($sql, array($idSpace));
         $instructors = $req->fetchAll();
 
         $modelUser = new CoreUser();

@@ -49,28 +49,28 @@ if ($ecmenucolortxt == "") {
     </div>
     
     <?php
-    $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
+    $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $idSpace);
 if ($servicesuseproject == 1) {
     ?>
     
     <div >
         <p id="separatorp"><?php echo ServicesTranslator::Projects($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
+            <a href="servicesprojectsopened/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Opened_projects($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectsclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
+            <a href="servicesprojectsclosed/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Closed_projects($lang) ?></a><br/>
         </div>
 
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesprojectedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
+            <a href="servicesprojectedit/<?php echo $idSpace ?>/0"><?php echo ServicesTranslator::New_project($lang) ?></a><br/>
         </div>
     </div>
     
     <?php
 }
 
-$servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+$servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $idSpace);
 if ($servicesusecommand == 1) {
     ?>
     
@@ -78,16 +78,16 @@ if ($servicesusecommand == 1) {
     <div >
         <p id="separatorp"><?php echo ServicesTranslator::Opened_orders($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesordersopened/<?php echo $id_space ?>"><?php echo ServicesTranslator::Opened_orders($lang) ?></a>      
+            <a href="servicesordersopened/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Opened_orders($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesordersclosed/<?php echo $id_space ?>"><?php echo ServicesTranslator::Closed_orders($lang) ?></a><br/>
+            <a href="servicesordersclosed/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Closed_orders($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesordersall/<?php echo $id_space ?>"><?php echo ServicesTranslator::All_orders($lang) ?></a><br/>
+            <a href="servicesordersall/<?php echo $idSpace ?>"><?php echo ServicesTranslator::All_orders($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesorderedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_orders($lang) ?></a><br/>
+            <a href="servicesorderedit/<?php echo $idSpace ?>/0"><?php echo ServicesTranslator::New_orders($lang) ?></a><br/>
         </div>
     </div>
     
@@ -96,20 +96,20 @@ if ($servicesusecommand == 1) {
 ?>
     
     <?php
-$servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
+$servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $idSpace);
 if ($servicesusestock == 1) {
     ?>
     <div >
         <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicesstock/<?php echo $id_space ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
+            <a href="servicesstock/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Stock($lang) ?></a>      
         </div>
         <br/>
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="servicespurchaseedit/<?php echo $id_space ?>/0"><?php echo ServicesTranslator::New_Purchase($lang) ?></a><br/>
+            <a id="menu-button" href="servicespurchaseedit/<?php echo $idSpace ?>/0"><?php echo ServicesTranslator::New_Purchase($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="servicespurchase/<?php echo $id_space ?>"><?php echo ServicesTranslator::Purchase($lang) ?></a>      
+            <a href="servicespurchase/<?php echo $idSpace ?>"><?php echo ServicesTranslator::Purchase($lang) ?></a>      
         </div>
     </div>
     
@@ -121,8 +121,8 @@ if ($servicesusestock == 1) {
         <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>
 
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="serviceslisting/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a>
-            <a href="servicesedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="serviceslisting/<?php echo $idSpace ?>"><?php echo ServicesTranslator::services($lang) ?></a>
+            <a href="servicesedit/<?php echo $idSpace ?>/0">+</a>
         </div>	
     </div>
 </div>

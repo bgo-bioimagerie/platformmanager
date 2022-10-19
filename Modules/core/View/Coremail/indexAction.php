@@ -8,7 +8,7 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 <div >
     <h3>Mail subscriptions</h3>
     <div class="container">
-    <form action="/coremail/<?php echo $id_space; ?>" method="POST">
+    <form action="/coremail/<?php echo $idSpace; ?>" method="POST">
     <div class="bm-3 row">
     <?php foreach ($mods as $key => $mod) { ?>
         <div class="col-4 form-check">

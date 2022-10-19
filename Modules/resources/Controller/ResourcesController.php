@@ -28,12 +28,12 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
  */
 class ResourcesController extends CoresecureController
 {
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $html = file_get_contents('Modules/resources/View/Resources/navbar.php');
 
         $lang = $this->getLanguage();
-        $html = str_replace('{{id_space}}', $id_space, $html);
+        $html = str_replace('{{id_space}}', $idSpace, $html);
         $html = str_replace('{{Resources}}', ResourcesTranslator::Resources($lang), $html);
         $html = str_replace('{{Sorting}}', ResourcesTranslator::Sorting($lang), $html);
         $html = str_replace('{{Areas}}', ResourcesTranslator::Areas($lang), $html);
@@ -46,7 +46,7 @@ class ResourcesController extends CoresecureController
         $html = str_replace('{{Event_Types}}', ResourcesTranslator::Event_Types($lang), $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $idSpace);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', ResourcesTranslator::Resources($lang), $html);

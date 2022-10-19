@@ -19,59 +19,59 @@ class BjcollectionsController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $model = new BjCollection();
-        $collections = $model->getBySpace($id_space);
+        $collections = $model->getBySpace($idSpace);
 
         $table = new TableView();
         $headers = array("name" => CoreTranslator::Name($lang));
 
-        $table->addLineEditButton("bjcollectionsedit/".$id_space, "id");
-        $table->addLineButton("bjcollectionsview/".$id_space, "id", BulletjournalTranslator::See($lang));
+        $table->addLineEditButton("bjcollectionsedit/".$idSpace, "id");
+        $table->addLineButton("bjcollectionsview/".$idSpace, "id", BulletjournalTranslator::See($lang));
         $tableHtml = $table->view($collections, $headers);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "collections" => $collections,
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "collections" => $collections,
               "tableHtml" => $tableHtml  ), "indexAction");
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $model = new BjCollection();
-        $collection = $model->get($id_space, $id);
+        $collection = $model->get($idSpace, $id);
 
         $form = new Form($this->request, "addCollectionForm");
         $form->setTitle(BulletjournalTranslator::Edit_collection($lang));
         $form->addText("name", CoreTranslator::Name($lang), true, $collection["name"]);
-        $form->setValidationButton(CoreTranslator::Ok($lang), "bjcollectionsedit/".$id_space."/".$id);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "bjcollectionsedit/".$idSpace."/".$id);
 
         if ($form->check()) {
-            $model->set($id, $id_space, $form->getParameter("name"));
-            $this->redirect("bjcollections/".$id_space);
+            $model->set($id, $idSpace, $form->getParameter("name"));
+            $this->redirect("bjcollections/".$idSpace);
         }
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function viewAction($id_space, $id)
+    public function viewAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get the collection name
         $modelCollection = new BjCollection();
-        $collection = $modelCollection->get($id_space, $id);
+        $collection = $modelCollection->get($idSpace, $id);
 
         // select all the notes in this collection
         $model = new BjNote();
-        $notes = $model->getforCollection($id_space, $id);
+        $notes = $model->getforCollection($idSpace, $id);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, "notes" => $notes, "collection" => $collection));
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, "notes" => $notes, "collection" => $collection));
     }
 }

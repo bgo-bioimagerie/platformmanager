@@ -18,27 +18,27 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
  */
 class BookingnightweController extends BookingsettingsController
 {
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         // get the core belongings
         $modelBelonging = new ClPricing();
-        $belongings = $modelBelonging->getAll($id_space);
+        $belongings = $modelBelonging->getAll($idSpace);
 
 
         // get the pricing
         $modelPricing = new BkNightWE();
-        $modelPricing->addBelongingIfNotExists($id_space, $belongings);
-        $pricingArray = $modelPricing->getSpacePrices($id_space, "id");
+        $modelPricing->addBelongingIfNotExists($idSpace, $belongings);
+        $pricingArray = $modelPricing->getSpacePrices($idSpace, "id");
 
         $pricings = [];
 
         // prepare view
         for ($i = 0; $i < count($pricingArray); $i++) {
-            $pricingArray[$i]["name"] = $modelBelonging->getName($id_space, $pricingArray[$i]["id_belonging"]);
+            $pricingArray[$i]["name"] = $modelBelonging->getName($idSpace, $pricingArray[$i]["id_belonging"]);
             if ($pricingArray[$i]["tarif_unique"] == 1) {
                 $pricingArray[$i]["tarif_unique"] = CoreTranslator::yes($lang);
             } else {
@@ -64,8 +64,8 @@ class BookingnightweController extends BookingsettingsController
         $table = new TableView();
 
         $table->setTitle(BookingTranslator::Nightwe($lang), 3);
-        $table->addLineEditButton("bookingnightweedit/".$id_space, "id_belonging");
-        // $table->addDeleteButton("bookingnightwedelete/".$id_space);
+        $table->addLineEditButton("bookingnightweedit/".$idSpace, "id_belonging");
+        // $table->addDeleteButton("bookingnightwedelete/".$idSpace);
 
         $tableContent = array(
             "id" => "ID",
@@ -76,23 +76,23 @@ class BookingnightweController extends BookingsettingsController
         );
         $tableHtml = $table->view($pricings, $tableContent);
 
-        $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml, 'data' => ['pricings' => $pricingArray]));
+        $this->render(array("id_space" => $idSpace, "lang" => $lang, 'tableHtml' => $tableHtml, 'data' => ['pricings' => $pricingArray]));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelPricing = new BkNightWE();
-        $pricing = $modelPricing->getPricing($id, $id_space);
+        $pricing = $modelPricing->getPricing($id, $idSpace);
 
         $modelBelonging = new ClPricing();
-        $pricing["name"] = $modelBelonging->getName($id_space, $id);
+        $pricing["name"] = $modelBelonging->getName($idSpace, $id);
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'pricing' => $pricing
         ));
     }
@@ -100,9 +100,9 @@ class BookingnightweController extends BookingsettingsController
     /**
      * Query to edit a pricing
      */
-    public function editqueryAction($id_space)
+    public function editqueryAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
 
         // get form variables
         $id = $this->request->getParameter("id");
@@ -159,8 +159,8 @@ class BookingnightweController extends BookingsettingsController
         $we_char = $lundi . "," . $mardi . "," . $mercredi . "," . $jeudi . "," . $vendredi . "," . $samedi . "," . $dimanche;
 
         $modelPricing = new BkNightWE();
-        $modelPricing->editPricing($id, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char);
+        $modelPricing->editPricing($id, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char);
 
-        $this->redirect("bookingnightwe/".$id_space);
+        $this->redirect("bookingnightwe/".$idSpace);
     }
 }

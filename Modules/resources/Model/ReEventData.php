@@ -23,32 +23,32 @@ class ReEventData extends Model
         $this->primaryKey = "id";
     }
 
-    public function addFile($id_space, $id_event, $url)
+    public function addFile($idSpace, $id_event, $url)
     {
         $sql = "INSERT INTO re_event_data (id_event, url, id_space) VALUES (?,?,?)";
-        $this->runRequest($sql, array($id_event, $url, $id_space));
+        $this->runRequest($sql, array($id_event, $url, $idSpace));
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM re_event_data WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function getByEvent($id_space, $id_event)
+    public function getByEvent($idSpace, $id_event)
     {
         $sql = "SELECT * FROM re_event_data WHERE id_event=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_event, $id_space))->fetchAll();
+        return $this->runRequest($sql, array($id_event, $idSpace))->fetchAll();
     }
 
-    public function set($id_space, $id, $id_event, $url)
+    public function set($idSpace, $id, $id_event, $url)
     {
-        if ($this->exists($id_space, $id)) {
+        if ($this->exists($idSpace, $id)) {
             $sql = "UPDATE re_event_data SET id_event=?, url=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_event, $url, $id, $id_space));
+            $this->runRequest($sql, array($id_event, $url, $id, $idSpace));
         } else {
             $sql = "INSERT INTO re_event_data (id_event, url, id_space) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_event, $url, $id_space));
+            $this->runRequest($sql, array($id_event, $url, $idSpace));
             $id = $this->getDatabase()->lastInsertId();
         }
         return $id;

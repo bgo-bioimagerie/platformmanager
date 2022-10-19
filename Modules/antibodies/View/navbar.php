@@ -53,12 +53,12 @@ if ($ecmenucolortxt == "") {
         <p id="separatorp">Listing</p>
 
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="anticorps/<?php echo $id_space ?>">Anticorps</a>
-            <a href="anticorpsedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="anticorps/<?php echo $idSpace ?>">Anticorps</a>
+            <a href="anticorpsedit/<?php echo $idSpace ?>/0">+</a> 
         </div>	
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="protocols/<?php echo $id_space ?>/id">Protocoles</a>
-            <a href="protocolsedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="protocols/<?php echo $idSpace ?>/id">Protocoles</a>
+            <a href="protocolsedit/<?php echo $idSpace ?>/0">+</a>
         </div>
     </div>
 
@@ -66,12 +66,12 @@ if ($ecmenucolortxt == "") {
         <p id="separatorp">Référence</p>
 
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="sources/<?php echo $id_space ?>">Sources</a>
-            <a href="sourcesedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="sources/<?php echo $idSpace ?>">Sources</a>
+            <a href="sourcesedit/<?php echo $idSpace ?>/0">+</a> 
         </div>	
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="isotypes/<?php echo $id_space ?>">Isotypes</a>
-            <a href="isotypesedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="isotypes/<?php echo $idSpace ?>">Isotypes</a>
+            <a href="isotypesedit/<?php echo $idSpace ?>/0">+</a>
         </div>
     </div>
     
@@ -79,20 +79,20 @@ if ($ecmenucolortxt == "") {
         <p id="separatorp">Tissus</p>
 
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="especes/<?php echo $id_space ?>">Espèces</a>
-            <a href="especesedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="especes/<?php echo $idSpace ?>">Espèces</a>
+            <a href="especesedit/<?php echo $idSpace ?>/0">+</a> 
         </div>	
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="organes/<?php echo $id_space ?>">Organes</a>
-            <a href="organesedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="organes/<?php echo $idSpace ?>">Organes</a>
+            <a href="organesedit/<?php echo $idSpace ?>/0">+</a>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="prelevements/<?php echo $id_space ?>">Prélèvements</a>
-            <a href="prelevementsedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="prelevements/<?php echo $idSpace ?>">Prélèvements</a>
+            <a href="prelevementsedit/<?php echo $idSpace ?>/0">+</a>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="status/<?php echo $id_space ?>">Status</a>
-            <a href="statusedit/<?php echo $id_space ?>/0">+</a>
+            <a id="menu-button" href="status/<?php echo $idSpace ?>">Status</a>
+            <a href="statusedit/<?php echo $idSpace ?>/0">+</a>
         </div>
     </div>
 
@@ -100,63 +100,63 @@ if ($ecmenucolortxt == "") {
         <p id="separatorp">Détails Proto</p>
 
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="kit/<?php echo $id_space ?>">KIT</a>
-            <a href="kitedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="kit/<?php echo $idSpace ?>">KIT</a>
+            <a href="kitedit/<?php echo $idSpace ?>/0">+</a> 
         </div>	
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="proto/<?php echo $id_space ?>">Proto</a>
-            <a href="protoedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="proto/<?php echo $idSpace ?>">Proto</a>
+            <a href="protoedit/<?php echo $idSpace ?>/0">+</a> 
         </div>	
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="fixative/<?php echo $id_space ?>">Fixative</a>
-            <a href="fixativeedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="fixative/<?php echo $idSpace ?>">Fixative</a>
+            <a href="fixativeedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="option/<?php echo $id_space ?>">Option</a>
-            <a href="optionedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="option/<?php echo $idSpace ?>">Option</a>
+            <a href="optionedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="enzymes/<?php echo $id_space ?>">Enzyme</a>
-            <a href="enzymesedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="enzymes/<?php echo $idSpace ?>">Enzyme</a>
+            <a href="enzymesedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="dem/<?php echo $id_space ?>">Dém</a>
-            <a href="demedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="dem/<?php echo $idSpace ?>">Dém</a>
+            <a href="demedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="aciinc/<?php echo $id_space ?>">AcI Inc</a>
-            <a href="aciincedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="aciinc/<?php echo $idSpace ?>">AcI Inc</a>
+            <a href="aciincedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="linker/<?php echo $id_space ?>">Linker</a>
-            <a href="linkeredit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="linker/<?php echo $idSpace ?>">Linker</a>
+            <a href="linkeredit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="inc/<?php echo $id_space ?>">Linker Inc</a>
-            <a href="incedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="inc/<?php echo $idSpace ?>">Linker Inc</a>
+            <a href="incedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="acii/<?php echo $id_space ?>">acII</a>
-            <a href="aciiedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="acii/<?php echo $idSpace ?>">acII</a>
+            <a href="aciiedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="application/<?php echo $id_space ?>">Application</a>
-            <a href="applicationedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="application/<?php echo $idSpace ?>">Application</a>
+            <a href="applicationedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
         
         <div  class="btn-block" id="menu-button-div">
-            <a id="menu-button" href="staining/<?php echo $id_space ?>">Marquage</a>
-            <a href="stainingedit/<?php echo $id_space ?>/0">+</a> 
+            <a id="menu-button" href="staining/<?php echo $idSpace ?>">Marquage</a>
+            <a href="stainingedit/<?php echo $idSpace ?>/0">+</a> 
         </div>
     </div>
     

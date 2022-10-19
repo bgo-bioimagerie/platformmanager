@@ -3,7 +3,7 @@
 
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 
-function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0)
+function compute($idSpace, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0)
 {
     $q = '?';
     if (!empty($from)) {
@@ -12,7 +12,7 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
     }
 
     $modelSpace = new CoreSpace();
-    $user_space_role = $modelSpace->getUserSpaceRole($id_space, $_SESSION["id_user"]);
+    $user_space_role = $modelSpace->getUserSpaceRole($idSpace, $_SESSION["id_user"]);
 
     $dateString = date("Y-m-d", $date_unix);
     $modelBookingSupplemetary = new BkCalSupInfo();
@@ -69,7 +69,7 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
 
                 $curBlockTs = (new DateTime())->setTimestamp($date_unix)->setTime($he[0], $he[1])->getTimestamp();
                 if ($user_space_role >= CoreSpace::$MANAGER  || ($isUserAuthorizedToBook && $curBlockTs > time())) {
-                    $linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID.$q;
+                    $linkAdress = "bookingeditreservation/". $idSpace ."/t_" . $dateString."_".$hed."_".$resourceID.$q;
                     $calRows[$i][] = [
                         'free' => true,
                         'link' => $linkAdress,
@@ -141,14 +141,14 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
                 }
             } else {
                 if ($c['id'] && $role >= CoreSpace::$USER) {
-                    $text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $c['client_name'], $shortDescription, $c['full_description'], false, $role);
-                    $text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
+                    $text = $modelBookingSetting->getSummary($idSpace, $c["recipient_fullname"], $c['phone'], $c['client_name'], $shortDescription, $c['full_description'], false, $role);
+                    $text .= $modelBookingSupplemetary->getSummary($idSpace, $calEntry["id"]);
                     if ($text === '') {
                         $text = '#'.$c['id'];
                     }
                 }
             }
-            $linkAdress = "bookingeditreservation/". $id_space ."/r_" . $c['id'].$q;
+            $linkAdress = "bookingeditreservation/". $idSpace ."/r_" . $c['id'].$q;
             $c['text'] = $text;
             $c['pixelHeight'] = $pixelHeight;
             $c['link'] = $linkAdress;

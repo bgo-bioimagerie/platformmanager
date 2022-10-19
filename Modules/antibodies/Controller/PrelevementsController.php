@@ -22,62 +22,62 @@ class PrelevementsController extends AntibodiesController
     }
 
     // affiche la liste des Prelevementss
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get the user list
-        $prelevementssArray = $this->model->getBySpace($id_space);
+        $prelevementssArray = $this->model->getBySpace($idSpace);
 
         $table = new TableView();
         $table->setTitle("Prelevements", 3);
-        $table->addLineEditButton("prelevementsedit/".$id_space."/");
-        $table->addDeleteButton("prelevementsdelete/".$id_space."/", "id", "nom");
+        $table->addLineEditButton("prelevementsedit/".$idSpace."/");
+        $table->addDeleteButton("prelevementsdelete/".$idSpace."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($prelevementssArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($id_space, $id)
+    public function editAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $prelevements = $this->model->get($id_space, $id);
+        $prelevements = $this->model->get($idSpace, $id);
 
         $form = new Form($this->request, "prelevementseditform");
         $form->setTitle("Modifier prelevements");
         $form->addText("nom", "nom", true, $prelevements["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "prelevementsedit/".$id_space.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "prelevementsedit/".$idSpace.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $id_space);
+                $id = $this->model->add($name, $idSpace);
             } else {
-                $this->model->edit($id, $name, $id_space);
+                $this->model->edit($id, $name, $idSpace);
             }
 
-            return $this->redirect("prelevements/".$id_space, [], ['prelevement' => ['id' => $id]]);
+            return $this->redirect("prelevements/".$idSpace, [], ['prelevement' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $id_space,
+            'id_space' => $idSpace,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($id_space, $id)
+    public function deleteAction($idSpace, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($id_space, $id);
-        $this->redirect("prelevements/" . $id_space);
+        $this->model->delete($idSpace, $id);
+        $this->redirect("prelevements/" . $idSpace);
     }
 }

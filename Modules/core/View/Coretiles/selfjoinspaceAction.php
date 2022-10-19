@@ -8,9 +8,9 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 
 <div class=" container">
     <div class="row">
-        <form method="POST" action="coretilesselfjoinspace/<?php echo $id_space ?>">
+        <form method="POST" action="coretilesselfjoinspace/<?php echo $idSpace ?>">
             <input type="hidden" name="formid" value="coretilesselfjoinspace">
-            <input type="hidden" name="space" value="<?php echo $id_space; ?>">
+            <input type="hidden" name="space" value="<?php echo $idSpace; ?>">
             <div class="form-group">
                 <label class="form-label col-xs-4" for="comment"><?php echo CoreTranslator::JoinWhy($lang) ?>*</label>
                 <div class="col-xs-8">

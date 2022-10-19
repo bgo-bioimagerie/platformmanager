@@ -16,28 +16,28 @@ class StatisticsController extends CoresecureController
 {
     public function sideMenu()
     {
-        $id_space = $this->args['id_space'];
-        return $this->navbar($id_space);
+        $idSpace = $this->args['id_space'];
+        return $this->navbar($idSpace);
     }
 
-    public function navbar($id_space)
+    public function navbar($idSpace)
     {
         $lang = $this->getLanguage();
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a  style="color: {{color}};" href="statistics/'.$id_space.'"> {{title}}';
+        $html .= '<a  style="color: {{color}};" href="statistics/'.$idSpace.'"> {{title}}';
         $html .= '    <span style="color: {{color}}; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
 
         $html .= '<div class=" pm-inline-div">';
-        $html .= '<a style="color: {{color}};" class="menu-button" href="statisticsglobal/' . $id_space . '">' . StatisticsTranslator::StatisticsGlobal($lang) . '</a>';
+        $html .= '<a style="color: {{color}};" class="menu-button" href="statisticsglobal/' . $idSpace . '">' . StatisticsTranslator::StatisticsGlobal($lang) . '</a>';
         $html .= '</div>';
 
         $modelSpace = new CoreSpace();
         //$configModel = new CoreConfig();
-        $menus = $modelSpace->getDistinctSpaceMenusModules($id_space);
+        $menus = $modelSpace->getDistinctSpaceMenusModules($idSpace);
         //$urls = array();
         //$urlss = array();
         $count = -1;
@@ -52,12 +52,12 @@ class StatisticsController extends CoresecureController
                 require_once 'Modules/' . $module . "/Model/" . $classTranslator . ".php";
                 $translator = new $classTranslator();
                 $model = new $className();
-                $model->setSpace($id_space);
+                $model->setSpace($idSpace);
                 $model->listRoutes();
 
                 if ($model->count() > 0) {
                     /*
-                    $donfigTitle = $configModel->getParamSpace($module . "menuname", $id_space);
+                    $donfigTitle = $configModel->getParamSpace($module . "menuname", $idSpace);
                     if ($donfigTitle != "") {
                         $txt = $donfigTitle;
                     } else {
@@ -79,7 +79,7 @@ class StatisticsController extends CoresecureController
                         $txt = $translator->$url($lang);
 
                         $html .= '<div class="pm-inline-div" style="background-color:{{bgcolor}};">';
-                        $html .= '<a style="color: {{color}};" class="menu-button" href="' . $url . "/" . $id_space . '">' . $txt . '</a>';
+                        $html .= '<a style="color: {{color}};" class="menu-button" href="' . $url . "/" . $idSpace . '">' . $txt . '</a>';
                         $html .= '</div>';
                     }
                 }
@@ -88,7 +88,7 @@ class StatisticsController extends CoresecureController
 
         $html.= "</div>";
 
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("statistics", $id_space);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("statistics", $idSpace);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{color}}', $menuInfo['txtcolor'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);

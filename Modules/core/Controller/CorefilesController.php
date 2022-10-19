@@ -13,7 +13,7 @@ class CorefilesController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::downloadAction()
      */
-    public function downloadAction($id_space, $id_file)
+    public function downloadAction($idSpace, $id_file)
     {
         $modelFiles = new CoreFiles();
         $f = $modelFiles->get($id_file);
@@ -27,7 +27,7 @@ class CorefilesController extends CoresecureController
             if ($_SESSION['id_user'] != $f['id_user']) {
                 // If user not owner of file, check role
                 $modelSpace = new CoreSpace();
-                $userRole = $modelSpace->getUserSpaceRole($id_space, $_SESSION['id_user']);
+                $userRole = $modelSpace->getUserSpaceRole($idSpace, $_SESSION['id_user']);
                 if (intval($f['role']) > intval($userRole)) {
                     throw new PfmAuthException("Not authorized");
                 }

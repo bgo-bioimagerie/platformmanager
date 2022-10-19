@@ -35,12 +35,12 @@ class ClientscompanyController extends ClientsController
      *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space)
+    public function indexAction($idSpace)
     {
-        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $data = $this->companyModel->getForSpace($id_space);
+        $data = $this->companyModel->getForSpace($idSpace);
         $formKeys = ["name", "address", "zipcode", "city", "county", "country", "tel", "fax", "email", "approval_number"];
         foreach ($formKeys as $key) {
             $data[$key] = array_key_exists($key, $data) ? $data[$key] : "";
@@ -60,7 +60,7 @@ class ClientscompanyController extends ClientsController
         $form->addText('approval_number', ClientsTranslator::ApprovalNumber($lang), true, $data["approval_number"]);
 
         $todo = $this->request->getParameterNoException('redirect');
-        $validationUrl = "clcompany/".$id_space;
+        $validationUrl = "clcompany/".$idSpace;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
@@ -72,7 +72,7 @@ class ClientscompanyController extends ClientsController
         if ($form->check()) {
             // run the database query
             $this->companyModel->set(
-                $id_space,
+                $idSpace,
                 $form->getParameter("name"),
                 $form->getParameter("address"),
                 $form->getParameter("zipcode"),
@@ -89,17 +89,17 @@ class ClientscompanyController extends ClientsController
             $_SESSION["flashClass"] = 'success';
 
             if ($todo) {
-                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
+                return $this->redirect("spaceadminedit/" . $idSpace, ["showTodo" => true]);
             } else {
                 // after the provider is saved we redirect to the providers list page
-                return $this->redirect("clcompany/" . $id_space);
+                return $this->redirect("clcompany/" . $idSpace);
             }
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // render the view
             $this->render(array(
-                'id_space' => $id_space,
+                'id_space' => $idSpace,
                 'lang' => $lang,
                 'formHtml' => $formHtml
             ));

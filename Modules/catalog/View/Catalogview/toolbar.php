@@ -63,7 +63,7 @@
             <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
                 <div class="card-header"></div>
                 <div class="card-body">
-                    <a style="text-align: center; <?php echo $selectedStyle; ?>" href="catalog/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
+                    <a style="text-align: center; <?php echo $selectedStyle; ?>" href="catalog/<?php echo $idSpace . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
                 </div>
             </div>
         </div>

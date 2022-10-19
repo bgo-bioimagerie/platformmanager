@@ -18,16 +18,16 @@ class StockShelf extends Model
         $this->primaryKey = "id";
     }
 
-    public function getAll($id_space)
+    public function getAll($idSpace)
     {
         $sql  = " SELECT stock_shelf.*, stock_cabinets.name as cabinet, stock_cabinets.room_number as room ";
         $sql .= " FROM stock_shelf ";
         $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
         $sql .= " WHERE stock_shelf.id_space=? AND stock_shelf.deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function getFullName($id_space, $id)
+    public function getFullName($idSpace, $id)
     {
         if (!isset($id) || is_null($id) || $id == "") {
             return "";
@@ -37,7 +37,7 @@ class StockShelf extends Model
         $sql .= " FROM stock_shelf ";
         $sql .= " INNER JOIN stock_cabinets ON stock_shelf.id_cabinet=stock_cabinets.id ";
         $sql .= " WHERE stock_shelf.id = ?  AND stock_shelf.id_space=? AND stock_shelf.deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
 
         if ($req->rowCount() > 0) {
             $data = $req->fetch();
@@ -46,15 +46,15 @@ class StockShelf extends Model
         return "";
     }
 
-    public function getOne($id_space, $id)
+    public function getOne($idSpace, $id)
     {
         $sql = "SELECT * FROM stock_shelf WHERE id=?  AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function getAllForProjectSelect($id_space)
+    public function getAllForProjectSelect($idSpace)
     {
-        $data = $this->getAll($id_space);
+        $data = $this->getAll($idSpace);
 
         $names = array();
         $ids = array();
@@ -67,24 +67,24 @@ class StockShelf extends Model
         return array( "names" => $names, "ids" => $ids );
     }
 
-    public function set($id_space, $id, $name, $id_cabinet)
+    public function set($idSpace, $id, $name, $id_cabinet)
     {
         if ($id > 0) {
             $sql = "UPDATE stock_shelf SET name=?, id_cabinet=? WHERE id=?  AND id_space=? AND deleted=0";
             $this->runRequest($sql, array(
-                $name, $id_cabinet, $id, $id_space
+                $name, $id_cabinet, $id, $idSpace
             ));
             return $id;
         } else {
             $sql = "INSERT INTO stock_shelf (name, id_cabinet, id_space) VALUES (?,?,?)";
-            $this->runRequest($sql, array($name, $id_cabinet, $id_space));
+            $this->runRequest($sql, array($name, $id_cabinet, $idSpace));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE stock_shelf SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }

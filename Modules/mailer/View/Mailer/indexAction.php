@@ -21,7 +21,7 @@
     <?php if($role >= $editRole) { ?>
     <div class="row"><div class="col-12">
     <div >
-        <form role="form" action="mailersend/<?php echo $id_space ?>" method="post">
+        <form role="form" action="mailersend/<?php echo $idSpace ?>" method="post">
             <div class="page-header"> 
                 <h1>
                     <?php echo MailerTranslator::mailer($lang) ?>
@@ -116,7 +116,7 @@
                 <td><?php echo substr(trim($mail['message']), 0, 15); ?>...</td>
                 <?php if($role >= $editRole) { ?>
                 <td><?php echo MailerTranslator::dest($mail['type'], $lang); ?></td>
-                <td><a href="mailer/<?php echo $id_space; ?>/delete/<?php echo $mail['id']; ?>"><button type="button" class="btn"><?php echo CoreTranslator::Delete($lang) ?></button></a>
+                <td><a href="mailer/<?php echo $idSpace; ?>/delete/<?php echo $mail['id']; ?>"><button type="button" class="btn"><?php echo CoreTranslator::Delete($lang) ?></button></a>
                 <?php } ?>
             </tr>
         <?php } ?>

@@ -23,35 +23,35 @@ class BjCollection extends Model
         $this->primaryKey = "id";
     }
 
-    public function get($id_space, $id)
+    public function get($idSpace, $id)
     {
         $sql = "SELECT * FROM bj_collections WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $id_space))->fetch();
+        return $this->runRequest($sql, array($id, $idSpace))->fetch();
     }
 
-    public function getBySpace($id_space)
+    public function getBySpace($idSpace)
     {
         $sql = "SELECT * FROM bj_collections WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
+        return $this->runRequest($sql, array($idSpace))->fetchAll();
     }
 
-    public function set($id, $id_space, $name)
+    public function set($id, $idSpace, $name)
     {
-        if ($this->exists($id_space, $id)) {
+        if ($this->exists($idSpace, $id)) {
             $sql = "UPDATE bj_collections SET name=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($name, $id, $id_space));
+            $this->runRequest($sql, array($name, $id, $idSpace));
         } else {
             $sql = "INSERT INTO bj_collections (id_space, name) VALUES (?,?)";
-            $this->runRequest($sql, array($id_space, $name));
+            $this->runRequest($sql, array($idSpace, $name));
             $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }
 
-    public function exists($id_space, $id)
+    public function exists($idSpace, $id)
     {
         $sql = "SELECT * from bj_collections WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $id_space));
+        $req = $this->runRequest($sql, array($id, $idSpace));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -62,10 +62,10 @@ class BjCollection extends Model
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($id_space, $id)
+    public function delete($idSpace, $id)
     {
         $sql = "UPDATE bj_collections SET deleted=1,deleted_at=NOW() WHERE id=? ANd id_space=?";
         //$sql = "DELETE FROM bj_collections WHERE id = ?";
-        $this->runRequest($sql, array($id, $id_space));
+        $this->runRequest($sql, array($id, $idSpace));
     }
 }
