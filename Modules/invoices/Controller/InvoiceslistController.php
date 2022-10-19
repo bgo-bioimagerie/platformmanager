@@ -25,11 +25,11 @@ require_once 'Modules/invoices/Controller/InvoicesController.php';
  */
 class InvoiceslistController extends InvoicesController
 {
-    protected function getInvoicePeriod($idSpace, $year)
+    protected function getInvoicePeriod($id_space, $year)
     {
         $modelCoreConfig = new CoreConfig();
-        $projectperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $idSpace);
-        $projectperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $idSpace);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
         if (!$projectperiodbegin) {
             $projectperiodbegin = "0000-01-01";
@@ -51,16 +51,16 @@ class InvoiceslistController extends InvoicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace, $sent, $year = "")
+    public function indexAction($id_space, $sent, $year = "")
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if ($sent == "") {
             $sent = 0;
         }
 
-        if (!file_exists('data/invoices/'.$idSpace.'/template.twig') && !file_exists('data/invoices/'.$idSpace.'/template.php')) {
+        if (!file_exists('data/invoices/'.$id_space.'/template.twig') && !file_exists('data/invoices/'.$id_space.'/template.php')) {
             $_SESSION['flash'] = InvoicesTranslator::NoTemplate($lang);
             $_SESSION['flashClass'] = 'warning';
         }
@@ -69,10 +69,10 @@ class InvoiceslistController extends InvoicesController
         $modelUser = new CoreUser();
 
         $modelConfig = new CoreConfig();
-        $invoiceperiodbegin = $modelConfig->getParamSpace("invoiceperiodbegin", $idSpace);
-        $invoiceperiodend = $modelConfig->getParamSpace("invoiceperiodend", $idSpace);
+        $invoiceperiodbegin = $modelConfig->getParamSpace("invoiceperiodbegin", $id_space);
+        $invoiceperiodend = $modelConfig->getParamSpace("invoiceperiodend", $id_space);
 
-        $years = $modelInvoices->allPeriodYears($idSpace, $invoiceperiodbegin, $invoiceperiodend);
+        $years = $modelInvoices->allPeriodYears($id_space, $invoiceperiodbegin, $invoiceperiodend);
         if ($year == "") {
             if (empty($years)) {
                 $year = date('Y');
@@ -82,8 +82,8 @@ class InvoiceslistController extends InvoicesController
                 $year = $years[count($years) - 1];
             }
         }
-        $dates = $this->getInvoicePeriod($idSpace, $year);
-        $data = $modelInvoices->getSentByPeriod($idSpace, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
+        $dates = $this->getInvoicePeriod($id_space, $year);
+        $data = $modelInvoices->getSentByPeriod($id_space, $sent, $dates["yearBegin"], $dates["yearEnd"], "number");
         $invoices = $data;
         for ($i = 0; $i < count($invoices); $i++) {
             $invoices[$i]["date_generated"] = CoreTranslator::dateFromEn($invoices[$i]["date_generated"], $lang);
@@ -110,21 +110,21 @@ class InvoiceslistController extends InvoicesController
         );
 
 
-        $table->addLineEditButton("invoiceedit/" . $idSpace);
+        $table->addLineEditButton("invoiceedit/" . $id_space);
         if ($sent == 0) {
-            $table->addLineButton("invoiceinfo/" . $idSpace, "id", InvoicesTranslator::SendStatus($lang));
+            $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::SendStatus($lang));
         }
-        $table->addDeleteButton("invoicedelete/" . $idSpace, "id", "number");
+        $table->addDeleteButton("invoicedelete/" . $id_space, "id", "number");
         if ($sent == 1) {
-            $table->addLineButton("invoiceinfo/" . $idSpace, "id", InvoicesTranslator::Info($lang));
+            $table->addLineButton("invoiceinfo/" . $id_space, "id", InvoicesTranslator::Info($lang));
         }
         $tableView = $table->view($invoices, $headers);
 
         $cv = new CoreVirtual();
-        $requests = $cv->getRequests($idSpace, 'invoices');
+        $requests = $cv->getRequests($id_space, 'invoices');
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableView,
             "requests" => $requests,
@@ -135,22 +135,22 @@ class InvoiceslistController extends InvoicesController
         ));
     }
 
-    public function sentAction($idSpace, $year = "")
+    public function sentAction($id_space, $year = "")
     {
-        $this->redirect("invoices/".$idSpace."/1/".$year);
+        $this->redirect("invoices/".$id_space."/1/".$year);
     }
 
-    public function tosendAction($idSpace, $year = "")
+    public function tosendAction($id_space, $year = "")
     {
-        $this->redirect("invoices/".$idSpace."/0/".$year);
+        $this->redirect("invoices/".$id_space."/0/".$year);
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
-        $service = $modelInvoice->get($idSpace, $id);
+        $service = $modelInvoice->get($id_space, $id);
         if (!$service) {
             throw new PfmUserException('invoice not found', 404);
         }
@@ -165,7 +165,7 @@ class InvoiceslistController extends InvoicesController
         $object = new $controllerName($this->request, $this->currentSpace);
         //$object->setRequest($this->request);
         Configuration::getLogger()->debug('[invoices][edit]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
-        return $object->runAction($service["module"], "edit", ['id_space' => $idSpace, 'id_invoice' => $id]);
+        return $object->runAction($service["module"], "edit", ['id_space' => $id_space, 'id_invoice' => $id]);
     }
 
     public function createPurcentageDiscountForm($discountValue)
@@ -177,12 +177,12 @@ class InvoiceslistController extends InvoicesController
         return $form->getHtml($lang);
     }
 
-    protected function infoForm($idSpace, $id)
+    protected function infoForm($id_space, $id)
     {
         $lang = $this->getLanguage();
         $modelClient = new ClClient();
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($idSpace, $id);
+        $invoice = $modelInvoice->get($id_space, $id);
 
         if ($invoice["date_paid"] == "0000-00-00") {
             $invoice["date_paid"] = "";
@@ -191,37 +191,37 @@ class InvoiceslistController extends InvoicesController
         $form = new Form($this->request, "infoActionForm");
         $form->setTitle(InvoicesTranslator::InvoiceInfo($lang));
         $form->addText("number", InvoicesTranslator::Number($lang), false, $invoice["number"], false);
-        $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($idSpace, $invoice["id_responsible"]), false);
+        $form->addText("resp", ClientsTranslator::ClientAccount($lang), false, $modelClient->getName($id_space, $invoice["id_responsible"]), false);
         $form->addDate("date_generated", InvoicesTranslator::Date_generated($lang), true, $invoice["date_generated"]);
         $form->addDate("date_send", InvoicesTranslator::Date_send($lang), true, $invoice["date_send"]);
 
         $modelVisa = new InVisa();
-        $visasList = $modelVisa->getForList($idSpace);
+        $visasList = $modelVisa->getForList($id_space);
         $form->addSelect("visa_send", InvoicesTranslator::Visa_send($lang), $visasList['names'], $visasList['ids'], $invoice["visa_send"]);
 
         $modelConfig = new CoreConfig();
-        if ($modelConfig->getParamSpace("useInvoiceDatePaid", $idSpace) == 1) {
+        if ($modelConfig->getParamSpace("useInvoiceDatePaid", $id_space) == 1) {
             $form->addDate("date_paid", InvoicesTranslator::Date_paid($lang), true, $invoice["date_paid"]);
         } else {
             $form->addHidden("date_paid", "");
         }
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceinfo/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "invoices/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoiceinfo/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "invoices/" . $id_space);
 
         if ($form->check()) {
             if ($this->request->getParameter("date_send") != "" && $this->request->getParameter("visa_send") == 0) {
                 $message = InvoicesTranslator::TheFieldVisaIsMandatoryWithSend($lang);
                 $_SESSION['flash'] = $message;
-                $this->redirect("invoiceinfo/".$idSpace."/".$id);
+                $this->redirect("invoiceinfo/".$id_space."/".$id);
                 return "";
             }
 
             $datePaid = CoreTranslator::dateToEn($this->request->getParameter("date_paid"), $lang);
             //echo "date paid = " . $datePaid . "<br/>";
-            $modelInvoice->setDatePaid($idSpace, $id, $datePaid);
+            $modelInvoice->setDatePaid($id_space, $id, $datePaid);
             $modelInvoice->setSend(
-                $idSpace,
+                $id_space,
                 $id,
                 CoreTranslator::dateToEn($this->request->getParameter("date_send"), $lang),
                 $this->request->getParameter("visa_send")
@@ -229,34 +229,34 @@ class InvoiceslistController extends InvoicesController
 
             $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
             $_SESSION["flashClass"] = 'success';
-            $this->redirect("invoiceinfo/" . $idSpace . "/" . $id);
+            $this->redirect("invoiceinfo/" . $id_space . "/" . $id);
             return "";
         } else {
             return $form->getHtml($lang);
         }
     }
 
-    public function infoAction($idSpace, $id)
+    public function infoAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $formHtml = $this->infoForm($idSpace, $id);
+        $formHtml = $this->infoForm($id_space, $id);
         if ($formHtml) {
-            $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $formHtml));
+            $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
         }
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // cancel the pricing in the origin module
         $modelInvoice = new InInvoice();
-        $service = $modelInvoice->get($idSpace, $id);
+        $service = $modelInvoice->get($id_space, $id);
         if (!$service) {
             $_SESSION['flash'] = InvoicesTranslator::Invoice($lang)." $id ".CoreTranslator::NotFound($lang);
-            return $this->redirect("invoices/" . $idSpace, [], ['invoice' => null]);
+            return $this->redirect("invoices/" . $id_space, [], ['invoice' => null]);
         }
 
 
@@ -264,15 +264,15 @@ class InvoiceslistController extends InvoicesController
         require_once 'Modules/' . $service["module"] . "/Controller/" . $controllerName . ".php";
         $object = new $controllerName($this->request, $this->currentSpace);
         Configuration::getLogger()->debug('[invoices][delete]', ['controller' => $service['controller'], 'module' => $service['module'], 'id' => $id]);
-        $object->runAction($service["module"], "delete", array($idSpace, $id));
+        $object->runAction($service["module"], "delete", array($id_space, $id));
 
         // delete invoice
         $modelInvoiceItem = new InInvoiceItem();
-        $modelInvoiceItem->deleteForInvoice($idSpace, $id);
+        $modelInvoiceItem->deleteForInvoice($id_space, $id);
 
-        $modelInvoice->delete($idSpace, $id);
+        $modelInvoice->delete($id_space, $id);
 
         // redirect
-        return $this->redirect("invoices/" . $idSpace, [], ['invoice' => $service]);
+        return $this->redirect("invoices/" . $id_space, [], ['invoice' => $service]);
     }
 }

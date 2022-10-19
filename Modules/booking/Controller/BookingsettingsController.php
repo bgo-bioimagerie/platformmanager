@@ -17,13 +17,13 @@ class BookingsettingsController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("bookingsettings", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("bookingsettings", $id_space);
 
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' => BookingTranslator::Booking($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -49,11 +49,11 @@ class BookingsettingsController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $this->render(array("id_space" => $idSpace, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

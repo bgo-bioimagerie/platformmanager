@@ -7,12 +7,12 @@ require_once 'Modules/clients/Model/ClAddress.php';
 
 class AddressForm extends FormGenerator
 {
-    private $idSpace;
+    private $id_space;
     protected $cancelUrl;
 
-    public function setSpace($idSpace)
+    public function setSpace($id_space)
     {
-        $this->id_space = $idSpace;
+        $this->id_space = $id_space;
     }
 
     /**

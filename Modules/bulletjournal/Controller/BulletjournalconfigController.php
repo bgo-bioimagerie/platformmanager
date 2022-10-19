@@ -32,22 +32,22 @@ class BulletjournalconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'bulletjournal', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'bulletjournal', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'bulletjournal', 'book');
+            $this->menusactivation($id_space, 'bulletjournal', 'book');
 
-            $this->redirect("bulletjournalconfig/".$idSpace);
+            $this->redirect("bulletjournalconfig/".$id_space);
             return;
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
 
-        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 }

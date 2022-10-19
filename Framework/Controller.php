@@ -186,13 +186,13 @@ abstract class Controller
 
         /**
      *
-     * @param int $idSpace
+     * @param int $id_space
      * @return string
      */
     public function mainMenu()
     {
         //$m = new CoreSpace();
-        //$space = $m->getSpace($idSpace);
+        //$space = $m->getSpace($id_space);
         $space = $this->currentSpace;
         if ($space === null) {
             return '';

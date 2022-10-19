@@ -9,7 +9,7 @@
     <script type="module">
         import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
         let dynamicForms = new DynamicForms();
-        let spaceId = <?php echo $idSpace?>;
+        let spaceId = <?php echo $id_space?>;
         let input1 = "is_invoicing_unit";
         let input2 = "mandatory"
         let rules = [

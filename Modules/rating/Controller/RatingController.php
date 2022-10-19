@@ -23,17 +23,17 @@ class RatingController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("rating", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("rating", $id_space);
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("ratingMenuName", $idSpace);
+        $title = $modelConfig->getParamSpace("ratingMenuName", $id_space);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' => $title,
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -45,21 +45,21 @@ class RatingController extends CoresecureController
     }
 
 
-    public function campaignsAction($idSpace)
+    public function campaignsAction($id_space)
     {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if (!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
         }
-        $this->checkAuthorizationMenuSpace("rating", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $cm = new RatingCampaign();
 
         $campaigns = [];
         if ($this->role < CoreSpace::$MANAGER) {
-            $campaigns = $cm->list($idSpace, open: true);
+            $campaigns = $cm->list($id_space, open: true);
         } else {
-            $campaigns = $cm->list($idSpace);
+            $campaigns = $cm->list($id_space);
         }
 
         $dataTable = new TableView();
@@ -87,27 +87,27 @@ class RatingController extends CoresecureController
         );
 
         if ($this->role < CoreSpace::$MANAGER) {
-            $dataTable->addLineButton("rating/" . $idSpace . "/rate", "id", CoreTranslator::Access($lang));
+            $dataTable->addLineButton("rating/" . $id_space . "/rate", "id", CoreTranslator::Access($lang));
         } else {
-            $dataTable->addLineButton("rating/" . $idSpace . "/campaign", "id", CoreTranslator::Access($lang));
+            $dataTable->addLineButton("rating/" . $id_space . "/campaign", "id", CoreTranslator::Access($lang));
         }
 
         $tableHtml = $dataTable->view($data, $headers);
         $this->render(['table' => $tableHtml, 'data' => ['campaigns' => $campaigns]]);
     }
 
-    public function campaignAction($idSpace, $id_campaign)
+    public function campaignAction($id_space, $id_campaign)
     {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if (!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
         }
-        $this->checkAuthorizationMenuSpace("rating", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("rating", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         $cm = new RatingCampaign();
-        $data = $cm->get($idSpace, $id_campaign);
+        $data = $cm->get($id_space, $id_campaign);
         $form = new Form($this->request, "campaignedit");
         $form->addHidden("id", $id_campaign);
 
@@ -131,7 +131,7 @@ class RatingController extends CoresecureController
             $form->addDate("to_date", RatingTranslator::To($lang), true, CoreTranslator::dateFromEn($to_date_str, $lang));
             $form->addTextArea("message", 'Message', true, $data["message"] ?? '');
         } else {
-            $answers = count($cm->answers($idSpace, $id_campaign));
+            $answers = count($cm->answers($id_space, $id_campaign));
             $form->addText("from_date", RatingTranslator::From($lang), true, $from_date_str, readonly:true);
             $form->addText("to_date", RatingTranslator::To($lang), true, $to_date_str, readonly:true);
             $form->addText("message", 'Message', false, $data["message"] ?? '', readonly:true);
@@ -140,8 +140,8 @@ class RatingController extends CoresecureController
         }
         $form->addDate("limit_date", RatingTranslator::Deadline($lang), false, $limit_date_str);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "rating/".$idSpace.'/campaign/'.$id_campaign);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "rating/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "rating/".$id_space.'/campaign/'.$id_campaign);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "rating/" . $id_space);
 
         if ($form->check()) {
             if ($id_campaign) {
@@ -163,7 +163,7 @@ class RatingController extends CoresecureController
             }
 
             $new_campaign = $cm->set(
-                $idSpace,
+                $id_space,
                 $id_campaign,
                 $from_date,
                 $to_date,
@@ -173,13 +173,13 @@ class RatingController extends CoresecureController
             if ($id_campaign == 0 && $new_campaign) {
                 Events::send([
                     "action" => Events::ACTION_RATING_CAMPAIGN_NEW,
-                    "space" => ["id" => intval($idSpace)],
+                    "space" => ["id" => intval($id_space)],
                     "campaign" => ["id" => intval($new_campaign)]
                 ]);
             }
 
             $_SESSION['flashClass'] = 'success';
-            return $this->redirect('rating/'.$idSpace, [], ['campaign' => ['id' => $new_campaign]]);
+            return $this->redirect('rating/'.$id_space, [], ['campaign' => ['id' => $new_campaign]]);
         }
 
         $r = new Rating();
@@ -191,7 +191,7 @@ class RatingController extends CoresecureController
 
 
         if ($id_campaign) {
-            $booking_ratings = $r->list($idSpace, 'booking', campaign:$id_campaign);
+            $booking_ratings = $r->list($id_space, 'booking', campaign:$id_campaign);
             for ($i=0;$i<count($booking_ratings);$i++) {
                 $booking_ratings[$i]['rate'] = intval($booking_ratings[$i]['rate']);
                 if (!$booking_ratings[$i]['login'] || $booking_ratings[$i]['anon']) {
@@ -201,7 +201,7 @@ class RatingController extends CoresecureController
 
 
 
-            $projects_ratings = $r->list($idSpace, 'projects', campaign:$id_campaign);
+            $projects_ratings = $r->list($id_space, 'projects', campaign:$id_campaign);
             for ($i=0;$i<count($projects_ratings);$i++) {
                 $projects_ratings[$i]['rate'] = intval($projects_ratings[$i]['rate']);
                 if (!$projects_ratings[$i]['login'] || $projects_ratings[$i]['anon']) {
@@ -210,7 +210,7 @@ class RatingController extends CoresecureController
             }
 
 
-            $global_stats = $r->stat($idSpace, $id_campaign);
+            $global_stats = $r->stat($id_space, $id_campaign);
 
 
             foreach ($global_stats as $g) {
@@ -227,7 +227,7 @@ class RatingController extends CoresecureController
                 }
             }
 
-            $total_stats = $r->statGlobal($idSpace, $id_campaign);
+            $total_stats = $r->statGlobal($id_space, $id_campaign);
             foreach ($total_stats as $stat) {
                 $stat['rate'] = round($stat['rate']);
                 $total[$stat['module']] = $stat;
@@ -242,19 +242,19 @@ class RatingController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function surveyAction($idSpace, $id_campaign)
+    public function surveyAction($id_space, $id_campaign)
     {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if (!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
         }
-        $role = $this->getUserSpaceStatus($idSpace, $_SESSION['id_user']);
+        $role = $this->getUserSpaceStatus($id_space, $_SESSION['id_user']);
         if ($role < CoreSpace::$USER) {
             throw new PfmAuthException('Access not allowed');
         }
         $lang = $this->getLanguage();
         $cm = new RatingCampaign();
-        $campaign = $cm->get($idSpace, $id_campaign);
+        $campaign = $cm->get($id_space, $id_campaign);
         if (!$campaign) {
             throw new PfmParamException('Survey not found');
         }
@@ -262,7 +262,7 @@ class RatingController extends CoresecureController
             throw new PfmParamException('Survey expired!');
         }
         $bke = new BkCalendarEntry();
-        $bkentries = $bke->getEntriesForPeriod($idSpace, $_SESSION['id_user'], $campaign['from_date'], $campaign['to_date']);
+        $bkentries = $bke->getEntriesForPeriod($id_space, $_SESSION['id_user'], $campaign['from_date'], $campaign['to_date']);
         //             $sql = 'SELECT bk_calendar_entry.resource_id , core_users.id as user_id, core_users.login as user_login, core_users.email as user_email, re_info.name as resource_name FROM bk_calendar_entry
 
         $resources = [];
@@ -283,7 +283,7 @@ class RatingController extends CoresecureController
         // TODO add projects
         // closedProjectsByPeriod
         $s = new SeProject();
-        $closed_projects = $s->closedProjectsByPeriod($idSpace, $_SESSION['id_user'], date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        $closed_projects = $s->closedProjectsByPeriod($id_space, $_SESSION['id_user'], date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
         $projects = [];
         foreach ($closed_projects as $entry) {
             $projects[$entry['id']] = [
@@ -298,7 +298,7 @@ class RatingController extends CoresecureController
         }
 
         $r = new Rating();
-        $stats = $r->list($idSpace, campaign: $campaign['id']);
+        $stats = $r->list($id_space, campaign: $campaign['id']);
         foreach ($stats as $stat) {
             if ($stat['module'] == 'booking' && isset($resources[$stat['resource']])) {
                 $resources[$stat['resource']]['id'] = $stat['id'];
@@ -318,18 +318,18 @@ class RatingController extends CoresecureController
 
 
 
-    public function rateAction($idSpace, $id_campaign)
+    public function rateAction($id_space, $id_campaign)
     {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if (!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
         }
-        $userSpaceStatus = $this->getUserSpaceStatus($idSpace, $_SESSION["id_user"]);
+        $userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
         if ($userSpaceStatus != CoreSpace::$USER) {
             throw new PfmAuthException("only user space member can evaluate!");
         }
         $c = new RatingCampaign();
-        $campaign = $c->get($idSpace, $id_campaign);
+        $campaign = $c->get($id_space, $id_campaign);
         if (!$campaign) {
             throw new PfmParamException("Survey not found");
         }
@@ -337,11 +337,11 @@ class RatingController extends CoresecureController
             throw new PfmParamException("Survey expired");
         }
         $r = new Rating();
-        $idUser = $_SESSION['id_user'];
+        $id_user = $_SESSION['id_user'];
         $id = $r->set(
-            $idSpace,
+            $id_space,
             $id_campaign,
-            $idUser,
+            $id_user,
             $this->request->getParameter('id'),
             $this->request->getParameter('module'),
             $this->request->getParameter('vid'),

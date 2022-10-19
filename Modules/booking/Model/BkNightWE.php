@@ -39,20 +39,20 @@ class BkNightWE extends Model
         );
     }
 
-    public function isNight($idSpace, $id)
+    public function isNight($id_space, $id)
     {
         $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_night=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id, 1, $idSpace));
+        $req = $this->runRequest($sql, array($id, 1, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function isWe($idSpace, $id)
+    public function isWe($id_space, $id)
     {
         $sql = "SELECT tarif_night FROM bk_nightwe WHERE id_belonging=? AND tarif_we=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id, 1, $idSpace));
+        $req = $this->runRequest($sql, array($id, 1, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -64,24 +64,24 @@ class BkNightWE extends Model
      * @param string $sortEntry
      * @return array multitype:
      */
-    public function getSpacePrices($idSpace, $sortEntry = 'id')
+    public function getSpacePrices($id_space, $sortEntry = 'id')
     {
         $sql = "select * from bk_nightwe WHERE id_space=? AND deleted=0 order by " . $sortEntry . " ASC;";
-        $data = $this->runRequest($sql, array($idSpace));
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
 
     /**
      * get pricing ID from ID
      * @param int $id
-     * @param int $idSpace
+     * @param int $id_space
      * @throws Exception
      * @return array
      */
-    public function getPricing($id, $idSpace)
+    public function getPricing($id, $id_space)
     {
         $sql = "select * from bk_nightwe where id_belonging=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id, $idSpace));
+        $data = $this->runRequest($sql, array($id, $id_space));
         if ($data->rowCount() > 0) {
             return $data->fetch();  // get the first line of the result
         } else {
@@ -94,18 +94,18 @@ class BkNightWE extends Model
      * @param int $id
      * @return int|bool
      */
-    public function addUnique($id, $idSpace)
+    public function addUnique($id, $id_space)
     {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space) VALUES(?,?)";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function addBelongingIfNotExists($idSpace, $belongings)
+    public function addBelongingIfNotExists($id_space, $belongings)
     {
         foreach ($belongings as $b) {
-            if (!$this->isPricing($b["id"], $idSpace)) {
-                $this->addUnique($b["id"], $idSpace);
+            if (!$this->isPricing($b["id"], $id_space)) {
+                $this->addUnique($b["id"], $id_space);
             }
         }
     }
@@ -121,11 +121,11 @@ class BkNightWE extends Model
      * @param unknown $we_char
      * @return PDOStatement
      */
-    public function addPricing($id_belonging, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
+    public function addPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
     {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space, tarif_unique, tarif_night, night_start,
 				                        night_end, tarif_we, choice_we ) VALUES(?,?,?,?,?,?,?,?)";
-        return $this->runRequest($sql, array($id_belonging, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char));
+        return $this->runRequest($sql, array($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char));
     }
 
     /**
@@ -138,12 +138,12 @@ class BkNightWE extends Model
      * @param unknown $tarif_we
      * @param unknown $we_char
      */
-    public function editPricing($id_belonging, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
+    public function editPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
     {
         $sql = "UPDATE bk_nightwe SET tarif_unique=?, tarif_night=?, night_start=?,
 				                      night_end=?, tarif_we=?, choice_we=?
 									  WHERE id_belonging=? AND id_space=?";
-        $this->runRequest($sql, array($tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char, $id_belonging, $idSpace));
+        $this->runRequest($sql, array($tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char, $id_belonging, $id_space));
     }
 
     /**
@@ -152,17 +152,17 @@ class BkNightWE extends Model
      * @param int id_space
      * @return boolean
      */
-    private function isPricing($id_belonging, $idSpace)
+    private function isPricing($id_belonging, $id_space)
     {
         $sql = "SELECT * FROM bk_nightwe WHERE id_belonging=? AND id_space=? AND deleted=0;";
-        $data = $this->runRequest($sql, array($id_belonging, $idSpace));
+        $data = $this->runRequest($sql, array($id_belonging, $id_space));
         return ($data->rowCount() == 1);
     }
 
     /**
      * Add pricing if pricing name does not exists
      * @param int $id_belonging
-     * @param int $idSpace
+     * @param int $id_space
      * @param unknown $tarif_unique
      * @param unknown $tarif_nuit
      * @param unknown $night_start
@@ -170,10 +170,10 @@ class BkNightWE extends Model
      * @param unknown $tarif_we
      * @param unknown $we_char
      */
-    public function setPricing($id_belonging, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
+    public function setPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char)
     {
-        if (!$this->isPricing($id_belonging, $idSpace)) {
-            $this->addPricing($id_belonging, $idSpace, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char);
+        if (!$this->isPricing($id_belonging, $id_space)) {
+            $this->addPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char);
         }
     }
 
@@ -181,9 +181,9 @@ class BkNightWE extends Model
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE bk_nightwe SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

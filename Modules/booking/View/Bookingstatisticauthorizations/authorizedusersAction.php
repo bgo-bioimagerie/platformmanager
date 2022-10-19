@@ -5,7 +5,7 @@
 
 <div class="pm-form">
     <div class="col-8 offset-2">
-        <form role="form" class="form-horizontal" action="bookingauthorizedusersquery/<?php echo $idSpace ?>"
+        <form role="form" class="form-horizontal" action="bookingauthorizedusersquery/<?php echo $id_space ?>"
               method="post" id="statform">
 
             <div class="page-header">

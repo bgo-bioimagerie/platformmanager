@@ -29,10 +29,10 @@ class CoreSpaceUser extends Model
         $this->primaryKey = "id";
     }
 
-    public function managersOrAdmin($idSpace)
+    public function managersOrAdmin($id_space)
     {
         $sql = "SELECT * from core_j_spaces_user WHERE id_space=? AND status>".CoreSpace::$USER;
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     public function admins()
@@ -44,93 +44,93 @@ class CoreSpaceUser extends Model
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function setRole($idUser, $idSpace, $role)
+    public function setRole($id_user, $id_space, $role)
     {
-        if (!$this->exists($idUser, $idSpace)) {
+        if (!$this->exists($id_user, $id_space)) {
             $sql = "INSERT INTO core_j_spaces_user (id_user, id_space, status) VALUES (?,?,?)";
-            $this->runRequest($sql, array($idUser, $idSpace, $role));
+            $this->runRequest($sql, array($id_user, $id_space, $role));
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_JOIN,
-                "space" => ["id" => intval($idSpace)],
-                "user" => ["id" => intval($idUser)]
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)]
             ]);
         } else {
             $sql = "UPDATE core_j_spaces_user SET status=? WHERE id_user=? AND id_space=?";
-            $this->runRequest($sql, array($role, $idUser, $idSpace));
+            $this->runRequest($sql, array($role, $id_user, $id_space));
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_ROLEUPDATE,
-                "space" => ["id" => intval($idSpace)],
-                "user" => ["id" => intval($idUser)],
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
                 "role" => $role
             ]);
         }
 
         if ($role > 0) {
             $sql = "UPDATE core_users SET is_active=? where id=?";
-            $this->runRequest($sql, array(1, $idUser));
+            $this->runRequest($sql, array(1, $id_user));
         }
     }
 
-    public function exists($idUser, $idSpace)
+    public function exists($id_user, $id_space)
     {
         $sql = "SELECT id FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
-        $req = $this->runRequest($sql, array($idUser, $idSpace));
+        $req = $this->runRequest($sql, array($id_user, $id_space));
         if ($req->rowCount() > 0) {
             return true;
         }
         return false;
     }
 
-    public function setDateEndContract($idUser, $idSpace, $date_contract_end)
+    public function setDateEndContract($id_user, $id_space, $date_contract_end)
     {
         if ($date_contract_end == "") {
             $date_contract_end = null;
         }
         $sql = "UPDATE core_j_spaces_user SET date_contract_end=? WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($date_contract_end, $idUser, $idSpace));
+        $this->runRequest($sql, array($date_contract_end, $id_user, $id_space));
     }
 
-    public function setDateConvention($idUser, $idSpace, $date_convention)
+    public function setDateConvention($id_user, $id_space, $date_convention)
     {
         if ($date_convention == "") {
             $date_convention = null;
         }
         $sql = "UPDATE core_j_spaces_user SET date_convention=? WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($date_convention, $idUser, $idSpace));
+        $this->runRequest($sql, array($date_convention, $id_user, $id_space));
     }
 
-    public function setConventionUrl($idUser, $idSpace, $convention_url)
+    public function setConventionUrl($id_user, $id_space, $convention_url)
     {
         $sql = "UPDATE core_j_spaces_user SET convention_url=? WHERE id_user=? AND id_space=?";
-        $this->runRequest($sql, array($convention_url, $idUser, $idSpace));
+        $this->runRequest($sql, array($convention_url, $id_user, $id_space));
     }
 
-    public function getUserSpaceInfo($idUser)
+    public function getUserSpaceInfo($id_user)
     {
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_user=?";
-        return $this->runRequest($sql, array($idUser))->fetchAll();
+        return $this->runRequest($sql, array($id_user))->fetchAll();
     }
 
     /**
      * Get user specific space info and role
      */
-    public function getUserSpaceInfo2($idSpace, $idUser)
+    public function getUserSpaceInfo2($id_space, $id_user)
     {
         $sql = "SELECT * FROM core_j_spaces_user WHERE id_space=? AND id_user=?";
-        return $this->runRequest($sql, array($idSpace, $idUser))->fetch();
+        return $this->runRequest($sql, array($id_space, $id_user))->fetch();
     }
 
     /**
      * Remove user from space
      *
-     * @param int $idSpace
-     * @param int $idUser
+     * @param int $id_space
+     * @param int $id_user
      * @param int $status optional status filter
      */
-    public function delete($idSpace, $idUser, $status=null)
+    public function delete($id_space, $id_user, $status=null)
     {
         $sql = "SELECT status FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
-        $res = $this->runRequest($sql, array($idUser, $idSpace));
+        $res = $this->runRequest($sql, array($id_user, $id_space));
         $role = 0;
         if ($res->rowCount() == 1) {
             $obj = $res->fetch();
@@ -140,22 +140,22 @@ class CoreSpaceUser extends Model
         $count = 0;
         if ($status != null) {
             $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=? AND status=?";
-            $pdo = $this->runRequest($sql, array($idUser, $idSpace, $status));
+            $pdo = $this->runRequest($sql, array($id_user, $id_space, $status));
             $count = $pdo->rowCount();
         } else {
             $sql = "DELETE FROM core_j_spaces_user WHERE id_user=? AND id_space=?";
-            $pdo = $this->runRequest($sql, array($idUser, $idSpace));
+            $pdo = $this->runRequest($sql, array($id_user, $id_space));
             $count = $pdo->rowCount();
         }
 
         if ($count > 0) {
             // Update eventually pending accounts status
             $modelSpacePending = new CorePendingAccount();
-            $modelSpacePending->updateWhenUnjoin($idUser, $idSpace);
+            $modelSpacePending->updateWhenUnjoin($id_user, $id_space);
             Events::send([
                 "action" => Events::ACTION_SPACE_USER_UNJOIN,
-                "space" => ["id" => intval($idSpace)],
-                "user" => ["id" => intval($idUser)],
+                "space" => ["id" => intval($id_space)],
+                "user" => ["id" => intval($id_user)],
                 "role" => $role
             ]);
         }
@@ -165,14 +165,14 @@ class CoreSpaceUser extends Model
      *
      * Fetch users for a space filtered by name and role
      *
-     * @param int $idSpace
+     * @param int $id_space
      * @param string $letter
      * @param int $active
      *
      * @return array of users for the selected space
      */
 
-    public function getUsersOfSpaceByLetter($idSpace, $letter, $active)
+    public function getUsersOfSpaceByLetter($id_space, $letter, $active)
     {
         $letter = ($letter === "All") ? "" : $letter;
         $sql =
@@ -201,6 +201,6 @@ class CoreSpaceUser extends Model
 
         $sql .= " ORDER BY name ASC";
 
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 }

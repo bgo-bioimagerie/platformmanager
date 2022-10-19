@@ -33,10 +33,10 @@ class CoremailController extends CoresecureController
      * Show/edit mail subscriptions
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         $spaceModel = new CoreSpace();
-        $role = $spaceModel->getUserSpaceRole($idSpace, $_SESSION['id_user']);
+        $role = $spaceModel->getUserSpaceRole($id_space, $_SESSION['id_user']);
         if ($role < CoreSpace::$USER) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -49,12 +49,12 @@ class CoremailController extends CoresecureController
                 $subscription = $this->request->getParameterNoException("s_".$moduleName);
                 if ($subscription == null) {
                     Configuration::getLogger()->debug("[core:mail] unsubscribe", ["module" => $moduleName]);
-                    $cm->unsubscribe($_SESSION["id_user"], $idSpace, $moduleName);
+                    $cm->unsubscribe($_SESSION["id_user"], $id_space, $moduleName);
                 } else {
-                    $cm->subscribe($_SESSION["id_user"], $idSpace, $moduleName);
+                    $cm->subscribe($_SESSION["id_user"], $id_space, $moduleName);
                 }
             }
-            if ($cm->unsubscribed($_SESSION["id_user"], $idSpace, $moduleName)) {
+            if ($cm->unsubscribed($_SESSION["id_user"], $id_space, $moduleName)) {
                 $mods[$moduleName] = 0;
             } else {
                 $mods[$moduleName] = 1;
@@ -63,6 +63,6 @@ class CoremailController extends CoresecureController
 
 
         $lang = $this->getLanguage();
-        $this->render(array("lang" => $lang, "id_space" => $idSpace, "mods" => $mods));
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "mods" => $mods));
     }
 }

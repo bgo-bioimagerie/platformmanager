@@ -56,11 +56,11 @@ class CorespaceController extends CoresecureController
 
     /**
      *
-     * @param type $idSpace
+     * @param type $id_space
      */
-    public function viewAction($idSpace)
+    public function viewAction($id_space)
     {
-        $space = $this->spaceModel->getSpace($idSpace);
+        $space = $this->spaceModel->getSpace($id_space);
         if (!$space) {
             throw new PfmUserException('space not found', 404);
         }
@@ -72,12 +72,12 @@ class CorespaceController extends CoresecureController
         }
 
         $modelConfig = new CoreConfig();
-        $space_home_page = $modelConfig->getParamSpace('space_home_page', $idSpace);
+        $space_home_page = $modelConfig->getParamSpace('space_home_page', $id_space);
 
         $showCom = ($space_home_page == "comhome");
 
         if ($space_home_page != "" && !$showCom) {
-            $this->redirect($space_home_page . "/" . $idSpace);
+            $this->redirect($space_home_page . "/" . $id_space);
             return;
         }
 
@@ -106,7 +106,7 @@ class CorespaceController extends CoresecureController
         for ($i = 0; $i < count($spaceMenuItems); $i++) {
             $item = $spaceMenuItems[$i];
             $url = $item["url"];
-            $donfigTitle = $configModel->getParamSpace($url . "menuname", $idSpace);
+            $donfigTitle = $configModel->getParamSpace($url . "menuname", $id_space);
 
             $name = $donfigTitle;
             if ($donfigTitle == "") {
@@ -136,7 +136,7 @@ class CorespaceController extends CoresecureController
             "role" => $role,
             "isMemberOfSpace" => $isMemberOfSpace,
             "lang" => $lang,
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "space" => $space,
             "spaceMenuItems" => $spaceMenuItems,
             "showAdmMenu" => $showAdmMenu,
@@ -147,51 +147,51 @@ class CorespaceController extends CoresecureController
 
     /**
      *
-     * @param type $idSpace
+     * @param type $id_space
      */
-    public function configAction($idSpace)
+    public function configAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $space = $this->spaceModel->getSpace($idSpace);
-        $modulesTable = $this->configModulesTable($lang, $idSpace);
-        return $this->render(array("lang" => $lang, "id_space" => $idSpace, "space" => $space, "modulesTable" => $modulesTable));
+        $space = $this->spaceModel->getSpace($id_space);
+        $modulesTable = $this->configModulesTable($lang, $id_space);
+        return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "modulesTable" => $modulesTable));
     }
 
     /**
      * @deprecated
-     * @param type $idSpace
+     * @param type $id_space
      */
-    public function configusersAction($idSpace)
+    public function configusersAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // space info
-        $space = $this->spaceModel->getSpace($idSpace);
+        $space = $this->spaceModel->getSpace($id_space);
 
         // user form
-        $userForm = $this->configUsersForm($lang, $idSpace);
+        $userForm = $this->configUsersForm($lang, $id_space);
         if ($userForm->check()) {
-            $idSpace = $this->request->getParameter("id_space");
-            $idUser = $this->request->getParameter("id_user");
+            $id_space = $this->request->getParameter("id_space");
+            $id_user = $this->request->getParameter("id_user");
             $id_role = $this->request->getParameter("id_role");
-            $this->spaceModel->setUser($idUser, $idSpace, $id_role);
-            $this->redirect("spaceconfiguser/" . $idSpace);
+            $this->spaceModel->setUser($id_user, $id_space, $id_role);
+            $this->redirect("spaceconfiguser/" . $id_space);
         }
 
 
-        $userTable = $this->configUsersTable($lang, $idSpace);
-        return $this->render(array("lang" => $lang, "id_space" => $idSpace, "space" => $space, "userForm" => $userForm->getHtml($lang), "userTable" => $userTable));
+        $userTable = $this->configUsersTable($lang, $id_space);
+        return $this->render(array("lang" => $lang, "id_space" => $id_space, "space" => $space, "userForm" => $userForm->getHtml($lang), "userTable" => $userTable));
     }
 
     /**
      *
      * @param string $lang
-     * @param int $idSpace
+     * @param int $id_space
      * @return string
      */
-    protected function configModulesTable($lang, $idSpace)
+    protected function configModulesTable($lang, $id_space)
     {
         $modules = Configuration::get("modules");
         //echo "modules = " ;print_r($modules);
@@ -223,19 +223,19 @@ class CorespaceController extends CoresecureController
 
         $tableView = new TableView("tableModules");
         $tableView->setTitle(CoreTranslator::Modules_configuration($lang), 3);
-        $tableView->addLineEditButton("spaceconfigmodule/" . $idSpace, "name");
+        $tableView->addLineEditButton("spaceconfigmodule/" . $id_space, "name");
         return $tableView->view($mods, $headers);
     }
 
     /**
      *
      * @param type $lang
-     * @param type $idSpace
+     * @param type $id_space
      * @return type
      */
-    protected function configUsersTable($lang, $idSpace)
+    protected function configUsersTable($lang, $id_space)
     {
-        $data = $this->spaceModel->getUsers($idSpace);
+        $data = $this->spaceModel->getUsers($id_space);
         //print_r($data);
         for ($i = 0; $i < count($data); $i++) {
             if ($data[$i]["role"] == 1) {
@@ -253,7 +253,7 @@ class CorespaceController extends CoresecureController
         }
 
         $tableUsers = new TableView();
-        $tableUsers->addDeleteButton("spaceconfigdeleteuser/" . $idSpace);
+        $tableUsers->addDeleteButton("spaceconfigdeleteuser/" . $id_space);
         return $tableUsers->view($data, array("name" => CoreTranslator::Name($lang),
                     "firstname" => CoreTranslator::Firstname($lang),
                     "role" => CoreTranslator::Role($lang)));
@@ -261,24 +261,24 @@ class CorespaceController extends CoresecureController
 
     /**
      *
-     * @param type $idSpace
-     * @param type $idUser
+     * @param type $id_space
+     * @param type $id_user
      */
-    public function configdeleteuserAction($idSpace, $idUser)
+    public function configdeleteuserAction($id_space, $id_user)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $spaceUserModel = new CoreSpaceUser();
-        $spaceUserModel->delete($idSpace, $idUser);
-        $this->redirect("spaceconfiguser/" . $idSpace);
+        $spaceUserModel->delete($id_space, $id_user);
+        $this->redirect("spaceconfiguser/" . $id_space);
     }
 
     /**
      * @deprecated
      * @param type $lang
-     * @param type $idSpace
+     * @param type $id_space
      * @return \Form
      */
-    protected function configUsersForm($lang, $idSpace)
+    protected function configUsersForm($lang, $id_space)
     {
         $modeluser = new CoreUser();
         $users = $modeluser->getActiveUsers("name");
@@ -295,37 +295,37 @@ class CorespaceController extends CoresecureController
         $formUser->setTitle(CoreTranslator::Access($lang));
         $formUser->setColumnsWidth(3, 6);
 
-        $formUser->addHidden("id_space", $idSpace);
+        $formUser->addHidden("id_space", $id_space);
         $formUser->addSelect("id_user", CoreTranslator::User($lang), $usersNames, $usersId);
         $formUser->addSelect("id_role", CoreTranslator::Role($lang), $roles["names"], $roles["ids"]);
-        $formUser->setValidationButton(CoreTranslator::Ok($lang), "spaceconfiguser/" . $idSpace);
+        $formUser->setValidationButton(CoreTranslator::Ok($lang), "spaceconfiguser/" . $id_space);
         return $formUser;
     }
 
     /**
      *
-     * @param type $idSpace
+     * @param type $id_space
      * @return type
      */
-    public function spaceName($idSpace)
+    public function spaceName($id_space)
     {
-        $space = $this->spaceModel->getSpace($idSpace);
+        $space = $this->spaceModel->getSpace($id_space);
         return $space["name"];
     }
 
-    protected function getSpaceMenus($idSpace, $userRole)
+    protected function getSpaceMenus($id_space, $userRole)
     {
-        return $this->spaceModel->getSpaceMenus($idSpace, $userRole);
+        return $this->spaceModel->getSpaceMenus($id_space, $userRole);
     }
 
     /**
      *
-     * @param int $idSpace
+     * @param int $id_space
      * @return string
      */
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
-        $space = $this->spaceModel->getSpace($idSpace);
+        $space = $this->spaceModel->getSpace($id_space);
 
 
         $spaceColor = Constants::COLOR_WHITE;
@@ -355,11 +355,11 @@ class CorespaceController extends CoresecureController
         $html = str_replace("{{space.name}}", $space["name"], $html);
         $html = str_replace("{{space.color}}", $spaceColor, $html);
         $html = str_replace("{{space.txtcolor}}", $spaceTxtColor, $html);
-        $html = str_replace("{{space.id}}", $idSpace, $html);
+        $html = str_replace("{{space.id}}", $id_space, $html);
         */
 
         $dataView = [
-            'id' => $idSpace,
+            'id' => $id_space,
             'name' => $space['name'],
             'color' => $spaceColor,
             'txtcolor' => $spaceTxtColor,
@@ -390,12 +390,12 @@ class CorespaceController extends CoresecureController
 
     /**
      *
-     * @param int $idSpace
+     * @param int $id_space
      * @param string $name_module
      */
-    public function configmoduleAction($idSpace, $name_module)
+    public function configmoduleAction($id_space, $name_module)
     {
         $path = $name_module . "config/";
-        $this->redirect($path . $idSpace);
+        $this->redirect($path . $id_space);
     }
 }

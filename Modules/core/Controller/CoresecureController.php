@@ -136,13 +136,13 @@ abstract class CoresecureController extends CorecookiesecureController
     }
 
 
-    protected function menusactivationForm($idSpace, $module, $lang)
+    protected function menusactivationForm($id_space, $module, $lang)
     {
         $modelSpace = new CoreSpace();
-        $statusMenu = $modelSpace->getSpaceMenusRole($idSpace, $module);
-        $displayMenu = $modelSpace->getSpaceMenusDisplay($idSpace, $module);
-        $displayColor = $modelSpace->getSpaceMenusColor($idSpace, $module);
-        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($idSpace, $module);
+        $statusMenu = $modelSpace->getSpaceMenusRole($id_space, $module);
+        $displayMenu = $modelSpace->getSpaceMenusDisplay($id_space, $module);
+        $displayColor = $modelSpace->getSpaceMenusColor($id_space, $module);
+        $displayColorTxt = $modelSpace->getSpaceMenusTxtColor($id_space, $module);
 
         $form = new Form($this->request, $module."menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang). " ($module)");
@@ -154,20 +154,20 @@ abstract class CoresecureController extends CorecookiesecureController
         $form->addColor($module."DisplayColor", CoreTranslator::color($lang), false, $displayColor);
         $form->addColor($module."DisplayColorTxt", CoreTranslator::text_color($lang), false, $displayColorTxt);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
 
 
         return $form;
     }
 
-    protected function menusactivation($idSpace, $module, $icon, $basemodule=null)
+    protected function menusactivation($id_space, $module, $icon, $basemodule=null)
     {
         if ($basemodule == null) {
             $basemodule = $module;
         }
         $modelSpace = new CoreSpace();
         $modelSpace->setSpaceMenu(
-            $idSpace,
+            $id_space,
             $basemodule,
             $module,
             "bi-".$icon,
@@ -179,25 +179,25 @@ abstract class CoresecureController extends CorecookiesecureController
         );
     }
 
-    protected function menuNameForm($idSpace, $module, $lang)
+    protected function menuNameForm($id_space, $module, $lang)
     {
         $modelConfig = new CoreConfig();
-        $menuName = $modelConfig->getParamSpace($module."menuname", $idSpace);
+        $menuName = $modelConfig->getParamSpace($module."menuname", $id_space);
 
         $form = new Form($this->request, $module."MenuNameForm");
         $form->addSeparator(CoreTranslator::MenuName($lang)." ($module)");
 
         $form->addText($module."MenuName", CoreTranslator::Name($lang), false, $menuName);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), $module."config/" . $id_space);
 
 
         return $form;
     }
 
-    protected function setMenuName($idSpace, $module)
+    protected function setMenuName($id_space, $module)
     {
         $modelConfig = new CoreConfig();
-        $modelConfig->setParam($module."menuname", $this->request->getParameter($module."MenuName"), $idSpace);
+        $modelConfig->setParam($module."menuname", $this->request->getParameter($module."MenuName"), $id_space);
     }
 }

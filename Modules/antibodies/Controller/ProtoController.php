@@ -26,62 +26,62 @@ class ProtoController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $protosArray = $this->model->getBySpace($idSpace);
+        $protosArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Proto", 3);
-        $table->addLineEditButton("protoedit/".$idSpace."/");
-        $table->addDeleteButton("protodelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("protoedit/".$id_space."/");
+        $table->addDeleteButton("protodelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($protosArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $proto = $this->model->get($idSpace, $id);
+        $proto = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "protoeditform");
         $form->setTitle("Modifier proto");
         $form->addText("nom", "nom", true, $proto["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "protoedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "protoedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("proto/".$idSpace, [], ['proto' => ['id' => $id]]);
+            return $this->redirect("proto/".$id_space, [], ['proto' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("proto/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("proto/" . $id_space);
     }
 }

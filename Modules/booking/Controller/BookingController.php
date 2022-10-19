@@ -29,12 +29,12 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
  */
 class BookingController extends BookingabstractController
 {
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
         $html = file_get_contents('Modules/booking/View/Booking/navbar.php');
 
         $lang = $this->getLanguage();
-        $html = str_replace('{{id_space}}', $idSpace, $html);
+        $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Calendar_View}}', BookingTranslator::Calendar_View($lang), $html);
         $html = str_replace('{{Scheduling}}', BookingTranslator::Scheduling($lang), $html);
         $html = str_replace('{{Display}}', BookingTranslator::Display($lang), $html);
@@ -52,7 +52,7 @@ class BookingController extends BookingabstractController
 
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("bookingsettings", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("bookingsettings", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', BookingTranslator::Booking($lang), $html);
@@ -60,27 +60,27 @@ class BookingController extends BookingabstractController
         return $html;
     }
 
-    public function journalAction($idSpace)
+    public function journalAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $m = new BkCalendarEntry();
-        $bookings = $m->journal($idSpace, $_SESSION['id_user'], 100);
+        $bookings = $m->journal($id_space, $_SESSION['id_user'], 100);
         return $this->render(['data' => ['bookings' => $bookings]]);
     }
 
-    public function futureAction($idSpace, $id_resource)
+    public function futureAction($id_space, $id_resource)
     {
         if (!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
             throw new PfmAuthException('need login', 403);
         }
         $modelBooking = new BkCalendarEntry();
-        $bookings = $modelBooking->getUserFutureBookings($idSpace, $_SESSION["id_user"], $id_resource);
+        $bookings = $modelBooking->getUserFutureBookings($id_space, $_SESSION["id_user"], $id_resource);
         $this->render(['data' => ['bookings' => $bookings]]);
     }
 
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
 
         $id_area = $this->request->getParameterNoException("id_area");
@@ -99,16 +99,16 @@ class BookingController extends BookingabstractController
         }
         */
 
-        $this->bookingAction($idSpace, $id_area, $id_resource, $curentDate);
+        $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function bookingAction($idSpace, $id_area, $id_resource)
+    public function bookingAction($id_space, $id_area, $id_resource)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $curentDate = date("Y-m-d", time());
@@ -116,7 +116,7 @@ class BookingController extends BookingabstractController
             $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
         }
 
-        // $menuData = $this->calendarMenuData($idSpace, $id_area, $id_resource, $curentDate);
+        // $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
         $userSettingsModel = new CoreUserSettings();
@@ -124,24 +124,24 @@ class BookingController extends BookingabstractController
             $calendarDefaultResource = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultResource");
             if ($calendarDefaultResource != "") {
                 $id_resource = $calendarDefaultResource;
-                $id_area = $modelResource->getAreaID($idSpace, $id_resource);
+                $id_area = $modelResource->getAreaID($id_space, $id_resource);
             } else {
                 if ($id_area == "" || $id_area == 0) {
                     $modelArea = new ReArea();
                     if ($_SESSION["user_status"] < 2) {
-                        $id_area = $modelArea->getSmallestUnrestrictedID($idSpace);
+                        $id_area = $modelArea->getSmallestUnrestrictedID($id_space);
                     } else {
-                        $id_area = $modelArea->getSmallestID($idSpace);
+                        $id_area = $modelArea->getSmallestID($id_space);
                     }
                 }
                 // get the resource with the smallest id
-                $id_resource = $modelResource->firstResourceIDForArea($idSpace, $id_area);
+                $id_resource = $modelResource->firstResourceIDForArea($id_space, $id_area);
             }
         }
 
         $bk_id_resource = $this->request->getParameterNoException("id_resource", default: $id_resource);
         $bk_id_area = $this->request->getParameterNoException("id_area", default: $id_area);
-        $idUser = $this->request->getParameterNoException('id_user');
+        $id_user = $this->request->getParameterNoException('id_user');
 
 
         $modelCoreConfig = new CoreConfig();
@@ -152,14 +152,14 @@ class BookingController extends BookingabstractController
             $bkUserDefaultViewType = $userSettingsModel->getUserSetting($_SESSION["id_user"], "BkDefaultViewType");
         }
         if (!$bkUserDefaultViewType) {
-            $bkUserDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $idSpace, "simple");
+            $bkUserDefaultViewType = $modelCoreConfig->getParamSpace("BkDefaultViewType", $id_space, "simple");
         }
 
         $qc = [
             "bk_curentDate" => $curentDate,
             "bk_id_resource" => $bk_id_resource,
             "bk_id_area" => $bk_id_area,
-            "id_user" => $idUser,
+            "id_user" => $id_user,
             "view" => $bkUserDefaultViewType
         ];
 
@@ -167,12 +167,12 @@ class BookingController extends BookingabstractController
         $bkUserDefaultView = $userSettingsModel->getUserSetting($_SESSION["id_user"], "calendarDefaultView");
         if (isset($_SESSION['lastbookview'])) {
             $lastView = $_SESSION['lastbookview'];
-            $this->redirect($lastView . "/" . $idSpace, $qc);
+            $this->redirect($lastView . "/" . $id_space, $qc);
         } elseif ($bkUserDefaultView == "") {
-            $bkSpaceDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $idSpace, "bookingweekarea");
-            $this->redirect($bkSpaceDefaultView . "/" . $idSpace, $qc);
+            $bkSpaceDefaultView = $modelCoreConfig->getParamSpace("BkSetDefaultView", $id_space, "bookingweekarea");
+            $this->redirect($bkSpaceDefaultView . "/" . $id_space, $qc);
         } else {
-            $this->redirect($bkUserDefaultView . "/" . $idSpace, $qc);
+            $this->redirect($bkUserDefaultView . "/" . $id_space, $qc);
         }
     }
 
@@ -180,7 +180,7 @@ class BookingController extends BookingabstractController
     /**
      * @deprecated, unused?
      */
-    public function book($idSpace)
+    public function book($id_space)
     {
         $lastView = "";
         if (isset($_SESSION["user_settings"]["calendarDefaultView"])) {
@@ -191,25 +191,25 @@ class BookingController extends BookingabstractController
         }
         switch($lastView) {
             case "bookingday":
-                $this->dayAction($idSpace);
+                $this->dayAction($id_space);
                 break;
             case "bookingweek":
-                $this->weekAction($idSpace);
+                $this->weekAction($id_space);
                 break;
             case "bookingdayarea":
-                $this->dayareaAction($idSpace);
+                $this->dayareaAction($id_space);
                 break;
             case "bookingweekarea":
-                $this->weekareaAction($idSpace);
+                $this->weekareaAction($id_space);
                 break;
             default:
-                $this->dayAction($idSpace);
+                $this->dayAction($id_space);
         }
     }
 
-    public function dayAction($idSpace)
+    public function dayAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingday";
 
         $lang = $this->getLanguage();
@@ -219,9 +219,9 @@ class BookingController extends BookingabstractController
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
-        $idUser = $this->request->getParameterNoException('id_user');
-        if ($idUser && $this->role < CoreSpace::$MANAGER) {
-            $idUser = $_SESSION['id_user'];
+        $id_user = $this->request->getParameterNoException('id_user');
+        if ($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
         }
 
         if ($curentDate != "") {
@@ -239,7 +239,7 @@ class BookingController extends BookingabstractController
         $afterTime = $tmpTime + 86400;
         $afterDate = date("Y-m-d", $afterTime);
 
-        $menuData = $this->calendarMenuData($idSpace, $curentAreaId, $curentResource, $curentDate);
+        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
@@ -262,10 +262,10 @@ class BookingController extends BookingabstractController
 
         // get the resource info
         $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($idSpace, $curentResource);
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
         $modelRes = new ResourceInfo();
-        $resourceBase = $modelRes->get($idSpace, $curentResource);
+        $resourceBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
@@ -275,16 +275,16 @@ class BookingController extends BookingabstractController
 
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($idSpace, $curentAreaId);
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if ($schedule['shared']) {
             $modelRes = new ResourceInfo();
-            $resourcesBase = $modelRes->resourcesForArea($idSpace, $curentAreaId);
+            $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
             $resIds = [];
             for ($r = 0; $r < count($resourcesBase); $r++) {
                 $resIds[] = $resourcesBase[$r]["id"];
             }
-            $cals = $modelEntries->getEntriesForPeriodeAndResources($idSpace, $dateBegin, $dateEnd, $resIds, $idUser);
+            $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
             $calmap = [];
             $calEntries = [];
 
@@ -299,7 +299,7 @@ class BookingController extends BookingabstractController
                 $calEntries[] = $cal;
             }
         } else {
-            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($idSpace, $dateBegin, $dateEnd, $curentResource, $idUser);
+            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
         }
 
         // curentdate unix
@@ -309,35 +309,35 @@ class BookingController extends BookingabstractController
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getForSpace($idSpace);
+        $colorcodes = $modelColor->getForSpace($id_space);
 
         $isUserAuthorizedToBook = false;
         if ($resourceBase) {
             // isUserAuthorizedToBook
             $modelAccess = new BkAccess();
-            $resourceBase["accessibility_id"] = $modelAccess->getAccessId($idSpace, $resourceBase["id"]);
-            $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $idSpace, $_SESSION['id_user'], $curentDateUnix);
+            $resourceBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourceBase["id"]);
+            $isUserAuthorizedToBook = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $curentDateUnix);
             // get last state
             $modelEvent = new ReEvent();
-            $resourceBase["last_state"] = $modelEvent->getLastStateColor($idSpace, $resourceBase["id"]);
+            $resourceBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourceBase["id"]);
         }
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($idSpace, $curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($idSpace, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
 
         $u = new CoreSpaceUser();
-        $user = $u->getUserSpaceInfo2($idSpace, $_SESSION['id_user']);
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
         if ($user === false) {
             $user = [];
         }
 
         $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if ($this->role > CoreSpace::$USER) {
-            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($idSpace, '', 1));
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
@@ -349,7 +349,7 @@ class BookingController extends BookingabstractController
 
         // view
         return $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
             'scheduling' => $scheduling,
@@ -366,15 +366,15 @@ class BookingController extends BookingabstractController
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $idUser,
+            'id_user' => $id_user,
             'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookday");
     }
 
-    public function dayareaAction($idSpace)
+    public function dayareaAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingdayarea";
         $lang = $this->getLanguage();
 
@@ -383,9 +383,9 @@ class BookingController extends BookingabstractController
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
-        $idUser = $this->request->getParameterNoException('id_user');
-        if ($idUser && $this->role < CoreSpace::$MANAGER) {
-            $idUser = $_SESSION['id_user'];
+        $id_user = $this->request->getParameterNoException('id_user');
+        if ($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
         }
 
         if ($curentDate != "") {
@@ -403,7 +403,7 @@ class BookingController extends BookingabstractController
         $afterDate = date("Y-m-d", $afterTime);
 
 
-        $menuData = $this->calendarMenuData($idSpace, $curentAreaId, $curentResource, $curentDate);
+        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
 
         $foundA = false;
@@ -419,7 +419,7 @@ class BookingController extends BookingabstractController
 
         // get the resource info
         $modelRes = new ResourceInfo();
-        $resourcesBase = $modelRes->resourcesForArea($idSpace, $curentAreaId);
+        $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
         $curentAreaId = $menuData['curentAreaId'];
 
         $resIds = [];
@@ -429,7 +429,7 @@ class BookingController extends BookingabstractController
 
 
         $modelEvent = new ReEvent();
-        $colors =$modelEvent->getLastStateColors($idSpace, $resIds);
+        $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach ($colors as $c) {
             if (!key_exists($c['id_resource'], $cmap)) {
@@ -438,7 +438,7 @@ class BookingController extends BookingabstractController
         }
 
         $modelAccess = new BkAccess();
-        $accessIds = $modelAccess->getAccessIds($idSpace, $resIds);
+        $accessIds = $modelAccess->getAccessIds($id_space, $resIds);
         $amap = [];
         foreach ($accessIds as $a) {
             $amap[$a['id_resource']] = $a['id_access'];
@@ -457,7 +457,7 @@ class BookingController extends BookingabstractController
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2], $dateArray[0]);
 
-        $cals = $modelEntries->getEntriesForPeriodeAndResources($idSpace, $dateBegin, $dateEnd, $resIds, $idUser);
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
         foreach ($resourcesBase as $r) {
@@ -468,7 +468,7 @@ class BookingController extends BookingabstractController
         }
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($idSpace, $curentAreaId);
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if ($schedule['shared']) {
             foreach ($resourcesBase as $i => $r) {
                 foreach ($cals as $cal) {
@@ -490,19 +490,19 @@ class BookingController extends BookingabstractController
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getForSpace($idSpace);
+        $colorcodes = $modelColor->getForSpace($id_space);
 
         $isUserAuthorizedToBook = [];
         // isUserAuthorizedToBook
         foreach ($resourcesBase as $resourceBase) {
-            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $idSpace, $_SESSION['id_user'], $curentDateUnix);
+            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], $curentDateUnix);
         }
 
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($idSpace, $curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($idSpace, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
             $_SESSION["flash"] = BookingTranslator::noBookingArea($lang);
@@ -510,14 +510,14 @@ class BookingController extends BookingabstractController
         }
 
         $u = new CoreSpaceUser();
-        $user = $u->getUserSpaceInfo2($idSpace, $_SESSION['id_user']);
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
         if ($user === false) {
             $user = [];
         }
 
         $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if ($this->role > CoreSpace::$USER) {
-            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($idSpace, '', 1));
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
@@ -528,7 +528,7 @@ class BookingController extends BookingabstractController
 
         // view
         return $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'lang' => $lang,
             'menuData' => $menuData,
             'scheduling' => $scheduling,
@@ -544,15 +544,15 @@ class BookingController extends BookingabstractController
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $idUser,
+            'id_user' => $id_user,
             'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookdayarea");
     }
 
-    public function weekAction($idSpace)
+    public function weekAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweek";
         $lang = $this->getLanguage();
 
@@ -561,9 +561,9 @@ class BookingController extends BookingabstractController
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
-        $idUser = $this->request->getParameterNoException('id_user');
-        if ($idUser && $this->role < CoreSpace::$MANAGER) {
-            $idUser = $_SESSION['id_user'];
+        $id_user = $this->request->getParameterNoException('id_user');
+        if ($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
         }
 
         if ($curentDate != "") {
@@ -591,7 +591,7 @@ class BookingController extends BookingabstractController
         $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
-        $menuData = $this->calendarMenuData($idSpace, $curentAreaId, $curentResource, $curentDate);
+        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
@@ -611,7 +611,7 @@ class BookingController extends BookingabstractController
 
         // get the resource info
         $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($idSpace, $curentResource);
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
@@ -620,26 +620,26 @@ class BookingController extends BookingabstractController
         }
 
         $modelRes = new ResourceInfo();
-        $resourcesBase = $modelRes->get($idSpace, $curentResource);
+        $resourcesBase = $modelRes->get($id_space, $curentResource);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        //$calEntries = $modelEntries->getEntriesForPeriodeAndResource($idSpace, $dateBegin, $dateEnd, $curentResource, $idUser);
+        //$calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($idSpace, $curentAreaId);
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if ($schedule['shared']) {
             $modelRes = new ResourceInfo();
-            $resourcesBaseShared = $modelRes->resourcesForArea($idSpace, $curentAreaId);
+            $resourcesBaseShared = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
             $resIds = [];
             for ($r = 0; $r < count($resourcesBaseShared); $r++) {
                 $resIds[] = $resourcesBaseShared[$r]["id"];
             }
-            $cals = $modelEntries->getEntriesForPeriodeAndResources($idSpace, $dateBegin, $dateEnd, $resIds, $idUser);
+            $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
             $calmap = [];
             $calEntries = [];
 
@@ -654,7 +654,7 @@ class BookingController extends BookingabstractController
                 $calEntries[] = $cal;
             }
         } else {
-            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($idSpace, $dateBegin, $dateEnd, $curentResource, $idUser);
+            $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
         }
 
 
@@ -666,36 +666,36 @@ class BookingController extends BookingabstractController
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes($idSpace, "name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         $isUserAuthorizedToBook = false;
         if ($resourcesBase) {
             // isUserAuthorizedToBook
             $modelAccess = new BkAccess();
-            $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($idSpace, $resourcesBase["id"]);
-            $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $idSpace, $_SESSION['id_user'], 0);
+            $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
+            $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
 
             // get last state
             $modelEvent = new ReEvent();
-            $resourcesBase["last_state"] = $modelEvent->getLastStateColor($idSpace, $resourcesBase["id"]);
+            $resourcesBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase["id"]);
         }
 
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($idSpace, $curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($idSpace, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         $u = new CoreSpaceUser();
-        $user = $u->getUserSpaceInfo2($idSpace, $_SESSION['id_user']);
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
         if ($user === false) {
             $user = [];
         }
 
         $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if ($this->role > CoreSpace::$USER) {
-            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($idSpace, '', 1));
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
@@ -707,7 +707,7 @@ class BookingController extends BookingabstractController
         // view
         return $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
             'resourceBase' => $resourcesBase,
@@ -725,15 +725,15 @@ class BookingController extends BookingabstractController
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $idUser,
+            'id_user' => $id_user,
             'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookweek");
     }
 
-    public function weekareaAction($idSpace)
+    public function weekareaAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingweekarea";
         $lang = $this->getLanguage();
 
@@ -742,9 +742,9 @@ class BookingController extends BookingabstractController
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
-        $idUser = $this->request->getParameterNoException('id_user');
-        if ($idUser && $this->role < CoreSpace::$MANAGER) {
-            $idUser = $_SESSION['id_user'];
+        $id_user = $this->request->getParameterNoException('id_user');
+        if ($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
         }
 
         if ($curentDate != "") {
@@ -756,8 +756,8 @@ class BookingController extends BookingabstractController
 
         $modelArea = new ReArea();
         $areaSpace = $modelArea->getSpace($curentAreaId);
-        if ($areaSpace != $idSpace) {
-            $curentAreaId = $modelArea->getDefaultArea($idSpace);
+        if ($areaSpace != $id_space) {
+            $curentAreaId = $modelArea->getDefaultArea($id_space);
             $curentResource = 0;
         }
 
@@ -777,15 +777,15 @@ class BookingController extends BookingabstractController
         $mondayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + 6, intval($curentDateE[0])));
 
-        $menuData = $this->calendarMenuData($idSpace, $curentAreaId, $curentResource, $curentDate);
+        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
 
         // get the area info
-        $area = $modelArea->get($idSpace, $curentAreaId);
+        $area = $modelArea->get($id_space, $curentAreaId);
 
         // get the resource info
         $modelRes = new ResourceInfo();
-        $resourcesBase = $modelRes->resourcesForArea($idSpace, $curentAreaId);
+        $resourcesBase = $modelRes->resourcesForArea($id_space, $curentAreaId);
 
         // get last state
         $modelEvent = new ReEvent();
@@ -793,7 +793,7 @@ class BookingController extends BookingabstractController
         for ($r = 0; $r < count($resourcesBase); $r++) {
             $resIds[] = $resourcesBase[$r]["id"];
         }
-        $colors =$modelEvent->getLastStateColors($idSpace, $resIds);
+        $colors =$modelEvent->getLastStateColors($id_space, $resIds);
         $cmap = [];
         foreach ($colors as $c) {
             if (!key_exists($c['id_resource'], $cmap)) {
@@ -802,7 +802,7 @@ class BookingController extends BookingabstractController
         }
 
         $modelRescal = new ResourceInfo();
-        $resources  = $modelRescal->getBySpace($idSpace);
+        $resources  = $modelRescal->getBySpace($id_space);
         $rmap = [];
         foreach ($resources as $r) {
             $rmap[$r['id']] = $r;
@@ -820,9 +820,9 @@ class BookingController extends BookingabstractController
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + 7, $dateArray[0]);
-        //$calEntries = $modelEntries->getEntriesForPeriodeAndArea($idSpace, $dateBegin, $dateEnd, $curentAreaId, $idUser);
+        //$calEntries = $modelEntries->getEntriesForPeriodeAndArea($id_space, $dateBegin, $dateEnd, $curentAreaId, $id_user);
 
-        $cals = $modelEntries->getEntriesForPeriodeAndResources($idSpace, $dateBegin, $dateEnd, $resIds, $idUser);
+        $cals = $modelEntries->getEntriesForPeriodeAndResources($id_space, $dateBegin, $dateEnd, $resIds, $id_user);
         $calmap = [];
         $calEntries = [];
         foreach ($resourcesBase as $r) {
@@ -833,7 +833,7 @@ class BookingController extends BookingabstractController
         }
 
         $mschedule = new BkScheduling();
-        $schedule= $mschedule->getByReArea($idSpace, $curentAreaId);
+        $schedule= $mschedule->getByReArea($id_space, $curentAreaId);
         if ($schedule['shared']) {
             foreach ($resourcesBase as $i => $r) {
                 foreach ($cals as $cal) {
@@ -855,12 +855,12 @@ class BookingController extends BookingabstractController
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes($idSpace, "name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
         $isUserAuthorizedToBook = array();
-        $accessIds = $modelAccess->getAccessIds($idSpace, $resIds);
+        $accessIds = $modelAccess->getAccessIds($id_space, $resIds);
         $amap = [];
         foreach ($accessIds as $a) {
             $amap[$a['id_resource']] = $a['id_access'];
@@ -869,15 +869,15 @@ class BookingController extends BookingabstractController
         $isUserAuthorizedToBook = [];
         foreach ($resourcesBase as $resourceBase) {
             $resourceBase["accessibility_id"] = $amap[$resourceBase["id"]] ?? null;
-            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $idSpace, $_SESSION['id_user'], 0);
+            $isUserAuthorizedToBook[] = $this->hasAuthorization($resourceBase["id_category"], $resourceBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
         }
 
         // stylesheet
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($idSpace, $curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $modelScheduling = new BkScheduling();
-        $scheduling = $modelScheduling->getByReArea($idSpace, $curentAreaId);
+        $scheduling = $modelScheduling->getByReArea($id_space, $curentAreaId);
 
         // Setting an error message if no resource exists
         if (empty($resourcesBase)) {
@@ -886,14 +886,14 @@ class BookingController extends BookingabstractController
         }
 
         $u = new CoreSpaceUser();
-        $user = $u->getUserSpaceInfo2($idSpace, $_SESSION['id_user']);
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
         if ($user === false) {
             $user = [];
         }
 
         $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if ($this->role > CoreSpace::$USER) {
-            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($idSpace, '', 1));
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         $detailedViewRequest = $this->request->getParameterNoException('view');
@@ -905,7 +905,7 @@ class BookingController extends BookingabstractController
         // view
         return $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'menuData' => $menuData,
             'areaname' => $area["name"],
             'resourcesInfo' => $resourcesBase,
@@ -924,15 +924,15 @@ class BookingController extends BookingabstractController
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $idUser,
+            'id_user' => $id_user,
             'detailedView' => $detailedView,
             'data' => ['bookings' => $calEntries]
         ), "bookweekarea");
     }
 
-    public function monthAction($idSpace)
+    public function monthAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $_SESSION['lastbookview'] = "bookingmonth";
         $lang = $this->getLanguage();
 
@@ -941,9 +941,9 @@ class BookingController extends BookingabstractController
         $curentAreaId = $this->request->getParameterNoException('bk_id_area');
         $curentDate = $this->request->getParameterNoException('bk_curentDate');
 
-        $idUser = $this->request->getParameterNoException('id_user');
-        if ($idUser && $this->role < CoreSpace::$MANAGER) {
-            $idUser = $_SESSION['id_user'];
+        $id_user = $this->request->getParameterNoException('id_user');
+        if ($id_user && $this->role < CoreSpace::$MANAGER) {
+            $id_user = $_SESSION['id_user'];
         }
 
         if ($curentDate != "") {
@@ -971,7 +971,7 @@ class BookingController extends BookingabstractController
         $nbdays = date('t', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i), intval($curentDateE[0])));
         $sundayDate = date('Y-m-d', mktime(0, 0, 0, intval($curentDateE[1]), intval($curentDateE[2]) - ($i) + $nbdays, intval($curentDateE[0])));
 
-        $menuData = $this->calendarMenuData($idSpace, $curentAreaId, $curentResource, $curentDate);
+        $menuData = $this->calendarMenuData($id_space, $curentAreaId, $curentResource, $curentDate);
         $curentAreaId = $menuData['curentAreaId'];
 
         $foundR = false;
@@ -987,7 +987,7 @@ class BookingController extends BookingabstractController
 
         // get the resource info
         $modelRescal = new ResourceInfo();
-        $resourceInfo = $modelRescal->get($idSpace, $curentResource);
+        $resourceInfo = $modelRescal->get($id_space, $curentResource);
 
         // Setting an error message if no resource exists
         if (!$resourceInfo) {
@@ -997,14 +997,14 @@ class BookingController extends BookingabstractController
 
         $resourcesBase = $resourceInfo;
         $modelEvent = new ReEvent();
-        $resourcesBase["last_state"] = $modelEvent->getLastStateColor($idSpace, $resourcesBase["id"]);
+        $resourcesBase["last_state"] = $modelEvent->getLastStateColor($id_space, $resourcesBase["id"]);
 
         // get the entries for this resource
         $modelEntries = new BkCalendarEntry();
         $dateArray = explode("-", $mondayDate);
         $dateBegin = mktime(0, 0, 0, $dateArray[1], $dateArray[2], $dateArray[0]);
         $dateEnd = mktime(23, 59, 59, $dateArray[1], $dateArray[2] + $nbdays, $dateArray[0]);
-        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($idSpace, $dateBegin, $dateEnd, $curentResource, $idUser);
+        $calEntries = $modelEntries->getEntriesForPeriodeAndResource($id_space, $dateBegin, $dateEnd, $curentResource, $id_user);
         //echo "Cal entry count = " . count($calEntries) . "</br>";
         // curentdate unix
         $temp = explode("-", $curentDate);
@@ -1012,31 +1012,31 @@ class BookingController extends BookingabstractController
 
         // color code
         $modelColor = new BkColorCode();
-        $colorcodes = $modelColor->getColorCodes($idSpace, "name");
+        $colorcodes = $modelColor->getColorCodes($id_space, "name");
 
         // isUserAuthorizedToBook
         $modelAccess = new BkAccess();
-        $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($idSpace, $resourcesBase["id"]);
-        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $idSpace, $_SESSION['id_user'], 0);
+        $resourcesBase["accessibility_id"] = $modelAccess->getAccessId($id_space, $resourcesBase["id"]);
+        $isUserAuthorizedToBook = $this->hasAuthorization($resourcesBase["id_category"], $resourcesBase["accessibility_id"], $id_space, $_SESSION['id_user'], 0);
 
         $modelCSS = new BkBookingTableCSS();
-        $agendaStyle = $modelCSS->getAreaCss($idSpace, $curentAreaId);
+        $agendaStyle = $modelCSS->getAreaCss($id_space, $curentAreaId);
 
         $u = new CoreSpaceUser();
-        $user = $u->getUserSpaceInfo2($idSpace, $_SESSION['id_user']);
+        $user = $u->getUserSpaceInfo2($id_space, $_SESSION['id_user']);
         if ($user === false) {
             $user = [];
         }
 
         $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], [$user]);
         if ($this->role > CoreSpace::$USER) {
-            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($idSpace, '', 1));
+            $users = array_merge([['id' => 0, 'login' => '', 'name' => 'all', 'firstname' => '']], $u->getUsersOfSpaceByLetter($id_space, '', 1));
         }
 
         // view
         return $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'menuData' => $menuData,
             'resourceInfo' => $resourceInfo,
             'resourcesBase' => $resourcesBase,
@@ -1055,22 +1055,22 @@ class BookingController extends BookingabstractController
             'bk_id_resource' => $curentResource,
             'bk_id_area' => $curentAreaId,
             'users' => $users,
-            'id_user' => $idUser,
+            'id_user' => $id_user,
             'detailedView' => false,
             'data' => ['bookings' => $calEntries]
         ), "bookmonth");
     }
 
-    public function editreservationAction($idSpace, $param)
+    public function editreservationAction($id_space, $param)
     {
-        $this->checkAuthorizationMenuSpace("booking", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelSettings = new CoreConfig();
-        $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $idSpace);
+        $editResaFunction = $modelSettings->getParamSpace("bkReservationPlugin", $id_space);
 
         if ($editResaFunction == "" || $editResaFunction == "bookingeditreservationdefault") {
             $modelDefault = new BookingdefaultController($this->request, $this->currentSpace);
-            //$modelDefault->setArgs(['id_space' => $idSpace, 'param' => $param]);
-            return $modelDefault->editreservationdefault($idSpace, $param);
+            //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
+            return $modelDefault->editreservationdefault($id_space, $param);
         } else {
             /// todo run plugin
             $modelCache = new FCache();

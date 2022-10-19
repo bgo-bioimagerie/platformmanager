@@ -36,10 +36,10 @@ class BookinginvoiceController extends InvoiceAbstractController
     /**
      * @deprecated
      */
-    public function updateResaResponsiblesAction($idSpace)
+    public function updateResaResponsiblesAction($id_space)
     {
         $modelCalentry = new BkCalendarEntry();
-        $modelCalentry->updateNullResponsibles($idSpace);
+        $modelCalentry->updateNullResponsibles($id_space);
         echo "done";
     }
 
@@ -47,60 +47,60 @@ class BookinginvoiceController extends InvoiceAbstractController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $formByProjects = $this->createAllForm($idSpace, $lang);
+        $formByProjects = $this->createAllForm($id_space, $lang);
         if ($formByProjects->check()) {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
 
-            $this->invoiceAll($idSpace, $beginPeriod, $endPeriod);
-            return $this->redirect("invoices/" . $idSpace);
+            $this->invoiceAll($id_space, $beginPeriod, $endPeriod);
+            return $this->redirect("invoices/" . $id_space);
         }
 
-        $formByPeriod = $this->createByPeriodForm($idSpace, $lang);
+        $formByPeriod = $this->createByPeriodForm($id_space, $lang);
         if ($formByPeriod->check()) {
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
-                $this->invoice($idSpace, $beginPeriod, $endPeriod, $id_resp);
-                return $this->redirect("invoices/" . $idSpace);
+                $this->invoice($id_space, $beginPeriod, $endPeriod, $id_resp);
+                return $this->redirect("invoices/" . $id_space);
             }
         }
 
-        return $this->render(array("id_space" => $idSpace, "lang" => $lang,
+        return $this->render(array("id_space" => $id_space, "lang" => $lang,
             "formByProjects" => $formByProjects->getHtml($lang),
             "formByPeriod" => $formByPeriod->getHtml($lang)));
     }
 
-    public function editAction($idSpace, $id_invoice, $pdf = 0)
+    public function editAction($id_space, $id_invoice, $pdf = 0)
     {
         require_once 'Modules/booking/Model/BkPackage.php';
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($idSpace, $id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelInvoiceItem = new InInvoiceItem();
-        $id_items = $modelInvoiceItem->getInvoiceItems($idSpace, $id_invoice);
+        $id_items = $modelInvoiceItem->getInvoiceItems($id_space, $id_invoice);
 
         // generate pdf
         if ($pdf == 1) {
-            return $this->generatePDFInvoice($idSpace, $invoice, $id_items[0]["id"], $lang);
+            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
         }
         if ($pdf == 2) {
-            return $this->generatePDFInvoiceDetails($idSpace, $invoice, $id_items[0]["id"], $lang);
+            return $this->generatePDFInvoiceDetails($id_space, $invoice, $id_items[0]["id"], $lang);
         }
 
         // unparse details
         $detailsData = array();
         if (!empty($id_items)) {
-            $item = $modelInvoiceItem->getItem($idSpace, $id_items[0]["id"]);
+            $item = $modelInvoiceItem->getItem($id_space, $id_items[0]["id"]);
             $details = $item["details"];
 
             $detailsArray = explode(";", $details);
@@ -117,7 +117,7 @@ class BookinginvoiceController extends InvoiceAbstractController
         if (!empty($id_items)) {
             $idItem = $id_items[0]["id"];
         }
-        $form = $this->editForm($idItem, $idSpace, $id_invoice, $lang);
+        $form = $this->editForm($idItem, $id_space, $id_invoice, $lang);
         if ($form->check()) {
             $total_ht = 0;
             $id_services = $this->request->getParameter("id_service");
@@ -130,30 +130,30 @@ class BookinginvoiceController extends InvoiceAbstractController
                 $total_ht += floatval($quantity[$i]) * floatval($unit_price[$i]);
             }
             if (!empty($id_items)) {
-                $modelInvoiceItem->editItemContent($idSpace, $id_items[0]["id"], $content, $total_ht);
+                $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
             }
             // apply discount
             $discount = $form->getParameter("discount");
             $total_ht = (1 - floatval($discount) / 100) * $total_ht;
 
-            $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
-            $modelInvoice->setDiscount($idSpace, $id_invoice, $discount);
+            $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+            $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
 
             $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
             $_SESSION['flashClass'] = 'success';
 
             Events::send([
                 "action" => Events::ACTION_INVOICE_EDIT,
-                "space" => ["id" => intval($idSpace)],
+                "space" => ["id" => intval($id_space)],
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
 
-            return $this->redirect("bookinginvoiceedit/" . $idSpace . "/" . $id_invoice . "/O", [], ['invoice' => $invoice]);
+            return $this->redirect("bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/O", [], ['invoice' => $invoice]);
         }
 
         // render
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "invoice" => $invoice,
             "details" => $detailsData,
@@ -162,12 +162,12 @@ class BookinginvoiceController extends InvoiceAbstractController
         ));
     }
 
-    public function deleteAction($idSpace, $id_invoice)
+    public function deleteAction($id_space, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($idSpace, $id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
         if (!$invoice) {
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_invoice]);
             throw new PfmAuthException('access denied for this resource', 403);
@@ -175,13 +175,13 @@ class BookinginvoiceController extends InvoiceAbstractController
 
         // get items
         $model = new BkCalendarEntry();
-        $services = $model->getInvoiceEntries($idSpace, $id_invoice);
+        $services = $model->getInvoiceEntries($id_space, $id_invoice);
         foreach ($services as $s) {
-            $model->setReservationInvoice($idSpace, $s["id"], 0);
+            $model->setReservationInvoice($id_space, $s["id"], 0);
         }
     }
 
-    public function editForm($id_item, $idSpace, $id_invoice, $lang)
+    public function editForm($id_item, $id_space, $id_invoice, $lang)
     {
         $itemIds = array();
         $itemServices = array();
@@ -192,12 +192,12 @@ class BookinginvoiceController extends InvoiceAbstractController
         $modelClient = new ClClient();
         $modelResource = new ResourceInfo();
 
-        $invoiceInfo = $modelInvoice->get($idSpace, $id_invoice);
+        $invoiceInfo = $modelInvoice->get($id_space, $id_invoice);
 
-        $clientInfo = $modelClient->get($idSpace, $invoiceInfo["id_responsible"]);
+        $clientInfo = $modelClient->get($id_space, $invoiceInfo["id_responsible"]);
         $id_belonging = $clientInfo["pricing"];
 
-        $item = $modelInvoiceItem->getItem($idSpace, $id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
         $contentArray = explode(";", $item["content"]);
         $total = 0;
         $deletedPackages = array();
@@ -210,7 +210,7 @@ class BookinginvoiceController extends InvoiceAbstractController
                 // if package and is deleted, add it to the list of deleted packages
                 if (strpos($data[0], '_pk_')) {
                     $pk_id = explode('_pk_', $data[0])[1];
-                    if ($bkPackageModel->isDeleted($idSpace, $pk_id)) {
+                    if ($bkPackageModel->isDeleted($id_space, $pk_id)) {
                         $deletedPackages[] = $pk_id;
                     }
                 }
@@ -225,14 +225,14 @@ class BookinginvoiceController extends InvoiceAbstractController
             }
         }
 
-        $listResources = $this->getResourcesList($idSpace, $id_belonging, $lang);
+        $listResources = $this->getResourcesList($id_space, $id_belonging, $lang);
 
         // add selected deleted packages to $listResources
         if (!empty($deletedPackages)) {
             foreach ($deletedPackages as $id_package) {
-                $p = $bkPackageModel->getById($idSpace, $id_package);
+                $p = $bkPackageModel->getById($id_space, $id_package);
                 $pName = $p["name"] . " [!]";
-                $r = $modelResource->get($idSpace, $p["id_resource"]);
+                $r = $modelResource->get($id_space, $p["id_resource"]);
                 array_push($listResources["ids"], $r["id"] . "_pk_" . $p["id"]);
                 array_push($listResources["names"], $r["name"] . " " . $pName);
             }
@@ -245,13 +245,13 @@ class BookinginvoiceController extends InvoiceAbstractController
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form = new Form($this->request, "editinvoiceorderform");
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $idSpace . "/" . $id_invoice . "/0");
-        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $idSpace . "/" . $id_invoice . "/1", "danger", true);
-        $form->addExternalButton(InvoicesTranslator::GeneratePdfDetails($lang), "bookinginvoiceedit/" . $idSpace . "/" . $id_invoice . "/2", "danger", true);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/0");
+        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
+        $form->addExternalButton(InvoicesTranslator::GeneratePdfDetails($lang), "bookinginvoiceedit/" . $id_space . "/" . $id_invoice . "/2", "danger", true);
 
         $form->setFormAdd($formAdd);
 
-        $discount = $modelInvoice->getDiscount($idSpace, $id_invoice);
+        $discount = $modelInvoice->getDiscount($id_space, $id_invoice);
         $form->addText("discount", BookinginvoiceTranslator::Discount($lang), false, $discount);
 
 
@@ -261,31 +261,31 @@ class BookinginvoiceController extends InvoiceAbstractController
         return $form;
     }
 
-    protected function getResourcesList($idSpace, $id_belonging, $lang)
+    protected function getResourcesList($id_space, $id_belonging, $lang)
     {
         $modelResource = new ResourceInfo();
         $modelNightWe = new BkNightWE();
 
         $modelPackages = new BkPackage();
-        $resources = $modelResource->getBySpace($idSpace);
+        $resources = $modelResource->getBySpace($id_space);
         $ids = array();
         $names = array();
         foreach ($resources as $r) {
             $ids[] = $r["id"] . "_day";
-            if (!$modelNightWe->isNight($idSpace, $id_belonging) && !$modelNightWe->isWe($idSpace, $id_belonging)) {
+            if (!$modelNightWe->isNight($id_space, $id_belonging) && !$modelNightWe->isWe($id_space, $id_belonging)) {
                 $names[] = $r["name"];
             } else {
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::Day($lang);
             }
-            if ($modelNightWe->isNight($idSpace, $id_belonging)) {
+            if ($modelNightWe->isNight($id_space, $id_belonging)) {
                 $ids[] = $r["id"] . "_night";
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::night($lang);
             }
-            if ($modelNightWe->isWe($idSpace, $id_belonging)) {
+            if ($modelNightWe->isWe($id_space, $id_belonging)) {
                 $ids[] = $r["id"] . "_we";
                 $names[] = $r["name"] . " " . BookinginvoiceTranslator::WE($lang);
             }
-            $packages = $modelPackages->getByResource($idSpace, $r["id"]);
+            $packages = $modelPackages->getByResource($id_space, $r["id"]);
             foreach ($packages as $p) {
                 $ids[] = $r["id"] . "_pk_" . $p["id"];
                 $names[] = $r["name"] . " " . $p["name"];
@@ -295,7 +295,7 @@ class BookinginvoiceController extends InvoiceAbstractController
         return array("names" => $names, "ids" => $ids);
     }
 
-    protected function createAllForm($idSpace, $lang)
+    protected function createAllForm($id_space, $lang)
     {
         $form = new Form($this->request, "BookingInvoiceAllForm");
         $form->addSeparator(InvoicesTranslator::Invoice_All($lang));
@@ -305,11 +305,11 @@ class BookinginvoiceController extends InvoiceAbstractController
 
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;
     }
 
-    protected function createByPeriodForm($idSpace, $lang)
+    protected function createByPeriodForm($id_space, $lang)
     {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(InvoicesTranslator::Invoice_Responsible($lang));
@@ -319,22 +319,22 @@ class BookinginvoiceController extends InvoiceAbstractController
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClient = new ClClient();
-        $resps = $modelClient->getForList($idSpace);
+        $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookinginvoice/" . $id_space);
         return $form;
     }
 
-    protected function invoiceAll($idSpace, $beginPeriod, $endPeriod)
+    protected function invoiceAll($id_space, $beginPeriod, $endPeriod)
     {
         $cv = new CoreVirtual();
-        $rid = $cv->newRequest($idSpace, "invoices", "booking:$beginPeriod => $endPeriod");
+        $rid = $cv->newRequest($id_space, "invoices", "booking:$beginPeriod => $endPeriod");
         Events::send([
             "action" => Events::ACTION_INVOICE_REQUEST,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "user" => ["id" => $_SESSION['id_user']],
             "type" => BookingInvoice::$INVOICES_BOOKING_ALL,
             "period_begin" => $beginPeriod,
@@ -343,14 +343,14 @@ class BookinginvoiceController extends InvoiceAbstractController
         ]);
     }
 
-    protected function invoice($idSpace, $beginPeriod, $endPeriod, $id_resp)
+    protected function invoice($id_space, $beginPeriod, $endPeriod, $id_resp)
     {
         $cv = new CoreVirtual();
-        $rid = $cv->newRequest($idSpace, "invoices", "booking:$beginPeriod => $endPeriod");
+        $rid = $cv->newRequest($id_space, "invoices", "booking:$beginPeriod => $endPeriod");
 
         Events::send([
             "action" => Events::ACTION_INVOICE_REQUEST,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "user" => ["id" => $_SESSION['id_user']],
             "type" => BookingInvoice::$INVOICES_BOOKING_CLIENT,
             "period_begin" => $beginPeriod,
@@ -363,20 +363,20 @@ class BookinginvoiceController extends InvoiceAbstractController
     /**
      * @deprecated ? seems never called
      */
-    protected function invoiceProjects($idSpace, $id_projects, $id_unit, $id_resp)
+    protected function invoiceProjects($id_space, $id_projects, $id_unit, $id_resp)
     {
         // add invoice
         $modelInvoiceItem = new InInvoiceItem();
         $modelInvoice = new InInvoice();
         $module = "services";
         $controller = "servicesinvoiceproject";
-        $number = $modelInvoice->getNextNumber($idSpace);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $idSpace, $number, date("Y-m-d", time()), $id_unit, $id_resp);
-        $modelInvoice->setEditedBy($idSpace, $id_invoice, $_SESSION["id_user"]);
+        $number = $modelInvoice->getNextNumber($id_space);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
+        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
 
         // parse content
         $modelClient = new ClClient();
-        $id_pricing = $modelClient->getPricingID($idSpace, $id_resp);
+        $id_pricing = $modelClient->getPricingID($id_space, $id_resp);
         $total_ht = 0;
         $modelProject = new SeProject();
         $addedServices = array();
@@ -384,14 +384,14 @@ class BookinginvoiceController extends InvoiceAbstractController
         $addedServicesPrice = array();
         $modelPrice = new SePrice();
         foreach ($id_projects as $id_proj) {
-            $services = $modelProject->getNoInvoicesServices($idSpace, $id_proj);
+            $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
             for ($i = 0; $i < count($services); $i++) {
                 $quantity = 0;
-                $modelProject->setServiceInvoice($idSpace, $services[$i]["id"], $id_invoice);
+                $modelProject->setServiceInvoice($id_space, $services[$i]["id"], $id_invoice);
                 if (!in_array($services[$i]["id_service"], $addedServices)) {
                     $addedServices[] = $services[$i]["id_service"];
                     $quantity = floatval($services[$i]["quantity"]);
-                    $price = floatval($modelPrice->getPrice($idSpace, $services[$i]["id_service"], $id_pricing));
+                    $price = floatval($modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_pricing));
                     $addedServicesCount[] = $quantity;
                     $addedServicesPrice[] = $price;
                     $total_ht += floatval($quantity) * floatval($price);
@@ -412,21 +412,21 @@ class BookinginvoiceController extends InvoiceAbstractController
         // get details
         $details = "";
         foreach ($id_projects as $id_proj) {
-            $name = $modelProject->getName($idSpace, $id_proj);
-            $details .= $name[0] . "=" . "servicesprojectedit/" . $idSpace . "/" . $id_proj . ";";
+            $name = $modelProject->getName($id_space, $id_proj);
+            $details .= $name[0] . "=" . "servicesprojectedit/" . $id_space . "/" . $id_proj . ";";
         }
 
         // set invoice itmems
-        $modelInvoiceItem->setItem($idSpace, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
+        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
         Events::send([
             "action" => Events::ACTION_INVOICE_EDIT,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "invoice" => ["id" => intval($id_invoice)]
         ]);
     }
 
-    protected function invoiceTable($idSpace, $invoice, $id_item, $lang)
+    protected function invoiceTable($id_space, $invoice, $id_item, $lang)
     {
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
@@ -439,7 +439,7 @@ class BookinginvoiceController extends InvoiceAbstractController
         ";
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($idSpace, $id_item, $lang);
+        $content = $this->unparseContent($id_space, $id_item, $lang);
         $total = 0;
         foreach ($content as $d) {
             if ($d[2] > 0) {
@@ -467,46 +467,46 @@ class BookinginvoiceController extends InvoiceAbstractController
         return array("table" => $table, "total" => $total);
     }
 
-    protected function generatePDFInvoiceDetails($idSpace, $invoice, $id_item, $lang)
+    protected function generatePDFInvoiceDetails($id_space, $invoice, $id_item, $lang)
     {
-        $tabledata = $this->invoiceTable($idSpace, $invoice, $id_item, $lang);
+        $tabledata = $this->invoiceTable($id_space, $invoice, $id_item, $lang);
         $table = $tabledata["table"];
         $total = $tabledata["total"];
-        $details = $this->detailsTable($idSpace, $invoice["id"], $lang);
+        $details = $this->detailsTable($id_space, $invoice["id"], $lang);
 
         $modelClient = new ClClient();
-        $clientInfos = $modelClient->get($idSpace, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($idSpace, $invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
         $useTTC = true;
 
-        return $this->generatePDF($idSpace, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
+        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
     }
 
-    protected function generatePDFInvoice($idSpace, $invoice, $id_item, $lang)
+    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
     {
-        $tabledata = $this->invoiceTable($idSpace, $invoice, $id_item, $lang);
+        $tabledata = $this->invoiceTable($id_space, $invoice, $id_item, $lang);
         $table = $tabledata["table"];
         $total = $tabledata["total"];
 
         $modelClient = new ClClient();
-        $clientInfos = $modelClient->get($idSpace, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($idSpace, $invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
 
         $useTTC = true;
-        return $this->generatePDF($idSpace, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
+        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
     }
 
-    protected function unparseContent($idSpace, $id_item, $lang)
+    protected function unparseContent($id_space, $id_item, $lang)
     {
         $modelResources = new ResourceInfo();
         $modelPackage = new BkPackage();
 
         $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($idSpace, $id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
         $contentList = array();
@@ -518,7 +518,7 @@ class BookinginvoiceController extends InvoiceAbstractController
                 if (count($idArray) == 2) {
                     $idRes = $idArray[0];
                     $idDay = $idArray[1];
-                    $name = $modelResources->getName($idSpace, $idRes);
+                    $name = $modelResources->getName($id_space, $idRes);
                     if ($idDay == "day") {
                         $name .= " " . BookinginvoiceTranslator::Day($lang);
                     } elseif ($idDay == "night") {
@@ -527,8 +527,8 @@ class BookinginvoiceController extends InvoiceAbstractController
                         $name .= " " . BookinginvoiceTranslator::WE($lang);
                     }
                 } elseif (count($idArray) == 3) {
-                    $name = $modelResources->getName($idSpace, $idArray[0]);
-                    $name .= " " . $modelPackage->getName($idSpace, $idArray[2], include_deleted:true);
+                    $name = $modelResources->getName($id_space, $idArray[0]);
+                    $name .= " " . $modelPackage->getName($id_space, $idArray[2], include_deleted:true);
                 }
 
                 $contentList[] = array($name, $data[1], $data[2]);
@@ -537,9 +537,9 @@ class BookinginvoiceController extends InvoiceAbstractController
         return $contentList;
     }
 
-    protected function detailsTable($idSpace, $id_invoice, $lang)
+    protected function detailsTable($id_space, $id_invoice, $lang)
     {
-        $data = $this->detailsData($idSpace, $id_invoice);
+        $data = $this->detailsData($id_space, $id_invoice);
 
         $table = "<h3>".BookinginvoiceTranslator::Details($lang) . "</h3><br/>";
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
@@ -570,49 +570,49 @@ class BookinginvoiceController extends InvoiceAbstractController
         return $table;
     }
 
-    public function detailsData($idSpace, $id_invoice)
+    public function detailsData($id_space, $id_invoice)
     {
         $modelCalEntry = new BkCalendarEntry();
         $modelResource = new ResourceInfo();
         $modelUser = new CoreUser();
 
-        $resources = $modelCalEntry->getResourcesForInvoice($idSpace, $id_invoice);
+        $resources = $modelCalEntry->getResourcesForInvoice($id_space, $id_invoice);
         $data = array();
         foreach ($resources as $r) {
-            $users = $modelCalEntry->getResourcesUsersForInvoice($idSpace, $r['resource_id'], $id_invoice);
+            $users = $modelCalEntry->getResourcesUsersForInvoice($id_space, $r['resource_id'], $id_invoice);
             foreach ($users as $user) {
-                $resas = $modelCalEntry->getResourcesUserResaForInvoice($idSpace, $r['resource_id'], $user['recipient_id'], $id_invoice);
+                $resas = $modelCalEntry->getResourcesUserResaForInvoice($id_space, $r['resource_id'], $user['recipient_id'], $id_invoice);
                 $time = 0;
                 $time_day = 0;
                 $time_night = 0;
                 $time_we = 0;
                 for ($i = 0; $i < count($resas); $i++) {
-                    $slots = $modelCalEntry->computeDuration($idSpace, $resas[$i]);
+                    $slots = $modelCalEntry->computeDuration($id_space, $resas[$i]);
                     $resaDayNightWe = $slots['hours'];
                     $time += $slots['total'];
                     $time_day += $resaDayNightWe['nb_hours_day'];
                     $time_night += $resaDayNightWe['nb_hours_night'];
                     $time_we += $resaDayNightWe['nb_hours_we'];
                 }
-                $data[] = array('resource' => $modelResource->getName($idSpace, $r['resource_id']), 'user' => $modelUser->getUserFullName($user['recipient_id']), 'time' => round($time / 3600, 2), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
+                $data[] = array('resource' => $modelResource->getName($id_space, $r['resource_id']), 'user' => $modelUser->getUserFullName($user['recipient_id']), 'time' => round($time / 3600, 2), 'day' => $time_day, 'night' => $time_night, 'we' => $time_we);
             }
         }
         return $data;
     }
 
-    public function detailsAction($idSpace, $id_invoice)
+    public function detailsAction($id_space, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
-        $data = $this->detailsData($idSpace, $id_invoice);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
+        $data = $this->detailsData($id_space, $id_invoice);
         $lang = $this->getLanguage();
 
         $modelInvoice = new InInvoice();
-        $invoiceInfo = $modelInvoice->get($idSpace, $id_invoice);
+        $invoiceInfo = $modelInvoice->get($id_space, $id_invoice);
 
         $modelBk = new BkCalendarEntry();
-        $entries = $modelBk->getInvoiceEntries($idSpace, $id_invoice);
+        $entries = $modelBk->getInvoiceEntries($id_space, $id_invoice);
         $modelResource = new ResourceInfo();
-        $resources = $modelResource->getBySpace($idSpace);
+        $resources = $modelResource->getBySpace($id_space);
         $rmap = [];
         foreach ($resources as $r) {
             $rmap[$r['id']] = $r['name'];
@@ -630,6 +630,6 @@ class BookinginvoiceController extends InvoiceAbstractController
         );
 
         $tableHtml = $table->view($data, $headers);
-        $this->render(array("lang" => $lang, "id_space" => $idSpace, "tableHtml" => $tableHtml, 'entries' => $entries, 'resources' => $rmap));
+        $this->render(array("lang" => $lang, "id_space" => $id_space, "tableHtml" => $tableHtml, 'entries' => $entries, 'resources' => $rmap));
     }
 }

@@ -25,14 +25,14 @@ class BjTask extends Model
         $this->primaryKey = "id";
     }
 
-    public function openedForMigration($idSpace, $year, $month)
+    public function openedForMigration($id_space, $year, $month)
     {
         $firstDay = $year . "-" . $month . "-01";
         $lastDay = date("Y-m-t", strtotime($firstDay));
 
         $sql = "SELECT * FROM bj_notes "
                 . "WHERE bj_notes.id_space=? AND bj_notes.date>=? AND bj_notes.date<=? AND type=2";
-        $tasks = $this->runRequest($sql, array($idSpace, $firstDay, $lastDay))->fetchAll();
+        $tasks = $this->runRequest($sql, array($id_space, $firstDay, $lastDay))->fetchAll();
         $openedTasks = array();
         foreach ($tasks as $task) {
             $sql = "SELECT * FROM bj_tasks_history WHERE id_note=? ORDER BY date DESC;";
@@ -59,15 +59,15 @@ class BjTask extends Model
         return $openedTasks;
     }
 
-    public function getForNote($idSpace, $id_note)
+    public function getForNote($id_space, $id_note)
     {
         $sql = "SELECT bj_tasks.*, bj_notes.* FROM bj_tasks "
                 . "INNER JOIN bj_notes ON bj_tasks.id_note=bj_notes.id "
                 . "WHERE bj_tasks.id_note=? AND bj_tasks.id_space=?";
-        return $this->runRequest($sql, array($id_note, $idSpace))->fetch();
+        return $this->runRequest($sql, array($id_note, $id_space))->fetch();
     }
 
-    public function set($idSpace, $id_note, $priority, $deadline)
+    public function set($id_space, $id_note, $priority, $deadline)
     {
         if ($deadline == '') {
             $deadline = null;
@@ -75,21 +75,21 @@ class BjTask extends Model
         if ($priority == '') {
             $priority = 0;
         }
-        if ($this->exists($idSpace, $id_note)) {
+        if ($this->exists($id_space, $id_note)) {
             $sql = "UPDATE bj_tasks SET priority=?, deadline=? WHERE id_note=? AND id_space=?";
-            $this->runRequest($sql, array($priority, $deadline, $id_note, $idSpace));
+            $this->runRequest($sql, array($priority, $deadline, $id_note, $id_space));
         } else {
             $sql = "INSERT INTO bj_tasks (id_note, priority, deadline, id_space) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($id_note, $priority, $deadline, $idSpace));
+            $this->runRequest($sql, array($id_note, $priority, $deadline, $id_space));
             $id_note = $this->getDatabase()->lastInsertId();
         }
         return $id_note;
     }
 
-    public function exists($idSpace, $id_note)
+    public function exists($id_space, $id_note)
     {
         $sql = "SELECT * from bj_tasks WHERE id_note=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id_note, $idSpace));
+        $req = $this->runRequest($sql, array($id_note, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
@@ -100,9 +100,9 @@ class BjTask extends Model
      * Delete a unit
      * @param number $id ID
      */
-    public function delete($idSpace, $id_note)
+    public function delete($id_space, $id_note)
     {
         $sql = "DELETE FROM bj_tasks WHERE id_note = ? AND id_space=?";
-        $this->runRequest($sql, array($id_note, $idSpace));
+        $this->runRequest($sql, array($id_note, $id_space));
     }
 }

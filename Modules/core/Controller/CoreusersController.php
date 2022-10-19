@@ -196,8 +196,8 @@ class CoreusersController extends CoresecureController
                     ? CoreTranslator::AccountHasBeenCreated($lang)
                     : CoreTranslator::AccountHasBeenModified($lang);
                 $_SESSION["flashClass"] = "success";
-                $idUser = $this->editQuery($form, $lang);
-                $user = $modelUser->getInfo($idUser);
+                $id_user = $this->editQuery($form, $lang);
+                $user = $modelUser->getInfo($id_user);
                 return $this->redirect("coreusers", [], ['user' => $user]);
             }
         }
@@ -314,17 +314,17 @@ class CoreusersController extends CoresecureController
      *
      * Returns true if user is pending or active in any space
      *
-     * @param int $idUser
+     * @param int $id_user
      *
      * @return bool
      */
-    public function isLinkedToAnySpace($idUser)
+    public function isLinkedToAnySpace($id_user)
     {
         $coreSpaceModel = new CoreSpaceUser();
         $corePendingModel = new CorePendingAccount();
         return (
-            $coreSpaceModel->getUserSpaceInfo($idUser) ||
-            $corePendingModel->isActuallyPendingInAnySpace($idUser)
+            $coreSpaceModel->getUserSpaceInfo($id_user) ||
+            $corePendingModel->isActuallyPendingInAnySpace($id_user)
         );
     }
 
@@ -386,7 +386,7 @@ class CoreusersController extends CoresecureController
     public function languageeditAction()
     {
         // language form
-        $idUser = $_SESSION["id_user"];
+        $id_user = $_SESSION["id_user"];
         $userSettingsModel = new CoreUserSettings();
 
         $lang = $this->getLanguage();
@@ -408,7 +408,7 @@ class CoreusersController extends CoresecureController
 
         if ($form->check()) {
             $lang = $this->request->getParameter("language");
-            $userSettingsModel->setSettings($idUser, "language", $lang);
+            $userSettingsModel->setSettings($id_user, "language", $lang);
             $userSettingsModel->updateSessionSettingVariable();
             $this->redirect("coresettings");
         }

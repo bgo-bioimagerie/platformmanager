@@ -142,14 +142,14 @@ abstract class CorecookiesecureController extends Controller
     /**
      *
      * @param string $menuName
-     * @param int $idSpace
-     * @param int $idUser
+     * @param int $id_space
+     * @param int $id_user
      * @throws Exception
      */
-    public function checkAuthorizationMenuSpace($menuName, $idSpace, $idUser)
+    public function checkAuthorizationMenuSpace($menuName, $id_space, $id_user)
     {
         $modelSpace = new CoreSpace();
-        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $idSpace, $idUser);
+        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
             if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
                 throw new PfmAuthException("Error 403: Permission denied", 403);
@@ -162,14 +162,14 @@ abstract class CorecookiesecureController extends Controller
     /**
      *
      * @param type $menuName
-     * @param type $idSpace
-     * @param type $idUser
+     * @param type $id_space
+     * @param type $id_user
      * @throws Exception
      */
-    public function checkAuthorizationMenuSpaceNoException($menuName, $idSpace, $idUser)
+    public function checkAuthorizationMenuSpaceNoException($menuName, $id_space, $id_user)
     {
         $modelSpace = new CoreSpace();
-        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $idSpace, $idUser);
+        $auth = $modelSpace->isUserMenuSpaceAuthorized($menuName, $id_space, $id_user);
         if ($auth == 0) {
             return false;
         }
@@ -195,38 +195,38 @@ abstract class CorecookiesecureController extends Controller
 
     /**
      *
-     * @param type $idSpace
-     * @param type $idUser
+     * @param type $id_space
+     * @param type $id_user
      * @return int
      */
-    public function getUserSpaceStatus($idSpace, $idUser)
+    public function getUserSpaceStatus($id_space, $id_user)
     {
         $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($idUser);
+        $userAppStatus = $modelUser->getStatus($id_user);
         if ($userAppStatus > 1) {
             return 4;
         }
         $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($idSpace, $idUser);
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
         return $spaceRole;
     }
 
     /**
      *
-     * @param int $idSpace
-     * @param int $idUser
+     * @param int $id_space
+     * @param int $id_user
      * @return boolean
      * @throws Exception
      */
-    public function checkSpaceAdmin($idSpace, $idUser)
+    public function checkSpaceAdmin($id_space, $id_user)
     {
         $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($idUser);
+        $userAppStatus = $modelUser->getStatus($id_user);
         if ($userAppStatus > CoreStatus::$USER) {
             return true;
         }
         $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($idSpace, $idUser);
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
         if ($spaceRole < CoreSpace::$ADMIN) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
@@ -234,19 +234,19 @@ abstract class CorecookiesecureController extends Controller
 
     /**
      *
-     * @param int $idSpace
-     * @param int $idUser
+     * @param int $id_space
+     * @param int $id_user
      * @return boolean
      */
-    public function isSpaceAdmin($idSpace, $idUser)
+    public function isSpaceAdmin($id_space, $id_user)
     {
         $modelUser = new CoreUser();
-        $userAppStatus = $modelUser->getStatus($idUser);
+        $userAppStatus = $modelUser->getStatus($id_user);
         if ($userAppStatus > CoreStatus::$USER) {
             return true;
         }
         $modelSpace = new CoreSpace();
-        $spaceRole = $modelSpace->getUserSpaceRole($idSpace, $idUser);
+        $spaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
         if ($spaceRole < CoreSpace::$ADMIN) {
             return false;
         }

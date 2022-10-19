@@ -21,14 +21,14 @@ class ProtocolsController extends AntibodiesController
     }
 
     // affiche la liste des isotypes
-    public function indexAction($idSpace, $sortEntry)
+    public function indexAction($id_space, $sortEntry)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         if ($sortEntry == "") {
             $sortEntry = "id";
         }
         // get the user list
-        $protocolesArray = $this->protocolModel->getProtocols2($idSpace, $sortEntry);
+        $protocolesArray = $this->protocolModel->getProtocols2($id_space, $sortEntry);
 
         $table = new TableView();
         $table->setTitle("Protocoles");
@@ -49,12 +49,12 @@ class ProtocolsController extends AntibodiesController
             "inc2" => "acII Inc"
         );
 
-        $table->addLineEditButton('protocolsedit/'.$idSpace, "id");
-        $table->addDeleteButton("protocolsdelete/".$idSpace, "id", "no_proto");
+        $table->addLineEditButton('protocolsedit/'.$id_space, "id");
+        $table->addDeleteButton("protocolsdelete/".$id_space, "id", "no_proto");
         $tableView = $table->view($protocolesArray, $headers);
 
         $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'lang' => $this->getLanguage(),
             'protocols' => $protocolesArray,
             'tableHtml' => $tableView
@@ -66,7 +66,7 @@ class ProtocolsController extends AntibodiesController
      * @deprecated
      */
 
-    public function protoref($idSpace)
+    public function protoref($id_space)
     {
         throw new PfmException("deprecated method", 500);
 
@@ -78,11 +78,11 @@ class ProtocolsController extends AntibodiesController
 
         // get the user list
         //echo "action id = " . $anticorpsId . "<br />";
-        $protocolesArray = $this->protocolModel->getProtocolsByAnticorps($idSpace, $anticorpsId);
+        $protocolesArray = $this->protocolModel->getProtocolsByAnticorps($id_space, $anticorpsId);
 
         throw new PfmException("deprecated method", 500)
         // view
-        $navBar = $this->navBar($idSpace);
+        $navBar = $this->navBar($id_space);
         $this->generateView(array(
             'navBar' => $navBar,
             'protocols' => $protocolesArray
@@ -90,9 +90,9 @@ class ProtocolsController extends AntibodiesController
         */
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $protocol ['id'] = "";
         $protocol ['kit'] = "";
         $protocol ['no_proto'] = "";
@@ -110,7 +110,7 @@ class ProtocolsController extends AntibodiesController
 
         if ($id != 0) {
             // get isotype info
-            $protocol = $this->protocolModel->getProtocol($idSpace, $id);
+            $protocol = $this->protocolModel->getProtocol($id_space, $id);
         }
 
         // lists
@@ -125,20 +125,20 @@ class ProtocolsController extends AntibodiesController
         $modelInc = new Inc();
         $modelAcii = new Acii();
 
-        $kits = $modelKit->getKits($idSpace, "id");
-        $protos = $modelProto->getProtos($idSpace, "id");
-        $fixatives = $modelFixative->getFixatives($idSpace, "id");
-        $options = $modelOption->getOptions($idSpace, "id");
-        $enzymes = $modelEnzyme->getEnzymes($idSpace, "id");
-        $dems = $modelDem->getDems($idSpace, "id");
-        $aciincs = $modelAciinc->getAciincs($idSpace, "id");
-        $linkers = $modelLinker->getLinkers($idSpace, "id");
-        $incs = $modelInc->getIncs($idSpace, "id");
-        $aciis = $modelAcii->getAciis($idSpace, "id");
+        $kits = $modelKit->getKits($id_space, "id");
+        $protos = $modelProto->getProtos($id_space, "id");
+        $fixatives = $modelFixative->getFixatives($id_space, "id");
+        $options = $modelOption->getOptions($id_space, "id");
+        $enzymes = $modelEnzyme->getEnzymes($id_space, "id");
+        $dems = $modelDem->getDems($id_space, "id");
+        $aciincs = $modelAciinc->getAciincs($id_space, "id");
+        $linkers = $modelLinker->getLinkers($id_space, "id");
+        $incs = $modelInc->getIncs($id_space, "id");
+        $aciis = $modelAcii->getAciis($id_space, "id");
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'protocol' => $protocol,
             'kits' => $kits,
             'protos' => $protos,
@@ -153,9 +153,9 @@ class ProtocolsController extends AntibodiesController
         ));
     }
 
-    public function editqueryAction($idSpace)
+    public function editqueryAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get form variables
         $id = $this->request->getParameterNoException("id");
         $kit = $this->request->getParameter("kit");
@@ -174,20 +174,20 @@ class ProtocolsController extends AntibodiesController
 
         // add query
         if ($id == "") {
-            $id = $this->protocolModel->addProtocol($idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
+            $id = $this->protocolModel->addProtocol($id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
         } else {
-            $this->protocolModel->editProtocol($id, $idSpace, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
+            $this->protocolModel->editProtocol($id, $id_space, $kit, $no_proto, $proto, $fixative, $option, $enzyme, $dem, $acl_inc, $linker, $inc, $acll, $inc2, $associe);
         }
 
-        return $this->redirect("protocols/".$idSpace. "/id", [], ['protocol' => ['id' => $id]]);
+        return $this->redirect("protocols/".$id_space. "/id", [], ['protocol' => ['id' => $id]]);
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->protocolModel->delete($idSpace, $id);
+        $this->protocolModel->delete($id_space, $id);
 
-        $this->redirect("protocols/".$idSpace. "/id");
+        $this->redirect("protocols/".$id_space. "/id");
     }
 }

@@ -29,10 +29,10 @@ class BkPrice extends Model
         $this->runRequest($sql);
     }
 
-    public function getPrice($idSpace, $id_resource, $id_belongings)
+    public function getPrice($id_space, $id_resource, $id_belongings)
     {
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -40,10 +40,10 @@ class BkPrice extends Model
         return 0;
     }
 
-    public function getDayPrice($idSpace, $id_resource, $id_belongings)
+    public function getDayPrice($id_space, $id_resource, $id_belongings)
     {
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "day", $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "day", $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -51,10 +51,10 @@ class BkPrice extends Model
         return 0;
     }
 
-    public function getNightPrice($idSpace, $id_resource, $id_belongings)
+    public function getNightPrice($id_space, $id_resource, $id_belongings)
     {
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "night", $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "night", $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -62,10 +62,10 @@ class BkPrice extends Model
         return 0;
     }
 
-    public function getWePrice($idSpace, $id_resource, $id_belongings)
+    public function getWePrice($id_space, $id_resource, $id_belongings)
     {
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "we", $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, "we", $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -73,10 +73,10 @@ class BkPrice extends Model
         return 0;
     }
 
-    public function getPackagePrice($idSpace, $package_id, $resources_id, $belonging_id)
+    public function getPackagePrice($id_space, $package_id, $resources_id, $belonging_id)
     {
         $sql = "SELECT price FROM bk_prices WHERE id_resource=? AND id_belonging=? AND id_package=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($resources_id, $belonging_id, $package_id, $idSpace));
+        $req = $this->runRequest($sql, array($resources_id, $belonging_id, $package_id, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -84,19 +84,19 @@ class BkPrice extends Model
         return 0;
     }
 
-    public function setPriceDay($idSpace, $id_resource, $id_belongings, $price)
+    public function setPriceDay($id_space, $id_resource, $id_belongings, $price)
     {
-        if ($this->isPriceDay($idSpace, $id_resource, $id_belongings, "day")) {
+        if ($this->isPriceDay($id_space, $id_resource, $id_belongings, "day")) {
             $sql = "UPDATE bk_prices SET price=? WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "day", $idSpace));
+            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "day", $id_space));
         } else {
             $sql = "INSERT INTO bk_prices (id_resource, id_belonging, price, day_night_we, id_space) VALUES (?,?,?,?,?)";
-            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "day", $idSpace));
+            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "day", $id_space));
         }
     }
 
     public function import(
-        $idSpace,
+        $id_space,
         $id_resource,
         $id_package,
         $day_night_we,
@@ -105,56 +105,56 @@ class BkPrice extends Model
     )
     {
         $sql = "INSERT INTO bk_prices (id_resource, id_package, id_belonging, price, day_night_we, id_space) VALUES (?,?,?,?,?,?)";
-        $this->runRequest($sql, array($id_resource, $id_package, $id_belonging, $price, $day_night_we, $idSpace));
+        $this->runRequest($sql, array($id_resource, $id_package, $id_belonging, $price, $day_night_we, $id_space));
     }
 
-    public function setPriceNight($idSpace, $id_resource, $id_belongings, $price)
+    public function setPriceNight($id_space, $id_resource, $id_belongings, $price)
     {
-        if ($this->isPriceDay($idSpace, $id_resource, $id_belongings, "night")) {
+        if ($this->isPriceDay($id_space, $id_resource, $id_belongings, "night")) {
             $sql = "UPDATE bk_prices SET price=? WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "night", $idSpace));
+            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "night", $id_space));
         } else {
             $sql = "INSERT INTO bk_prices (id_resource, id_belonging, price, day_night_we, id_space) VALUES (?,?,?,?,?)";
-            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "night", $idSpace));
+            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "night", $id_space));
         }
     }
 
-    public function setPriceWe($idSpace, $id_resource, $id_belongings, $price)
+    public function setPriceWe($id_space, $id_resource, $id_belongings, $price)
     {
-        if ($this->isPriceDay($idSpace, $id_resource, $id_belongings, "we")) {
+        if ($this->isPriceDay($id_space, $id_resource, $id_belongings, "we")) {
             $sql = "UPDATE bk_prices SET price=? WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "we", $idSpace));
+            $this->runRequest($sql, array($price, $id_resource, $id_belongings, "we", $id_space));
         } else {
             $sql = "INSERT INTO bk_prices (id_resource, id_belonging, price, day_night_we, id_space) VALUES (?,?,?,?,?)";
-            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "we", $idSpace));
+            $this->runRequest($sql, array($id_resource, $id_belongings, $price, "we", $id_space));
         }
     }
 
-    public function setPricePackage($idSpace, $id_resource, $id_belongings, $id_package, $price)
+    public function setPricePackage($id_space, $id_resource, $id_belongings, $id_package, $price)
     {
-        if ($this->isPricePackage($idSpace, $id_resource, $id_belongings, $id_package)) {
+        if ($this->isPricePackage($id_space, $id_resource, $id_belongings, $id_package)) {
             $sql = "UPDATE bk_prices SET price=? WHERE id_resource=? AND id_belonging=? AND id_package=? AND deleted=0 AND id_space=?";
-            $this->runRequest($sql, array($price, $id_resource, $id_belongings, $id_package, $idSpace));
+            $this->runRequest($sql, array($price, $id_resource, $id_belongings, $id_package, $id_space));
         } else {
             $sql = "INSERT INTO bk_prices (id_resource, id_belonging, price, id_package, id_space) VALUES (?,?,?,?,?)";
-            $this->runRequest($sql, array($id_resource, $id_belongings, $price, $id_package, $idSpace));
+            $this->runRequest($sql, array($id_resource, $id_belongings, $price, $id_package, $id_space));
         }
     }
 
-    public function isPricePackage($idSpace, $id_resource, $id_belongings, $id_package)
+    public function isPricePackage($id_space, $id_resource, $id_belongings, $id_package)
     {
         $sql = "SELECT id FROM bk_prices WHERE id_resource=? AND id_belonging=? AND id_package=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $id_package, $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $id_package, $id_space));
         if ($req->rowCount() > 0) {
             return true;
         }
         return false;
     }
 
-    public function isPriceDay($idSpace, $id_resource, $id_belongings, $day)
+    public function isPriceDay($id_space, $id_resource, $id_belongings, $day)
     {
         $sql = "SELECT id FROM bk_prices WHERE id_resource=? AND id_belonging=? AND day_night_we=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $day, $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_belongings, $day, $id_space));
         return ($req->rowCount() > 0);
     }
 }

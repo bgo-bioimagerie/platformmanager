@@ -42,15 +42,15 @@ class CoreMainMenuItem extends Model
         return $this->runRequest($sql, array($id_sub_menu))->fetchAll();
     }
 
-    public function set($id, $name, $id_sub_menu, $idSpace, $display_order)
+    public function set($id, $name, $id_sub_menu, $id_space, $display_order)
     {
         if ($id > 0) {
             $sql = "UPDATE core_main_menu_items SET name=?, id_sub_menu=?, id_space=?, display_order=? WHERE id=?";
-            $this->runRequest($sql, array($name, $id_sub_menu, $idSpace, $display_order, $id));
+            $this->runRequest($sql, array($name, $id_sub_menu, $id_space, $display_order, $id));
             return $id;
         } else {
             $sql = "INSERT INTO core_main_menu_items (name, id_sub_menu, id_space, display_order) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($name, $id_sub_menu, $idSpace, $display_order));
+            $this->runRequest($sql, array($name, $id_sub_menu, $id_space, $display_order));
             return $this->getDatabase()->lastInsertId();
         }
     }
@@ -84,9 +84,9 @@ class CoreMainMenuItem extends Model
         $list = $this->runRequest($sql, array($id_submenu))->fetchAll();
 
         $items = array();
-        foreach ($list as $idSpace) {
+        foreach ($list as $id_space) {
             $sql = "SELECT * FROM core_spaces WHERE id=?";
-            $data = $this->runRequest($sql, array($idSpace[0]))->fetch();
+            $data = $this->runRequest($sql, array($id_space[0]))->fetch();
             $items[] = $data;
         }
 

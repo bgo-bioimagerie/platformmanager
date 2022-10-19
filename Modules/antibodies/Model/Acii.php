@@ -32,10 +32,10 @@ class Acii extends Model
         return $pdo;
     }
 
-    public function getBySpace($idSpace)
+    public function getBySpace($id_space)
     {
         $sql = "SELECT * from ac_aciis WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -45,10 +45,10 @@ class Acii extends Model
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getAciis($idSpace, $sortentry = 'id')
+    public function getAciis($id_space, $sortentry = 'id')
     {
         $sql = "SELECT * from ac_aciis WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -59,14 +59,14 @@ class Acii extends Model
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return array( "id" => 0, "nom" => "");
         }
 
         $sql = "SELECT * from ac_aciis where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $idSpace));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -80,11 +80,11 @@ class Acii extends Model
      * @param string $name name of the espece
      *
      */
-    public function add($name, $idSpace)
+    public function add($name, $id_space)
     {
         $sql = "insert into ac_aciis(nom, id_space)"
                 . " values(?,?)";
-        $this->runRequest($sql, array($name, $idSpace));
+        $this->runRequest($sql, array($name, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -94,16 +94,16 @@ class Acii extends Model
      * @param int $id Id of the  to update
      * @param string $name New name of the
      */
-    public function edit($id, $name, $idSpace)
+    public function edit($id, $name, $id_space)
     {
         $sql = "update ac_aciis set nom=? where id=? AND id_space=?";
-        $this->runRequest($sql, array("" . $name . "", $id, $idSpace));
+        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
     }
 
-    public function getIdFromName($name, $idSpace)
+    public function getIdFromName($name, $id_space)
     {
         $sql = "select id from ac_aciis where nom=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($name, $idSpace));
+        $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -112,10 +112,10 @@ class Acii extends Model
         }
     }
 
-    public function getNameFromId($idSpace, $id)
+    public function getNameFromId($id_space, $id)
     {
         $sql = "select nom from ac_aciis where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $idSpace));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -124,9 +124,9 @@ class Acii extends Model
         }
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE ac_aciis SET deleted=1,deleted_at=NOW() WHERE id=? and id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

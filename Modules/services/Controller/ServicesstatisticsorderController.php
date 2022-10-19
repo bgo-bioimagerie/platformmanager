@@ -39,9 +39,9 @@ class ServicesstatisticsorderController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // build the form
@@ -51,19 +51,19 @@ class ServicesstatisticsorderController extends ServicesController
         $form->addDate("end_period", ServicesTranslator::End_period($lang), true, "");
 
 
-        $form->setValidationButton("Ok", "servicesstatisticsorder/".$idSpace);
+        $form->setValidationButton("Ok", "servicesstatisticsorder/".$id_space);
 
         $stats = "";
         if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
-            $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
+            $role = $cs->getSpaceMenusRole($id_space, 'statistics');
             $dateBegin = $form->getParameter("begining_period");
             $dateEnd = $form->getParameter("end_period");
             $name = 'stats_'.SeStats::STATS_ORDERS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
 
-            $fid = $c->set(0, $idSpace, $name, $role, 'statistics', $_SESSION['id_user']);
-            $c->status($idSpace, $fid, CoreFiles::$PENDING, '');
+            $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
+            $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
             Events::send([
                 "action" => Events::ACTION_STATISTICS_REQUEST,
@@ -73,17 +73,17 @@ class ServicesstatisticsorderController extends ServicesController
                 "user" => ["id" => $_SESSION['id_user']],
                 "lang" => $lang,
                 "file" => ["id" => $fid],
-                "space" => ["id" => $idSpace]
+                "space" => ["id" => $id_space]
             ]);
 
-            return $this->redirect('statistics/'.$idSpace, [], ['stats' => ['id' => $fid]]);
+            return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
         // set the view
         $formHtml = $form->getHtml($lang);
         // view
         $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             'formHtml' => $formHtml,
             'stats' => $stats

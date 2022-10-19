@@ -34,16 +34,16 @@ class InvoicesvisaController extends InvoicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $table = new TableView();
         $table->setTitle(InvoicesTranslator::Visa($lang), 3);
 
-        $table->addLineEditButton("invoicesvisaedit/" . $idSpace);
-        $table->addDeleteButton("invoicesvisadelete/" . $idSpace, "id", "id");
+        $table->addLineEditButton("invoicesvisaedit/" . $id_space);
+        $table->addDeleteButton("invoicesvisadelete/" . $id_space, "id", "id");
 
         $headersArray = array(
             "id" => "ID",
@@ -51,58 +51,58 @@ class InvoicesvisaController extends InvoicesController
         );
 
         $modelVisa = new InVisa();
-        $entriesArray = $modelVisa->getAll($idSpace);
+        $entriesArray = $modelVisa->getAll($id_space);
         $tableHtml = $table->view($entriesArray, $headersArray);
 
         //
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml,
                 ), "indexAction");
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if (!$id) {
             $value = array("id" => 0,  "id_user" => 0);
         } else {
-            $value = $this->visaModel->get($idSpace, $id);
+            $value = $this->visaModel->get($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(InvoicesTranslator::Visa($lang));
 
         $modelUser = new CoreUser();
-        $users = $modelUser->getSpaceActiveUsersForSelect($idSpace, "name");
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
 
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesvisaedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "invoicesvisas/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesvisaedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "invoicesvisas/" . $id_space);
 
         if ($form->check()) {
             $this->visaModel->set(
                 $id,
                 $this->request->getParameter("id_user"),
-                $idSpace
+                $id_space
             );
 
-            $this->redirect("invoicesvisas/" . $idSpace);
+            $this->redirect("invoicesvisas/" . $id_space);
             return;
         }
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
-        $this->visaModel->delete($idSpace, $id);
-        $this->redirect("invoicesvisas/" . $idSpace);
+        $this->visaModel->delete($id_space, $id);
+        $this->redirect("invoicesvisas/" . $id_space);
     }
 }

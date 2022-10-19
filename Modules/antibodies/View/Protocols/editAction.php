@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 <div class=" pm-table">
 	<div class="col-6 offset-3">
-	<form role="form" class="form-horizontal" action="protocolseditquery/<?php echo $idSpace ?>"
+	<form role="form" class="form-horizontal" action="protocolseditquery/<?php echo $id_space ?>"
 		method="post">
 	
 	
@@ -292,7 +292,7 @@ foreach ($incs as $var) {
 		<div class="col-6 offset-6" id="button-div">
 		        <input type="submit" class="btn btn-primary" value="Save" />
 		        <?php if ($protocol['id'] != "") { ?>
-		        	<button type="button" onclick="location.href='<?php echo "protocolsdelete/".$idSpace."/".$protocol['id'] ?>'" class="btn btn-danger"><?php echo  CoreTranslator::Delete($lang)?></button>
+		        	<button type="button" onclick="location.href='<?php echo "protocolsdelete/".$id_space."/".$protocol['id'] ?>'" class="btn btn-danger"><?php echo  CoreTranslator::Delete($lang)?></button>
 				<?php }?>
 				<button type="button" onclick="location.href='protocols'" class="btn btn-outline-dark">Cancel</button>
 		</div>

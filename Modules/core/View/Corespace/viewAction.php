@@ -28,7 +28,7 @@ if ($space['color'] == "") {
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
 $navController = new ComtileController(new Request(array(), false), $space);
-echo $navController->indexAction($idSpace);
+echo $navController->indexAction($id_space);
 ?>
 
 <?php
@@ -55,7 +55,7 @@ if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
 foreach ($spaceMenuItems as $item) {
     ?>
                         <li style="background-color:<?php echo $item["color"]; ?>; <?php echo "; color: ".$item["txtcolor"]; ?>">
-                            <a href="<?php echo $item["url"] . "/" . $idSpace ?>">
+                            <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span style="font-size: 1.4rem" height class="pm-tiles <?php echo $item["icon"] ?>" aria-hidden="true"></span>
                                 <span style="<?php echo "color: ".$item["txtcolor"]; ?>" class="pm-tiles glyphicon-class"><?php echo $item["name"] ?></span>
                                 <span v-if="notifs && notifs.<?php echo strtolower($item['url']); ?>" class="m-1 badge bg-primary">{{notifs.<?php echo strtolower($item['url']); ?>}}</span>
@@ -159,7 +159,7 @@ foreach ($spaceMenuItems as $item) {
 Vue.createApp({
     data() {
         return {
-            id_space: <?php echo $idSpace ?>,
+            id_space: <?php echo $id_space ?>,
             logged: <?php if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
                 echo "true";
             } else {

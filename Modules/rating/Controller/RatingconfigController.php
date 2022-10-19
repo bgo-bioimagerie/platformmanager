@@ -29,27 +29,27 @@ class RatingconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
         if (!$plan->hasFlag(CorePlan::FLAGS_SATISFACTION)) {
             throw new PfmAuthException('Sorry, space does not have this feature plan');
         }
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'rating', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'rating', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'rating', 'star');
-            $this->redirect("ratingconfig/".$idSpace);
+            $this->menusactivation($id_space, 'rating', 'star');
+            $this->redirect("ratingconfig/".$id_space);
             return;
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
 
-        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 }

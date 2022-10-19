@@ -22,62 +22,62 @@ class KitController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $kitssArray = $this->model->getBySpace($idSpace);
+        $kitssArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Kits", 3);
-        $table->addLineEditButton("kitedit/".$idSpace."/");
-        $table->addDeleteButton("kitdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("kitedit/".$id_space."/");
+        $table->addDeleteButton("kitdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($kitssArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $kits = $this->model->get($idSpace, $id);
+        $kits = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "kitseditform");
         $form->setTitle("Modifier kits");
         $form->addText("nom", "nom", true, $kits["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "kitedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "kitedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("kit/".$idSpace, [], ['kit' => ['id' => $id]]);
+            return $this->redirect("kit/".$id_space, [], ['kit' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("kit/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("kit/" . $id_space);
     }
 }

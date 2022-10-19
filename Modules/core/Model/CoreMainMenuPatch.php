@@ -55,11 +55,11 @@ class CoreMainMenuPatch extends Model
         $datamenus = $this->runRequest($sql)->fetchAll();
         foreach ($datamenus as $dm) {
             $spacelink = explode("/", $dm["link"]);
-            $idSpace = $spacelink[count($spacelink)-1];
+            $id_space = $spacelink[count($spacelink)-1];
             $id_sub_menu = $this->getNewSubMenuId($dm["id_menu"]);
 
             $sql = "INSERT INTO core_main_menu_items (name, id_sub_menu, id_space, display_order) VALUES (?,?,?,?)";
-            $this->runRequest($sql, array($dm["name"], $id_sub_menu, $idSpace, $dm["display_order"]));
+            $this->runRequest($sql, array($dm["name"], $id_sub_menu, $id_space, $dm["display_order"]));
         }
     }
 
@@ -79,10 +79,10 @@ class CoreMainMenuPatch extends Model
         $datamenus = $this->runRequest($sql)->fetchAll();
         foreach ($datamenus as $dm) {
             $spacelink = explode("/", $dm["link"]);
-            $idSpace = $spacelink[count($spacelink)-1];
+            $id_space = $spacelink[count($spacelink)-1];
 
             $sql = "UPDATE core_spaces SET description=?, image=? WHERE id=?";
-            $this->runRequest($sql, array($dm["description"], $dm["icon"], $idSpace));
+            $this->runRequest($sql, array($dm["description"], $dm["icon"], $id_space));
         }
     }
 

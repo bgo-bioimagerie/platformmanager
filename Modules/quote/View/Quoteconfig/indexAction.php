@@ -20,7 +20,7 @@
 
     <div class="col-xs-12 col-md-10 col-md-offset-1" style="background-color: #fff; border-radius: 7px; padding: 7px;">
         <h3><?php echo QuoteTranslator::PDFTemplate($lang) ?></h3>
-        <a class="btn btn-primary" href="/quote/<?php echo $idSpace ?>/pdftemplate" ><?php echo CoreTranslator::Edit($lang) ?></a>
+        <a class="btn btn-primary" href="/quote/<?php echo $id_space ?>/pdftemplate" ><?php echo CoreTranslator::Edit($lang) ?></a>
     </div>
 </div>
 </div>

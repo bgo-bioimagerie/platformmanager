@@ -27,12 +27,12 @@ class ServicesoriginsController extends ServicesController
         $this->originModel = new SeOrigin();
     }
 
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $data = $this->originModel->getAll($idSpace);
+        $data = $this->originModel->getAll($id_space);
         //print_r($data);
 
         $headers = array(
@@ -41,23 +41,23 @@ class ServicesoriginsController extends ServicesController
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::servicesOrigin($lang), 3);
-        $table->addLineEditButton("serviceoriginedit/" . $idSpace);
-        $table->addDeleteButton("serviceorigindelete/" . $idSpace);
+        $table->addLineEditButton("serviceoriginedit/" . $id_space);
+        $table->addDeleteButton("serviceorigindelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "tableHtml" => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if (!$id) {
             $value = array("name" => "", "display_order" => 1);
         } else {
-            $value = $this->originModel->get($idSpace, $id);
+            $value = $this->originModel->get($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
@@ -66,28 +66,28 @@ class ServicesoriginsController extends ServicesController
         $form->addText("name", CoreTranslator::Name($lang), true, $value["name"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $value["display_order"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "serviceoriginedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesorigins/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "serviceoriginedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesorigins/" . $id_space);
 
         if ($form->check()) {
             $origin_id = $this->originModel->set(
                 $id,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("display_order"),
-                $idSpace
+                $id_space
             );
 
-            return $this->redirect("servicesorigins/" . $idSpace, [], ['origin' => ['id' => $origin_id]]);
+            return $this->redirect("servicesorigins/" . $id_space, [], ['origin' => ['id' => $origin_id]]);
         }
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->originModel->delete($idSpace, $id);
-        $this->redirect("servicesorigins/" . $idSpace);
+        $this->originModel->delete($id_space, $id);
+        $this->redirect("servicesorigins/" . $id_space);
     }
 }

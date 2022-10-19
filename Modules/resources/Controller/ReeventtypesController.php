@@ -31,28 +31,28 @@ class ReeventtypesController extends ResourcesBaseController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Event_types($lang), 3);
-        $table->addLineEditButton("reeventtypesedit/".$idSpace);
-        $table->addDeleteButton("reeventtypesdelete/".$idSpace);
+        $table->addLineEditButton("reeventtypesedit/".$id_space);
+        $table->addDeleteButton("reeventtypesdelete/".$id_space);
 
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
 
-        $categories = $this->model->getForSpace($idSpace);
+        $categories = $this->model->getForSpace($id_space);
 
         $tableHtml = $table->view($categories, $headers);
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "htmlTable" => $tableHtml,
             "data" => ['reeventtypes' => $categories]
@@ -62,14 +62,14 @@ class ReeventtypesController extends ResourcesBaseController
     /**
      * Edit form
      */
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
-        $site = array("id" => 0, "name" => "", "id_space" => $idSpace);
+        $site = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
-            $site = $this->model->get($idSpace, $id);
+            $site = $this->model->get($id_space, $id);
         }
 
         // lang
@@ -82,19 +82,19 @@ class ReeventtypesController extends ResourcesBaseController
         $form->addHidden("id", $site["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $site["name"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "reeventtypesedit/".$idSpace ."/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "reeventtypes/".$idSpace);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "reeventtypesedit/".$id_space ."/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "reeventtypes/".$id_space);
 
         if ($form->check()) {
             // run the database query
-            $id_type = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $idSpace);
-            return $this->redirect("reeventtypes/".$idSpace, [], ['reeventtype' => ['id' => $id_type]]);
+            $id_type = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $id_space);
+            return $this->redirect("reeventtypes/".$id_space, [], ['reeventtype' => ['id' => $id_type]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
             return $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'data' => ['reeventtype' => $site]
@@ -102,11 +102,11 @@ class ReeventtypesController extends ResourcesBaseController
         }
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
-        $this->model->delete($idSpace, $id);
-        $this->redirect("reeventtypes/".$idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("reeventtypes/".$id_space);
     }
 }

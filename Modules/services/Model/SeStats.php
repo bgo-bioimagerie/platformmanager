@@ -17,25 +17,25 @@ require_once 'Modules/core/Model/CoreTranslator.php';
 
 class SeOrderStats
 {
-    public function generateBalance($filepath, $idSpace, $periodStart, $periodEnd, $spreadsheet=null, $lang='en')
+    public function generateBalance($filepath, $id_space, $periodStart, $periodEnd, $spreadsheet=null, $lang='en')
     {
         // get all the opened projects informations
         $modelOrders = new SeOrder();
-        $openedOrders = $modelOrders->getOrdersOpenedPeriod($idSpace, $periodStart, $periodEnd);
+        $openedOrders = $modelOrders->getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd);
 
         // get all the priced projects details
-        $ordersBalance = $modelOrders->getPeriodeServicesBalancesOrders($idSpace, $periodStart, $periodEnd);
-        $ordersBilledBalance = $modelOrders->getPeriodeBilledServicesBalancesOrders($idSpace, $periodStart, $periodEnd);
+        $ordersBalance = $modelOrders->getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd);
+        $ordersBilledBalance = $modelOrders->getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd);
 
         // get the bill manager list
         $modelBillManager = new InInvoice();
         $controller = "servicesinvoiceorder";
-        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $idSpace);
+        $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
 
-        $this->makeBalanceXlsFile($filepath, $idSpace, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet, $lang);
+        $this->makeBalanceXlsFile($filepath, $id_space, $periodStart, $periodEnd, $openedOrders, $ordersBalance, $ordersBilledBalance, $invoices, $spreadsheet, $lang);
     }
 
-    private function makeBalanceXlsFile($filepath, $idSpace, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null, $lang='en')
+    private function makeBalanceXlsFile($filepath, $id_space, $periodStart, $periodEnd, $openedOrders, $projectsBalance, $ordersBilledBalance, $invoices, $spreadsheet=null, $lang='en')
     {
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
@@ -123,11 +123,11 @@ class SeOrderStats
 
             // getting client from user
             $user = $modelUser->getInfo($proj["id_user"]);
-            $idUser = $user['id'];
+            $id_user = $user['id'];
             $modelClUser = new ClClientUser();
             // FIXME: array to string conversion that is displayed in generated spreadsheet instead of anything else when in debug mode
             // Should work not in debug mode
-            $client = $modelClUser->getUserClientAccounts($idSpace, $idUser);
+            $client = $modelClUser->getUserClientAccounts($id_space, $id_user);
             $clientName = $client ? $client[0]["name"] : "n/a";
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $clientName /*$modelUser->getUserFullName($proj["id_resp"])*/);
@@ -190,7 +190,7 @@ class SeOrderStats
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item, true) ?? Constants::UNKNOWN ;
+            $name = $modelItem->getItemName($id_space, $item, true) ?? Constants::UNKNOWN ;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -198,7 +198,7 @@ class SeOrderStats
         $orders = $ordersBilledBalance["orders"];
         foreach ($orders as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFullName($proj["id_user"]));
@@ -272,7 +272,7 @@ class SeOrderStats
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($idSpace, $invoice["id_responsible"]);
+            $unitName = $modelClient->getInstitution($id_space, $invoice["id_responsible"]);
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($invoice["id_responsible"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $invoice["number"]);
@@ -325,7 +325,7 @@ class SeOrderStats
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item[0], true) ?? Constants::UNKNOWN;
+            $name = $modelItem->getItemName($id_space, $item[0], true) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -344,7 +344,7 @@ class SeOrderStats
         $projects = $projectsBalance["orders"];
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFullName($proj["id_user"]));
@@ -449,9 +449,9 @@ class SeStats extends Model
     public const STATS_MAIL_RESPS = 'se_mailresps';
     public const STATS_ORDERS = 'se_orders';
 
-    public function generateBalanceReport($filepath, $idSpace, $dateBegin, $dateEnd, $lang)
+    public function generateBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $lang)
     {
-        $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $idSpace);
+        $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space);
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         $dir = dirname($filepath);
         if (!file_exists($dir)) {
@@ -460,11 +460,11 @@ class SeStats extends Model
         $objWriter->save($filepath);
     }
 
-    public function emailRespsReport($filepath, $idSpace, $dateBegin, $dateEnd, $lang='en')
+    public function emailRespsReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en')
     {
         $modelProject = new SeProject();
         $data = $modelProject->getRespsPeriod(
-            $idSpace,
+            $id_space,
             $dateBegin,
             $dateEnd
         );
@@ -484,10 +484,10 @@ class SeStats extends Model
         file_put_contents($filepath, $content);
     }
 
-    public function samplesReport($filepath, $idSpace, $lang)
+    public function samplesReport($filepath, $id_space, $lang)
     {
         $modelProject = new SeProject();
-        $returnedSamples = $modelProject->getReturnedSamples($idSpace);
+        $returnedSamples = $modelProject->getReturnedSamples($id_space);
 
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
@@ -584,11 +584,11 @@ class SeStats extends Model
         $objWriter->save($filepath);
     }
 
-    public function computeStatsProjects($idSpace, $startDate_min, $startDate_max)
+    public function computeStatsProjects($id_space, $startDate_min, $startDate_max)
     {
         // total number of projects
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -601,8 +601,8 @@ class SeStats extends Model
 
         foreach ($projects as $project) {
             // get the responsible unit
-            $clientInfo = $modelClient->get($idSpace, $project["id_resp"]);
-            $pricingInfo = $modelPricing->get($idSpace, $clientInfo["pricing"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
             if ($pricingInfo["type"] == 1) {
                 $numberAccademicProjects++;
             } else {
@@ -612,12 +612,12 @@ class SeStats extends Model
 
         // number of new academic team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicTeam = $req->rowCount();
 
         // number of new industry team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
 
         $purcentageNewIndustryTeam = 0;
@@ -648,11 +648,11 @@ class SeStats extends Model
         );
     }
 
-    public function computeDelayStats($idSpace, $periodStart, $periodEnd)
+    public function computeDelayStats($id_space, $periodStart, $periodEnd)
     {
         // total number of projects
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($periodStart, $periodEnd, $idSpace));
+        $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -681,8 +681,8 @@ class SeStats extends Model
 
         foreach ($projects as $project) {
             // get the responsible unit
-            $clientInfo = $modelClient->get($idSpace, $project["id_resp"]);
-            $pricingInfo = $modelPricing->get($idSpace, $clientInfo["pricing"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
 
             $onTime = true;
             if ($project["date_close"] != "" && $project["date_close"] != null
@@ -718,10 +718,10 @@ class SeStats extends Model
             );
     }
 
-    public function getResponsiblesCsv($idSpace, $startDate_min, $startDate_max, $lang)
+    public function getResponsiblesCsv($id_space, $startDate_min, $startDate_max, $lang)
     {
         $sql = "select distinct id_resp from se_project where date_open >= ? AND date_open <= ?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -741,35 +741,35 @@ class SeStats extends Model
         echo $content;
     }
 
-    public function computeOriginStats($idSpace, $periodStart, $periodEnd)
+    public function computeOriginStats($id_space, $periodStart, $periodEnd)
     {
-        $academique = $this->computeSingleOriginStats($idSpace, $periodStart, $periodEnd, 2);
-        $private = $this->computeSingleOriginStats($idSpace, $periodStart, $periodEnd, 3);
+        $academique = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 2);
+        $private = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 3);
 
         return array("academique" => $academique, "private" => $private);
     }
 
-    public function computeSingleOriginStats($idSpace, $periodStart, $periodEnd, $academic_private)
+    public function computeSingleOriginStats($id_space, $periodStart, $periodEnd, $academic_private)
     {
         $stats = array();
 
         $sql = "SELECT * FROM se_origin WHERE id_space = ? AND deleted=0 ORDER BY display_order ASC;";
-        $origins = $this->runRequest($sql, array($idSpace))->fetchAll();
+        $origins = $this->runRequest($sql, array($id_space))->fetchAll();
 
         foreach ($origins as $origin) {
             $sql = "SELECT * FROM se_project WHERE date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0 AND new_project=? AND id_origin=?";
-            $req = $this->runRequest($sql, array($periodStart, $periodEnd, $idSpace, $academic_private, $origin["id"]));
+            $req = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space, $academic_private, $origin["id"]));
 
             $stats[] = array("id_origin" => $origin["id"], "origin" => $origin["name"], "count" => $req->rowCount());
         }
         return $stats;
     }
 
-    public function computeStats($idSpace, $startDate_min, $startDate_max)
+    public function computeStats($id_space, $startDate_min, $startDate_max)
     {
         // total number of projects
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, $id_space));
         $totalNumberOfProjects = $req->rowCount();
         $projects = $req->fetchAll();
 
@@ -782,9 +782,9 @@ class SeStats extends Model
 
         foreach ($projects as $project) {
             // get the responsible unit
-            $clientInfo = $modelClient->get($idSpace, $project["id_resp"]);
+            $clientInfo = $modelClient->get($id_space, $project["id_resp"]);
 
-            $pricingInfo = $modelPricing->get($idSpace, $clientInfo["pricing"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientInfo["pricing"]);
 
             if ($pricingInfo["type"] == 1) {
                 $numberAccademicProjects++;
@@ -795,24 +795,24 @@ class SeStats extends Model
 
         // number of new academic projects
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicProject = $req->rowCount();
 
         //echo "numberNewAccademicProject = " . $numberNewAccademicProject . "<br/>";
         // number of new academic team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 2, $id_space));
         $numberNewAccademicTeam = $req->rowCount();
 
         //echo "numberNewAccademicTeam = " . $numberNewAccademicTeam . "<br/>";
         // number of new industry projects
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_project=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryProject = $req->rowCount();
 
         // number of new industry team
         $sql = "select * from se_project where date_open >= ? AND date_open <= ? AND new_team=?  AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $idSpace));
+        $req = $this->runRequest($sql, array($startDate_min, $startDate_max, 3, $id_space));
         $numberNewIndustryTeam = $req->rowCount();
 
 
@@ -845,36 +845,36 @@ class SeStats extends Model
         return $output;
     }
 
-    public function getBalance($periodStart, $periodEnd, $idSpace, $isglobal = false, $spreadsheet=null, $lang='en')
+    public function getBalance($periodStart, $periodEnd, $id_space, $isglobal = false, $spreadsheet=null, $lang='en')
     {
         // get all the opened projects informations
         $modelProjects = new SeProject();
-        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $idSpace);
+        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
 
         // get all the priced projects details
-        $projectsBalance = $modelProjects->getPeriodeServicesBalances($idSpace, $periodStart, $periodEnd);
+        $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
 
-        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($idSpace, $periodStart, $periodEnd);
+        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
 
         // get the stats
         $modelStats = new SeStats();
-        $stats = $modelStats->computeStats($idSpace, $periodStart, $periodEnd);
-        $delayStats = $modelStats->computeDelayStats($idSpace, $periodStart, $periodEnd);
-        $statsOrigins = $modelStats->computeOriginStats($idSpace, $periodStart, $periodEnd);
+        $stats = $modelStats->computeStats($id_space, $periodStart, $periodEnd);
+        $delayStats = $modelStats->computeDelayStats($id_space, $periodStart, $periodEnd);
+        $statsOrigins = $modelStats->computeOriginStats($id_space, $periodStart, $periodEnd);
 
         // get the bill manager list
         $modelBillManager = new InInvoice();
         if ($isglobal) {
-            $invoices = $modelBillManager->getAllInvoicesPeriod($periodStart, $periodEnd, $idSpace);
+            $invoices = $modelBillManager->getAllInvoicesPeriod($periodStart, $periodEnd, $id_space);
         } else {
             $controller = "servicesinvoiceproject";
-            $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $idSpace);
+            $invoices = $modelBillManager->getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space);
         }
 
-        return $this->makeBalanceXlsFile($idSpace, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $spreadsheet, $lang);
+        return $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $spreadsheet, $lang);
     }
 
-    private function makeBalanceXlsFile($idSpace, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $spreadsheet=null, $lang='en')
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $invoices, $stats, $delayStats, $statsOrigins, $spreadsheet=null, $lang='en')
     {
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
@@ -1047,8 +1047,8 @@ class SeStats extends Model
             // responsable, client, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
 
-            $unitName = $modelClient->getName($idSpace, $proj["id_resp"]);
-            $visa = $modelVisa->get($idSpace, $proj["in_charge"]);
+            $unitName = $modelClient->getName($id_space, $proj["id_resp"]);
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
             $visaName = $modelUser->getUserFullName($visa["id_user"]);
             if (!array_key_exists($visaName, $pstats['in_charge'])) {
                 $pstats['in_charge'][$visaName] = 0;
@@ -1058,7 +1058,7 @@ class SeStats extends Model
                 $pstats['client'][$unitName] = 0;
             }
             $pstats['client'][$unitName] += 1;
-            $institutionName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $institutionName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             if (!array_key_exists($institutionName, $pstats['institution'])) {
                 $pstats['institution'][$institutionName] = 0;
             }
@@ -1100,7 +1100,7 @@ class SeStats extends Model
                 $proj["closed_by_in"] = array_key_exists("closed_by_in", $proj) ?: "n/a";
             }
 
-            $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($idSpace, $proj["id_origin"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('I' . $curentLine, $modelOrigin->getName($id_space, $proj["id_origin"]));
             $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCell);
 
             $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, CoreTranslator::dateFromEn($proj["date_open"], $lang));
@@ -1194,12 +1194,12 @@ class SeStats extends Model
         foreach ($invoices as $invoice) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($idSpace, $invoice["id_responsible"]);
+            $unitName = $modelClient->getInstitution($id_space, $invoice["id_responsible"]);
             $proj = null;
             $responsibleName = '';
             if ($invoice["controller"] == "servicesinvoiceproject") {
-                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $idSpace);
-                $visa = $modelVisa->get($idSpace, $proj["in_charge"]);
+                $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
+                $visa = $modelVisa->get($id_space, $proj["in_charge"]);
                 $responsibleName = $modelUser->getUserFullName($visa["id_user"]);
             }
 
@@ -1210,7 +1210,7 @@ class SeStats extends Model
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $invoice["title"]);
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, $invoice["total_ht"]);
             $spreadsheet->getActiveSheet()->SetCellValue('O' . $curentLine, CoreTranslator::dateFromEn($invoice["date_send"], $lang));
-            $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($idSpace, $invoice["visa_send"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('P' . $curentLine, $modelInvoiceVisa->getVisaNameShort($id_space, $invoice["visa_send"]));
 
             if ($invoice["controller"] == "servicesinvoiceproject" && $proj) {
                 if (isset($proj["new_team"])) {
@@ -1231,7 +1231,7 @@ class SeStats extends Model
                     $spreadsheet->getActiveSheet()->getStyle('H' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
                     $spreadsheet->getActiveSheet()->getStyle('I' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
-                    $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($idSpace, $proj["id_origin"]));
+                    $spreadsheet->getActiveSheet()->SetCellValue('J' . $curentLine, $modelOrigin->getName($id_space, $proj["id_origin"]));
                     $spreadsheet->getActiveSheet()->getStyle('J' . $curentLine)->applyFromArray($styleBorderedCenteredCell);
 
 
@@ -1450,7 +1450,7 @@ class SeStats extends Model
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item, true) ?? Constants::UNKNOWN;
+            $name = $modelItem->getItemName($id_space, $item, true) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -1459,8 +1459,8 @@ class SeStats extends Model
 
         foreach ($projects as $proj) {
             $curentLine++;
-            $visa = $modelVisa->get($idSpace, $proj["in_charge"]);
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($visa["id_user"] ?? 0));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFullName($proj["id_user"] ?? 0));
@@ -1538,7 +1538,7 @@ class SeStats extends Model
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item[0], true) ?? Constants::UNKNOWN;
+            $name = $modelItem->getItemName($id_space, $item[0], true) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -1557,8 +1557,8 @@ class SeStats extends Model
         foreach ($projects as $proj) {
             $curentLine++;
 
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
-            $visa = $modelVisa->get($idSpace, $proj["in_charge"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
+            $visa = $modelVisa->get($id_space, $proj["in_charge"]);
             $visaName = $modelUser->getUserFullName($visa["id_user"]);
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $visaName);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);

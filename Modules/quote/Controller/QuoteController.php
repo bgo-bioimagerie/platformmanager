@@ -15,13 +15,13 @@ class QuoteController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $id_space);
 
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' =>  QuoteTranslator::Quote($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -33,18 +33,18 @@ class QuoteController extends CoresecureController
         return $this->twig->render("Modules/quote/View/Quote/navbar.twig", $dataView);
     }
 
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
         $html = file_get_contents('Modules/quote/View/Quote/navbar.php');
 
         $lang = $this->getLanguage();
-        $html = str_replace('{{id_space}}', $idSpace, $html);
+        $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Quotes}}', QuoteTranslator::Quotes($lang), $html);
         $html = str_replace('{{CreateExistingUserQuote}}', QuoteTranslator::CreateExistingUserQuote($lang), $html);
         $html = str_replace('{{CreateNewUserQuote}}', QuoteTranslator::CreateNewUserQuote($lang), $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', QuoteTranslator::Quote($lang), $html);
@@ -55,11 +55,11 @@ class QuoteController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("quote", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $this->render(array("id_space" => $idSpace, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

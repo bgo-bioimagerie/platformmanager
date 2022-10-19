@@ -22,64 +22,64 @@ class EnzymesController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
-        $enzymessArray = $this->model->getBySpace($idSpace);
+        $enzymessArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Enzymes", 3);
-        $table->addLineEditButton("enzymesedit/".$idSpace."/");
-        $table->addDeleteButton("enzymesdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("enzymesedit/".$id_space."/");
+        $table->addDeleteButton("enzymesdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($enzymessArray, $headers);
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get isotype info
         $lang = $this->getLanguage();
-        $enzymes = $this->model->get($idSpace, $id);
+        $enzymes = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "enzymeseditform");
         $form->setTitle("Modifier enzymes");
         $form->addText("nom", "nom", true, $enzymes["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "enzymesedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "enzymesedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("enzymes/".$idSpace, [], ['enzyme' => ['id' => $id]]);
+            return $this->redirect("enzymes/".$id_space, [], ['enzyme' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("enzymes/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("enzymes/" . $id_space);
     }
 }

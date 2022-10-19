@@ -31,25 +31,25 @@ class HelpdeskconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelSpace = new CoreSpace();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'helpdesk', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'helpdesk', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'helpdesk', 'credit-card');
-            return $this->redirect("helpdeskconfig/".$idSpace);
+            $this->menusactivation($id_space, 'helpdesk', 'credit-card');
+            return $this->redirect("helpdeskconfig/".$id_space);
         }
 
         // menu name
-        $menuNameForm = $this->menuNameForm($idSpace, 'helpdesk', $lang);
+        $menuNameForm = $this->menuNameForm($id_space, 'helpdesk', $lang);
         if ($menuNameForm->check()) {
-            $this->setMenuName($idSpace, 'helpdesk');
-            return $this->redirect("helpdeskconfig/" . $idSpace);
+            $this->setMenuName($id_space, 'helpdesk');
+            return $this->redirect("helpdeskconfig/" . $id_space);
         }
 
         // view
@@ -58,12 +58,12 @@ class HelpdeskconfigController extends CoresecureController
             );
 
 
-        $space = $modelSpace->getSpace($idSpace);
+        $space = $modelSpace->getSpace($id_space);
         $hm = new Helpdesk();
         $fromAddress = $hm->fromAddress($space);
 
         $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "forms" => $forms,
             "lang" => $lang,
             "fromAddress" => $fromAddress

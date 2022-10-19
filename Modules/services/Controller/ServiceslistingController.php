@@ -30,12 +30,12 @@ class ServiceslistingController extends ServicesController
         $this->typeModel = new SeServiceType();
     }
 
-    public function listingAction($idSpace)
+    public function listingAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $data = $this->serviceModel->getAll($idSpace);
+        $data = $this->serviceModel->getAll($id_space);
 
         // set types from services
         $typesArray = $this->typeModel->getTypes();
@@ -53,27 +53,27 @@ class ServiceslistingController extends ServicesController
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::services($lang), 3);
-        $table->addLineEditButton("servicesedit/" . $idSpace);
-        $table->addDeleteButton("servicesdelete/" . $idSpace);
+        $table->addLineEditButton("servicesedit/" . $id_space);
+        $table->addDeleteButton("servicesdelete/" . $id_space);
 
         $tableHtml = $table->view($data, $headers);
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableHtml,
             "data" => ['services' => $data]
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         if (!$id) {
             $value = array("name" => "", "description" => "", "display_order" => "", "type_id" => "");
         } else {
-            $value = $this->serviceModel->getItem($idSpace, $id);
+            $value = $this->serviceModel->getItem($id_space, $id);
         }
 
         $form = new Form($this->request, "editserviceform");
@@ -87,39 +87,39 @@ class ServiceslistingController extends ServicesController
         $types = $modelTypes->getAllForSelect();
 
         $form->addSelect("type_id", CoreTranslator::type($lang), $types["names"], $types["ids"], $value["type_id"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "serviceslisting/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "serviceslisting/" . $id_space);
 
         if ($form->check()) {
             $service_id = $this->serviceModel->setService(
                 $id,
-                $idSpace,
+                $id_space,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("description"),
                 $this->request->getParameter("display_order"),
                 $this->request->getParameter("type_id")
             );
 
-            return $this->redirect("serviceslisting/" . $idSpace, [], ['service' => ['id' => $service_id]]);
+            return $this->redirect("serviceslisting/" . $id_space, [], ['service' => ['id' => $service_id]]);
         }
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($idSpace, $id);
-        $this->redirect("serviceslisting/" . $idSpace);
+        $this->serviceModel->delete($id_space, $id);
+        $this->redirect("serviceslisting/" . $id_space);
     }
 
-    public function stockAction($idSpace)
+    public function stockAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $data = $this->serviceModel->getAll($idSpace);
+        $data = $this->serviceModel->getAll($id_space);
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::name($lang),
@@ -131,6 +131,6 @@ class ServiceslistingController extends ServicesController
 
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "tableHtml" => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 }

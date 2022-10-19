@@ -39,31 +39,31 @@ class QuoteconfigController extends PfmTemplateController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'quote', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'quote', 'book');
-            return $this->redirect("quoteconfig/".$idSpace);
+            $this->menusactivation($id_space, 'quote', 'book');
+            return $this->redirect("quoteconfig/".$id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
 
-        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function pdftemplateAction($idSpace)
+    public function pdftemplateAction($id_space)
     {
-        return $this->pdftemplate($idSpace, 'quote', new QuoteTranslator());
+        return $this->pdftemplate($id_space, 'quote', new QuoteTranslator());
     }
 
-    public function pdftemplatedeleteAction($idSpace, $name)
+    public function pdftemplatedeleteAction($id_space, $name)
     {
-        return $this->pdftemplatedelete($idSpace, 'quote', $name);
+        return $this->pdftemplatedelete($id_space, 'quote', $name);
     }
 }

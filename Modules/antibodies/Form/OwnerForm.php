@@ -5,11 +5,11 @@ require_once 'Modules/antibodies/Model/AntibodiesTranslator.php';
 
 class OwnerForm extends FormGenerator
 {
-    private $idSpace;
+    private $id_space;
 
-    public function setSpace($idSpace)
+    public function setSpace($id_space)
     {
-        $this->id_space = $idSpace;
+        $this->id_space = $id_space;
     }
 
         /**

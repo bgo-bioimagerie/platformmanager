@@ -12,137 +12,137 @@
             if ($letter == "All") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/All/<?php echo $active ?>';"><?php echo CoreTranslator::All($lang) ?></button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/All/<?php echo $active ?>';"><?php echo CoreTranslator::All($lang) ?></button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "A") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/A/<?php echo $active ?>';">A</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/A/<?php echo $active ?>';">A</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "B") {
             echo "active";
         }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/B/<?php echo $active ?>';">B</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/B/<?php echo $active ?>';">B</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "C") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/C/<?php echo $active ?>';">C</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/C/<?php echo $active ?>';">C</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "D") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/D/<?php echo $active ?>';">D</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/D/<?php echo $active ?>';">D</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "E") {
             echo "active";
         }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/E/<?php echo $active ?>';">E</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/E/<?php echo $active ?>';">E</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "F") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/F/<?php echo $active ?>';">F</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/F/<?php echo $active ?>';">F</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "G") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/G/<?php echo $active ?>';">G</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/G/<?php echo $active ?>';">G</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "H") {
             echo "active";
         }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/H/<?php echo $active ?>';">H</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/H/<?php echo $active ?>';">H</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "I") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/I/<?php echo $active ?>';">I</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/I/<?php echo $active ?>';">I</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "J") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/J/<?php echo $active ?>';">J</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/J/<?php echo $active ?>';">J</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "K") {
             echo "active";
         }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/K/<?php echo $active ?>';">K</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/K/<?php echo $active ?>';">K</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "L") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/L/<?php echo $active ?>';">L</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/L/<?php echo $active ?>';">L</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "M") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/M/<?php echo $active ?>';">M</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/M/<?php echo $active ?>';">M</button>
             <button class="btn btn-outline-dark <?php
         if ($letter == "N") {
             echo "active";
         }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/N/<?php echo $active ?>';">N</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/N/<?php echo $active ?>';">N</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "O") {
                 echo "active";
             }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/O/<?php echo $active ?>';">O</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/O/<?php echo $active ?>';">O</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "P") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/P/<?php echo $active ?>';">P</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/P/<?php echo $active ?>';">P</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "Q") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/Q/<?php echo $active ?>';">Q</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/Q/<?php echo $active ?>';">Q</button>
             <button class="btn btn-outline-dark <?php
 if ($letter == "R") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/R/<?php echo $active ?>';">R</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/R/<?php echo $active ?>';">R</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "S") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/S/<?php echo $active ?>';">S</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/S/<?php echo $active ?>';">S</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "T") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/T/<?php echo $active ?>';">T</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/T/<?php echo $active ?>';">T</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "U") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/U/<?php echo $active ?>';">U</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/U/<?php echo $active ?>';">U</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "V") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/V/<?php echo $active ?>';">V</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/V/<?php echo $active ?>';">V</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "W") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/W/<?php echo $active ?>';">W</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/W/<?php echo $active ?>';">W</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "X") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/X/<?php echo $active ?>';">X</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/X/<?php echo $active ?>';">X</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "Y") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/Y/<?php echo $active ?>';">Y</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/Y/<?php echo $active ?>';">Y</button>
                         <button class="btn btn-outline-dark <?php
 if ($letter == "Z") {
     echo "active";
 }
-?>" onclick="location.href = 'corespaceaccess/<?php echo $idSpace ?>/Z/<?php echo $active ?>';">Z</button>
+?>" onclick="location.href = 'corespaceaccess/<?php echo $id_space ?>/Z/<?php echo $active ?>';">Z</button>
         </div>
 
     </div>

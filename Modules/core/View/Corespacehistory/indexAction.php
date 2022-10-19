@@ -57,7 +57,7 @@ Vue.createApp({
                 headers: headers,
                 method: 'GET',
             }
-            fetch(`/corespacehistory/<?php echo $idSpace ?>?start=${start}&end=${end}`, cfg).
+            fetch(`/corespacehistory/<?php echo $id_space ?>?start=${start}&end=${end}`, cfg).
             then((response) => response.json()).
             then(data => {
                 this.logs = data.logs

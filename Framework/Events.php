@@ -183,10 +183,10 @@ class EventHandler
         $statHandler->record($space['shortname'], $stat);
     }
 
-    private function isSpaceOwner($idSpace, $idUser)
+    private function isSpaceOwner($id_space, $id_user)
     {
         $sum = new CoreSpaceUser();
-        $link = $sum->getUserSpaceInfo2($idSpace, $idUser);
+        $link = $sum->getUserSpaceInfo2($id_space, $id_user);
         if ($link && $link['status'] >= CoreSpace::$MANAGER) {
             return true;
         }
@@ -224,8 +224,8 @@ class EventHandler
         $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
         $gm = new Grafana();
         $u = new CoreUser();
-        $idUser = $msg['user']['id'];
-        $user = $u->userAllInfo($idUser);
+        $id_user = $msg['user']['id'];
+        $user = $u->userAllInfo($id_user);
         $gm->updateUserPassword($user['login'], $user['apikey']);
     }
 
@@ -511,7 +511,7 @@ class EventHandler
         $c = new CoreFiles();
         $f = $c->get($msg['file']['id']);
         $file = $c->path($f);
-        $idSpace = $msg['space']['id'];
+        $id_space = $msg['space']['id'];
         $lang = $msg['lang'] ?? 'en';
         $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$IN_PROGRESS, '');
         try {
@@ -528,44 +528,44 @@ class EventHandler
                     $statUserModel = new BkStatsUser();
                     $resource_id = $msg['resource_id'];
                     if ($msg['email'] != "") {
-                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $idSpace);
+                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $id_space);
                     } else {
-                        $f = $statUserModel->authorizedUsers($file, $resource_id, $idSpace, $lang);
+                        $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
                     }
                     break;
                 case BkStats::STATS_BK_USERS:
                     $model = new BkStatsUser();
-                    $users = $model->bookingUsers($idSpace, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $users = $model->bookingUsers($id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     $bs = new BkStats();
                     $bs->exportstatbookingusersCSV($file, $users);
                     break;
                 case BkStats::STATS_BK:
                     $bs = new BkStats();
-                    $bs->getBalanceReport($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], null, $lang);
+                    $bs->getBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $msg['excludeColorCode'], $msg['generateclientstats'], null, $lang);
                     break;
                 case BkStats::STATS_QUANTITIES:
                     $bs = new BkStats();
-                    $bs->getQuantitiesReport($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $bs->getQuantitiesReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case BkStats::STATS_BK_TIME:
                     $bs = new BkStats();
-                    $bs->getReservationsRespReport($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $bs->getReservationsRespReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case SeStats::STATS_PROJECTS:
                     $ss = new SeStats();
-                    $ss->generateBalanceReport($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $ss->generateBalanceReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case SeStats::STATS_PROJECT_SAMPLES:
                     $ss = new SeStats();
-                    $ss->samplesReport($file, $idSpace, $lang);
+                    $ss->samplesReport($file, $id_space, $lang);
                     break;
                 case SeStats::STATS_MAIL_RESPS:
                     $ss = new SeStats();
-                    $ss->emailRespsReport($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], $lang);
+                    $ss->emailRespsReport($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case SeStats::STATS_ORDERS:
                     $ss = new SeOrderStats();
-                    $ss->generateBalance($file, $idSpace, $msg['dateBegin'], $msg['dateEnd'], null, $lang);
+                    $ss->generateBalance($file, $id_space, $msg['dateBegin'], $msg['dateEnd'], null, $lang);
                     break;
                 default:
                     Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
@@ -581,33 +581,33 @@ class EventHandler
     }
 
 
-    public function closeRequest($idSpace, $rid, $found)
+    public function closeRequest($id_space, $rid, $found)
     {
         $cv = new CoreVirtual();
         if (!$found) {
-            $cv->updateRequest($idSpace, 'invoices', $rid, 'nothing to invoice');
+            $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
         } else {
-            $cv->deleteRequest($idSpace, 'invoices', $rid);
+            $cv->deleteRequest($id_space, 'invoices', $rid);
         }
     }
 
     public function campaignRequest($msg)
     {
         Configuration::getLogger()->debug('[campaignRequest] ', ['campaign' => $msg['campaign']['id']]);
-        $idSpace = $msg['space']['id'];
+        $id_space = $msg['space']['id'];
         $c = new CoreSpace();
-        $space = $c->getSpace($idSpace);
+        $space = $c->getSpace($id_space);
         $campaign_id = $msg['campaign']['id'];
         $cm = new RatingCampaign();
-        $campaign = $cm->get($idSpace, $campaign_id);
+        $campaign = $cm->get($id_space, $campaign_id);
         if (!$campaign) {
             Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
             return;
         }
         $b = new BkCalendarEntry();
-        $emails = $b->getEmailsWithEntriesForPeriod($idSpace, $campaign['from_date'], $campaign['to_date'], CoreSpace::$USER);
+        $emails = $b->getEmailsWithEntriesForPeriod($id_space, $campaign['from_date'], $campaign['to_date'], CoreSpace::$USER);
         $p = new SeProject();
-        $pemails = $p->getEmailsForClosedProjectsByPeriod($idSpace, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
+        $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
         foreach ($pemails as $email) {
             if (!in_array($email, $emails)) {
                 $emails[] = $email;
@@ -617,7 +617,7 @@ class EventHandler
 
         $me = new Email();
         $from = Configuration::get('smtp_from');
-        if ($c->getSpaceMenusRole($idSpace, "helpdesk")) {
+        if ($c->getSpaceMenusRole($id_space, "helpdesk")) {
             $from = $me->getFromEmail($space['shortname']);
         }
         $fromName = "Platform-Manager";
@@ -641,7 +641,7 @@ class EventHandler
             $user = $cu->getUserByEmail($email['email']);
             $lang = $cus->getUserSetting($user['id'], "language") ?? 'en';
             $message = RatingTranslator::NewCampaign($lang).'<br/>'.$campaign['message'];
-            $link = Configuration::get('public_url').'/rating/'.$idSpace.'/campaign/'.$campaign_id.'/rate';
+            $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
             $message .= '<br/><a href="'.$link.'">'.$link.'</a>';
             if ($limit_date_str) {
                 $message .= '<br/><p>'.RatingTranslator::Deadline($lang).': '.$limit_date_str.'</p>';
@@ -654,54 +654,54 @@ class EventHandler
 
     public function invoiceRequest($msg)
     {
-        $idSpace = $msg['space']['id'];
-        $idUser = $msg['user']['id'];
+        $id_space = $msg['space']['id'];
+        $id_user = $msg['user']['id'];
         $cus = new CoreUserSettings();
-        $lang = $cus->getUserSetting($idUser, "language") ?? 'en';
+        $lang = $cus->getUserSetting($id_user, "language") ?? 'en';
         $type = $msg['type'];
         $rid = $msg["request"]["id"];
         $cv = new CoreVirtual();
         Configuration::getLogger()->debug('[invoice][request]', ['type' => $type]);
-        $cv->updateRequest($idSpace, 'invoices', $rid, 'generating');
+        $cv->updateRequest($id_space, 'invoices', $rid, 'generating');
         try {
             switch ($type) {
                 case GlobalInvoice::$INVOICES_GLOBAL_ALL:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $gi = new GlobalInvoice();
-                    $found = $gi->invoiceAll($idSpace, $beginPeriod, $endPeriod, $idUser, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 case GlobalInvoice::$INVOICES_GLOBAL_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new GlobalInvoice();
-                    $found = $gi->invoice($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 case BookingInvoice::$INVOICES_BOOKING_ALL:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $gi = new BookingInvoice();
-                    $found = $gi->invoiceAll($idSpace, $beginPeriod, $endPeriod, $idUser, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 case BookingInvoice::$INVOICES_BOOKING_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new BookingInvoice();
-                    $found = $gi->invoiceClient($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 case ServicesInvoice::$INVOICES_SERVICES_ORDERS_CLIENT:
                     $beginPeriod = $msg['period_begin'];
                     $endPeriod = $msg['period_end'];
                     $id_client = $msg['id_client'];
                     $gi = new ServicesInvoice();
-                    $found = $gi->invoiceOrders($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 case ServicesInvoice::$INVOICES_SERVICES_PROJECTS_CLIENT:
                     $beginPeriod = $msg['period_begin'];
@@ -709,17 +709,17 @@ class EventHandler
                     $id_client = $msg['id_client'];
                     $id_projects = $msg['id_projects'];
                     $gi = new ServicesInvoice();
-                    $found = $gi->invoiceProjects($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $id_projects, $lang);
-                    $this->closeRequest($idSpace, $rid, $found);
+                    $found = $gi->invoiceProjects($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $id_projects, $lang);
+                    $this->closeRequest($id_space, $rid, $found);
                     break;
                 default:
-                    $cv->updateRequest($idSpace, 'invoices', $rid, 'error: unknown request '.$type);
+                    $cv->updateRequest($id_space, 'invoices', $rid, 'error: unknown request '.$type);
                     Configuration::getLogger()->error('[invoiceRequest] unknown request type', ['type' => $type]);
                     break;
             }
         } catch(Throwable $e) {
             $cv = new CoreVirtual();
-            $cv->updateRequest($idSpace, 'invoices', $rid, 'error: '.$e->getMessage());
+            $cv->updateRequest($id_space, 'invoices', $rid, 'error: '.$e->getMessage());
             throw $e;
         }
     }

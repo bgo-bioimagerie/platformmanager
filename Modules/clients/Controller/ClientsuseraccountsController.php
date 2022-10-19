@@ -21,21 +21,21 @@ class ClientsuseraccountsController extends ClientsController
      *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($idSpace, $idUser)
+    public function indexAction($id_space, $id_user)
     {
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        $form = $this->generateClientsUserForm($idSpace, $idUser);
+        $form = $this->generateClientsUserForm($id_space, $id_user);
 
         if ($form->check()) {
-            $this->validateClientsUserform($idSpace, $idUser, $form->getParameter("id_client"));
+            $this->validateClientsUserform($id_space, $id_user, $form->getParameter("id_client"));
         }
 
-        $tableHtml = $this->generateClientsUserTable($idSpace, $idUser);
+        $tableHtml = $this->generateClientsUserTable($id_space, $id_user);
 
         $this->render(
             array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tableHtml" => $tableHtml,
             "formHtml" => $form->getHtml($lang)
@@ -46,16 +46,16 @@ class ClientsuseraccountsController extends ClientsController
     /**
      * Returns a table listing a one user's client accounts
      */
-    public function generateClientsUserTable($idSpace, $idUser)
+    public function generateClientsUserTable($id_space, $id_user)
     {
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelClientUser = new ClClientUser();
         $modelUser = new CoreUser();
-        $userFullName = $modelUser->getUserFullName($idUser);
-        $accounts = $modelClientUser->getUserClientAccounts($idUser, $idSpace);
+        $userFullName = $modelUser->getUserFullName($id_user);
+        $accounts = $modelClientUser->getUserClientAccounts($id_user, $id_space);
         $modelClient = new ClClient();
-        $clients = $modelClient->getForList($idSpace);
+        $clients = $modelClient->getForList($id_space);
 
         if (empty($clients['ids'])) {
             $_SESSION['flash'] = ClientsTranslator::Client_needed($lang);
@@ -63,7 +63,7 @@ class ClientsuseraccountsController extends ClientsController
         }
         $table = new TableView("clientsUser");
         $table->setTitle(ClientsTranslator::ClientAccountsFor($lang) . $userFullName);
-        $table->addDeleteButton("clientsuseraccounts" . "delete/" . $idSpace . "/" . $idUser);
+        $table->addDeleteButton("clientsuseraccounts" . "delete/" . $id_space . "/" . $id_user);
         return $table->view($accounts, array(
             "name" => ClientsTranslator::Identifier($lang)
         ));
@@ -72,20 +72,20 @@ class ClientsuseraccountsController extends ClientsController
     /**
      * Returns a form in which user is given and we can select clients to link them to
      */
-    public function generateClientsUserForm($idSpace, $idUser, $todo=false)
+    public function generateClientsUserForm($id_space, $id_user, $todo=false)
     {
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelUser = new CoreUser();
-        $userFullName = $modelUser->getUserFullName($idUser);
+        $userFullName = $modelUser->getUserFullName($id_user);
         $modelClient = new ClClient();
-        $clients = $modelClient->getForList($idSpace);
+        $clients = $modelClient->getForList($id_space);
 
         $form = new Form($this->request, "clientsusersform");
         $form->setTitle(ClientsTranslator::addClientAccountFor($lang) . ": " . $userFullName);
         $form->addSelect("id_client", ClientsTranslator::ClientAccount($lang), $clients["names"], $clients["ids"]);
 
-        $validationUrl = "corespaceuseredit/".$idSpace."/".$idUser;
+        $validationUrl = "corespaceuseredit/".$id_space."/".$id_user;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
@@ -95,13 +95,13 @@ class ClientsuseraccountsController extends ClientsController
         return $form;
     }
 
-    public function validateClientsUserForm($idSpace, $idUser, $id_client)
+    public function validateClientsUserForm($id_space, $id_user, $id_client)
     {
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelClientUser = new ClClientUser();
-        if (!$modelClientUser->exists($idSpace, $id_client, $idUser)) {
-            $modelClientUser->set($idSpace, $id_client, $idUser);
+        if (!$modelClientUser->exists($id_space, $id_client, $id_user)) {
+            $modelClientUser->set($id_space, $id_client, $id_user);
             $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
             $_SESSION["flashClass"] = "success";
         } else {
@@ -113,12 +113,12 @@ class ClientsuseraccountsController extends ClientsController
     /**
      * Remove a provider
      */
-    public function deleteAction($idSpace, $idUser, $id_client)
+    public function deleteAction($id_space, $id_user, $id_client)
     {
         // security
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientUser = new ClClientUser();
-        $modelClientUser->deleteClientUser($idSpace, $id_client, $idUser);
-        $this->redirect("corespaceuseredit/" . $idSpace . "/" . $idUser, ["origin" => "clientsuseraccounts"]);
+        $modelClientUser->deleteClientUser($id_space, $id_client, $id_user);
+        $this->redirect("corespaceuseredit/" . $id_space . "/" . $id_user, ["origin" => "clientsuseraccounts"]);
     }
 }

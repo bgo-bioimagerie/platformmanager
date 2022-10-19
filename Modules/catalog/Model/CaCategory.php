@@ -30,37 +30,37 @@ class CaCategory extends Model
         $this->addColumn("ca_categories", "id_space", "int(11)", 0);
     }
 
-    public function add($idSpace, $name, $displayOrder = 0)
+    public function add($id_space, $name, $displayOrder = 0)
     {
         $sql = "INSERT INTO ca_categories(id_space, name, display_order) VALUES(?, ?,?)";
-        $this->runRequest($sql, array($idSpace, $name, $displayOrder));
+        $this->runRequest($sql, array($id_space, $name, $displayOrder));
     }
 
-    public function edit($id, $idSpace, $name, $displayOrder = 0)
+    public function edit($id, $id_space, $name, $displayOrder = 0)
     {
         $sql = "update ca_categories set name=?, display_order=? where id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($name, $displayOrder, $id, $idSpace));
+        $this->runRequest($sql, array($name, $displayOrder, $id, $id_space));
     }
 
-    public function getAll($idSpace)
+    public function getAll($id_space)
     {
         $sql = "SELECT * FROM ca_categories WHERE id_space=? AND deleted=0 ORDER BY display_order ASC;";
-        $req = $this->runRequest($sql, array($idSpace));
+        $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
-    public function getName($idSpace, $id)
+    public function getName($id_space, $id)
     {
         $sql = "SELECT name FROM ca_categories WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $idSpace));
+        $req = $this->runRequest($sql, array($id, $id_space));
         $inter = $req->fetch();
         return $inter[0];
     }
 
-    public function getDisplayOrder($idSpace, $id)
+    public function getDisplayOrder($id_space, $id)
     {
         $sql = "SELECT display_order FROM ca_categories WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $idSpace));
+        $req = $this->runRequest($sql, array($id, $id_space));
         $inter = $req->fetch();
         return $inter[0];
     }
@@ -69,9 +69,9 @@ class CaCategory extends Model
      * Delete a category
      * @param number $id Category ID
      */
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "DELETE FROM ca_categories WHERE id =? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

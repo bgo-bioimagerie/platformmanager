@@ -17,30 +17,30 @@ abstract class InvoiceAbstractController extends InvoicesController
     /**
      * To desplay the form that allows to edit an order and xport as pdf
      */
-    abstract public function editAction($idSpace, $id_invoice, $pdf);
+    abstract public function editAction($id_space, $id_invoice, $pdf);
 
     /**
      * To delete the invoice data in the content tables
      */
-    abstract public function deleteAction($idSpace, $id_invoice);
+    abstract public function deleteAction($id_space, $id_invoice);
 
 
-    public function generatePDF($idSpace, $invoice_id, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en')
+    public function generatePDF($id_space, $invoice_id, $date, $unit, $resp, $address, $table, $total, $useTTC = true, $details = "", $clientInfos = null, $toFile=false, $lang='en')
     {
         $address = nl2br($address);
         $date = CoreTranslator::dateFromEn($date, $lang);
 
         $modelInvoice = new InInvoice();
-        $invoiceInfo = $modelInvoice->get($idSpace, $invoice_id);
+        $invoiceInfo = $modelInvoice->get($id_space, $invoice_id);
         $number = $invoiceInfo['number'];
         $invoiceInfo['module'] = InvoicesTranslator::Module($invoiceInfo['module'], $lang);
 
         $translator = new InvoicesTranslator();
         $csm = new CoreSpace();
-        $space = $csm->getSpace($idSpace);
+        $space = $csm->getSpace($id_space);
 
         $clcm = new ClCompany();
-        $company = $clcm->getForSpace($idSpace);
+        $company = $clcm->getForSpace($id_space);
         if (!isset($company['name'])) {
             $company = [
                 'name' => $space['name'],
@@ -54,13 +54,13 @@ abstract class InvoiceAbstractController extends InvoicesController
             ];
         }
 
-        if (!file_exists('data/invoices/'.$idSpace.'/template.twig') && file_exists('data/invoices/'.$idSpace.'/template.php')) {
+        if (!file_exists('data/invoices/'.$id_space.'/template.twig') && file_exists('data/invoices/'.$id_space.'/template.php')) {
             // backwark, templates were in PHP and no twig template available use old template
             ob_start();
-            include('data/invoices/'.$idSpace.'/template.php');
+            include('data/invoices/'.$id_space.'/template.php');
             $content = ob_get_clean();
         } else {
-            $template = 'data/invoices/'.$idSpace.'/template.twig';
+            $template = 'data/invoices/'.$id_space.'/template.twig';
             if (!file_exists($template)) {
                 $template = 'externals/pfm/templates/invoices_template.twig';
             }
@@ -69,7 +69,7 @@ abstract class InvoiceAbstractController extends InvoicesController
             $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/../../..');
             $twig = new \Twig\Environment($loader, []);
             $content = $twig->render($template, [
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'number' => $number,
                 'date' => $date,
                 'unit' => $unit,
@@ -90,7 +90,7 @@ abstract class InvoiceAbstractController extends InvoicesController
         }
 
         // convert in PDF
-        $out = __DIR__."/../../../data/invoices/$idSpace/invoice_".$number.".pdf";
+        $out = __DIR__."/../../../data/invoices/$id_space/invoice_".$number.".pdf";
         try {
             $html2pdf = new \Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'fr');
             $html2pdf->setDefaultFont('Arial');

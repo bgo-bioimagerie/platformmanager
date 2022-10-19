@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 <div class="container">
 <div class="pm-form row mb-3">
-    <form role="form" class="form-horizontal" action="bookingblockquery/<?php echo $idSpace ?>"
+    <form role="form" class="form-horizontal" action="bookingblockquery/<?php echo $id_space ?>"
           method="post">
 
 
@@ -136,7 +136,7 @@ foreach ($colorCodes as $colorCode) {
             <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Save($lang) ?>" />
             <button
                 type="button"
-                onclick="location.href = 'bookingblock/<?php echo $idSpace ?>'"
+                onclick="location.href = 'bookingblock/<?php echo $id_space ?>'"
                 class="btn btn-outline-dark">
                     <?php echo CoreTranslator::Cancel($lang) ?>
             </button>

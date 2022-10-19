@@ -72,13 +72,13 @@ class BkScheduling extends Model
         return $closest;
     }
 
-    public function getClosestMinutes($idSpace, $id_resource, $minutes)
+    public function getClosestMinutes($id_space, $id_resource, $minutes)
     {
         if ($minutes == "") {
             $minutes = 0;
         }
         $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id_rearea=(SELECT id_area FROM re_info WHERE id=? AND deleted=0 AND id_space=? )";
-        $req = $this->runRequest($sql, array($id_resource, $idSpace));
+        $req = $this->runRequest($sql, array($id_resource, $id_space));
         if ($req->rowCount() > 0) {
             $d = $req->fetch();
             $step = $d[0];
@@ -102,10 +102,10 @@ class BkScheduling extends Model
      * @param string $sortentry Entry that is used to sort the SyColorCodes
      * @return multitype: array
      */
-    public function getAll($idSpace, $sortentry = 'id')
+    public function getAll($id_space, $sortentry = 'id')
     {
         $sql = "SELECT * FROM bk_schedulings WHERE deleted=0 AND id_space=? order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -114,21 +114,21 @@ class BkScheduling extends Model
      * @param unknown $id
      * @return mixed
      */
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
-        if (!$this->exists($idSpace, $id)) {
+        if (!$this->exists($id_space, $id)) {
             return $this->getDefault();
         }
 
         $sql = "SELECT * FROM bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
-        $user = $this->runRequest($sql, array($id, $idSpace));
+        $user = $this->runRequest($sql, array($id, $id_space));
         return $user->fetch();
     }
 
-    public function getByReArea($idSpace, $id_rearea)
+    public function getByReArea($id_space, $id_rearea)
     {
         $sql = "SELECT * FROM bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
-        $user = $this->runRequest($sql, array($id_rearea, $idSpace));
+        $user = $this->runRequest($sql, array($id_rearea, $id_space));
         $scheduling = $user->fetch();
         if (!$scheduling) {
             $scheduling = $this->getDefault();
@@ -142,7 +142,7 @@ class BkScheduling extends Model
      * @param string $name name of the SyColorCode
      * @param string $address address of the SyColorCode
      */
-    public function add($idSpace, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
+    public function add($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
     {
         $sql = "insert into bk_schedulings(is_monday, is_tuesday, "
                 . " is_wednesday, is_thursday, is_friday, is_saturday, is_sunday, day_begin,"
@@ -152,7 +152,7 @@ class BkScheduling extends Model
         $this->runRequest($sql, array($is_monday, $is_tuesday,
             $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin,
             $day_end, $size_bloc_resa, $booking_time_scale,
-            $resa_time_setting, $default_color_id, $idSpace, $id_rearea, $force_packages, $shared));
+            $resa_time_setting, $default_color_id, $id_space, $id_rearea, $force_packages, $shared));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -163,7 +163,7 @@ class BkScheduling extends Model
      * @param string $name New name of the SyColorCode
      * @param string $color New Address of the SyColorCode
      */
-    public function update2($idSpace, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
+    public function update2($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
     {
         $sql = "UPDATE bk_schedulings SET is_monday=?, is_tuesday=?, is_wednesday=?, is_thursday=?, is_friday=?, "
                 . "is_saturday=?, is_sunday=?, day_begin=?, day_end=?, size_bloc_resa=?, booking_time_scale=?, "
@@ -171,7 +171,7 @@ class BkScheduling extends Model
                 . "WHERE id_rearea=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday,
             $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa,
-            $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages, $shared, $id_rearea, $idSpace));
+            $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages, $shared, $id_rearea, $id_space));
     }
 
     protected function onToBool($on)
@@ -186,7 +186,7 @@ class BkScheduling extends Model
     }
 
     public function edit(
-        $idSpace,
+        $id_space,
         $id_rearea,
         $is_monday,
         $is_tuesday,
@@ -205,9 +205,9 @@ class BkScheduling extends Model
         $shared
     ) {
         $id = 0;
-        if ($id = $this->existsByReArea($idSpace, $id_rearea)) {
+        if ($id = $this->existsByReArea($id_space, $id_rearea)) {
             $this->update2(
-                $idSpace,
+                $id_space,
                 $id_rearea,
                 $this->onToBool($is_monday),
                 $this->onToBool($is_tuesday),
@@ -227,7 +227,7 @@ class BkScheduling extends Model
             );
         } else {
             $id = $this->add(
-                $idSpace,
+                $id_space,
                 $id_rearea,
                 $this->onToBool($is_monday),
                 $this->onToBool($is_tuesday),
@@ -254,29 +254,29 @@ class BkScheduling extends Model
      * @param unknown $id
      * @return boolean
      */
-    public function exists($idSpace, $id_bkScheduling)
+    public function exists($id_space, $id_bkScheduling)
     {
         $sql = "SELECT * from bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_bkScheduling, $idSpace));
+        $req = $this->runRequest($sql, array($id_bkScheduling, $id_space));
         return ($req->rowCount() == 1);
     }
 
-    public function getForSpace($idSpace)
+    public function getForSpace($id_space)
     {
         $sql = "SELECT * from bk_schedulings WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     /**
      * Check if a bkScheduling exists from area
-     * @param string $idSpace
+     * @param string $id_space
      * @param string $id_rearea
      * @return boolean
      */
-    public function existsByReArea($idSpace, $id_rearea): ?array
+    public function existsByReArea($id_space, $id_rearea): ?array
     {
         $sql = "SELECT * from bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
-        $req = $this->runRequest($sql, array($id_rearea, $idSpace));
+        $req = $this->runRequest($sql, array($id_rearea, $id_space));
         return ($req->rowCount() == 1) ? $req->fetch() : null;
     }
 
@@ -284,16 +284,16 @@ class BkScheduling extends Model
      * Remove a color code
      * @param unknown $id
      */
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE bk_schedulings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         //$sql = "DELETE FROM bk_schedulings WHERE id = ? AND deleted=0 AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
-    public function setReArea($idSpace, $id, $id_rearea)
+    public function setReArea($id_space, $id, $id_rearea)
     {
         $sql = "UPDATE bk_schedulings SET id_rearea=? WHERE id=? AND deleted=0 AND id_space=?";
-        $this->runRequest($sql, array($id_rearea, $id, $idSpace));
+        $this->runRequest($sql, array($id_rearea, $id, $id_space));
     }
 }

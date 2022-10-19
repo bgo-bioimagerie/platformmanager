@@ -1,17 +1,17 @@
 <?php
 
-function drawNavigation(string $kind, int $idSpace, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int|string $bk_id_area, string $idUser, bool $detailedView, string $lang)
+function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int|string $bk_id_area, string $id_user, bool $detailedView, string $lang)
 {
     $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
 	<div class="col-12 col-md-7 text-left">
 		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
     $today = date("Y-m-d", time());
-    $qc = '?'.implode('&', ["bk_curentDate=$fromDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$idUser"]);
-    $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$idUser"]);
-    $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$idUser"]);
-    $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$idUser"]);
-    $reload = 'booking'.$kind.'/'.$idSpace.$qc;
+    $qc = '?'.implode('&', ["bk_curentDate=$fromDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $reload = 'booking'.$kind.'/'.$id_space.$qc;
 
     if (!$detailedView) {
         $qc .= '&view=simple';
@@ -25,9 +25,9 @@ function drawNavigation(string $kind, int $idSpace, string $fromDate, ?string $t
         $qa .= '&view=detailed';
     }
 
-    $html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$idSpace.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
-    $html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$idSpace.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
-    $html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $idSpace.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
+    $html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
+    $html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
+    $html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
     $html .= '</div>';
 
     $d = explode("-", $fromDate);
@@ -56,11 +56,11 @@ function drawNavigation(string $kind, int $idSpace, string $fromDate, ?string $t
 
     $html .= '<div class="col-12 col-md-3 text-right">';
     $html .= '<select id="selectview" class="form-select" onchange="location.href=this.value">';
-    $html .='			<option aria-label="go to day view" value="bookingday/'.$idSpace.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
-    $html .= '			<option aria-label="go to day area view" value="bookingdayarea/'.$idSpace.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
-    $html .='			<option aria-label="go to week view" value="bookingweek/'.$idSpace.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
-    $html .='			<option aria-label="go to week area view" value="bookingweekarea/'.$idSpace.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
-    $html .='			<option aria-label="go to month view" value="bookingmonth/'.$idSpace.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
+    $html .='			<option aria-label="go to day view" value="bookingday/'.$id_space.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
+    $html .= '			<option aria-label="go to day area view" value="bookingdayarea/'.$id_space.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
+    $html .='			<option aria-label="go to week view" value="bookingweek/'.$id_space.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
+    $html .='			<option aria-label="go to week area view" value="bookingweekarea/'.$id_space.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
+    $html .='			<option aria-label="go to month view" value="bookingmonth/'.$id_space.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
     $html .= '</select>';
     $html .= '</div>';
 
@@ -82,7 +82,7 @@ function drawNavigation(string $kind, int $idSpace, string $fromDate, ?string $t
 }
 
 
-function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null, $from=[], $role=0)
+function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null, $from=[], $role=0)
 {
     $q = '?';
     if (!empty($from)) {
@@ -107,7 +107,7 @@ function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $ag
 
     $bk_id_area = $nav['bk_id_area'];
     $bk_id_resource = $nav['bk_id_resource'];
-    $idUser = $nav['id_user']
+    $id_user = $nav['id_user']
 
     ?>
 
@@ -115,7 +115,7 @@ function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $ag
         <div class="row"><div class="col-12" style="text-align: center"><?php
         echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
     if ($resourceBase['last_state'] != "") {
-        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$idSpace.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+        echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
     }
     ?></div></div>
         <table aria-label="table month view" class="table">
@@ -147,8 +147,8 @@ function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $ag
         echo "<td class=\"col-1\">";
         ?>
                 <div style="text-align:right; font-size:12px; color:#999999;"> <?php echo $i ?> </div>
-                <?php $tileq = '?'.implode('&', ["bk_curentDate=$tile_date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$idUser"]); ?>
-                <a class="bi-plus" href="bookingday/<?php echo $idSpace .'/'.$tile_date.$tileq ?>"></a>
+                <?php $tileq = '?'.implode('&', ["bk_curentDate=$tile_date", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]); ?>
+                <a class="bi-plus" href="bookingday/<?php echo $id_space .'/'.$tile_date.$tileq ?>"></a>
                     <?php
         $found = false;
         $modelBookingSetting = new BkBookingSettings();
@@ -162,7 +162,7 @@ function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $ag
                 $found = true;
                 $shortDescription = $entry['short_description'];
                 ?>
-                        <a href="bookingeditreservation/<?php echo $idSpace ?>/r_<?php echo $entry["id"].$q ?>">
+                        <a href="bookingeditreservation/<?php echo $id_space ?>/r_<?php echo $entry["id"].$q ?>">
 
                             <div style="background-color: <?php echo $entry['color_bg'] ?>; max-width:200px; -webkit-border-radius: 5px; -moz-border-radius: 5px; border-radius: 5px;" >
                                 <p style="border-bottom: thin solid #e1e1e1; font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text'] ?>;" >
@@ -179,7 +179,7 @@ function drawAgenda($idSpace, $lang, $mois, $annee, $entries, $resourceBase, $ag
                             }
                 ?>
                                     <?php echo $printStart . " - " . $printEnd ?></p>
-                                    <?php $text = $modelBookingSetting->getSummary($idSpace, $entry["recipient_fullname"], $entry['phone'], $entry['client_name'], $shortDescription, $entry['full_description'], true, $role); ?>
+                                    <?php $text = $modelBookingSetting->getSummary($id_space, $entry["recipient_fullname"], $entry['phone'], $entry['client_name'], $shortDescription, $entry['full_description'], true, $role); ?>
                                 <p style="font-size:<?php echo $agendaStyle["resa_font_size"] ?>px; color:<?php echo $entry['color_text'] ?>;"><?php echo $text ?></p>
                             </div>
                         </a>

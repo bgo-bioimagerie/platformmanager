@@ -26,46 +26,46 @@ class BkAccess extends Model
         $this->setColumnsInfo("id_access", "int(11)", 0);
     }
 
-    public function set($idSpace, $id_resources, $id_access)
+    public function set($id_space, $id_resources, $id_access)
     {
-        if ($this->exists($idSpace, $id_resources)) {
+        if ($this->exists($id_space, $id_resources)) {
             $sql = "UPDATE bk_access SET id_access=? WHERE id_resource=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_access, $id_resources, $idSpace));
+            $this->runRequest($sql, array($id_access, $id_resources, $id_space));
         } else {
             $sql = "INSERT INTO bk_access (id_resource, id_access, id_space) VALUES (?,?,?)";
-            $this->runRequest($sql, array($id_resources, $id_access, $idSpace));
+            $this->runRequest($sql, array($id_resources, $id_access, $id_space));
         }
     }
 
-    public function getAll($idSpace, $sortentry = 'id_access')
+    public function getAll($id_space, $sortentry = 'id_access')
     {
         $sql = "SELECT * FROM bk_access WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function get($idSpace, $id_resource)
+    public function get($id_space, $id_resource)
     {
         $sql = "SELECT * FROM bk_access WHERE id_resource=? AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id_resource, $idSpace));
+        $user = $this->runRequest($sql, array($id_resource, $id_space));
         return $user->fetch();
     }
 
-    public function getAccessId($idSpace, $id)
+    public function getAccessId($id_space, $id)
     {
         $sql = "SELECT id_access FROM bk_access WHERE id_resource=? AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($id, $idSpace));
+        $user = $this->runRequest($sql, array($id, $id_space));
         $tmp = $user->fetch();
         return  $tmp ? $tmp[0] : null;
     }
 
-    public function getAccessIds($idSpace, array $ids)
+    public function getAccessIds($id_space, array $ids)
     {
         if (empty($ids)) {
             return [];
         }
         $sql = "SELECT id_resource, id_access FROM bk_access WHERE id_resource IN (".implode(',', $ids).") AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -76,10 +76,10 @@ class BkAccess extends Model
      * @param unknown $id
      * @return boolean
      */
-    public function exists($idSpace, $id)
+    public function exists($id_space, $id)
     {
         $sql = "select * from bk_access where id_resource=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $idSpace));
+        $req = $this->runRequest($sql, array($id, $id_space));
         return ($req->rowCount() == 1);
     }
 
@@ -87,9 +87,9 @@ class BkAccess extends Model
      * Remove a color code
      * @param unknown $id
      */
-    public function delete($idSpace, $id_resource)
+    public function delete($id_space, $id_resource)
     {
         $sql = "UPDATE bk_access SET deleted=1,deleted_at=NOW() WHERE id_resource=? AND id_space=?";
-        $this->runRequest($sql, array($id_resource, $idSpace));
+        $this->runRequest($sql, array($id_resource, $id_space));
     }
 }

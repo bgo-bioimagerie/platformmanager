@@ -32,16 +32,16 @@ class Isotype extends Model
         return $pdo;
     }
 
-    public function getBySpace($idSpace)
+    public function getBySpace($id_space)
     {
         $sql = "select * from ac_isotypes WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function getForList($idSpace)
+    public function getForList($id_space)
     {
-        $data = $this->getBySpace($idSpace);
+        $data = $this->getBySpace($id_space);
         $names = array();
         $ids = array();
         foreach ($data as $d) {
@@ -57,10 +57,10 @@ class Isotype extends Model
      * @param string $sortentry Entry that is used to sort the isotypes
      * @return multitype: array
      */
-    public function getIsotypes($idSpace, $sortentry = 'id')
+    public function getIsotypes($id_space, $sortentry = 'id')
     {
         $sql = "select * from ac_isotypes WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -71,14 +71,14 @@ class Isotype extends Model
      * @throws Exception id the isotype is not found
      * @return mixed array
      */
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return array("nom" => "");
         }
 
         $sql = "select * from ac_isotypes where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $idSpace));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -92,19 +92,19 @@ class Isotype extends Model
      * @param string $name name of the isotype
      *
      */
-    public function add($name, $idSpace)
+    public function add($name, $id_space)
     {
         $sql = "insert into ac_isotypes(nom, id_space)"
                 . " values(?,?)";
-        $this->runRequest($sql, array($name, $idSpace));
+        $this->runRequest($sql, array($name, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function importIsotype($id, $name, $idSpace)
+    public function importIsotype($id, $name, $id_space)
     {
         $sql = "insert into ac_isotypes(id, nom, id_space)"
                 . " values(?,?,?)";
-        $this->runRequest($sql, array($id, $name, $idSpace));
+        $this->runRequest($sql, array($id, $name, $id_space));
     }
 
     /**
@@ -113,16 +113,16 @@ class Isotype extends Model
      * @param int $id Id of the isotype to update
      * @param string $name New name of the isotype
      */
-    public function edit($id, $name, $idSpace)
+    public function edit($id, $name, $id_space)
     {
         $sql = "update ac_isotypes set nom=? where id=? AND id_space=?";
-        $this->runRequest($sql, array("" . $name . "", $id, $idSpace));
+        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
     }
 
-    public function getIdFromName($name, $idSpace)
+    public function getIdFromName($name, $id_space)
     {
         $sql = "select id from ac_isotypes where nom=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($name, $idSpace));
+        $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -131,9 +131,9 @@ class Isotype extends Model
         }
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE ac_isotypes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

@@ -19,7 +19,7 @@ class BkReport extends Model
      * @param array $contition_et_ou
      * @return multitype:
      */
-    public function reportstats($idSpace, $datebegin, $dateend, $champ, $type_recherche, $text, $contition_et_ou)
+    public function reportstats($id_space, $datebegin, $dateend, $champ, $type_recherche, $text, $contition_et_ou)
     {
         $sql = "SELECT distinct e.id, e.start_time, e.end_time, e.short_description, e.full_description, "
                 . "e.color_type_id, e.recipient_id, "
@@ -55,7 +55,7 @@ class BkReport extends Model
             $sql .= ")";
         }
 
-        $data = $this->runRequest($sql, array($idSpace));
+        $data = $this->runRequest($sql, array($id_space));
         return $data->fetchAll();
     }
 

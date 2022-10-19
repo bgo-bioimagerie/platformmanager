@@ -32,43 +32,43 @@ class ComconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'com', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'com', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'com', 'info-circle');
-            return $this->redirect("comconfig/" . $idSpace);
+            $this->menusactivation($id_space, 'com', 'info-circle');
+            return $this->redirect("comconfig/" . $id_space);
         }
 
-        $useComAsSpaceHomePageForm = $this->useComAsSpaceHomePage($lang, $idSpace);
+        $useComAsSpaceHomePageForm = $this->useComAsSpaceHomePage($lang, $id_space);
         if ($useComAsSpaceHomePageForm->check()) {
             $modelConfig = new CoreConfig();
 
             $use_space_home_page = $this->request->getParameter('use_space_home_page');
             if ($use_space_home_page == 1) {
-                $modelConfig->setParam('space_home_page', 'comhome', $idSpace);
+                $modelConfig->setParam('space_home_page', 'comhome', $id_space);
             } else {
-                $modelConfig->setParam('space_home_page', '', $idSpace);
+                $modelConfig->setParam('space_home_page', '', $id_space);
             }
 
-            $this->redirect("comconfig/" . $idSpace);
+            $this->redirect("comconfig/" . $id_space);
             return;
         }
 
-        $twitterForm = $this->twitterConfigForm($lang, $idSpace);
+        $twitterForm = $this->twitterConfigForm($lang, $id_space);
         if ($twitterForm->check()) {
             $modelConfig = new CoreConfig();
-            $modelConfig->setParam("use_twitter", $this->request->getParameter("use_twitter"), $idSpace);
-            $modelConfig->setParam("twitter_oauth_access_token", $this->request->getParameter("twitter_oauth_access_token"), $idSpace);
-            $modelConfig->setParam("twitter_oauth_access_token_sec", $this->request->getParameter("twitter_oauth_access_token_secret"), $idSpace);
-            $modelConfig->setParam("twitter_consumer_key", $this->request->getParameter("twitter_consumer_key"), $idSpace);
-            $modelConfig->setParam("twitter_consumer_secret", $this->request->getParameter("twitter_consumer_secret"), $idSpace);
+            $modelConfig->setParam("use_twitter", $this->request->getParameter("use_twitter"), $id_space);
+            $modelConfig->setParam("twitter_oauth_access_token", $this->request->getParameter("twitter_oauth_access_token"), $id_space);
+            $modelConfig->setParam("twitter_oauth_access_token_sec", $this->request->getParameter("twitter_oauth_access_token_secret"), $id_space);
+            $modelConfig->setParam("twitter_consumer_key", $this->request->getParameter("twitter_consumer_key"), $id_space);
+            $modelConfig->setParam("twitter_consumer_secret", $this->request->getParameter("twitter_consumer_secret"), $id_space);
 
-            $this->redirect("comconfig/" . $idSpace);
+            $this->redirect("comconfig/" . $id_space);
             return;
         }
 
@@ -77,13 +77,13 @@ class ComconfigController extends CoresecureController
             $useComAsSpaceHomePageForm->getHtml($lang),
             $twitterForm->getHtml($lang));
 
-        $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function useComAsSpaceHomePage($lang, $idSpace)
+    protected function useComAsSpaceHomePage($lang, $id_space)
     {
         $modelConfig = new CoreConfig();
-        $space_home_page = $modelConfig->getParamSpace("space_home_page", $idSpace);
+        $space_home_page = $modelConfig->getParamSpace("space_home_page", $id_space);
         $useSpaceHomePage = 0;
         if ($space_home_page == "comhome") {
             $useSpaceHomePage = 1;
@@ -94,20 +94,20 @@ class ComconfigController extends CoresecureController
 
         $form->addSelect("use_space_home_page", "", array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useSpaceHomePage);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $id_space);
 
 
         return $form;
     }
 
-    protected function twitterConfigForm($lang, $idSpace)
+    protected function twitterConfigForm($lang, $id_space)
     {
         $modelConfig = new CoreConfig();
-        $use_twitter = $modelConfig->getParamSpace("use_twitter", $idSpace);
-        $twitter_oauth_access_token = $modelConfig->getParamSpace("twitter_oauth_access_token", $idSpace);
-        $twitter_oauth_access_token_secret = $modelConfig->getParamSpace("twitter_oauth_access_token_sec", $idSpace);
-        $twitter_consumer_key = $modelConfig->getParamSpace("twitter_consumer_key", $idSpace);
-        $twitter_consumer_secret = $modelConfig->getParamSpace("twitter_consumer_secret", $idSpace);
+        $use_twitter = $modelConfig->getParamSpace("use_twitter", $id_space);
+        $twitter_oauth_access_token = $modelConfig->getParamSpace("twitter_oauth_access_token", $id_space);
+        $twitter_oauth_access_token_secret = $modelConfig->getParamSpace("twitter_oauth_access_token_sec", $id_space);
+        $twitter_consumer_key = $modelConfig->getParamSpace("twitter_consumer_key", $id_space);
+        $twitter_consumer_secret = $modelConfig->getParamSpace("twitter_consumer_secret", $id_space);
 
         $form = new Form($this->request, "twitterConfigForm");
         $form->setTitle(ComTranslator::Twitter($lang));
@@ -118,7 +118,7 @@ class ComconfigController extends CoresecureController
         $form->addText("twitter_consumer_key", ComTranslator::ConsumerKey($lang), false, $twitter_consumer_key);
         $form->addText("twitter_consumer_secret", ComTranslator::ConsumerKeySecret($lang), false, $twitter_consumer_secret);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "comconfig/" . $id_space);
 
 
         return $form;

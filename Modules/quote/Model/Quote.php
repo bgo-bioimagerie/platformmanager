@@ -22,13 +22,13 @@ class Quote extends Model
         $this->primaryKey = "id";
     }
 
-    public function getAll($idSpace)
+    public function getAll($id_space)
     {
         $sql = "SELECT * FROM qo_quotes WHERE id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return [
@@ -44,22 +44,22 @@ class Quote extends Model
             ];
         }
         $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $idSpace))->fetch();
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
     /**
      * Get all infos relative to a quote.
      * Behaviour depends on how quote has been created (w/wo client_id, belonging_id or user_id)
      *
-     * @param int|string $idSpace
+     * @param int|string $id_space
      * @param int|string $id id of the quote
      *
      * @return array(string) quote infos
      */
-    public function getAllInfo($idSpace, $id)
+    public function getAllInfo($id_space, $id)
     {
         $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($id, $idSpace))->fetch();
+        $data = $this->runRequest($sql, array($id, $id_space))->fetch();
 
         $modelUser = new CoreUser();
         $modelUserClient = new ClClientUser();
@@ -67,9 +67,9 @@ class Quote extends Model
 
         $data['id_pricing'] = $data['id_belonging'];
         if ($data["id_client"] && $data["id_client"] != 0) {
-            $client = $modelClient->get($idSpace, $data["id_client"]);
+            $client = $modelClient->get($id_space, $data["id_client"]);
         } else {
-            $clients = $modelUserClient->getUserClientAccounts($data["id_user"], $idSpace);
+            $clients = $modelUserClient->getUserClientAccounts($data["id_user"], $id_space);
             if ($clients && !empty($clients)) {
                 $client = $clients[0];
             } else {
@@ -80,7 +80,7 @@ class Quote extends Model
         if ($client != null) {
             $data['id_pricing'] = $client['pricing'];
             if (!$data['address']) {
-                $data["address"] = $modelClient->getAddressInvoice($idSpace, $client["id"]) ?? "";
+                $data["address"] = $modelClient->getAddressInvoice($id_space, $client["id"]) ?? "";
             }
         }
         $data['client'] = $client;
@@ -92,7 +92,7 @@ class Quote extends Model
         return $data;
     }
 
-    public function set($id, $idSpace, $recipient, $recipient_email, $address, $id_belonging, $idUser, $id_client, $date_open)
+    public function set($id, $id_space, $recipient, $recipient_email, $address, $id_belonging, $id_user, $id_client, $date_open)
     {
         if ($date_open == "") {
             $date_open = null;
@@ -103,27 +103,27 @@ class Quote extends Model
         }
         if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, recipient_email, address, id_belonging, id_user, id_client, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?,?,?)';
-            $this->runRequest($sql, array($idSpace, $recipient, $recipient_email, $address, $id_belonging, $idUser, $id_client, $date_open, $date_last_modified));
+            $this->runRequest($sql, array($id_space, $recipient, $recipient_email, $address, $id_belonging, $id_user, $id_client, $date_open, $date_last_modified));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE qo_quotes SET recipient=?, recipient_email=?, address=?, id_belonging=?, id_user=?, id_client=?, date_open=?, date_last_modified=? WHERE id=? AND id_space=?';
-            $this->runRequest($sql, array($recipient, $recipient_email, $address, $id_belonging, $idUser, $id_client, $date_open, $date_last_modified, $id, $idSpace));
+            $this->runRequest($sql, array($recipient, $recipient_email, $address, $id_belonging, $id_user, $id_client, $date_open, $date_last_modified, $id, $id_space));
         }
         Events::send([
             "action" => Events::ACTION_QUOTE_EDIT,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "quote" => ["id" => $id]
         ]);
         return $id;
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE qo_quotes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
         Events::send([
             "action" => Events::ACTION_QUOTE_DELETE,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "quote" => ["id" => $id]
         ]);
     }

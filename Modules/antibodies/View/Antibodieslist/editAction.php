@@ -7,7 +7,7 @@
     
     <div class="col-12 pm-form-short">
         <?php echo $form ?>
-        <a class="btn btn-danger m-3" href="antibodydelete/<?php echo $idSpace ?>/<?php echo $id ?>"><?php echo CoreTranslator::Delete($lang) ?></a>
+        <a class="btn btn-danger m-3" href="antibodydelete/<?php echo $id_space ?>/<?php echo $id ?>"><?php echo CoreTranslator::Delete($lang) ?></a>
     </div>
     <div class="col-12">
         <div class="col-12 pm-table-short">
@@ -59,9 +59,9 @@
         var arrayid = id.split("_");
                 //alert("add note clicked " + arrayid[1]);
         if(arrayid[0] == 'edittissus') {
-            editTissuesForm(<?php echo $idSpace ?>, arrayid[1]);
+            editTissuesForm(<?php echo $id_space ?>, arrayid[1]);
         } else if(arrayid[0] == 'editowner') {
-            editOwnerForm(<?php echo $idSpace ?>, arrayid[1]);
+            editOwnerForm(<?php echo $id_space ?>, arrayid[1]);
         }
     }
 

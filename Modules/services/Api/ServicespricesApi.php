@@ -25,19 +25,19 @@ class ServicespricesApi extends CoresecureController
         parent::__construct($request);
     }
 
-    public function getpricesAction($idSpace, $id_service)
+    public function getpricesAction($id_space, $id_service)
     {
         $modelPrices = new SePrice();
         $modelPricing = new ClPricing();
         $modelService = new SeService();
-        $belongings = $modelPricing->getAll($idSpace);
+        $belongings = $modelPricing->getAll($id_space);
 
         $data = array();
 
         $data['id_service'] = $id_service;
-        $data['service'] = $modelService->getItemName($idSpace, $id_service) ?? Constants::UNKNOWN;
+        $data['service'] = $modelService->getItemName($id_space, $id_service) ?? Constants::UNKNOWN;
         for ($i = 0 ; $i < count($belongings) ; $i++) {
-            $price = $modelPrices->getPrice($idSpace, $id_service, $belongings[$i]["id"]);
+            $price = $modelPrices->getPrice($id_space, $id_service, $belongings[$i]["id"]);
             $data['bel_'.$belongings[$i]['id']] = floatval($price);
         }
 

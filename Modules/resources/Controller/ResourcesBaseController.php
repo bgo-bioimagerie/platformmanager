@@ -9,13 +9,13 @@ class ResourcesBaseController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $id_space);
 
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' => ResourcesTranslator::Resources($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],

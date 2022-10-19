@@ -12,7 +12,7 @@
             $bookingSettings = $modelBkSettings->getDefaultBkSettings();
         }
         ?>
-        <form role="form" class="form-horizontal" action="bookingconfig/<?php echo $idSpace ?>"
+        <form role="form" class="form-horizontal" action="bookingconfig/<?php echo $id_space ?>"
               method="post">
             <div>
                 <input class="form-control" type="hidden" name="setbookingoptionsquery" value="yes"/>

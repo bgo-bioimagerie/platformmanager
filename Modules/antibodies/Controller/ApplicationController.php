@@ -22,63 +22,63 @@ class ApplicationController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $acapplicationsArray = $this->acapplicationModel->getBySpace($idSpace);
+        $acapplicationsArray = $this->acapplicationModel->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Application", 3);
-        $table->addLineEditButton("applicationedit/".$idSpace."/");
-        $table->addDeleteButton("applicationdelete/".$idSpace."/", "id", "name");
+        $table->addLineEditButton("applicationedit/".$id_space."/");
+        $table->addDeleteButton("applicationdelete/".$id_space."/", "id", "name");
 
         $headers = array("id" => "ID", "name" => "Nom");
         $tableHtml = $table->view($acapplicationsArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $acapplication = $this->acapplicationModel->get($idSpace, $id);
+        $acapplication = $this->acapplicationModel->get($id_space, $id);
 
         $form = new Form($this->request, "acapplicationeditform");
         $form->setTitle("Modifier application");
         $form->addText("nom", "nom", true, $acapplication["name"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "applicationedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "applicationedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->acapplicationModel->add($name, $idSpace);
+                $id = $this->acapplicationModel->add($name, $id_space);
             } else {
-                $this->acapplicationModel->edit($id, $name, $idSpace);
+                $this->acapplicationModel->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("application/".$idSpace, [], ['application' => ['id' => $id]]);
+            return $this->redirect("application/".$id_space, [], ['application' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->acapplicationModel->delete($idSpace, $id);
+        $this->acapplicationModel->delete($id_space, $id);
 
-        $this->redirect("application/" . $idSpace);
+        $this->redirect("application/" . $id_space);
     }
 }

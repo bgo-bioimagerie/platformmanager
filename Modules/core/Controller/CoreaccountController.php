@@ -50,7 +50,7 @@ class CoreaccountController extends Controller
         }
         $pwd = $modelCoreUser->generateRandomPassword();
 
-        $idUser = $modelCoreUser->createAccount(
+        $id_user = $modelCoreUser->createAccount(
             $data["login"],
             $pwd,
             $data["name"],
@@ -58,10 +58,10 @@ class CoreaccountController extends Controller
             $data["email"]
         );
         if ($data["phone"]??"") {
-            $modelCoreUser->setPhone($idUser, $data["phone"]);
+            $modelCoreUser->setPhone($id_user, $data["phone"]);
         }
         $modelUsersInfo->set(
-            $idUser,
+            $id_user,
             $data["phone"] ?? '',
             $data['unit'] ?? '',
             $data['organization'] ?? ''
@@ -69,11 +69,11 @@ class CoreaccountController extends Controller
         // if specified a space, add to pending users in space
         if (array_key_exists('id_space', $data) && $data['id_space']) {
             $modelPeningAccounts = new CorePendingAccount();
-            $modelPeningAccounts->add($idUser, $data["id_space"]);
+            $modelPeningAccounts->add($id_user, $data["id_space"]);
         }
         // validate anyway the account
-        $modelCoreUser->validateAccount($idUser);
-        $userFullName = $modelCoreUser->getUserFullName($idUser);
+        $modelCoreUser->validateAccount($id_user);
+        $userFullName = $modelCoreUser->getUserFullName($id_user);
 
         $email = new Email();
         $mailParams = [
@@ -116,10 +116,10 @@ class CoreaccountController extends Controller
         $items = $modelMenuItems->getAll();
 
         for ($i=0; $i<count($spacesList['ids']); $i++) {
-            $idSpace = $spacesList['ids'][$i];
+            $id_space = $spacesList['ids'][$i];
             for ($j=0; $j<count($items); $j++) {
                 // get id subMenu
-                if ($items[$j]['id_space'] && $items[$j]['id_space'] == $idSpace) {
+                if ($items[$j]['id_space'] && $items[$j]['id_space'] == $id_space) {
                     $idSubMenu =  $items[$j]['id_sub_menu'];
                     for ($k=0; $k<count($subMenus); $k++) {
                         // get id menu
@@ -246,12 +246,12 @@ class CoreaccountController extends Controller
         $params = $this->request->params();
         $type = $params["type"];
         $value = $params["value"];
-        $idUser = $params["user"] ?? 0;
+        $id_user = $params["user"] ?? 0;
         $modelUser = new CoreUser();
         $email = "";
         $login = "";
-        if ($idUser && $idUser > 0) {
-            $user = $modelUser->getInfo($idUser);
+        if ($id_user && $id_user > 0) {
+            $user = $modelUser->getInfo($id_user);
             $email = $user['email'];
             $login = $user['login'];
         }

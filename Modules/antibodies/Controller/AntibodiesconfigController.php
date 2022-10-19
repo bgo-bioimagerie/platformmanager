@@ -35,21 +35,21 @@ class AntibodiesconfigController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'antibodies', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'antibodies', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'antibodies', 'person');
-            return $this->redirect("antibodiesconfig/".$idSpace);
+            $this->menusactivation($id_space, 'antibodies', 'person');
+            return $this->redirect("antibodiesconfig/".$id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang));
 
-        return $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 }

@@ -69,7 +69,7 @@
                 $buttonStyle = "mybuttonactive";
             }
             ?>
-            <a class="<?php echo $buttonStyle ?>" href="catalogpublic/<?php echo $idSpace . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
+            <a class="<?php echo $buttonStyle ?>" href="catalogpublic/<?php echo $id_space . "/" . $cat["id"] ?>"><?php echo $cat["name"] ?></a>
             <?php
         }
 ?>

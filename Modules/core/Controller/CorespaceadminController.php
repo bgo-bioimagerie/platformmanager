@@ -87,17 +87,17 @@ class CorespaceadminController extends CoresecureController
         return $this->render(array("lang" => $lang, "tableHtml" => $tableHtml, "data" => ["spaces" => $data]));
     }
 
-    public function editAction($idSpace)
+    public function editAction($id_space)
     {
         // Check user is superadmin or space admin
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $isSuperAdmin = $this->isUserAuthorized(CoreStatus::$ADMIN);
 
         $modelSpace = new CoreSpace();
-        $space = $modelSpace->getSpace($idSpace);
+        $space = $modelSpace->getSpace($id_space);
         $lang = $this->getLanguage();
 
-        $formTitle = ($idSpace > 0) ? "Edit_space" : "Create_space";
+        $formTitle = ($id_space > 0) ? "Edit_space" : "Create_space";
 
         $form = new Form($this->request, "corespaceadminedit");
         $form->setTitle(CoreTranslator::$formTitle($lang));
@@ -107,7 +107,7 @@ class CorespaceadminController extends CoresecureController
             $form->addSelect("preconfigure", CoreTranslator::Preconfigure_space($lang), array(CoreTranslator::no($lang),CoreTranslator::yes($lang)), array(0,1), 0);
         }
 
-        $spaceAdmins = $modelSpace->spaceAdmins($idSpace);
+        $spaceAdmins = $modelSpace->spaceAdmins($id_space);
 
         $form->addText("name", CoreTranslator::Name($lang), true, $space["name"]);
         $form->addSelect("status", CoreTranslator::Status($lang), array(CoreTranslator::PrivateA($lang),CoreTranslator::PublicA($lang)), array(0,1), $space["status"]);
@@ -157,10 +157,10 @@ class CorespaceadminController extends CoresecureController
         $formAdd->addSelect("admins", CoreTranslator::Admin($lang), $usersNames, $usersIds, $spaceAdmins);
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
         $form->setFormAdd($formAdd, CoreTranslator::Admin($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "spaceadminedit/".$id_space);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "spaceadmin");
 
-        $id = $idSpace;
+        $id = $id_space;
         if ($form->check()) {
             $shortname = $this->request->getParameter("name");
             $shortname = strtolower($shortname);
@@ -172,9 +172,9 @@ class CorespaceadminController extends CoresecureController
             // set base informations
             if ($isSuperAdmin) {
                 // Only super admin can create
-                Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $idSpace, "name" => $this->request->getParameter("name")]);
+                Configuration::getLogger()->debug('[admin][space] create/edit space', ["space" => $id_space, "name" => $this->request->getParameter("name")]);
                 $id = $modelSpace->setSpace(
-                    $idSpace,
+                    $id_space,
                     $this->request->getParameter("name"),
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
@@ -215,7 +215,7 @@ class CorespaceadminController extends CoresecureController
                 // Space admin can edit
                 Configuration::getLogger()->debug('[admin][space] edit space', ["name" => $this->request->getParameter("name")]);
                 $modelSpace->editSpace(
-                    $idSpace,
+                    $id_space,
                     $this->request->getParameter("name"),
                     $this->request->getParameter("status"),
                     $this->request->getParameter("color"),
@@ -260,7 +260,7 @@ class CorespaceadminController extends CoresecureController
         $showTodo = ($this->request->getParameterNoException('showTodo') == 1) ? true : false;
 
         // generate todoList informations
-        $todolist = ($idSpace > 0) ? $this->todolist($space['id']) : null;
+        $todolist = ($id_space > 0) ? $this->todolist($space['id']) : null;
         return $this->render(
             array(
                 "lang" => $lang,
@@ -272,20 +272,20 @@ class CorespaceadminController extends CoresecureController
         );
     }
 
-    protected function todolist($idSpace)
+    protected function todolist($id_space)
     {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
 
         $todoData = array();
-        $activeModules = array_column($modelSpace->getDistinctSpaceMenusModules($idSpace), 'module');
+        $activeModules = array_column($modelSpace->getDistinctSpaceMenusModules($id_space), 'module');
         $baseModules = array('users', 'resources', 'clients', 'booking');
         array_push($activeModules, 'users');
 
         foreach ($baseModules as $baseModule) {
             if (in_array($baseModule, $activeModules)) {
                 $fName = 'get' . ucFirst($baseModule) . 'Todo';
-                $todoData[$baseModule] = $this->$fName($idSpace, $lang);
+                $todoData[$baseModule] = $this->$fName($id_space, $lang);
             }
         }
 
@@ -293,13 +293,13 @@ class CorespaceadminController extends CoresecureController
         foreach (array_keys($todoData) as $module) {
             $todoData[$module]['docurl'] = $modulesDocUrl . lcfirst($todoData[$module]['title']);
             if ($todoData[$module]['title'] != "Users") {
-                $todoData[$module] = $this->checkForTasksDone($todoData[$module], $idSpace);
+                $todoData[$module] = $this->checkForTasksDone($todoData[$module], $id_space);
             }
         }
         return $todoData;
     }
 
-    protected function getUsersTodo($idSpace, $lang)
+    protected function getUsersTodo($id_space, $lang)
     {
         $modelUser = new CoreUser();
         $modelPending = new CorePendingAccount();
@@ -311,21 +311,21 @@ class CorespaceadminController extends CoresecureController
                         "id" => "users",
                         "model" => "CoreUser",
                         "title" => UsersTranslator::Create_item("user", $lang),
-                        "url" => "corespaceaccessuseradd/" . $idSpace,
-                        "done" => $modelUser->countSpaceActiveUsers($idSpace)
+                        "url" => "corespaceaccessuseradd/" . $id_space,
+                        "done" => $modelUser->countSpaceActiveUsers($id_space)
                     ],
                     [
                         "id" => "pendingUsers",
                         "model" => "CorePendingAccount",
                         "title" => UsersTranslator::Create_item("pending", $lang),
-                        "url" => "corespacependingusers/" . $idSpace,
-                        "done" => $modelPending->countActivatedForSpace($idSpace)
+                        "url" => "corespacependingusers/" . $id_space,
+                        "done" => $modelPending->countActivatedForSpace($id_space)
                     ],
                 ]
             ];
     }
 
-    protected function getResourcesTodo($idSpace, $lang)
+    protected function getResourcesTodo($id_space, $lang)
     {
         return
             [
@@ -335,31 +335,31 @@ class CorespaceadminController extends CoresecureController
                         "id" => "ReArea",
                         "model" => "ReArea",
                         "title" => ResourcesTranslator::Create_item("area", $lang),
-                        "url" => "reareasedit/" . $idSpace,
+                        "url" => "reareasedit/" . $id_space,
                     ],
                     [
                         "id" => "ReCategory",
                         "model" => "ReCategory",
                         "title" => ResourcesTranslator::Create_item("category", $lang),
-                        "url" => "recategoriesedit/" . $idSpace,
+                        "url" => "recategoriesedit/" . $id_space,
                     ],
                     [
                         "id" => "ResourceInfo",
                         "model" => "ResourceInfo",
                         "title" => ResourcesTranslator::Create_item("resource", $lang),
-                        "url" => "resourcesedit/" . $idSpace,
+                        "url" => "resourcesedit/" . $id_space,
                     ],
                     [
                         "id" => "ReVisa",
                         "model" => "ReVisa",
                         "title" => ResourcesTranslator::Create_item("visa", $lang),
-                        "url" => "resourceseditvisa/" . $idSpace,
+                        "url" => "resourceseditvisa/" . $id_space,
                     ],
                 ]
             ];
     }
 
-    protected function getClientsTodo($idSpace, $lang)
+    protected function getClientsTodo($id_space, $lang)
     {
         $modelUser = new CoreUser();
         return
@@ -370,27 +370,27 @@ class CorespaceadminController extends CoresecureController
                         "id" => "company",
                         "model" => "ClCompany",
                         "title" => ClientsTranslator::Create_item("company", $lang),
-                        "url" => "clcompany/" . $idSpace,
+                        "url" => "clcompany/" . $id_space,
                     ],
                     [
                         "id" => "pricings",
                         "model" => "ClPricing",
                         "title" => ClientsTranslator::Create_item("pricing", $lang),
-                        "url" => "clpricingedit/" . $idSpace,
+                        "url" => "clpricingedit/" . $id_space,
                     ],
                     [
                         "id" => "clients",
                         "model" => "ClClient",
                         "title" => ClientsTranslator::Create_item("client", $lang),
-                        "url" => "clclientedit/" . $idSpace,
+                        "url" => "clclientedit/" . $id_space,
                     ],
                     [
                         "id" => "clientsuser",
                         "model" => "ClClientUser",
                         "title" => ClientsTranslator::Create_item("clientsuser", $lang),
-                        "url" => "corespaceuseredit/" . $idSpace,
+                        "url" => "corespaceuseredit/" . $id_space,
                         "options" => [
-                            "list" => $modelUser->getSpaceActiveUsers($idSpace),
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
                         ]
                     ]
@@ -398,7 +398,7 @@ class CorespaceadminController extends CoresecureController
             ];
     }
 
-    protected function getBookingTodo($idSpace, $lang)
+    protected function getBookingTodo($id_space, $lang)
     {
         $modelUser = new CoreUser();
         $modelReArea = new ReArea();
@@ -411,15 +411,15 @@ class CorespaceadminController extends CoresecureController
                         "id" => "colorcodes",
                         "model" => "BkColorCode",
                         "title" => BookingTranslator::Create_item("colorcode", $lang),
-                        "url" => "bookingcolorcodeedit/" . $idSpace,
+                        "url" => "bookingcolorcodeedit/" . $id_space,
                     ],
                     [
                         "id" => "schedule",
                         "model" => "BkScheduling",
                         "title" => $opt . BookingTranslator::Create_item("schedule", $lang),
-                        "url" => "bookingschedulingedit/" . $idSpace,
+                        "url" => "bookingschedulingedit/" . $id_space,
                         "options" => [
-                            "list" => $modelReArea->getForSpace($idSpace),
+                            "list" => $modelReArea->getForSpace($id_space),
                             "defaultText" => ResourcesTranslator::Area($lang)
                         ]
                     ],
@@ -427,9 +427,9 @@ class CorespaceadminController extends CoresecureController
                         "id" => "auth",
                         "model" => "BkAuthorization",
                         "title" => $opt . BookingTranslator::Create_item("authorisations", $lang),
-                        "url" => "corespaceuseredit/" . $idSpace,
+                        "url" => "corespaceuseredit/" . $id_space,
                         "options" => [
-                            "list" => $modelUser->getSpaceActiveUsers($idSpace),
+                            "list" => $modelUser->getSpaceActiveUsers($id_space),
                             "defaultText" => UsersTranslator::User_account($lang)
                         ]
                     ],
@@ -437,23 +437,23 @@ class CorespaceadminController extends CoresecureController
                         "id" => "access",
                         "model" => "BkAccess",
                         "title" => BookingTranslator::Create_item("access", $lang),
-                        "url" => "bookingaccessibilities/" . $idSpace,
+                        "url" => "bookingaccessibilities/" . $id_space,
                     ],
                     [
                         "id" => "booking",
                         "model" => "BkCalendarEntry",
                         "title" => BookingTranslator::Create_item("booking", $lang),
-                        "url" => "bookingdayarea/" . $idSpace,
+                        "url" => "bookingdayarea/" . $id_space,
                     ]
                 ]
             ];
     }
 
-    protected function checkForTasksDone($moduleTodo, $idSpace)
+    protected function checkForTasksDone($moduleTodo, $id_space)
     {
         for ($i=0; $i < count($moduleTodo['tasks']); $i++) {
             $model = new $moduleTodo['tasks'][$i]['model']();
-            $moduleTodo['tasks'][$i]['done'] = $model->admCount($idSpace)['total'];
+            $moduleTodo['tasks'][$i]['done'] = $model->admCount($id_space)['total'];
         }
         return $moduleTodo;
     }
@@ -503,13 +503,13 @@ class CorespaceadminController extends CoresecureController
         $c->runAction($moduleBaseName, 'index', ['id_space' => $space['id']]);
     }
 
-    public function deleteAction($idSpace)
+    public function deleteAction($id_space)
     {
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $model = new CoreSpace();
-        $model->delete($idSpace);
+        $model->delete($id_space);
         $this->redirect("spaceadmin");
     }
 }

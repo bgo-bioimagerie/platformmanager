@@ -16,8 +16,8 @@ class BulletjournalController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->redirect("bjnotes/".$idSpace."/0/0");
+        $this->redirect("bjnotes/".$id_space."/0/0");
     }
 }

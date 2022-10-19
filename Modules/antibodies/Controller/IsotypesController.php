@@ -22,62 +22,62 @@ class IsotypesController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $isotypessArray = $this->model->getBySpace($idSpace);
+        $isotypessArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Isotypes", 3);
-        $table->addLineEditButton("isotypesedit/".$idSpace."/");
-        $table->addDeleteButton("isotypesdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("isotypesedit/".$id_space."/");
+        $table->addDeleteButton("isotypesdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($isotypessArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $isotypes = $this->model->get($idSpace, $id);
+        $isotypes = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "isotypeseditform");
         $form->setTitle("Modifier isotypes");
         $form->addText("nom", "nom", true, $isotypes["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "isotypesedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "isotypesedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id= $this->model->add($name, $idSpace);
+                $id= $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("isotypes/".$idSpace, [], ['isotype' => ['id' => $id]]);
+            return $this->redirect("isotypes/".$id_space, [], ['isotype' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("isotypes/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("isotypes/" . $id_space);
     }
 }

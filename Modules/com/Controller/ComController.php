@@ -16,13 +16,13 @@ class ComController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $id_space);
 
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' =>  ComTranslator::Com($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -34,25 +34,25 @@ class ComController extends CoresecureController
         return $this->twig->render("Modules/com/View/Com/navbar.twig", $dataView);
     }
 
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         if ($this->role  && $this->role == CoreSpace::$ADMIN) {
-            return $this->redirect('comtileedit/' . $idSpace);
+            return $this->redirect('comtileedit/' . $id_space);
         }
-        return $this->redirect('comnews/'.$idSpace);
+        return $this->redirect('comnews/'.$id_space);
     }
 
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
         $html = file_get_contents('Modules/com/View/Com/navbar.php');
 
         $lang = $this->getLanguage();
-        $html = str_replace('{{id_space}}', $idSpace, $html);
+        $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Tilemessage}}', ComTranslator::Tilemessage($lang), $html);
         $html = str_replace('{{News}}', ComTranslator::News($lang), $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', ComTranslator::Com($lang), $html);

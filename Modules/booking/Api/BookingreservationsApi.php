@@ -30,10 +30,10 @@ class BookingreservationsApi extends Controller
     public function getreservationsAction($id_resource, $userlogin)
     {
         $modelUser = new CoreUser();
-        $idUser = $modelUser->getIdByLogin($userlogin);
-        if ($idUser > 0) {
+        $id_user = $modelUser->getIdByLogin($userlogin);
+        if ($id_user > 0) {
             $modelBooking = new BkCalendarEntry();
-            $data = $modelBooking->getEntriesForUserResource($idUser, $id_resource);
+            $data = $modelBooking->getEntriesForUserResource($id_user, $id_resource);
             echo json_encode($data);
         } else {
             echo json_encode(array("error" => "user does not exists"));

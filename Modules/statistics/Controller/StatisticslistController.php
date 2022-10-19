@@ -17,14 +17,14 @@ class StatisticslistController extends StatisticsController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $c = new CoreFiles();
         $cs = new CoreSpace();
-        $role = $cs->getSpaceMenusRole($idSpace, 'statistics');
-        $statFiles = $c->getByModule($idSpace, 'statistics', $role);
+        $role = $cs->getSpaceMenusRole($id_space, 'statistics');
+        $statFiles = $c->getByModule($id_space, 'statistics', $role);
 
         $table = new TableView();
 
@@ -58,13 +58,13 @@ class StatisticslistController extends StatisticsController
             }
             $statFiles[$i]['url'] = '';
             if ($statFiles[$i]['status'] == 'done') {
-                $statFiles[$i]['url'] = "corefiles/$idSpace/".$stat['id'];
+                $statFiles[$i]['url'] = "corefiles/$id_space/".$stat['id'];
             }
         }
 
         $table->addDownloadButton('url');
         $tableView = $table->view($statFiles, $headers);
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "stats" => $tableView));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "stats" => $tableView));
     }
 }

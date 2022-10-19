@@ -4,7 +4,7 @@
 <?php startblock('content') ?>
 
 <div class="pm-form-short container ">
-    <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $idSpace ?>"
+    <form role="form" class="form-horizontal" action="bookinggrrstats/<?php echo $id_space ?>"
           method="post" id="statform">
 
         <div class="page-header">

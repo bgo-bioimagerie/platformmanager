@@ -29,9 +29,9 @@ class BjnotesApi extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function editnotequeryAction($idSpace)
+    public function editnotequeryAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
 
@@ -47,7 +47,7 @@ class BjnotesApi extends CoresecureController
         $type = 1;
         $content = $this->request->getParameter("formnotecontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formnotedate"), $lang);
-        $id = $modelNote->set($id, $idSpace, $name, $type, $content, $date, $ismonth);
+        $id = $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
         if ($date == "") {
             throw new PfmParamException("invalid date");
         }
@@ -61,12 +61,12 @@ class BjnotesApi extends CoresecureController
         echo json_encode($data);
     }
 
-    public function getnoteAction($idSpace, $id)
+    public function getnoteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelNote = new BjNote();
 
-        $data = $modelNote->get($idSpace, $id);
+        $data = $modelNote->get($id_space, $id);
 
         $lang = $this->getLanguage();
         $data["date"] = CoreTranslator::dateFromEn($data["date"], $lang);
@@ -74,10 +74,10 @@ class BjnotesApi extends CoresecureController
         echo json_encode($data);
     }
 
-    public function edittaskAction($idSpace)
+    public function edittaskAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelNote = new BjNote();
@@ -92,11 +92,11 @@ class BjnotesApi extends CoresecureController
         $type = 2;
         $content = $this->request->getParameter("formtaskcontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formtaskdate"), $lang);
-        $id_note = $modelNote->set($id, $idSpace, $name, $type, $content, $date, $ismonth);
+        $id_note = $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
 
         $priority = $this->request->getParameter("formtaskpriority");
         $deadline = CoreTranslator::dateToEn($this->request->getParameter("formtaskdeadline"), $lang);
-        $modelTask->set($idSpace, $id_note, $priority, $deadline);
+        $modelTask->set($id_space, $id_note, $priority, $deadline);
 
         if ($date == "") {
             throw new PfmParamException("invalid date");
@@ -111,11 +111,11 @@ class BjnotesApi extends CoresecureController
         echo json_encode($data);
     }
 
-    public function gettaskAction($idSpace, $id)
+    public function gettaskAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelTask = new BjTask();
-        $data = $modelTask->getForNote($idSpace, $id);
+        $data = $modelTask->getForNote($id_space, $id);
 
         $lang = $this->getLanguage();
         $data["date"] = CoreTranslator::dateFromEn($data["date"], $lang);
@@ -124,11 +124,11 @@ class BjnotesApi extends CoresecureController
         echo json_encode($data);
     }
 
-    public function closetaskAction($idSpace, $id)
+    public function closetaskAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelTaskHistory = new BjTaskHistory();
-        $data = $modelTaskHistory->getForNote($idSpace, $id);
+        $data = $modelTaskHistory->getForNote($id_space, $id);
 
         $lastStatus = 1;
         if (count($data) > 0) {
@@ -138,17 +138,17 @@ class BjnotesApi extends CoresecureController
         if ($lastStatus == 1) {
             $status = 2;
         }
-        $modelTaskHistory->addHist($idSpace, $id, $status, time());
+        $modelTaskHistory->addHist($id_space, $id, $status, time());
 
         $dataout = array("status" => $status);
         echo json_encode($dataout);
     }
 
-    public function canceltaskAction($idSpace, $id)
+    public function canceltaskAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelTaskHistory = new BjTaskHistory();
-        $data = $modelTaskHistory->getForNote($idSpace, $id);
+        $data = $modelTaskHistory->getForNote($id_space, $id);
 
         $lastStatus = 1;
         if (count($data) > 0) {
@@ -158,17 +158,17 @@ class BjnotesApi extends CoresecureController
         if ($lastStatus < 3) {
             $status = 3;
         }
-        $modelTaskHistory->addHist($idSpace, $id, $status, time());
+        $modelTaskHistory->addHist($id_space, $id, $status, time());
 
         $dataout = array("status" => $status);
         echo json_encode($dataout);
     }
 
-    public function geteventAction($idSpace, $id)
+    public function geteventAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $modelTask = new BjEvent();
-        $data = $modelTask->getForNote($idSpace, $id);
+        $data = $modelTask->getForNote($id_space, $id);
         $data["startdate"] = date('Y-m-d', $data["start_time"]);
         $data["starthour"] = date('H', $data["start_time"]);
         $data["startmin"] = date('i', $data["start_time"]);
@@ -180,9 +180,9 @@ class BjnotesApi extends CoresecureController
         echo json_encode($data);
     }
 
-    public function editeventAction($idSpace)
+    public function editeventAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("bulletjournal", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelNote = new BjNote();
@@ -199,7 +199,7 @@ class BjnotesApi extends CoresecureController
         if ($date == "") {
             throw new PfmParamException("invalid start date");
         }
-        $id_note = $modelNote->set($id, $idSpace, $name, $type, $content, $date, $ismonth);
+        $id_note = $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
 
         $modelEvent = new BjEvent();
         $start_hour = $this->request->getParameter("formeventdatestartH");
@@ -216,7 +216,7 @@ class BjnotesApi extends CoresecureController
         $start_time = mktime($start_hour, $start_min, 0, $datearray[1], $datearray[2], $datearray[0]);
         $end_time = mktime($end_hour, $end_min, 0, $enddatearray[1], $enddatearray[2], $enddatearray[0]);
 
-        $modelEvent->set($idSpace, $id_note, $start_time, $end_time);
+        $modelEvent->set($id_space, $id_note, $start_time, $end_time);
 
         $data = array("id" => $id, "name" => $name, "type" => $type,
             "content" => $content, "date" => $date,

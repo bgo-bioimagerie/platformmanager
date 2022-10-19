@@ -22,10 +22,10 @@ class QuoteApi extends CoresecureController
         parent::__construct($request);
     }
 
-    public function getitemAction($idSpace, $id)
+    public function getitemAction($id_space, $id)
     {
         $model = new QuoteItem();
-        $data = $model->get($idSpace, $id);
+        $data = $model->get($id_space, $id);
 
         echo json_encode($data);
     }

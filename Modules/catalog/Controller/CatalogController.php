@@ -16,13 +16,13 @@ class CatalogController extends CoresecureController
 {
     public function sideMenu()
     {
-        $idSpace = $this->args['id_space'];
+        $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $id_space);
 
         $dataView = [
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'title' => CatalogTranslator::Catalog_settings($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
@@ -33,17 +33,17 @@ class CatalogController extends CoresecureController
         return $this->twig->render("Modules/catalog/View/Catalog/navbar.twig", $dataView);
     }
 
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
         $html = file_get_contents('Modules/catalog/View/Catalog/navbar.php');
 
         $lang = $this->getLanguage();
-        $html = str_replace('{{id_space}}', $idSpace, $html);
+        $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Categories}}', CatalogTranslator::Categories($lang), $html);
         $html = str_replace('{{Prestations}}', CatalogTranslator::Prestations($lang), $html);
 
         $modelSpace = new CoreSpace();
-        $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $idSpace);
+        $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', CatalogTranslator::Catalog_settings($lang), $html);
@@ -55,11 +55,11 @@ class CatalogController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("catalog", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $this->render(array("id_space" => $idSpace, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

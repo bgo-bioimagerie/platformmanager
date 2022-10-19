@@ -22,62 +22,62 @@ class OrganesController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $organessArray = $this->model->getBySpace($idSpace);
+        $organessArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Organes", 3);
-        $table->addLineEditButton("organesedit/".$idSpace."/");
-        $table->addDeleteButton("organesdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("organesedit/".$id_space."/");
+        $table->addDeleteButton("organesdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($organessArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $organes = $this->model->get($idSpace, $id);
+        $organes = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "organeseditform");
         $form->setTitle("Modifier organes");
         $form->addText("nom", "nom", true, $organes["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "organesedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "organesedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("organes/".$idSpace, [], ['organe' => ['id' => $id]]);
+            return $this->redirect("organes/".$id_space, [], ['organe' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("organes/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("organes/" . $id_space);
     }
 }

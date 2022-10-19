@@ -13,15 +13,15 @@ require_once 'Modules/com/Controller/ComController.php';
  */
 class ComtileController extends ComController
 {
-    public function editAction($idSpace)
+    public function editAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("com", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
         if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('admins only');
         }
         $modelParam = new CoreConfig();
-        $message_public = $modelParam->getParamSpace("tilemessage", $idSpace);
-        $message_private = $modelParam->getParamSpace("private_tilemessage", $idSpace);
+        $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
 
         $lang = $this->getLanguage();
         $form = new Form($this->request, "comtileeditform");
@@ -29,22 +29,22 @@ class ComtileController extends ComController
         $form->addTextArea("message_public", ComTranslator::PublicTilemessage($lang), false, $message_public, true);
         $form->addTextArea("message_private", ComTranslator::PrivateTilemessage($lang), false, $message_private, true);
         $form->setColumnsWidth(0, 12);
-        $form->setValidationButton(CoreTranslator::Ok($lang), "comtileedit/".$idSpace);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "comtileedit/".$id_space);
 
         if ($form->check()) {
-            $modelParam->setParam("tilemessage", $this->request->getParameter("message_public", false), $idSpace);
-            $modelParam->setParam("private_tilemessage", $this->request->getParameter("message_private", false), $idSpace);
-            $this->redirect('comtileedit/'.$idSpace);
+            $modelParam->setParam("tilemessage", $this->request->getParameter("message_public", false), $id_space);
+            $modelParam->setParam("private_tilemessage", $this->request->getParameter("message_private", false), $id_space);
+            $this->redirect('comtileedit/'.$id_space);
         }
 
-        $this->render(array("id_space" => $idSpace, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         $modelParam = new CoreConfig();
-        $message_public = $modelParam->getParamSpace("tilemessage", $idSpace);
-        $message_private = $modelParam->getParamSpace("private_tilemessage", $idSpace);
+        $message_public = $modelParam->getParamSpace("tilemessage", $id_space);
+        $message_private = $modelParam->getParamSpace("private_tilemessage", $id_space);
 
         $messages = array("message_public" => $message_public);
 

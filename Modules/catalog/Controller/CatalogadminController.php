@@ -15,42 +15,42 @@ require_once 'Modules/catalog/Controller/CatalogController.php';
  */
 class CatalogadminController extends CatalogController
 {
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->redirect("catalogcategories/".$idSpace);
+        $this->redirect("catalogcategories/".$id_space);
     }
     /**
      * (non-PHPdoc)
      * @see Controller::categoriesAction()
      */
-    public function categoriesAction($idSpace)
+    public function categoriesAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
         $modelCategory = new CaCategory();
-        $categoriesArray = $modelCategory->getAll($idSpace);
+        $categoriesArray = $modelCategory->getAll($id_space);
         $table = new TableView();
         $table->setTitle(CatalogTranslator::Categories($lang));
-        $table->addLineEditButton("catalogcategoryedit/".$idSpace);
-        $table->addDeleteButton("catalogcategorydelete/".$idSpace);
+        $table->addLineEditButton("catalogcategoryedit/".$id_space);
+        $table->addDeleteButton("catalogcategorydelete/".$id_space);
         $tableHtml = $table->view($categoriesArray, array("id" => "ID", "name" => CoreTranslator::Name($lang), "display_order" => CoreTranslator::Display_order($lang)));
         $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
-    public function categoryeditAction($idSpace, $id)
+    public function categoryeditAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get name
         $name = "";
         $display_order = 0;
         $modelCategory = new CaCategory();
         if ($id > 0) {
-            $name = $modelCategory->getName($idSpace, $id);
-            $display_order = $modelCategory->getDisplayOrder($idSpace, $id);
+            $name = $modelCategory->getName($id_space, $id);
+            $display_order = $modelCategory->getDisplayOrder($id_space, $id);
         }
         // build the form
         $form = new Form($this->request, "formcategories");
@@ -58,21 +58,21 @@ class CatalogadminController extends CatalogController
         $form->addHidden("id", $id);
         $form->addText("name", "name", true, $name);
         $form->addText("display_order", CoreTranslator::Display_order($lang), true, $display_order);
-        $form->setValidationButton("Ok", "catalogcategoryedit/".$idSpace ."/" . $id);
+        $form->setValidationButton("Ok", "catalogcategoryedit/".$id_space ."/" . $id);
         //$form->setCancelButton(CoreTranslator::Cancel($lang), "catalogadmin/categories");
         if ($form->check()) {
             if ($id > 0) {
-                $modelCategory->edit($form->getParameter("id"), $idSpace, $form->getParameter("name"), $form->getParameter("display_order"));
+                $modelCategory->edit($form->getParameter("id"), $id_space, $form->getParameter("name"), $form->getParameter("display_order"));
             } else {
-                $modelCategory->add($idSpace, $form->getParameter("name"), $form->getParameter("display_order"));
+                $modelCategory->add($id_space, $form->getParameter("name"), $form->getParameter("display_order"));
             }
-            $this->redirect("catalogcategories/".$idSpace);
+            $this->redirect("catalogcategories/".$id_space);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
             $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'formHtml' => $formHtml
             ));
         }
@@ -80,51 +80,51 @@ class CatalogadminController extends CatalogController
     /**
      * Remove a category from the database
      */
-    public function categorydeleteAction($idSpace, $id)
+    public function categorydeleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaCategory();
-        $modelCategory->delete($idSpace, $id);
+        $modelCategory->delete($id_space, $id);
         // generate view
-        $this->redirect("catalogcategories/".$idSpace);
+        $this->redirect("catalogcategories/".$id_space);
     }
-    public function prestationsAction($idSpace)
+    public function prestationsAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
         $modelEntry = new CaEntry();
-        $dataArray = $modelEntry->getAll($idSpace);
+        $dataArray = $modelEntry->getAll($id_space);
         $modelCategory = new CaCategory();
         for ($i = 0; $i < count($dataArray); $i++) {
-            $dataArray[$i]["id_category"] = $modelCategory->getName($idSpace, $dataArray[$i]["id_category"]);
+            $dataArray[$i]["id_category"] = $modelCategory->getName($id_space, $dataArray[$i]["id_category"]);
         }
         $table = new TableView();
         $table->setTitle(CatalogTranslator::Entries($lang));
-        $table->addLineEditButton("catalogprestationedit/".$idSpace);
-        $table->addDeleteButton("catalogprestationdelete/".$idSpace, "id", "title");
+        $table->addLineEditButton("catalogprestationedit/".$id_space);
+        $table->addDeleteButton("catalogprestationdelete/".$id_space, "id", "title");
         $tableHtml = $table->view($dataArray, array("id" => "ID", "title" => CatalogTranslator::Title($lang),
             "id_category" => CatalogTranslator::Category($lang),
             "short_desc" => CatalogTranslator::Short_desc($lang)
         ));
         $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
-    public function prestationeditAction($idSpace, $id)
+    public function prestationeditAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get info
         $modelEntry = new CaEntry();
         $entryInfo = array("title" => "", "id_category" => 0, "short_desc" => "", "full_desc" => "");
         if ($id > 0) {
-            $entryInfo = $modelEntry->getInfo($idSpace, $id);
+            $entryInfo = $modelEntry->getInfo($id_space, $id);
         }
         // categories choices
         $modelCategory = new CaCategory();
-        $categories = $modelCategory->getAll($idSpace);
+        $categories = $modelCategory->getAll($id_space);
         $cchoices = array();
         $cchoicesid = array();
         foreach ($categories as $cat) {
@@ -139,7 +139,7 @@ class CatalogadminController extends CatalogController
         $form->addSelect("id_category", CatalogTranslator::Category($lang), $cchoices, $cchoicesid, $entryInfo["id_category"]);
         $form->addTextArea("short_desc", CatalogTranslator::Short_desc($lang), false, $entryInfo["short_desc"]);
         $form->addUpload("illustration", CatalogTranslator::Illustration($lang));
-        $form->setValidationButton(CoreTranslator::Ok($lang), "catalogprestationedit/".$idSpace . "/" . $id);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "catalogprestationedit/".$id_space . "/" . $id);
         //$form->setCancelButton(CoreTranslator::Cancel($lang), "catalogadmin/entries");
         if ($form->check()) {
             $id_category = $form->getParameter("id_category");
@@ -147,23 +147,23 @@ class CatalogadminController extends CatalogController
             $short_desc = $form->getParameter("short_desc");
             $full_desc = ""; //$form->getParameter("full_desc");
             if ($id > 0) {
-                $modelEntry->edit($id, $idSpace, $id_category, $title, $short_desc, $full_desc);
+                $modelEntry->edit($id, $id_space, $id_category, $title, $short_desc, $full_desc);
             } else {
-                $id = $modelEntry->add($idSpace, $id_category, $title, $short_desc, $full_desc);
+                $id = $modelEntry->add($id_space, $id_category, $title, $short_desc, $full_desc);
             }
             if ($_FILES["illustration"]["name"] != "") {
                 // upload file
                 $this->uploadIllustration();
                 // set filename to database
-                $modelEntry->setImageUrl($idSpace, $id, $_FILES["illustration"]["name"]);
+                $modelEntry->setImageUrl($id_space, $id, $_FILES["illustration"]["name"]);
             }
-            $this->redirect("catalogprestations/".$idSpace);
+            $this->redirect("catalogprestations/".$id_space);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
             $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'formHtml' => $formHtml
             ));
         }
@@ -190,12 +190,12 @@ class CatalogadminController extends CatalogController
         }
     }
 
-    public function prestationdeleteAction($idSpace, $id)
+    public function prestationdeleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("catalogsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaEntry();
-        $modelCategory->delete($idSpace, $id);
+        $modelCategory->delete($id_space, $id);
         // generate view
-        $this->redirect("catalogprestations/".$idSpace);
+        $this->redirect("catalogprestations/".$id_space);
     }
 }

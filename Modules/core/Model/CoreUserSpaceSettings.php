@@ -36,14 +36,14 @@ class CoreUserSpaceSettings extends Model
 
     /**
      * Get the settings of a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @return multitype: Use settings
      */
-    public function getUserSettings($idSpace, $user_id)
+    public function getUserSettings($id_space, $user_id)
     {
         $sql = "select setting, value  from core_user_space_settings where user_id=? AND id_space=?";
-        $user = $this->runRequest($sql, array($user_id, $idSpace));
+        $user = $this->runRequest($sql, array($user_id, $id_space));
         $res = $user->fetchAll();
 
         $out = array();
@@ -56,98 +56,98 @@ class CoreUserSpaceSettings extends Model
     /**
      * Get all users settings for input setting and optional value
      */
-    public function getUsersForSetting($idSpace, $setting, $value=null)
+    public function getUsersForSetting($id_space, $setting, $value=null)
     {
         if ($value == null) {
             $sql = "select * from core_user_space_settings where setting=? and id_space=?";
-            $user = $this->runRequest($sql, array($setting, $idSpace));
+            $user = $this->runRequest($sql, array($setting, $id_space));
             return $user->fetchAll();
         }
         $sql = "select * from core_user_space_settings where setting=? and value=? and id_space=?";
-        $user = $this->runRequest($sql, array($setting, $value, $idSpace));
+        $user = $this->runRequest($sql, array($setting, $value, $id_space));
         return $user->fetchAll();
     }
 
     /**
      * Get a given setting of a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @param string $setting Setting key
      * @return mixed
      */
-    public function getUserSetting($idSpace, $user_id, $setting)
+    public function getUserSetting($id_space, $user_id, $setting)
     {
         $sql = "select value from core_user_space_settings where user_id=? and setting=? and id_space=?";
-        $user = $this->runRequest($sql, array($user_id, $setting, $idSpace));
+        $user = $this->runRequest($sql, array($user_id, $setting, $id_space));
         $tmp = $user->fetch();
         return $tmp ? $tmp[0] : null;
     }
 
     /**
      * Set (add if not exists, update otherwise) a setting for a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    public function setUserSettings($idSpace, $user_id, $setting, $value)
+    public function setUserSettings($id_space, $user_id, $setting, $value)
     {
-        if (!$this->isSetting($idSpace, $user_id, $setting)) {
-            $this->addSetting($idSpace, $user_id, $setting, $value);
+        if (!$this->isSetting($id_space, $user_id, $setting)) {
+            $this->addSetting($id_space, $user_id, $setting, $value);
         } else {
-            $this->updateSetting($idSpace, $user_id, $setting, $value);
+            $this->updateSetting($id_space, $user_id, $setting, $value);
         }
     }
 
     /**
      * Check if a setting exists for a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @param string $setting Setting key
      * @return boolean
      */
-    protected function isSetting($idSpace, $user_id, $setting)
+    protected function isSetting($id_space, $user_id, $setting)
     {
         $sql = "select * from core_user_space_settings where user_id=? and setting=? and id_space=?";
-        $req = $this->runRequest($sql, array($user_id, $setting, $idSpace));
+        $req = $this->runRequest($sql, array($user_id, $setting, $id_space));
         return $req->rowCount() == 1;
     }
 
     /**
      * Add a setting for a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    protected function addSetting($idSpace, $user_id, $setting, $value)
+    protected function addSetting($id_space, $user_id, $setting, $value)
     {
         $sql = "insert into core_user_space_settings (id_space, user_id, setting, value)
 				 VALUES(?,?,?,?)";
-        $this->runRequest($sql, array($idSpace, $user_id, $setting, $value));
+        $this->runRequest($sql, array($id_space, $user_id, $setting, $value));
     }
 
     /**
      * Update a setting for a given user
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      * @param number $user_id User ID
      * @param string $setting Setting key
      * @param string $value Setting value
      */
-    protected function updateSetting($idSpace, $user_id, $setting, $value)
+    protected function updateSetting($id_space, $user_id, $setting, $value)
     {
         $sql = "update core_user_space_settings set value=? where user_id=? and setting=? and id_space=?";
-        $this->runRequest($sql, array($value, $user_id, $setting, $idSpace));
+        $this->runRequest($sql, array($value, $user_id, $setting, $id_space));
     }
 
     /**
      * Set user setting into a session variable
-     * @param number $idSpace space ID
+     * @param number $id_space space ID
      */
-    public function updateSessionSettingVariable($idSpace)
+    public function updateSessionSettingVariable($id_space)
     {
         // add the user settings to the session
-        $settings = $this->getUserSettings($idSpace, $_SESSION["id_user"]);
+        $settings = $this->getUserSettings($id_space, $_SESSION["id_user"]);
         $_SESSION["user_space_settings"] = $settings;
     }
 }

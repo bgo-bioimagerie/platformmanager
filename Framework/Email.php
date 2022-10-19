@@ -213,10 +213,10 @@ class Email extends Model
             switch($origin) {
                 case "new_join_request":
                     $userLogin = $_SESSION['login'];
-                    $idSpace = $params["id_space"];
+                    $id_space = $params["id_space"];
                     break;
                 case "self_registration":
-                    $idSpace = $params['supData']['id_space'];
+                    $id_space = $params['supData']['id_space'];
                     $userLogin = $params['login'];
                     $organization = $params['supData']['organization'];
                     $unit = $params['supData']['unit'];
@@ -224,13 +224,13 @@ class Email extends Model
                 default:
                     break;
             }
-            $spaceName = $modelSpace->getSpaceName($idSpace) ?? "";
+            $spaceName = $modelSpace->getSpaceName($id_space) ?? "";
             $userEmail = $params['email'] ?? "";
             $userFullName = $params['fullName'] ?? "";
 
             $subject = CoreTranslator::JoinRequestSubject($spaceName, $lang);
             $content = CoreTranslator::JoinRequestEmail($userLogin, $spaceName, $userEmail, $userFullName, $lang, $organization ?? '', $unit ?? '', $params['comment'] ?? '');
-            $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($idSpace));
+            $toAddress = $this->formatAddresses($modelSpace->getEmailsSpaceManagers($id_space));
             $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
         } else {
             Configuration::getLogger()->error(

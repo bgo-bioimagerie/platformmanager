@@ -248,17 +248,17 @@ class CoretilesController extends CorecookiesecureController
         ));
     }
 
-    public function corestarAction($level, $id, $idSpace)
+    public function corestarAction($level, $id, $id_space)
     {
         $starModel = new CoreStar();
-        $starModel->star($_SESSION["id_user"], $idSpace);
+        $starModel->star($_SESSION["id_user"], $id_space);
         $this->redirect("coretiles/$level/$id");
     }
 
-    public function coreunstarAction($level, $id, $idSpace)
+    public function coreunstarAction($level, $id, $id_space)
     {
         $starModel = new CoreStar();
-        $starModel->delete($_SESSION["id_user"], $idSpace);
+        $starModel->delete($_SESSION["id_user"], $id_space);
         $this->redirect("coretiles/$level/$id");
     }
 
@@ -316,34 +316,34 @@ class CoretilesController extends CorecookiesecureController
      * Manage actions resulting from user request to join or leave a space
      * If user is a member of space, then leaves, else join
      *
-     * @param int $idSpace
+     * @param int $id_space
      * @param bool $isMemberOfSpace
      */
-    public function selfJoinSpaceAction($idSpace)
+    public function selfJoinSpaceAction($id_space)
     {
         $modelSpaceUser = new CoreSpaceUser();
-        $idUser = $_SESSION["id_user"];
-        if (!$idUser || $idUser<=0) {
+        $id_user = $_SESSION["id_user"];
+        if (!$id_user || $id_user<=0) {
             throw new PfmAuthException('need to be logged', 401);
         }
-        $isMemberOfSpace = $modelSpaceUser->exists($idUser, $idSpace);
+        $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
         $lang = $this->getLanguage();
 
         if ($isMemberOfSpace) {
             // User is already member of space
             $modelSpaceUser = new CoreSpaceUser();
             // remove user from space members
-            $modelSpaceUser->delete($idSpace, $idUser);
+            $modelSpaceUser->delete($id_space, $id_user);
         } else {
             $cum = new CoreUser();
-            $login_user = $cum->getUserLogin($idUser);
+            $login_user = $cum->getUserLogin($id_user);
             // User is not member of space
             $modelSpacePending = new CorePendingAccount();
-            $isPending = $modelSpacePending->isActuallyPending($idUser, $idSpace);
+            $isPending = $modelSpacePending->isActuallyPending($id_user, $id_space);
             if (!$isPending) {
                 // User hasn't already an unanswered request to join
                 $spaceModel = new CoreSpace();
-                $spaceName = $spaceModel->getSpaceName($idSpace);
+                $spaceName = $spaceModel->getSpaceName($id_space);
 
                 $comment = '';
                 if ($this->role < CoreSpace::$MANAGER) {
@@ -353,45 +353,45 @@ class CoretilesController extends CorecookiesecureController
                     if ($formid == 'coretilesselfjoinspace') {
                         if ($this->currentSpace['termsofuse'] && !$agree) {
                             $_SESSION['flash'] = 'You must agree with the usage policy!!';
-                            return $this->render(['lang' => $lang, 'id_space' => $idSpace, 'space' => $spaceName]);
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                         }
                         if (!$comment) {
                             $_SESSION['flash'] = 'Comment needed!!';
-                            return $this->render(['lang' => $lang, 'id_space' => $idSpace, 'space' => $spaceName]);
+                            return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                         }
                     } elseif (!$comment || ($this->currentSpace['termsofuse'] && !$agree)) {
-                        return $this->render(['lang' => $lang, 'id_space' => $idSpace, 'space' => $spaceName]);
+                        return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                     }
                 }
 
-                if ($modelSpacePending->exists($idSpace, $idUser)) {
+                if ($modelSpacePending->exists($id_space, $id_user)) {
                     // This user is already associated to this space in core_pending_account
-                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($idSpace, $idUser)["id"];
+                    $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
                     $pendingObject = $modelSpacePending->get($pendingId);
 
                     if (intval($pendingObject["validated"]) === 1 && intval($pendingObject["validated_by"]) === 0) {
                         // user has unjoin or has been rejected by space admin
-                        $modelSpacePending->updateWhenRejoin($idUser, $idSpace);
+                        $modelSpacePending->updateWhenRejoin($id_user, $id_space);
                         $m = new CoreHistory();
-                        $m->add($idSpace, $login_user, 'User join request');
+                        $m->add($id_space, $login_user, 'User join request');
                     } else {
                         $modelSpacePending->invalidate($pendingId, 0);
                         $m = new CoreHistory();
-                        $m->add($idSpace, $login_user, 'User cancelled join request');
+                        $m->add($id_space, $login_user, 'User cancelled join request');
                     }
                 } else {
                     // This user is not associated to this space in database
-                    $modelSpacePending->add($idUser, $idSpace);
+                    $modelSpacePending->add($id_user, $id_space);
                     $m = new CoreHistory();
-                    $m->add($idSpace, $login_user, 'User join request');
+                    $m->add($id_space, $login_user, 'User join request');
                 }
 
                 $modelUser = new CoreUser();
-                $userEmail = $modelUser->getEmail($idUser);
-                $userFullName = $modelUser->getUserFullName($idUser);
+                $userEmail = $modelUser->getEmail($id_user);
+                $userFullName = $modelUser->getUserFullName($id_user);
 
                 $mailParams = [
-                    "id_space" => $idSpace,
+                    "id_space" => $id_space,
                     "space_name" => $spaceName,
                     "email" => $userEmail,
                     "fullName" => $userFullName,

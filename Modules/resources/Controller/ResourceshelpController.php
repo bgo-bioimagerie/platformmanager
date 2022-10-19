@@ -15,10 +15,10 @@ class ResourceshelpController extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         $lang = $this->getLanguage();
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
 }

@@ -49,10 +49,10 @@ class InInvoice extends Model
     }
 
 
-    public function getIdFromName($name, $idSpace)
+    public function getIdFromName($name, $id_space)
     {
         $sql = "SELECT id FROM in_invoice WHERE number=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($name, $idSpace));
+        $req = $this->runRequest($sql, array($name, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -60,59 +60,59 @@ class InInvoice extends Model
         return 0;
     }
 
-    public function setSend($idSpace, $id, $date, $visa)
+    public function setSend($id_space, $id, $date, $visa)
     {
         if ($date == "") {
             $date = null;
         }
         $sql = "UPDATE in_invoice SET date_send=?, visa_send=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($date, $visa, $id, $idSpace));
+        $this->runRequest($sql, array($date, $visa, $id, $id_space));
     }
 
-    public function setDiscount($idSpace, $id, $discount)
+    public function setDiscount($id_space, $id, $discount)
     {
         $sql = "UPDATE in_invoice SET discount=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($discount, $id, $idSpace));
+        $this->runRequest($sql, array($discount, $id, $id_space));
     }
 
-    public function getDiscount($idSpace, $id)
+    public function getDiscount($id_space, $id)
     {
         $sql = "SELECT discount FROM in_invoice WHERE id=? AND id_space=? AND deleted=0";
-        $d = $this->runRequest($sql, array($id, $idSpace))->fetch();
+        $d = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $d[0];
     }
 
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         $sql = "SELECT * FROM in_invoice WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $idSpace))->fetch();
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function getByNumber($idSpace, $number)
+    public function getByNumber($id_space, $number)
     {
         $sql = "SELECT * FROM in_invoice WHERE number=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($number, $idSpace))->fetch();
+        return $this->runRequest($sql, array($number, $id_space))->fetch();
     }
 
-    public function setTitle($idSpace, $id_invoice, $title)
+    public function setTitle($id_space, $id_invoice, $title)
     {
         $sql = "UPDATE in_invoice SET title=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($title, $id_invoice, $idSpace));
+        $this->runRequest($sql, array($title, $id_invoice, $id_space));
     }
 
-    public function setTotal($idSpace, $id_invoice, $total)
+    public function setTotal($id_space, $id_invoice, $total)
     {
         $sql = "UPDATE in_invoice SET total_ht=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($total, $id_invoice, $idSpace));
+        $this->runRequest($sql, array($total, $id_invoice, $id_space));
     }
 
-    public function setNumber($idSpace, $id_invoice, $number)
+    public function setNumber($id_space, $id_invoice, $number)
     {
         $sql = "UPDATE in_invoice SET number=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($number, $id_invoice, $idSpace));
+        $this->runRequest($sql, array($number, $id_invoice, $id_space));
     }
 
-    public function setDatePaid($idSpace, $id, $date)
+    public function setDatePaid($id_space, $id, $date)
     {
         //echo "set date = " . $date . "<br/>";
         //echo "where id = " . $id . "<br/>";
@@ -120,19 +120,19 @@ class InInvoice extends Model
             $date = null;
         }
         $sql = "UPDATE in_invoice SET date_paid=?, is_paid=1 WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($date, $id, $idSpace));
+        $this->runRequest($sql, array($date, $id, $id_space));
 
         //$sql2 = "UPDATE in_invoice SET is_paid=1 WHERE id=? AND id_space=? AND deleted=0";
-        //$this->runRequest($sql2, array($id, $idSpace));
+        //$this->runRequest($sql2, array($id, $id_space));
     }
 
-    public function setEditedBy($idSpace, $id_invoice, $idUser)
+    public function setEditedBy($id_space, $id_invoice, $id_user)
     {
         $sql = "UPDATE in_invoice SET id_edited_by=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($idUser, $id_invoice, $idSpace));
+        $this->runRequest($sql, array($id_user, $id_invoice, $id_space));
     }
 
-    public function addInvoice($module, $controller, $idSpace, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0)
+    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0)
     {
         if ($date_generated == "") {
             $date_generated = null;
@@ -144,7 +144,7 @@ class InInvoice extends Model
             $period_end = null;
         }
         $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($module, $controller, $idSpace, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
+        $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -159,7 +159,7 @@ class InInvoice extends Model
         return $this->runRequest($sql)->fetchAll();
     }
 
-    public function getBySpace($idSpace, $sortentry = "number")
+    public function getBySpace($id_space, $sortentry = "number")
     {
         $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
                 . "FROM in_invoice "
@@ -167,10 +167,10 @@ class InInvoice extends Model
                 . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
                 . "WHERE in_invoice.id_space=? AND in_invoice.deleted=0 "
                 . "ORDER BY " . $sortentry . " DESC;";
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function getByPeriod($idSpace, $begin, $end, $sortentry = "number")
+    public function getByPeriod($id_space, $begin, $end, $sortentry = "number")
     {
         $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "
                 . "FROM in_invoice "
@@ -178,10 +178,10 @@ class InInvoice extends Model
                 . "INNER JOIN core_users ON core_users.id=in_invoice.id_responsible "
                 . "WHERE in_invoice.deleted=0 AND in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "
                 . "ORDER BY " . $sortentry . " DESC;";
-        return $this->runRequest($sql, array($idSpace, $begin, $end))->fetchAll();
+        return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
-    public function getSentByPeriod($idSpace, $sent, $begin, $end, $sortentry = "number")
+    public function getSentByPeriod($id_space, $sent, $begin, $end, $sortentry = "number")
     {
         $dateSendCondition = "";
         if ($sent == 0) {
@@ -196,14 +196,14 @@ class InInvoice extends Model
                 . "WHERE in_invoice.deleted=0 AND in_invoice.id_space=? AND in_invoice.date_generated >=? AND in_invoice.date_generated <=? "
                 . $dateSendCondition
                 . "ORDER BY " . $sortentry . " DESC;";
-        return $this->runRequest($sql, array($idSpace, $begin, $end))->fetchAll();
+        return $this->runRequest($sql, array($id_space, $begin, $end))->fetchAll();
     }
 
-    public function getNextNumber(int $idSpace)
+    public function getNextNumber(int $id_space)
     {
         $cv = new CoreVirtual();
         $curYear = date("Y", time());
-        $newNumber = $cv->incr($idSpace, "invoices:$curYear");
+        $newNumber = $cv->incr($id_space, "invoices:$curYear");
 
         $num = "";
         if ($newNumber < 10) {
@@ -218,10 +218,10 @@ class InInvoice extends Model
         return $curYear . "-" . $num;
     }
 
-    public function allPeriodYears($idSpace, $periodBegin, $periodEnd)
+    public function allPeriodYears($id_space, $periodBegin, $periodEnd)
     {
         $sql = "SELECT date_generated FROM in_invoice WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         if (!$periodBegin) {
             $periodBegin = "0000-01-01";
@@ -268,10 +268,10 @@ class InInvoice extends Model
         return array();
     }
 
-    public function allYears($idSpace)
+    public function allYears($id_space)
     {
         $sql = "SELECT date_generated FROM in_invoice WHERE id_space=? AND deleted=0 ORDER BY date_generated ASC";
-        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         if ($data && !empty($data)) {
             $firstYear = null;
@@ -296,26 +296,26 @@ class InInvoice extends Model
         return array();
     }
 
-    public function getAllInvoicesPeriod($periodStart, $periodEnd, $idSpace)
+    public function getAllInvoicesPeriod($periodStart, $periodEnd, $id_space)
     {
         $sql = "select * from in_invoice WHERE date_generated >= ? AND date_generated <= ? AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $idSpace));
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $id_space));
         return $user->fetchAll();
     }
 
-    public function getInvoicesPeriod($controller, $periodStart, $periodEnd, $idSpace)
+    public function getInvoicesPeriod($controller, $periodStart, $periodEnd, $id_space)
     {
         $sql = "select * from in_invoice WHERE date_generated >= ? "
                 . "AND date_generated <= ? AND controller=? "
                 . "AND id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller, $idSpace));
+        $user = $this->runRequest($sql, array($periodStart, $periodEnd, $controller, $id_space));
         return $user->fetchAll();
     }
 
-    public function getInvoiceNumber($idSpace, $id_invoice)
+    public function getInvoiceNumber($id_space, $id_invoice)
     {
         $sql = "SELECT number FROM in_invoice WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id_invoice, $idSpace));
+        $req = $this->runRequest($sql, array($id_invoice, $id_space));
         if ($req->rowCount() == 1) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -323,10 +323,10 @@ class InInvoice extends Model
         return "";
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE in_invoice SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 
     public function mergeUnits($units)

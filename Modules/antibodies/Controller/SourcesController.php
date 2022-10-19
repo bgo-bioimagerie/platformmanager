@@ -22,62 +22,62 @@ class SourcesController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $sourcessArray = $this->model->getBySpace($idSpace);
+        $sourcessArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Sources", 3);
-        $table->addLineEditButton("sourcesedit/".$idSpace."/");
-        $table->addDeleteButton("sourcesdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("sourcesedit/".$id_space."/");
+        $table->addDeleteButton("sourcesdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($sourcessArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $sources = $this->model->get($idSpace, $id);
+        $sources = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "sourceseditform");
         $form->setTitle("Modifier sources");
         $form->addText("nom", "nom", true, $sources["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "sourcesedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "sourcesedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("sources/".$idSpace, [], ['source' => ['id' => $id]]);
+            return $this->redirect("sources/".$id_space, [], ['source' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("sources/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("sources/" . $id_space);
     }
 }

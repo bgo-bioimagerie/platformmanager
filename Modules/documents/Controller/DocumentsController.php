@@ -13,7 +13,7 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  */
 class DocumentsController extends CoresecureController
 {
-    public function navbar($idSpace)
+    public function navbar($id_space)
     {
         return file_get_contents('Modules/documents/View/Documents/navbar.php');
     }

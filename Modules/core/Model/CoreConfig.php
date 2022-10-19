@@ -66,10 +66,10 @@ class CoreConfig extends Model
     /**
      * Check if a config key exists
      */
-    public function isKey($key, $idSpace)
+    public function isKey($key, $id_space)
     {
-        $this->loadParams($idSpace);
-        if (isset(self::$params[$idSpace]) && isset(self::$params[$idSpace][$key])) {
+        $this->loadParams($id_space);
+        if (isset(self::$params[$id_space]) && isset(self::$params[$id_space][$key])) {
             return true;
         }
         return false;
@@ -77,16 +77,16 @@ class CoreConfig extends Model
 
     /**
      * Load config parameters
-     * @param string $idSpace
+     * @param string $id_space
      */
-    private function loadParams($idSpace)
+    private function loadParams($id_space)
     {
-        if (isset(self::$params[$idSpace])) {
+        if (isset(self::$params[$id_space])) {
             return;
         }
-        Configuration::getLogger()->debug('load config', ['space' => $idSpace]);
+        Configuration::getLogger()->debug('load config', ['space' => $id_space]);
         $sql = "SELECT * FROM core_config where id_space=?";
-        $configParams = $this->runRequest($sql, array($idSpace));
+        $configParams = $this->runRequest($sql, array($id_space));
         $dbconfig = $configParams->fetchAll();
         foreach ($dbconfig as $param) {
             if (!isset(self::$params[$param["id_space"]])) {
@@ -106,14 +106,14 @@ class CoreConfig extends Model
      * @param string $key
      * @param string $value
      */
-    public function addParam($key, $value, $idSpace=0)
+    public function addParam($key, $value, $id_space=0)
     {
         $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
-        $this->runRequest($sql, array($key, $value, $idSpace));
-        if (!isset(self::$params[$idSpace])) {
-            self::$params[$idSpace] = [];
+        $this->runRequest($sql, array($key, $value, $id_space));
+        if (!isset(self::$params[$id_space])) {
+            self::$params[$id_space] = [];
         }
-        self::$params[$idSpace][$key] = $value;
+        self::$params[$id_space][$key] = $value;
     }
 
     /**
@@ -121,15 +121,15 @@ class CoreConfig extends Model
      * @param string $key
      * @param string $value
      */
-    public function updateParam($key, $value, $idSpace=0)
+    public function updateParam($key, $value, $id_space=0)
     {
         $sql = "update core_config set value=?  where keyname=? AND id_space=?";
-        $this->runRequest($sql, array($value, $key, $idSpace));
-        $this->loadParams($idSpace);
-        if (!isset(self::$params[$idSpace])) {
-            self::$params[$idSpace] = [];
+        $this->runRequest($sql, array($value, $key, $id_space));
+        $this->loadParams($id_space);
+        if (!isset(self::$params[$id_space])) {
+            self::$params[$id_space] = [];
         }
-        self::$params[$idSpace][$key] = $value;
+        self::$params[$id_space][$key] = $value;
     }
 
     /**
@@ -148,16 +148,16 @@ class CoreConfig extends Model
      * @param string $key
      * @return string value
      */
-    public function getParamSpace($key, $idSpace, $default="")
+    public function getParamSpace($key, $id_space, $default="")
     {
-        $this->loadParams($idSpace);
-        if (!isset(self::$params[$idSpace])) {
+        $this->loadParams($id_space);
+        if (!isset(self::$params[$id_space])) {
             return $default;
         }
-        if (!isset(self::$params[$idSpace][$key])) {
+        if (!isset(self::$params[$id_space][$key])) {
             return $default;
         }
-        return self::$params[$idSpace][$key];
+        return self::$params[$id_space][$key];
     }
 
     /**
@@ -165,12 +165,12 @@ class CoreConfig extends Model
      * @param string $key
      * @param string $value
      */
-    public function setParam($key, $value, $idSpace=0)
+    public function setParam($key, $value, $id_space=0)
     {
-        if ($this->isKey($key, $idSpace)) {
-            $this->updateParam($key, $value, $idSpace);
+        if ($this->isKey($key, $id_space)) {
+            $this->updateParam($key, $value, $id_space);
         } else {
-            $this->addParam($key, $value, $idSpace);
+            $this->addParam($key, $value, $id_space);
         }
     }
 

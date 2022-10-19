@@ -37,19 +37,19 @@ class StockshelfController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
         // get the user list
-        $unitsArray = $this->model->getAll($idSpace);
+        $unitsArray = $this->model->getAll($id_space);
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Shelfs($lang), 3);
-        $table->addLineEditButton("stockshelfedit/" . $idSpace);
-        $table->addDeleteButton("stockshelfdelete/" . $idSpace);
+        $table->addLineEditButton("stockshelfedit/" . $id_space);
+        $table->addDeleteButton("stockshelfdelete/" . $id_space);
         $tableHtml = $table->view($unitsArray, array(
             "room" => ServicesTranslator::RoomNumber($lang),
             "cabinet" => ServicesTranslator::Cabinet($lang),
@@ -58,7 +58,7 @@ class StockshelfController extends ServicesController
         ));
 
         $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'lang' => $lang,
             'tableHtml' => $tableHtml
         ));
@@ -67,14 +67,14 @@ class StockshelfController extends ServicesController
     /**
      * Edit an unit form
      */
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
         $unit = array("id" => 0, "name" => "", "id_cabinet" => 0);
         if ($id > 0) {
-            $unit = $this->model->getOne($idSpace, $id);
+            $unit = $this->model->getOne($id_space, $id);
         }
 
         // lang
@@ -82,7 +82,7 @@ class StockshelfController extends ServicesController
 
 
         $modelCabinet = new StockCabinet();
-        $cabinets = $modelCabinet->getForList($idSpace);
+        $cabinets = $modelCabinet->getForList($id_space);
 
         // form
         // build the form
@@ -92,19 +92,19 @@ class StockshelfController extends ServicesController
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $unit["id_cabinet"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "stockshelfedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "stockshelfs/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "stockshelfedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "stockshelfs/" . $id_space);
 
         if ($form->check()) {
             // run the database query
-            $shelf_id = $this->model->set($idSpace, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet"));
-            return $this->redirect("stockshelfs/" . $idSpace, [], ['shelf' => ['id' => $shelf_id]]);
+            $shelf_id = $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("id_cabinet"));
+            return $this->redirect("stockshelfs/" . $id_space, [], ['shelf' => ['id' => $shelf_id]]);
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // view
             return $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'data' => ['shelf' => $unit]
@@ -115,11 +115,11 @@ class StockshelfController extends ServicesController
     /**
      * Remove an unit query to database
      */
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->model->delete($idSpace, $id);
-        $this->redirect("stockshelfs/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("stockshelfs/" . $id_space);
     }
 }

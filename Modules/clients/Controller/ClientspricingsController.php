@@ -36,15 +36,15 @@ class ClientspricingsController extends ClientsController
      *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
         // security
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
         $lang = $this->getLanguage();
 
         // Query to the database
-        $belongingsArray = $this->pricingModel->getAll($idSpace);
+        $belongingsArray = $this->pricingModel->getAll($id_space);
         $pricings = $belongingsArray;
         for ($i = 0; $i < count($belongingsArray); $i++) {
             if ($belongingsArray[$i]["type"] == 1) {
@@ -55,8 +55,8 @@ class ClientspricingsController extends ClientsController
         }
 
         $table = new TableView();
-        $table->addLineEditButton("clpricingedit/" . $idSpace);
-        $table->addDeleteButton("clpricingdelete/" . $idSpace);
+        $table->addLineEditButton("clpricingedit/" . $id_space);
+        $table->addDeleteButton("clpricingdelete/" . $id_space);
         $table->setColorIndexes(array("color" => "color", "txtcolor" => "txtcolor"));
         $tableHtml = $table->view(
             $belongingsArray,
@@ -70,7 +70,7 @@ class ClientspricingsController extends ClientsController
 
         // render the View
         return $this->render(array(
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'lang' => $lang,
             'tableHtml' => $tableHtml,
             'data' => ['pricings' => $pricings]
@@ -80,10 +80,10 @@ class ClientspricingsController extends ClientsController
     /**
      * Edit a provider form
      */
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
         // security
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         //lang
         $lang = $this->getLanguage();
 
@@ -98,7 +98,7 @@ class ClientspricingsController extends ClientsController
                 "type" => 0
             );
         } else {
-            $pricing = $this->pricingModel->get($idSpace, $id);
+            $pricing = $this->pricingModel->get($id_space, $id);
         }
 
 
@@ -118,13 +118,13 @@ class ClientspricingsController extends ClientsController
         $form->addSelect("type", CoreTranslator::type($lang), $choices, $choicesid, $pricing["type"]);
 
         $todo = $this->request->getParameterNoException('redirect');
-        $validationUrl = "clpricingedit/".$idSpace."/".$id;
+        $validationUrl = "clpricingedit/".$id_space."/".$id;
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
 
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "clpricings/" . $idSpace);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "clpricings/" . $id_space);
 
 
         // Check if the form has been validated
@@ -132,7 +132,7 @@ class ClientspricingsController extends ClientsController
             // run the database query
             $newId = $this->pricingModel->set(
                 $form->getParameter("id"),
-                $idSpace,
+                $id_space,
                 $form->getParameter("name"),
                 $form->getParameter("color"),
                 $form->getParameter("type"),
@@ -144,17 +144,17 @@ class ClientspricingsController extends ClientsController
             $_SESSION["flashClass"] = "success";
 
             if ($todo) {
-                return $this->redirect("spaceadminedit/" . $idSpace, ["showTodo" => true]);
+                return $this->redirect("spaceadminedit/" . $id_space, ["showTodo" => true]);
             } else {
                 // after the provider is saved we redirect to the providers list page
-                return $this->redirect("clpricingedit/" . $idSpace . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
+                return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
             }
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
             // render the view
             return $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'data' => ['pricing' => $pricing]
@@ -165,27 +165,27 @@ class ClientspricingsController extends ClientsController
     /**
      * Remove a provider
      */
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
         // security
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
-        if ($this->pricingModel->hasClients($idSpace, $id)) {
+        if ($this->pricingModel->hasClients($id_space, $id)) {
             throw new PfmParamException("Pricing used by clients");
         }
 
         // query to delete the provider
-        $this->pricingModel->delete($idSpace, $id);
+        $this->pricingModel->delete($id_space, $id);
 
         // after the provider is deleted we redirect to the providers list page
-        $this->redirect("clpricings/" . $idSpace);
+        $this->redirect("clpricings/" . $id_space);
     }
 
-    public function getClientPricingAction($idSpace, $id_client)
+    public function getClientPricingAction($id_space, $id_client)
     {
-        $this->checkAuthorizationMenuSpace("clients", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientPricing = new ClPricing();
-        $pricingName = $modelClientPricing->getPricingByClient($idSpace, $id_client)[0]['name'];
+        $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
         return $this->render(['data' => ['elements' => $pricingName]]);
     }
 }

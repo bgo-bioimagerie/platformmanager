@@ -18,7 +18,7 @@ class ClAddress extends Model
         $this->primaryKey = "id";
     }
 
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return array(
@@ -34,25 +34,25 @@ class ClAddress extends Model
         }
 
         $sql = "SELECT * FROM cl_addresses WHERE id=? AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $idSpace))->fetch();
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function set($idSpace, $id, $institution, $building_floor, $service, $address, $zip_code, $city, $country)
+    public function set($id_space, $id, $institution, $building_floor, $service, $address, $zip_code, $city, $country)
     {
         if (!$id) {
             $sql = 'INSERT INTO cl_addresses (institution, building_floor, service, address, zip_code, city, country, id_space) VALUES (?,?,?,?,?,?,?,?)';
-            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $idSpace));
+            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id_space));
             return $this->getDatabase()->lastInsertId();
         } else {
             $sql = 'UPDATE cl_addresses SET institution=?, building_floor=?, service=?, address=?, zip_code=?, city=?, country=? WHERE id=? AND id_space=? AND deleted=0';
-            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id, $idSpace));
+            $this->runRequest($sql, array($institution, $building_floor, $service, $address, $zip_code, $city, $country, $id, $id_space));
             return $id;
         }
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE cl_addresses SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

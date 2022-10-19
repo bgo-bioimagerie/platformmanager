@@ -44,57 +44,57 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
-        $formByProjects = $this->createByProjectForm($idSpace, $lang);
+        $formByProjects = $this->createByProjectForm($id_space, $lang);
         if ($formByProjects->check()) {
             $id_projects = $this->request->getParameter("id_project");
-            $id_resp = $this->getProjectsResp($idSpace, $id_projects);
-            $this->invoiceProjects($idSpace, $id_projects, $id_resp);
-            return $this->redirect("invoices/" . $idSpace . "/");
+            $id_resp = $this->getProjectsResp($id_space, $id_projects);
+            $this->invoiceProjects($id_space, $id_projects, $id_resp);
+            return $this->redirect("invoices/" . $id_space . "/");
         }
-        $formByPeriod = $this->createByPeriodForm($idSpace, $lang);
+        $formByPeriod = $this->createByPeriodForm($id_space, $lang);
         if ($formByPeriod->check()) {
             $modelProject = new SeProject();
             $beginPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_begin"), $lang);
             $endPeriod = CoreTranslator::dateToEn($this->request->getParameter("period_end"), $lang);
             $id_resp = $this->request->getParameter("id_resp");
             if ($id_resp != 0) {
-                $id_projects = $modelProject->getProjectsOpenedPeriodResp($idSpace, $beginPeriod, $endPeriod, $id_resp);
+                $id_projects = $modelProject->getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_resp);
 
-                $this->invoiceProjects($idSpace, $id_projects, $id_resp, $beginPeriod, $endPeriod);
-                return $this->redirect("invoices/" . $idSpace);
+                $this->invoiceProjects($id_space, $id_projects, $id_resp, $beginPeriod, $endPeriod);
+                return $this->redirect("invoices/" . $id_space);
             }
         }
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang,
+        $this->render(array("id_space" => $id_space, "lang" => $lang,
             "formByProjects" => $formByProjects->getHtml($lang),
             "formByPeriod" => $formByPeriod->getHtml($lang)));
     }
 
-    public function editAction($idSpace, $id_invoice, $pdf = 0)
+    public function editAction($id_space, $id_invoice, $pdf = 0)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
         $modelInvoice = new InInvoice();
-        $invoice = $modelInvoice->get($idSpace, $id_invoice);
+        $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelInvoiceItem = new InInvoiceItem();
-        $id_items = $modelInvoiceItem->getInvoiceItems($idSpace, $id_invoice);
+        $id_items = $modelInvoiceItem->getInvoiceItems($id_space, $id_invoice);
 
         // generate pdf
         if ($pdf == 1) {
-            return $this->generatePDFInvoice($idSpace, $invoice, $id_items[0]["id"], $lang);
+            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
         }
 
         //print_r($id_items);
         // unparse details
         $detailsData = array();
-        $item = $modelInvoiceItem->getItem($idSpace, $id_items[0]["id"]);
+        $item = $modelInvoiceItem->getItem($id_space, $id_items[0]["id"]);
         $details = $item["details"];
         $detailsArray = explode(";", $details);
         foreach ($detailsArray as $de) {
@@ -105,7 +105,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         }
 
         // create edit form
-        $form = $this->editForm($id_items[0]["id"], $idSpace, $id_invoice, $lang);
+        $form = $this->editForm($id_items[0]["id"], $id_space, $id_invoice, $lang);
         $formAddName = $form->getFormAddId();
         if ($form->check()) {
             $total_ht = 0;
@@ -123,25 +123,25 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
             $discount = $form->getParameter("discount");
             $total_ht = (1-floatval($discount)/100)*$total_ht;
 
-            $modelInvoiceItem->editItemContent($idSpace, $id_items[0]["id"], $content, $total_ht);
-            $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
-            $modelInvoice->setDiscount($idSpace, $id_invoice, $discount);
+            $modelInvoiceItem->editItemContent($id_space, $id_items[0]["id"], $content, $total_ht);
+            $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+            $modelInvoice->setDiscount($id_space, $id_invoice, $discount);
 
             $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
             $_SESSION['flashClass'] = 'success';
 
             Events::send([
                 "action" => Events::ACTION_INVOICE_EDIT,
-                "space" => ["id" => intval($idSpace)],
+                "space" => ["id" => intval($id_space)],
                 "invoice" => ["id" => intval($id_invoice)]
             ]);
-            return $this->redirect("servicesinvoiceprojectedit/" . $idSpace . "/" . $id_invoice . "/O");
+            return $this->redirect("servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/O");
         }
 
 
         // render
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "invoice" => $invoice,
             "details" => $detailsData,
@@ -151,39 +151,39 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         ));
     }
 
-    protected function unparseContent($idSpace, $id_item)
+    protected function unparseContent($id_space, $id_item)
     {
         $modelServices = new SeService();
         $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($idSpace, $id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
         $contentList = array();
         foreach ($contentArray as $content) {
             $data = explode("=", $content);
             if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($idSpace, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
+                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
             }
             if (count($data) > 3) {
-                $contentList[] = array(($modelServices->getItemName($idSpace, $data[0], true) ?? Constants::UNKNOWN) . " " . $data[3], $data[1], $data[2]);
+                $contentList[] = array(($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN) . " " . $data[3], $data[1], $data[2]);
             }
         }
         return $contentList;
     }
 
-    public function deleteAction($idSpace, $id_invoice)
+    public function deleteAction($id_space, $id_invoice)
     {
-        $this->checkAuthorizationMenuSpace("invoices", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         // get items
         $modelProject = new SeProject();
-        $services = $modelProject->getServicesInvoice($idSpace, $id_invoice);
+        $services = $modelProject->getServicesInvoice($id_space, $id_invoice);
         foreach ($services as $s) {
-            $modelProject->setServiceInvoice($idSpace, $s["id"], 0);
+            $modelProject->setServiceInvoice($id_space, $s["id"], 0);
         }
     }
 
-    public function editForm($id_item, $idSpace, $id_invoice, $lang)
+    public function editForm($id_item, $id_space, $id_invoice, $lang)
     {
         $itemIds = array();
         $itemServices = array();
@@ -195,7 +195,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $modelServices = new SeService();
         $modelSeTypes = new SeServiceType();
 
-        $item = $modelInvoiceItem->getItem($idSpace, $id_item);
+        $item = $modelInvoiceItem->getItem($id_space, $id_item);
 
         $contentArray = explode(";", $item["content"]);
         $total = 0;
@@ -206,7 +206,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
                 $itemServices[] = $data[0];
                 $itemQuantities[] = $data[1];
                 $itemPrices[] = $data[2];
-                $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($idSpace, $data[0]));
+                $itemQuantityTypes[] = $modelSeTypes->getType($modelServices->getItemType($id_space, $data[0]));
                 if (is_numeric($data[1]) && is_numeric($data[2])) {
                     $total += $data[1] * $data[2];
                 } else {
@@ -221,11 +221,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
             }
         }
         $modelServices = new SeService();
-        $services = $modelServices->getForList($idSpace);
+        $services = $modelServices->getForList($id_space);
         foreach ($itemServices as $s) {
             if (! in_array($s, $services["ids"])) {
                 $services["ids"][] = $s;
-                $services["names"][] = '[!] '. $modelServices->getName($idSpace, $s, true);
+                $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
             }
         }
 
@@ -240,12 +240,12 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $form = new Form($this->request, "editinvoiceprojectform");
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceprojectedit/" . $idSpace . "/" . $id_invoice . "/0");
-        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceprojectedit/" . $idSpace . "/" . $id_invoice . "/1", "danger", true);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/0");
+        $form->addExternalButton(InvoicesTranslator::GeneratePdf($lang), "servicesinvoiceprojectedit/" . $id_space . "/" . $id_invoice . "/1", "danger", true);
         $form->setFormAdd($formAdd);
 
         $modelInvoice = new InInvoice();
-        $discount = $modelInvoice->getDiscount($idSpace, $id_invoice);
+        $discount = $modelInvoice->getDiscount($id_space, $id_invoice);
         $form->addText("discount", ServicesTranslator::Discount($lang), false, $discount);
 
 
@@ -256,13 +256,13 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         return $form;
     }
 
-    protected function createByProjectForm($idSpace, $lang)
+    protected function createByProjectForm($id_space, $lang)
     {
         $form = new Form($this->request, "ByProjectForm");
         $form->addSeparator(ServicesTranslator::By_projects($lang));
 
         $modelProject = new SeProject();
-        $projects = $modelProject->getOpenedProjectForList($idSpace);
+        $projects = $modelProject->getOpenedProjectForList($id_space);
 
         $formAdd = new FormAdd($this->request, "ByProjectFormAdd");
         $formAdd->addSelect("id_project", ServicesTranslator::Project($lang), $projects["names"], $projects["ids"]);
@@ -271,11 +271,11 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $form->setFormAdd($formAdd);
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;
     }
 
-    protected function createByPeriodForm($idSpace, $lang)
+    protected function createByPeriodForm($id_space, $lang)
     {
         $form = new Form($this->request, "ByPeriodForm");
         $form->addSeparator(ServicesTranslator::By_period($lang));
@@ -285,27 +285,27 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $respId = $this->request->getParameterNoException("id_resp");
 
         $modelClient = new ClClient();
-        $resps = $modelClient->getForList($idSpace);
+        $resps = $modelClient->getForList($id_space);
 
         $form->addSelect("id_resp", ClientsTranslator::ClientAccount($lang), $resps["names"], $resps["ids"], $respId);
 
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesinvoiceproject/" . $id_space);
         return $form;
     }
 
-    public function invoiceprojectAction($idSpace, $id_project)
+    public function invoiceprojectAction($id_space, $id_project)
     {
         $modelProject = new SeProject();
-        $id_resp = $modelProject->getResp($idSpace, $id_project);
+        $id_resp = $modelProject->getResp($id_space, $id_project);
 
         $id_projects = array();
         $id_projects[] = $id_project;
-        $this->invoiceProjects($idSpace, $id_projects, $id_resp);
-        return $this->redirect("invoices/" . $idSpace);
+        $this->invoiceProjects($id_space, $id_projects, $id_resp);
+        return $this->redirect("invoices/" . $id_space);
     }
 
-    protected function invoiceProjects($idSpace, $id_projects, $id_client, $beginPeriod=null, $endPeriod=null)
+    protected function invoiceProjects($id_space, $id_projects, $id_client, $beginPeriod=null, $endPeriod=null)
     {
         $cv = new CoreVirtual();
         $projects = implode(',', $id_projects);
@@ -313,10 +313,10 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         if ($beginPeriod) {
             $period = "$beginPeriod => $endPeriod";
         }
-        $rid = $cv->newRequest($idSpace, "invoices", "projects[$id_client][$projects]:$period");
+        $rid = $cv->newRequest($id_space, "invoices", "projects[$id_client][$projects]:$period");
         Events::send([
             "action" => Events::ACTION_INVOICE_REQUEST,
-            "space" => ["id" => intval($idSpace)],
+            "space" => ["id" => intval($id_space)],
             "user" => ["id" => $_SESSION['id_user']],
             "type" => ServicesInvoice::$INVOICES_SERVICES_PROJECTS_CLIENT,
             "period_begin" => $beginPeriod,
@@ -327,7 +327,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         ]);
     }
 
-    protected function getProjectsResp($idSpace, $id_projects)
+    protected function getProjectsResp($id_space, $id_projects)
     {
         if (empty($id_projects)) {
             throw new PfmParamException("You need to select at least one project");
@@ -335,9 +335,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
 
         $modelProject = new SeProject();
 
-        $id_resp = $modelProject->getResp($idSpace, $id_projects[0]);
+        $id_resp = $modelProject->getResp($id_space, $id_projects[0]);
         for ($i = 1; $i < count($id_projects); $i++) {
-            $id_respi = $modelProject->getResp($idSpace, $id_projects[$i]);
+            $id_respi = $modelProject->getResp($id_space, $id_projects[$i]);
             if ($id_respi != $id_resp) {
                 throw new PfmParamException("Projects must have the same responsible");
             }
@@ -345,7 +345,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         return $id_resp;
     }
 
-    protected function generatePDFInvoice($idSpace, $invoice, $id_item, $lang)
+    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
     {
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
@@ -358,7 +358,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         ";
 
         $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($idSpace, $id_item);
+        $content = $this->unparseContent($id_space, $id_item);
         $total = 0;
         foreach ($content as $d) {
             $rawQuantity = floatval($d[1]);
@@ -390,9 +390,9 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
 
         $modelClient = new ClClient();
         $unit = "";
-        $adress = $modelClient->getAddressInvoice($idSpace, $invoice["id_responsible"]);
-        $clientInfos = $modelClient->get($idSpace, $invoice["id_responsible"]);
+        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
+        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
         $resp = $clientInfos["contact_name"];
-        return $this->generatePDF($idSpace, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
+        return $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 }

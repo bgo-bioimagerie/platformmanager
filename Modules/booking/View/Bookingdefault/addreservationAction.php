@@ -11,7 +11,7 @@
             <script type="module">
                 import {DynamicForms} from '/externals/pfm/dynamics/dynamicForms.js';
                 let dynamicForms = new DynamicForms();
-                let spaceId = <?php echo $idSpace?>;
+                let spaceId = <?php echo $id_space?>;
                 let sourceId = "recipient_id";
                 let targets = [
                     {
@@ -139,7 +139,7 @@ if ($from) {
     $redirPage = $redirInfo[0];
     $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
 }
-$url = "booking$redirPage/$idSpace?$q"
+$url = "booking$redirPage/$id_space?$q"
 ?>
                 <button type="button" class="btn btn-outline-dark" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
             </div>

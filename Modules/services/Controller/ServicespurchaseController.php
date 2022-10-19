@@ -34,13 +34,13 @@ class ServicespurchaseController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
-        $data = $this->serviceModel->getForSpace($idSpace);
+        $data = $this->serviceModel->getForSpace($id_space);
         //print_r($data);
 
         $headers = array(
@@ -51,29 +51,29 @@ class ServicespurchaseController extends ServicesController
 
         $table = new TableView();
         $table->setTitle(ServicesTranslator::Purchase($lang), 3);
-        $table->addLineEditButton("servicespurchaseedit/" . $idSpace);
-        $table->addDeleteButton("servicespurchasedelete/" . $idSpace, "id", "date");
+        $table->addLineEditButton("servicespurchaseedit/" . $id_space);
+        $table->addDeleteButton("servicespurchasedelete/" . $id_space, "id", "date");
 
         $tableHtml = $table->view($data, $headers);
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "tableHtml" => $tableHtml));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelItem = new SePurchaseItem();
         if (!$id) {
             $value = array("comment" => "", "date" => date("Y-m-d", time()));
             $items = array("services" => array(), "quantities" => array());
         } else {
-            $value = $this->serviceModel->getItem($idSpace, $id);
-            $items = $modelItem->getForPurchase($idSpace, $id);
+            $value = $this->serviceModel->getItem($id_space, $id);
+            $items = $modelItem->getForPurchase($id_space, $id);
         }
 
         $modelServices = new SeService();
-        $services = $modelServices->getForList($idSpace);
+        $services = $modelServices->getForList($id_space);
 
         $form = new Form($this->request, "editserviceform");
         $form->addSeparator(ServicesTranslator::New_Purchase($lang));
@@ -87,11 +87,11 @@ class ServicespurchaseController extends ServicesController
         $formAdd->setButtonsNames(CoreTranslator::Add($lang), CoreTranslator::Delete($lang));
 
         $form->setFormAdd($formAdd, ServicesTranslator::services($lang));
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicespurchaseedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "servicespurchase/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicespurchaseedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "servicespurchase/" . $id_space);
 
         if ($form->check()) {
-            $id_purchase = $this->serviceModel->set($id, $this->request->getParameter("comment"), $idSpace, CoreTranslator::dateToEn($this->request->getParameter("date"), $lang));
+            $id_purchase = $this->serviceModel->set($id, $this->request->getParameter("comment"), $id_space, CoreTranslator::dateToEn($this->request->getParameter("date"), $lang));
 
             $servicesIds = $this->request->getParameter("services");
             $servicesQuantities = $this->request->getParameter("quantities");
@@ -100,29 +100,29 @@ class ServicespurchaseController extends ServicesController
                 if (!$id) {
                     $qOld = 0;
                 } else {
-                    $qOld = $modelItem->getItemQuantity($idSpace, $servicesIds[$i], $id)['quantity'];
+                    $qOld = $modelItem->getItemQuantity($id_space, $servicesIds[$i], $id)['quantity'];
                 }
                 $qDelta = $servicesQuantities[$i] - $qOld;
-                $modelServices->editquantity($idSpace, $servicesIds[$i], $qDelta, "add");
-                $modelItem->set($idSpace, $id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
+                $modelServices->editquantity($id_space, $servicesIds[$i], $qDelta, "add");
+                $modelItem->set($id_space, $id_purchase, $servicesIds[$i], $servicesQuantities[$i], "");
             }
 
-            return $this->redirect("servicespurchase/" . $idSpace, [], ['purchase' => ['id' => $id_purchase]]);
+            return $this->redirect("servicespurchase/" . $id_space, [], ['purchase' => ['id' => $id_purchase]]);
         }
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang),
             "data" => ['purchase' => $value, 'items' => $items]
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->serviceModel->delete($idSpace, $id);
-        $this->redirect("services/" . $idSpace);
+        $this->serviceModel->delete($id_space, $id);
+        $this->redirect("services/" . $id_space);
     }
 }

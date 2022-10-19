@@ -31,17 +31,17 @@ class RestatesController extends ResourcesBaseController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
 
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::States($lang), 3);
-        $table->addLineEditButton("restatesedit/" . $idSpace);
-        $table->addDeleteButton("restatesdelete/" . $idSpace);
+        $table->addLineEditButton("restatesedit/" . $id_space);
+        $table->addDeleteButton("restatesdelete/" . $id_space);
 
         $headers = array(
             "id" => "ID",
@@ -49,12 +49,12 @@ class RestatesController extends ResourcesBaseController
             "color" => CoreTranslator::color($lang)
         );
 
-        $data = $this->model->getForSpace($idSpace);
+        $data = $this->model->getForSpace($id_space);
 
         $tableHtml = $table->view($data, $headers);
 
         $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "htmlTable" => $tableHtml,
             "data" => ['restates' => $data]
@@ -64,14 +64,14 @@ class RestatesController extends ResourcesBaseController
     /**
      * Edit form
      */
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
-        $data = array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "id_space" => $idSpace);
+        $data = array("id" => 0, "name" => "", "color" => Constants::COLOR_WHITE, "id_space" => $id_space);
         if ($id > 0) {
-            $data = $this->model->get($idSpace, $id);
+            $data = $this->model->get($id_space, $id);
         }
 
         // lang
@@ -85,19 +85,19 @@ class RestatesController extends ResourcesBaseController
         $form->addText("name", CoreTranslator::Name($lang), true, $data["name"]);
         $form->addColor("color", CoreTranslator::color($lang), false, $data["color"]);
 
-        $form->setValidationButton(CoreTranslator::Ok($lang), "restatesedit/" . $idSpace . "/" . $id);
-        $form->setCancelButton(CoreTranslator::Cancel($lang), "restates/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Ok($lang), "restatesedit/" . $id_space . "/" . $id);
+        $form->setCancelButton(CoreTranslator::Cancel($lang), "restates/" . $id_space);
 
         if ($form->check()) {
             // run the database query
-            $id_state = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $idSpace);
-            return $this->redirect("restates/" . $idSpace, [], ['restate' => ['id' => $id_state]]);
+            $id_state = $this->model->set($form->getParameter("id"), $form->getParameter("name"), $form->getParameter("color"), $id_space);
+            return $this->redirect("restates/" . $id_space, [], ['restate' => ['id' => $id_state]]);
         } else {
             // set the view
             $formHtml = $form->getHtml();
             // view
             return $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'formHtml' => $formHtml,
                 'data' => ['restate'  => $data]
@@ -105,11 +105,11 @@ class RestatesController extends ResourcesBaseController
         }
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("resources", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
-        $this->model->delete($idSpace, $id);
-        $this->redirect("restates/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("restates/" . $id_space);
     }
 }

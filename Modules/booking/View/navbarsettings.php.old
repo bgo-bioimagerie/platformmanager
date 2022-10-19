@@ -52,45 +52,45 @@ if ($ecmenucolortxt == "") {
     <div class="col-12">
         <p id="separatorp"><?php echo BookingTranslator::Calendar_View($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingscheduling/<?php echo $idSpace ?>"><?php echo BookingTranslator::Scheduling($lang) ?></a>      
+            <a href="bookingscheduling/<?php echo $id_space ?>"><?php echo BookingTranslator::Scheduling($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingdisplay/<?php echo $idSpace ?>"><?php echo BookingTranslator::Display($lang) ?></a><br/>
+            <a href="bookingdisplay/<?php echo $id_space ?>"><?php echo BookingTranslator::Display($lang) ?></a><br/>
         </div>	
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingrestrictions/<?php echo $idSpace ?>"><?php echo BookingTranslator::Restrictions($lang) ?></a><br/>
+            <a href="bookingrestrictions/<?php echo $id_space ?>"><?php echo BookingTranslator::Restrictions($lang) ?></a><br/>
         </div>	
         
         
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingaccessibilities/<?php echo $idSpace ?>"><?php echo BookingTranslator::Accessibilities($lang) ?></a><br/>
+            <a href="bookingaccessibilities/<?php echo $id_space ?>"><?php echo BookingTranslator::Accessibilities($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingnightwe/<?php echo $idSpace ?>"><?php echo BookingTranslator::Nightwe($lang) ?></a><br/>
+            <a href="bookingnightwe/<?php echo $id_space ?>"><?php echo BookingTranslator::Nightwe($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingcolorcodes/<?php echo $idSpace ?>"><?php echo BookingTranslator::Color_codes($lang) ?></a>
-            <a style="text-align: right;" href="bookingcolorcodeedit/<?php echo $idSpace ?>/0">+</a><br/>
+            <a href="bookingcolorcodes/<?php echo $id_space ?>"><?php echo BookingTranslator::Color_codes($lang) ?></a>
+            <a style="text-align: right;" href="bookingcolorcodeedit/<?php echo $id_space ?>/0">+</a><br/>
         </div>
     </div>
 
     <div class="col-12">
         <p id="separatorp"><?php echo BookingTranslator::Additional_info($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingsupsinfo/<?php echo $idSpace ?>"><?php echo BookingTranslator::SupplementariesInfo($lang) ?></a>      
+            <a href="bookingsupsinfo/<?php echo $id_space ?>"><?php echo BookingTranslator::SupplementariesInfo($lang) ?></a>      
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingpackages/<?php echo $idSpace ?>"><?php echo BookingTranslator::Packages($lang) ?></a><br/>
+            <a href="bookingpackages/<?php echo $id_space ?>"><?php echo BookingTranslator::Packages($lang) ?></a><br/>
         </div>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingquantities/<?php echo $idSpace ?>"><?php echo BookingTranslator::Quantities($lang) ?></a><br/>
+            <a href="bookingquantities/<?php echo $id_space ?>"><?php echo BookingTranslator::Quantities($lang) ?></a><br/>
         </div>
     </div>
 
     <div class="col-12">
         <p id="separatorp"><?php echo BookingTranslator::booking($lang) ?></p>
         <div  class="btn-block" id="menu-button-div">
-            <a href="bookingblock/<?php echo $idSpace ?>"><?php echo BookingTranslator::Block_Resouces($lang) ?></a>      
+            <a href="bookingblock/<?php echo $id_space ?>"><?php echo BookingTranslator::Block_Resouces($lang) ?></a>      
         </div>
     </div>
 

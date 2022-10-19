@@ -22,62 +22,62 @@ class EspecesController extends AntibodiesController
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
-        $especessArray = $this->model->getBySpace($idSpace);
+        $especessArray = $this->model->getBySpace($id_space);
 
         $table = new TableView();
         $table->setTitle("Especes", 3);
-        $table->addLineEditButton("especesedit/".$idSpace."/");
-        $table->addDeleteButton("especesdelete/".$idSpace."/", "id", "nom");
+        $table->addLineEditButton("especesedit/".$id_space."/");
+        $table->addDeleteButton("especesdelete/".$id_space."/", "id", "nom");
 
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($especessArray, $headers);
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml
         ));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $especes = $this->model->get($idSpace, $id);
+        $especes = $this->model->get($id_space, $id);
 
         $form = new Form($this->request, "especeseditform");
         $form->setTitle("Modifier especes");
         $form->addText("nom", "nom", true, $especes["nom"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "especesedit/".$idSpace.'/'.$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "especesedit/".$id_space.'/'.$id);
 
         if ($form->check()) {
             $name = $this->request->getParameter("nom");
             if (!$id) {
-                $id = $this->model->add($name, $idSpace);
+                $id = $this->model->add($name, $id_space);
             } else {
-                $this->model->edit($id, $name, $idSpace);
+                $this->model->edit($id, $name, $id_space);
             }
 
-            return $this->redirect("especes/".$idSpace, [], ['espece' => ['id' => $id]]);
+            return $this->redirect("especes/".$id_space, [], ['espece' => ['id' => $id]]);
         }
 
         $this->render(array(
             'lang' => $this->getLanguage(),
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'formHtml' => $form->getHtml($lang)
         ));
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("antibodies", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->model->delete($idSpace, $id);
-        $this->redirect("especes/" . $idSpace);
+        $this->model->delete($id_space, $id);
+        $this->redirect("especes/" . $id_space);
     }
 }

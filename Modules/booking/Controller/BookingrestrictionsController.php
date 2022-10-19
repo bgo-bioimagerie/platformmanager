@@ -24,17 +24,17 @@ class BookingrestrictionsController extends BookingsettingsController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("bookingsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $model = new BkRestrictions();
         $modelResource = new ResourceInfo();
-        $model->init($idSpace);
-        $data = $model->getForSpace($idSpace);
+        $model->init($id_space);
+        $data = $model->getForSpace($id_space);
         for ($i = 0 ; $i < count($data); $i++) {
-            $data[$i]["resource"] = $modelResource->getName($idSpace, $data[$i]["id_resource"]);
+            $data[$i]["resource"] = $modelResource->getName($id_space, $data[$i]["id_resource"]);
         }
 
         //print_r($data);
@@ -47,24 +47,24 @@ class BookingrestrictionsController extends BookingsettingsController
             "bookingdelayusercanedit" => BookingTranslator::BookingDelayUserCanEdit($lang)
         );
 
-        $table->addLineEditButton("bookingrestrictionedit/".$idSpace);
+        $table->addLineEditButton("bookingrestrictionedit/".$id_space);
         $tableHtml = $table->view($data, $headers);
 
 
         // view
-        $this->render(array("id_space" => $idSpace, "tableHtml" => $tableHtml, "lang" => $lang));
+        $this->render(array("id_space" => $id_space, "tableHtml" => $tableHtml, "lang" => $lang));
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("bookingsettings", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $model = new BkRestrictions();
-        $data = $model->get($idSpace, $id);
+        $data = $model->get($id_space, $id);
 
         $modelResource = new ResourceInfo();
-        $resource = $modelResource->get($idSpace, $data['id_resource']);
+        $resource = $modelResource->get($id_space, $data['id_resource']);
         $resourceName = $resource['name'];
 
         $form = new Form($this->request, "restrictioneditform");
@@ -72,19 +72,19 @@ class BookingrestrictionsController extends BookingsettingsController
 
         $form->addText("maxbookingperday", BookingTranslator::Maxbookingperday($lang), false, $data["maxbookingperday"]);
         $form->addText("bookingdelayusercanedit", BookingTranslator::BookingDelayUserCanEdit($lang), false, $data["bookingdelayusercanedit"]);
-        $form->setValidationButton(CoreTranslator::Save($lang), "bookingrestrictionedit/".$idSpace."/".$id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "bookingrestrictionedit/".$id_space."/".$id);
 
         if ($form->check()) {
             $maxbookingperday = $form->getParameter("maxbookingperday");
             $bookingdelayusercanedit = $form->getParameter("bookingdelayusercanedit");
-            $model->set($idSpace, $id, $maxbookingperday, $bookingdelayusercanedit);
+            $model->set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit);
 
-            $this->redirect("bookingrestrictions/".$idSpace);
+            $this->redirect("bookingrestrictions/".$id_space);
             return;
         }
 
         $this->render(array(
-                'id_space' => $idSpace,
+                'id_space' => $id_space,
                 'lang' => $lang,
                 'htmlForm' => $form->getHtml($lang)
             ));

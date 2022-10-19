@@ -31,16 +31,16 @@ class AcApplication extends Model
         $this->runRequest($sql);
     }
 
-    public function getBySpace($idSpace)
+    public function getBySpace($id_space)
     {
         $sql = "SELECT * from ac_applications WHERE id_space=? AND deleted=0";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
-    public function getForList($idSpace)
+    public function getForList($id_space)
     {
-        $data = $this->getBySpace($idSpace);
+        $data = $this->getBySpace($id_space);
         $names = array();
         $ids = array();
         foreach ($data as $d) {
@@ -56,10 +56,10 @@ class AcApplication extends Model
      * @param string $sortentry Entry that is used to sort the especes
      * @return multitype: array
      */
-    public function getApplications($idSpace, $sortentry = 'id')
+    public function getApplications($id_space, $sortentry = 'id')
     {
         $sql = "SELECT * from ac_applications WHERE id_space=? AND deleted=0 order by " . $sortentry . " ASC;";
-        $user = $this->runRequest($sql, array($idSpace));
+        $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
     }
 
@@ -70,13 +70,13 @@ class AcApplication extends Model
      * @throws Exception id the espece is not found
      * @return mixed array
      */
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return array("name" => "");
         }
         $sql = "SELECT * from ac_applications where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $idSpace));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             return $unit->fetch();
         } else {
@@ -90,11 +90,11 @@ class AcApplication extends Model
      * @param string $name name of the espece
      *
      */
-    public function add($name, $idSpace)
+    public function add($name, $id_space)
     {
         $sql = "INSERT into ac_applications(name, id_space)"
                 . " values(?,?)";
-        $this->runRequest($sql, array($name, $idSpace));
+        $this->runRequest($sql, array($name, $id_space));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -104,16 +104,16 @@ class AcApplication extends Model
      * @param int $id Id of the  to update
      * @param string $name New name of the
      */
-    public function edit($id, $name, $idSpace)
+    public function edit($id, $name, $id_space)
     {
         $sql = "UPDATE ac_applications set name=? where id=? AND id_space=?";
-        $this->runRequest($sql, array("" . $name . "", $id, $idSpace));
+        $this->runRequest($sql, array("" . $name . "", $id, $id_space));
     }
 
-    public function getIdFromName($idSpace, $name)
+    public function getIdFromName($id_space, $name)
     {
         $sql = "SELECT id from ac_applications where name=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($name, $idSpace));
+        $unit = $this->runRequest($sql, array($name, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -122,10 +122,10 @@ class AcApplication extends Model
         }
     }
 
-    public function getNameFromId($idSpace, $id)
+    public function getNameFromId($id_space, $id)
     {
         $sql = "SELECT name from ac_applications where id=? AND id_space=? AND deleted=0";
-        $unit = $this->runRequest($sql, array($id, $idSpace));
+        $unit = $this->runRequest($sql, array($id, $id_space));
         if ($unit->rowCount() == 1) {
             $tmp = $unit->fetch();
             return $tmp[0];
@@ -134,16 +134,16 @@ class AcApplication extends Model
         }
     }
 
-    public function isEntryApp($idSpace, $name)
+    public function isEntryApp($id_space, $name)
     {
         $sql = "SELECT id from ac_applications where name=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($name, $idSpace));
+        $req = $this->runRequest($sql, array($name, $id_space));
         return ($req->rowCount() == 1);
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE ac_applications SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

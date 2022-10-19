@@ -42,85 +42,85 @@ class Document extends Model
         }
     }
 
-    public function getForSpace($idSpace)
+    public function getForSpace($id_space)
     {
         $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=?";
-        $req = $this->runRequest($sql, array($idSpace));
+        $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
-    public function add($idSpace, $title, $idUser)
+    public function add($id_space, $title, $id_user)
     {
         $sql = "INSERT INTO dc_documents (id_space, title, id_user, url) VALUES (?,?,?, '')";
-        $this->runRequest($sql, array($idSpace, $title, $idUser));
+        $this->runRequest($sql, array($id_space, $title, $id_user));
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function edit($id, $idSpace, $title, $idUser)
+    public function edit($id, $id_space, $title, $id_user)
     {
         $sql = "UPDATE dc_documents SET title=?, id_user=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($title, $idUser, $id, $idSpace));
+        $this->runRequest($sql, array($title, $id_user, $id, $id_space));
     }
 
-    public function setVisibility($idSpace, $id, $visibility, $id_ref)
+    public function setVisibility($id_space, $id, $visibility, $id_ref)
     {
         $sql = "UPDATE dc_documents SET visibility=?, id_ref=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($visibility, $id_ref, $id, $idSpace));
+        $this->runRequest($sql, array($visibility, $id_ref, $id, $id_space));
     }
 
-    public function getPublicDocs($idSpace)
+    public function getPublicDocs($id_space)
     {
         $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND dc_documents.visibility=?";
-        $req = $this->runRequest($sql, array($idSpace, self::$VISIBILITY_PUBLIC));
+        $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_PUBLIC));
         return $req->fetchAll();
     }
 
-    public function getRestrictedDocs($idSpace, $visibility, $id_ref=0)
+    public function getRestrictedDocs($id_space, $visibility, $id_ref=0)
     {
         if ($visibility == self::$VISIBILITY_MEMBERS) {
             $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND dc_documents.visibility=?";
-            $req = $this->runRequest($sql, array($idSpace, self::$VISIBILITY_MEMBERS));
+            $req = $this->runRequest($sql, array($id_space, self::$VISIBILITY_MEMBERS));
             return $req->fetchAll();
         }
         $sql = "SELECT dc_documents.*, core_users.login as user FROM dc_documents INNER JOIN core_users on core_users.id=dc_documents.id_user WHERE dc_documents.id_space=? AND ((dc_documents.visibility=? AND id_ref=?) OR dc_documents.visibility=?)";
-        $req = $this->runRequest($sql, array($idSpace, $visibility, $id_ref, self::$VISIBILITY_PUBLIC));
+        $req = $this->runRequest($sql, array($id_space, $visibility, $id_ref, self::$VISIBILITY_PUBLIC));
         return $req->fetchAll();
     }
 
-    public function set($id, $idSpace, $title, $idUser)
+    public function set($id, $id_space, $title, $id_user)
     {
-        if ($this->isDocument($idSpace, $id)) {
-            $this->edit($id, $idSpace, $title, $idUser);
+        if ($this->isDocument($id_space, $id)) {
+            $this->edit($id, $id_space, $title, $id_user);
             return $id;
         } else {
-            return $this->add($idSpace, $title, $idUser);
+            return $this->add($id_space, $title, $id_user);
         }
     }
 
-    public function isDocument($idSpace, $id)
+    public function isDocument($id_space, $id)
     {
         $sql = "SELECT id FROM dc_documents WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id, $idSpace));
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function setUrl($idSpace, $id, $url)
+    public function setUrl($id_space, $id, $url)
     {
         $sql = "UPDATE dc_documents SET url=?, date_modified=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($url, date("Y-m-d", time()), $id, $idSpace));
+        $this->runRequest($sql, array($url, date("Y-m-d", time()), $id, $id_space));
     }
 
-    public function getUrl($idSpace, $id)
+    public function getUrl($id_space, $id)
     {
         $sql = "SELECT url FROM dc_documents WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id, $idSpace))->fetch();
+        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req[0];
     }
 
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         if (!$id) {
             return array(
@@ -135,21 +135,21 @@ class Document extends Model
             );
         }
         $sql = "SELECT * FROM dc_documents WHERE id=? AND id_space=?";
-        $req = $this->runRequest($sql, array($id, $idSpace))->fetch();
+        $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req;
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         // remove the file
         $sql = "SELECT * FROM dc_documents WHERE id=? AND id_space=?";
-        $info = $this->runRequest($sql, array($id, $idSpace))->fetch();
+        $info = $this->runRequest($sql, array($id, $id_space))->fetch();
         if (file_exists($info["url"])) {
             unlink($info["url"]);
         }
 
         // remove the entry
         $sql2 = "DELETE FROM dc_documents WHERE id=? AND id_space=?";
-        $this->runRequest($sql2, array($id, $idSpace));
+        $this->runRequest($sql2, array($id, $id_space));
     }
 }

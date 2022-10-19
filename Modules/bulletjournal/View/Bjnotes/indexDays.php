@@ -83,7 +83,7 @@
                             
                             <td style="padding: 10px">
                                 <span class="bi-x-square-fill"
-                                    onclick="deleteNote(<?php echo $idSpace ?>,<?php echo $dnote['id'] ?>)" 
+                                    onclick="deleteNote(<?php echo $id_space ?>,<?php echo $dnote['id'] ?>)" 
                                 ></span>
 
                                 <?php if ($typeicon) { ?><span class="<?php echo $typeicon ?>"></span><?php } ?>

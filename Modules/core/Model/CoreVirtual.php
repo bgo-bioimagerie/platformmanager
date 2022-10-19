@@ -39,20 +39,20 @@ class CoreVirtual extends Model
      *
      * Using Redis
      */
-    public function incr($idSpace, $name)
+    public function incr($id_space, $name)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
-        $newid = $redis->incr("pfm:$idSpace:$name");
+        $newid = $redis->incr("pfm:$id_space:$name");
         $redis->close();
         return $newid;
     }
 
-    public function incrBy($idSpace, $name, $value)
+    public function incrBy($id_space, $name, $value)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
-        $newid = $redis->incrBy("pfm:$idSpace:$name", $value);
+        $newid = $redis->incrBy("pfm:$id_space:$name", $value);
         $redis->close();
         return $newid;
     }
@@ -60,7 +60,7 @@ class CoreVirtual extends Model
     /**
      * Set name/value in redis, value will be json_encoded
      */
-    public function set(int $idSpace, string $name, mixed $value, $expire=null)
+    public function set(int $id_space, string $name, mixed $value, $expire=null)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
@@ -70,18 +70,18 @@ class CoreVirtual extends Model
             $redis->close();
             throw $e;
         }
-        $redis->set("pfm:$idSpace:$name", $val, $expire);
+        $redis->set("pfm:$id_space:$name", $val, $expire);
         $redis->close();
     }
 
     /**
      * Get name key from redis, value is json_decoded
      */
-    public function get($idSpace, $name): mixed
+    public function get($id_space, $name): mixed
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
-        $value = $redis->get("pfm:$idSpace:$name");
+        $value = $redis->get("pfm:$id_space:$name");
         $redis->close();
         $val = null;
         if ($value) {
@@ -95,14 +95,14 @@ class CoreVirtual extends Model
         return $val;
     }
 
-    public function newRequest($idSpace, $module, $name)
+    public function newRequest($id_space, $module, $name)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         $rid = time().':'.$name;
         try {
-            $redis->hSet('pfm:'.$idSpace.':'.$module.':request', $rid, 'waiting');
-            $redis->expire('pfm:'.$idSpace.':'.$module.':request', 3600 * 5); // expire in 5h
+            $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, 'waiting');
+            $redis->expire('pfm:'.$id_space.':'.$module.':request', 3600 * 5); // expire in 5h
         } catch(Exception $e) {
             $redis->close();
             throw $e;
@@ -111,13 +111,13 @@ class CoreVirtual extends Model
         return $rid;
     }
 
-    public function updateRequest($idSpace, $module, $rid, $msg)
+    public function updateRequest($id_space, $module, $rid, $msg)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         try {
-            $redis->hSet('pfm:'.$idSpace.':'.$module.':request', $rid, $msg);
-            $redis->expire('pfm:'.$idSpace.':'.$module.':request', 3600 * 5); // expire in 5h
+            $redis->hSet('pfm:'.$id_space.':'.$module.':request', $rid, $msg);
+            $redis->expire('pfm:'.$id_space.':'.$module.':request', 3600 * 5); // expire in 5h
         } catch(Exception $e) {
             $redis->close();
             throw $e;
@@ -126,12 +126,12 @@ class CoreVirtual extends Model
         return $rid;
     }
 
-    public function deleteRequest($idSpace, $module, $rid)
+    public function deleteRequest($id_space, $module, $rid)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         try {
-            $redis->hDel('pfm:'.$idSpace.':'.$module.':request', $rid);
+            $redis->hDel('pfm:'.$id_space.':'.$module.':request', $rid);
         } catch(Exception $e) {
             $redis->close();
             throw $e;
@@ -140,13 +140,13 @@ class CoreVirtual extends Model
         return $rid;
     }
 
-    public function getRequests($idSpace, $module)
+    public function getRequests($id_space, $module)
     {
         $redis = new Redis();
         $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
         $requests = [];
         try {
-            $requests = $redis->hGetAll('pfm:'.$idSpace.':'.$module.':request');
+            $requests = $redis->hGetAll('pfm:'.$id_space.':'.$module.':request');
             krsort($requests);
         } catch(Exception $e) {
             $redis->close();

@@ -77,7 +77,7 @@ class Helpdesk extends Model
     /**
      * Creates a new ticket
      *
-     * @param string $idSpace space identifier
+     * @param string $id_space space identifier
      * @param string $from mail or name of creator
      * @param string $to mail of destination
      * @param string $subject subject of ticket
@@ -85,7 +85,7 @@ class Helpdesk extends Model
      * @param array $files  list of CoreFiles
      * @return int id of ticket
      */
-    public function createTicket($idSpace, $from, $to, $subject, $body, $idUser=0, $attachments=[])
+    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0, $attachments=[])
     {
         // create ticket
         // create message
@@ -95,7 +95,7 @@ class Helpdesk extends Model
         if ($id_ticket == 0) {
             $is_new = true;
             $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`, `unread`)  VALUES (?,?,?, ?,?, NOW(), ?)';
-            $this->runRequest($sql, array($idSpace, self::$STATUS_NEW, $subject, $from, $idUser, 1));
+            $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user, 1));
             $id_ticket = $this->getDatabase()->lastInsertId();
         }
 
@@ -148,7 +148,7 @@ class Helpdesk extends Model
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function notify($idSpace, $id_ticket, $lang="en", $isNew=true)
+    public function notify($id_space, $id_ticket, $lang="en", $isNew=true)
     {
         $cussm = new CoreUserSpaceSettings();
         $ticket = $this->get($id_ticket);
@@ -160,7 +160,7 @@ class Helpdesk extends Model
         if ($isNew) {
             $subject = "[Ticket #$id_ticket] new ticket";
             $msg = HelpdeskTranslator::newTicket($lang);
-            $users = $cussm->getUsersForSetting($idSpace, "hp_notifyNew", 1);
+            $users = $cussm->getUsersForSetting($id_space, "hp_notifyNew", 1);
             foreach ($users as $user) {
                 $sent[] = $user["user_id"];
             }
@@ -169,7 +169,7 @@ class Helpdesk extends Model
             $subject = "[Ticket #$id_ticket] updated ticket";
             $msg = HelpdeskTranslator::updatedTicket($lang);
             if ($ticket["assigned"]) {
-                $userSettings = $cussm->getUserSetting($idSpace, $ticket["assigned"], "hp_notifyAssignedUpdate");
+                $userSettings = $cussm->getUserSetting($id_space, $ticket["assigned"], "hp_notifyAssignedUpdate");
                 if ($userSettings) {
                     foreach ($userSettings as $user) {
                         if ($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
@@ -179,7 +179,7 @@ class Helpdesk extends Model
                 }
             }
 
-            $users = $cussm->getUsersForSetting($idSpace, "hp_notifyAllUpdate", 1);
+            $users = $cussm->getUsersForSetting($id_space, "hp_notifyAllUpdate", 1);
             foreach ($users as $user) {
                 if (!in_array($user["user_id"], $sent)) {
                     $sent[] = $user["user_id"];
@@ -219,12 +219,12 @@ class Helpdesk extends Model
         return 0;
     }
 
-    public function assign($id_ticket, $idUser)
+    public function assign($id_ticket, $id_user)
     {
         $um = new CoreUser();
-        $login = $um->getUserLogin($idUser);
+        $login = $um->getUserLogin($id_user);
         $sql = "UPDATE hp_tickets set assigned=?, assigned_name=? WHERE id=?";
-        $this->runRequest($sql, array($idUser, $login, $id_ticket));
+        $this->runRequest($sql, array($id_user, $login, $id_ticket));
     }
 
     public function setStatus($id_ticket, $status, $reminder_date=null)
@@ -237,15 +237,15 @@ class Helpdesk extends Model
         $this->runRequest($sql, array($status, $id_ticket));
     }
 
-    public function list($idSpace, $status=0, $idUser=0, $offset=0, $limit=50)
+    public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50)
     {
         $sql = "SELECT * FROM hp_tickets WHERE `status`=? AND id_space=?";
-        if ($idUser) {
+        if ($id_user) {
             $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id DESC LIMIT ".intval($limit)." OFFSET ".intval($offset);
-            return $this->runRequest($sql, array($status, $idSpace, $idUser, $idUser))->fetchAll();
+            return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
         $sql .= " ORDER BY id DESC LIMIT ".intval($limit)." OFFSET ".intval($offset);
-        return $this->runRequest($sql, array($status, $idSpace))->fetchAll();
+        return $this->runRequest($sql, array($status, $id_space))->fetchAll();
     }
 
     public function get($id_ticket)
@@ -347,10 +347,10 @@ class Helpdesk extends Model
     }
 
     // count unread messages
-    public function unread($idSpace)
+    public function unread($id_space)
     {
         $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE unread=1 AND id_space=? GROUP BY status";
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
     public function remind($lang="en")
@@ -379,9 +379,9 @@ class Helpdesk extends Model
     /**
      * count number of tickets per status per space
      */
-    public function count($idSpace)
+    public function count($id_space)
     {
         $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE id_space=? GROUP BY status";
-        return $this->runRequest($sql, array($idSpace))->fetchAll();
+        return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 }

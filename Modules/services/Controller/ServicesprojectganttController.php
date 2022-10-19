@@ -26,9 +26,9 @@ class ServicesprojectganttController extends ServicesController
 
     // TODO: gérer les autorisations par projet ?
 
-    public function indexAction($idSpace, $allPeriod = 0, $incharge = "", $id_project = null)
+    public function indexAction($id_space, $allPeriod = 0, $incharge = "", $id_project = null)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get sort action
@@ -41,8 +41,8 @@ class ServicesprojectganttController extends ServicesController
         if ($allPeriod == 1) {
             $ganttStatus = $ganttPeriod;
             $modelConfig = new CoreConfig();
-            $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $idSpace);
-            $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $idSpace);
+            $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
             $today = new DateTime();
             if ($projectperiodbegin === "") {
                 $projectperiodbegin = $today->format('Y')."-1-1";
@@ -63,19 +63,19 @@ class ServicesprojectganttController extends ServicesController
             $periodEnd = $yearp . "-" . $projectperiodendArray[1] . "-" . $projectperiodendArray[2] . "<br/>";
 
             if ($incharge == "") {
-                $projects = $modelProject->allPeriodProjects($idSpace, $periodStart, $periodEnd);
+                $projects = $modelProject->allPeriodProjects($id_space, $periodStart, $periodEnd);
             } else {
-                $projects = $modelProject->allPeriodProjectsByInCharge($idSpace, $incharge, $periodStart, $periodEnd);
+                $projects = $modelProject->allPeriodProjectsByInCharge($id_space, $incharge, $periodStart, $periodEnd);
             }
         } else {
             $ganttStatus = $ganttOpened;
             if ($incharge == "") {
-                $projects = $modelProject->allOpenedProjects($idSpace);
+                $projects = $modelProject->allOpenedProjects($id_space);
             } else {
-                $projects = $modelProject->allOpenedProjectsByInCharge($idSpace, $incharge);
+                $projects = $modelProject->allOpenedProjectsByInCharge($id_space, $incharge);
             }
         }
-        $personInCharge = $modelVisa->getAll($idSpace);
+        $personInCharge = $modelVisa->getAll($id_space);
 
         $headerInfo["allProjects"] = ServicesTranslator::All_projects($lang);
 
@@ -94,7 +94,7 @@ class ServicesprojectganttController extends ServicesController
 
         $data = array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'projects' => json_encode($projects),
             'personInCharge' => $personInCharge,
             'activeGantt' => $incharge,

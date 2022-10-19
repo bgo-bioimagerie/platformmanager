@@ -33,10 +33,10 @@ class SeVisa extends Model
         }
     }
 
-    public function getIdFromUser($idUser, $idSpace)
+    public function getIdFromUser($id_user, $id_space)
     {
         $sql = "SELECT id FROM se_visa WHERE id_user=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($idUser, $idSpace));
+        $req = $this->runRequest($sql, array($id_user, $id_space));
         if ($req->rowCount() > 0) {
             $tmp = $req->fetch();
             return $tmp[0];
@@ -50,23 +50,23 @@ class SeVisa extends Model
      * @param type $id
      * @param type $name
      */
-    public function set($id, $idUser, $idSpace)
+    public function set($id, $id_user, $id_space)
     {
         if (!$id) {
             $sql = "INSERT INTO se_visa (id_user, id_space) VALUES (?,?)";
-            $this->runRequest($sql, array($idUser, $idSpace));
+            $this->runRequest($sql, array($id_user, $id_space));
             $id = $this->getDatabase()->lastInsertId();
         } else {
             $sql = "UPDATE se_visa SET id_user=? WHERE id=? AND id_space=?";
-            $this->runRequest($sql, array($idUser, $id, $idSpace));
+            $this->runRequest($sql, array($id_user, $id, $id_space));
         }
         return $id;
     }
 
-    public function getAll($idSpace)
+    public function getAll($id_space)
     {
         $sql = "SELECT * FROM se_visa WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($data); $i++) {
@@ -75,16 +75,16 @@ class SeVisa extends Model
         return $data;
     }
 
-    public function get($idSpace, $id)
+    public function get($id_space, $id)
     {
         $sql = "SELECT * FROM se_visa WHERE id=?  AND id_space=? AND deleted=0";
-        return $this->runRequest($sql, array($id, $idSpace))->fetch();
+        return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function getForList($idSpace)
+    public function getForList($id_space)
     {
         $sql = "SELECT * FROM se_visa WHERE id_space=? AND deleted=0";
-        $data = $this->runRequest($sql, array($idSpace))->fetchAll();
+        $data = $this->runRequest($sql, array($id_space))->fetchAll();
 
         $ids = array();
         $names = array();
@@ -102,9 +102,9 @@ class SeVisa extends Model
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE from se_visa SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

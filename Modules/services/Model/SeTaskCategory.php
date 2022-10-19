@@ -28,27 +28,27 @@ class SeTaskCategory extends Model
         $this->runRequest($sql);
     }
 
-    public function getForSpace($idSpace)
+    public function getForSpace($id_space)
     {
         $sql = "SELECT * FROM se_task_category WHERE id_space=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($idSpace));
+        $req = $this->runRequest($sql, array($id_space));
         return $req->fetchAll();
     }
 
-    public function getById($idSpace, $id_category)
+    public function getById($id_space, $id_category)
     {
         $sql = "SELECT * FROM se_task_category WHERE id=? id_space=? AND deleted=0;";
-        $req = $this->runRequest($sql, array($id_category, $idSpace));
+        $req = $this->runRequest($sql, array($id_category, $id_space));
         return $req->fetch();
     }
 
-    public function getByProject($id_project, $idSpace)
+    public function getByProject($id_project, $id_space)
     {
         $sql = "SELECT * FROM se_task_category WHERE id_space=? AND id_project=? AND deleted=0 ORDER BY position;";
-        $req = $this->runRequest($sql, array($idSpace, $id_project));
+        $req = $this->runRequest($sql, array($id_space, $id_project));
         $categories = $req->fetchAll();
         if (empty($categories)) {
-            $categories = $this->createDefaultCategories($idSpace, $id_project);
+            $categories = $this->createDefaultCategories($id_space, $id_project);
         }
         return $categories;
     }
@@ -61,43 +61,43 @@ class SeTaskCategory extends Model
         return array($cat1, $cat2, $cat3);
     }
 
-    public function createDefaultCategories($idSpace, $id_project)
+    public function createDefaultCategories($id_space, $id_project)
     {
         $categories = $this->getDefaultCategories();
         for ($i=0; $i < count($categories); $i++) {
             $sql = "INSERT INTO se_task_category (id_project, name, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $categories[$i]['name'], $categories[$i]['position'], $categories[$i]['color'], $idSpace));
+            $this->runRequest($sql, array($id_project, $categories[$i]['name'], $categories[$i]['position'], $categories[$i]['color'], $id_space));
             $categories[$i]['id'] = $this->getDatabase()->lastInsertId();
         }
         return $categories;
     }
 
-    public function set($id, $idSpace, $id_project, $name, $position, $color)
+    public function set($id, $id_space, $id_project, $name, $position, $color)
     {
-        if ($this->isTaskCategory($idSpace, $id)) {
+        if ($this->isTaskCategory($id_space, $id)) {
             $sql = "UPDATE se_task_category SET id_project=?, name=?, position=?, color=? WHERE id=? AND id_space=? AND deleted=0";
-            $this->runRequest($sql, array($id_project, $name, $position, $color, $id, $idSpace));
+            $this->runRequest($sql, array($id_project, $name, $position, $color, $id, $id_space));
             return $id;
         } else {
             $sql = "INSERT INTO se_task_category (id_project, name, position, color, id_space) VALUES (?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_project, $name, $position, $color, $idSpace));
+            $this->runRequest($sql, array($id_project, $name, $position, $color, $id_space));
             return $this->getDatabase()->lastInsertId();
         }
     }
 
-    public function isTaskCategory($idSpace, $id)
+    public function isTaskCategory($id_space, $id)
     {
         $sql = "SELECT * FROM se_task_category WHERE id=? AND id_space=? AND deleted=0";
-        $req = $this->runRequest($sql, array($id, $idSpace));
+        $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function delete($idSpace, $id)
+    public function delete($id_space, $id)
     {
         $sql = "UPDATE se_task_category SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id, $idSpace));
+        $this->runRequest($sql, array($id, $id_space));
     }
 }

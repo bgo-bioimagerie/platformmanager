@@ -26,9 +26,9 @@ class ServicesprojectApi extends CoresecureController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function editentryqueryAction($idSpace)
+    public function editentryqueryAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         throw new PfmException("not supported", 500);
 
         /*
@@ -45,7 +45,7 @@ class ServicesprojectApi extends CoresecureController
         $type = 1;
         $content = $this->request->getParameter("formnotecontent");
         $date = CoreTranslator::dateToEn($this->request->getParameter("formnotedate"), $lang);
-        $modelNote->set($id, $idSpace, $name, $type, $content, $date, $ismonth);
+        $modelNote->set($id, $id_space, $name, $type, $content, $date, $ismonth);
 
         $datearray = explode("-", $date);
 
@@ -57,11 +57,11 @@ class ServicesprojectApi extends CoresecureController
         */
     }
 
-    public function getprojectentryAction($idSpace, $id)
+    public function getprojectentryAction($id_space, $id)
     {
         $modelProject = new SeProject();
 
-        $data = $modelProject->getProjectEntry($idSpace, $id);
+        $data = $modelProject->getProjectEntry($id_space, $id);
 
         echo json_encode($data);
     }

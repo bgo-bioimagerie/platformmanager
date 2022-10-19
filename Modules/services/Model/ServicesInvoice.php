@@ -21,14 +21,14 @@ class ServicesInvoice extends InvoiceModel
     public static string $INVOICES_SERVICES_PROJECTS_CLIENT = 'invoices_services_projects_client';
     public static string $INVOICES_SERVICES_ORDERS_CLIENT = 'invoices_services_orders_client';
 
-    public function hasActivity($idSpace, $beginPeriod, $endPeriod, $id_resp)
+    public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp)
     {
         // projects
         $sqlps = "SELECT * FROM se_project WHERE deleted=0 AND id_space=? AND id_resp=? AND date_close is NULL";
-        $projects = $this->runRequest($sqlps, array($idSpace, $id_resp))->fetchAll();
+        $projects = $this->runRequest($sqlps, array($id_space, $id_resp))->fetchAll();
         foreach ($projects as $p) {
             $sqlpd = "SELECT * FROM se_project_service WHERE id_project=? AND id_invoice=0 AND id_space=?";
-            $req = $this->runRequest($sqlpd, array($p["id"], $idSpace));
+            $req = $this->runRequest($sqlpd, array($p["id"], $id_space));
             if ($req->rowCount() > 0) {
                 return true;
             }
@@ -36,54 +36,54 @@ class ServicesInvoice extends InvoiceModel
 
         // orders
         $modelOrder = new SeOrder();
-        $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_resp, $idSpace);
+        $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_resp, $id_space);
         if (count($orders) > 0) {
             return true;
         }
         return false;
     }
 
-    public function invoiceOrders($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $lang='en')
+    public function invoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en')
     {
         $modelOrder = new SeOrder();
         $modelInvoice = new InInvoice();
         $modelInvoiceItem = new InInvoiceItem();
 
         $sim = new ServicesInvoice();
-        $contentAll = $sim->getInvoiceOrders($idSpace, $beginPeriod, $endPeriod, $id_client);
+        $contentAll = $sim->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
 
         if (empty($contentAll['orders'])) {
             return false;
         }
 
         // get the bill number
-        $number = $modelInvoice->getNextNumber($idSpace);
+        $number = $modelInvoice->getNextNumber($id_space);
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $idSpace, 'in progress', date("Y-m-d", time()), $id_client);
-        $modelInvoice->setEditedBy($idSpace, $id_invoice, $idUser);
-        $modelInvoice->setTitle($idSpace, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client);
+        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
+        $modelInvoice->setTitle($id_space, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         $total_ht = $contentAll['total_ht'];
         $details = $contentAll['details'];
         $content = $contentAll['content'];
         $orders = $contentAll['orders'];
-        $modelInvoiceItem->setItem($idSpace, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
-        $modelInvoice->setNumber($idSpace, $id_invoice, $number);
+        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setNumber($id_space, $id_invoice, $number);
 
         foreach ($orders as $order) {
-            $modelOrder->setEntryClosed($idSpace, $order["id"]);
-            $modelOrder->setInvoiceID($idSpace, $order["id"], $id_invoice);
+            $modelOrder->setEntryClosed($id_space, $order["id"]);
+            $modelOrder->setInvoiceID($id_space, $order["id"], $id_invoice);
         }
         return true;
     }
 
-    public function getInvoiceOrders($idSpace, $beginPeriod, $endPeriod, $id_client)
+    public function getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client)
     {
         $modelOrder = new SeOrder();
         // select all the opened orders
-        $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $idSpace);
+        $orders = $modelOrder->openedForClientPeriod($beginPeriod, $endPeriod, $id_client, $id_space);
         if (count($orders) == 0) {
             return [
                 'total_ht' => 0,
@@ -97,18 +97,18 @@ class ServicesInvoice extends InvoiceModel
         foreach ($orders as $order) {
             $id_orders[] = $order['id'];
         }
-        //$services = $modelOrder->openedItemsForClient($idSpace, $id_client);
-        $services = $modelOrder->openedOrdersItems($idSpace, $id_orders);
+        //$services = $modelOrder->openedItemsForClient($id_space, $id_client);
+        $services = $modelOrder->openedOrdersItems($id_space, $id_orders);
         $modelClPricing = new ClPricing();
-        $clpricing = $modelClPricing->getPricingByClient($idSpace, $id_client);
+        $clpricing = $modelClPricing->getPricingByClient($id_space, $id_client);
         $pricing = empty($clpricing) ? ['id' => 0, 'name' => Constants::UNKNOWN] : $clpricing[0];
-        $contentServices = $this->parseServicesToContent($idSpace, $services, $pricing['id']);
+        $contentServices = $this->parseServicesToContent($id_space, $services, $pricing['id']);
         $content = '';
         foreach ($contentServices as $c) {
             $content .= $c['content'];
         }
-        $details = $this->parseOrdersToDetails($idSpace, $orders);
-        $total_ht = $this->calculateTotal($idSpace, $services, $pricing['id']);
+        $details = $this->parseOrdersToDetails($id_space, $orders);
+        $total_ht = $this->calculateTotal($id_space, $services, $pricing['id']);
         return [
             'total_ht' => $total_ht,
             'content' => $content,
@@ -118,16 +118,16 @@ class ServicesInvoice extends InvoiceModel
         ];
     }
 
-    protected function parseOrdersToDetails($idSpace, $orders)
+    protected function parseOrdersToDetails($id_space, $orders)
     {
         $details = "";
         foreach ($orders as $order) {
-            $details .= $order["no_identification"] . "=servicesorderedit/" . $idSpace . "/" . $order["id"] . ";";
+            $details .= $order["no_identification"] . "=servicesorderedit/" . $id_space . "/" . $order["id"] . ";";
         }
         return $details;
     }
 
-    protected function parseServicesToContent($idSpace, $services, $id_belonging)
+    protected function parseServicesToContent($id_space, $services, $id_belonging)
     {
         $addedServices = array();
         $idServices = [];
@@ -147,7 +147,7 @@ class ServicesInvoice extends InvoiceModel
                         $s2o[$services[$j]["id_service"]][] = $services[$j]["id_order"];
                     }
                 }
-                $price = $modelPrice->getPrice($idSpace, $services[$i]["id_service"], $id_belonging);
+                $price = $modelPrice->getPrice($id_space, $services[$i]["id_service"], $id_belonging);
 
                 $addedServices[] = [
                     'id' => $services[$i]["id_service"],
@@ -165,18 +165,18 @@ class ServicesInvoice extends InvoiceModel
         return $addedServices;
     }
 
-    protected function calculateTotal($idSpace, $services, $id_belonging)
+    protected function calculateTotal($id_space, $services, $id_belonging)
     {
         $total_HT = 0;
         $modelPrice = new SePrice();
         foreach ($services as $service) {
-            $price = $modelPrice->getPrice($idSpace, $service["id_service"], $id_belonging);
+            $price = $modelPrice->getPrice($id_space, $service["id_service"], $id_belonging);
             $total_HT += floatval($service["quantity"]) *  floatval($price);
         }
         return $total_HT;
     }
 
-    public function invoiceProjects($idSpace, $beginPeriod, $endPeriod, $id_client, $idUser, $id_projects, $lang='en')
+    public function invoiceProjects($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $id_projects, $lang='en')
     {
         $modelProject = new SeProject();
         $modelInvoiceItem = new InInvoiceItem();
@@ -185,16 +185,16 @@ class ServicesInvoice extends InvoiceModel
         $controller = "servicesinvoiceproject";
 
 
-        $contentAll = $this->getInvoiceProjects($idSpace, $id_client, $id_projects);
+        $contentAll = $this->getInvoiceProjects($id_space, $id_client, $id_projects);
         if (empty($contentAll['services'])) {
             return false;
         }
 
-        $number = $modelInvoice->getNextNumber($idSpace);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $idSpace, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($idSpace, $id_invoice, $idUser);
+        $number = $modelInvoice->getNextNumber($id_space);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
+        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
         foreach ($contentAll['servicesToInvoice'] as $s) {
-            $modelProject->setServiceInvoice($idSpace, $s, $id_invoice);
+            $modelProject->setServiceInvoice($id_space, $s, $id_invoice);
         }
 
         $total_ht = $contentAll['total_ht'];
@@ -203,33 +203,33 @@ class ServicesInvoice extends InvoiceModel
         $details = "";
         $title = ServicesTranslator::Projects($lang).":";
         foreach ($id_projects as $id_proj) {
-            $name = $modelProject->getName($idSpace, $id_proj);
-            $details .= $name . "=" . "servicesprojectfollowup/" . $idSpace . "/" . $id_proj . ";";
+            $name = $modelProject->getName($id_space, $id_proj);
+            $details .= $name . "=" . "servicesprojectfollowup/" . $id_space . "/" . $id_proj . ";";
             $title .= " ".$name;
         }
         $title = substr($title, 0, 255);
-        $modelInvoiceItem->setItem($idSpace, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
-        $modelInvoice->setTotal($idSpace, $id_invoice, $total_ht);
-        $modelInvoice->setTitle($idSpace, $id_invoice, $title);
-        $modelInvoice->setNumber($idSpace, $id_invoice, $number);
+        $modelInvoiceItem->setItem($id_space, 0, $id_invoice, $module, $controller, $content, $details, $total_ht);
+        $modelInvoice->setTotal($id_space, $id_invoice, $total_ht);
+        $modelInvoice->setTitle($id_space, $id_invoice, $title);
+        $modelInvoice->setNumber($id_space, $id_invoice, $number);
 
         // Close projects if option defined in services config (core_config in db)
         $modelCoreConfig = new CoreConfig();
-        $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $idSpace, 0);
+        $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $id_space, 0);
         if ($seProjectCloseAtInvoice == 1) {
             foreach ($id_projects as $projectId) {
-                $modelProject->setEntryClosed($idSpace, $projectId, date("Y-m-d", time()));
+                $modelProject->setEntryClosed($id_space, $projectId, date("Y-m-d", time()));
             }
         }
 
         return true;
     }
 
-    public function getInvoiceProjects($idSpace, $id_client, $id_projects)
+    public function getInvoiceProjects($id_space, $id_client, $id_projects)
     {
         // parse content
         $modelClient = new ClClient();
-        $id_belonging = $modelClient->getPricingID($idSpace, $id_client);
+        $id_belonging = $modelClient->getPricingID($id_space, $id_client);
 
         $total_ht = 0;
         $modelProject = new SeProject();
@@ -241,7 +241,7 @@ class ServicesInvoice extends InvoiceModel
         $servicesToInvoice = [];
         $serviceList = [];
         foreach ($id_projects as $id_proj) {
-            $services = $modelProject->getNoInvoicesServices($idSpace, $id_proj);
+            $services = $modelProject->getNoInvoicesServices($id_space, $id_proj);
 
             $servicesMerged = array();
             for ($i = 0; $i < count($services); $i++) {
@@ -266,7 +266,7 @@ class ServicesInvoice extends InvoiceModel
             for ($i = 0; $i < count($servicesMerged); $i++) {
                 $addedServices[] = $servicesMerged[$i]["id_service"];
                 $quantity = floatval($servicesMerged[$i]["quantity"]);
-                $price = floatval($modelPrice->getPrice($idSpace, $servicesMerged[$i]["id_service"], $id_belonging));
+                $price = floatval($modelPrice->getPrice($id_space, $servicesMerged[$i]["id_service"], $id_belonging));
                 $addedServicesCount[] = $quantity;
                 $addedServicesPrice[] = $price;
                 $addedServicesComment[] = $servicesMerged[$i]["comment"];
@@ -288,7 +288,7 @@ class ServicesInvoice extends InvoiceModel
         return ['total_ht' => $total_ht, 'content' => $content, 'services' => $serviceList, 'servicesToInvoice' => $servicesToInvoice];
     }
 
-    public function invoice($idSpace, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang)
+    public function invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_invoice, $lang)
     {
         $content = array();
         $content["count"] = array();
@@ -297,7 +297,7 @@ class ServicesInvoice extends InvoiceModel
         $ssm = new SeService();
 
         // orders
-        $ordersContent = $this->getInvoiceOrders($idSpace, $beginPeriod, $endPeriod, $id_client);
+        $ordersContent = $this->getInvoiceOrders($id_space, $beginPeriod, $endPeriod, $id_client);
         if (!empty($ordersContent['orders'])) {
             $content['total_ht'] += $ordersContent['total_ht'];
             $orders = $ordersContent['orders'];
@@ -308,7 +308,7 @@ class ServicesInvoice extends InvoiceModel
                 $morder[$order['id']] = $order['no_identification'];
             }
             foreach ($ordersServices as $orderService) {
-                $name = $ssm->getName($idSpace, $orderService['id'], true);
+                $name = $ssm->getName($id_space, $orderService['id'], true);
                 $orderInfo = array("id" => $orderService['id'], "label" => $name, "quantity" => $orderService['quantity'], "unitprice" => $orderService['unitprice'], "order" => $orderService['id_order']);
                 $id_orders = explode(',', $orderService['id_order']);
                 $orderInfo['no_identification'] = [];
@@ -324,23 +324,23 @@ class ServicesInvoice extends InvoiceModel
             // close orders
             $modelOrder = new SeOrder();
             foreach ($orders as $order) {
-                $modelOrder->setEntryClosed($idSpace, $order["id"]);
-                $modelOrder->setInvoiceID($idSpace, $order["id"], $id_invoice);
+                $modelOrder->setEntryClosed($id_space, $order["id"]);
+                $modelOrder->setInvoiceID($id_space, $order["id"], $id_invoice);
             }
         }
 
         // projects
         $modelProject = new SeProject();
-        $id_projects = $modelProject->getProjectsOpenedPeriodResp($idSpace, $beginPeriod, $endPeriod, $id_client);
-        $projectsContent = $this->getInvoiceProjects($idSpace, $id_client, $id_projects);
+        $id_projects = $modelProject->getProjectsOpenedPeriodResp($id_space, $beginPeriod, $endPeriod, $id_client);
+        $projectsContent = $this->getInvoiceProjects($id_space, $id_client, $id_projects);
 
         $content['total_ht'] += $projectsContent['total_ht'];
         $projectServices = $projectsContent['services'];
         foreach ($projectServices as $projectService) {
-            $name = $ssm->getName($idSpace, $projectService['id'], true);
+            $name = $ssm->getName($id_space, $projectService['id'], true);
             $pname = '';
             if (isset($projectService['no_identification'])) {
-                $pname = $modelProject->getName($idSpace, $projectService['no_identification']);
+                $pname = $modelProject->getName($id_space, $projectService['no_identification']);
             }
             $content["count"][] = array(
                 "id" => $projectService['id'],
@@ -349,16 +349,16 @@ class ServicesInvoice extends InvoiceModel
                 "unitprice" => $projectService['unitprice'],
                 "no_identification" => $pname
             );
-            // $modelProject->setServiceInvoice($idSpace, $projectService["id"], $id_invoice);
+            // $modelProject->setServiceInvoice($id_space, $projectService["id"], $id_invoice);
         }
         foreach ($projectsContent['servicesToInvoice'] as $s) {
-            $modelProject->setServiceInvoice($idSpace, $s, $id_invoice);
+            $modelProject->setServiceInvoice($id_space, $s, $id_invoice);
         }
 
         return $content;
     }
 
-    public function details($idSpace, $invoice_id, $lang)
+    public function details($id_space, $invoice_id, $lang)
     {
         $sql1 = 'SELECT SUM(se_project_service.quantity)  as quantity,se_services.name as label, se_project.name as origin FROM se_project_service
         INNER JOIN se_project ON se_project.id=se_project_service.id_project
@@ -386,7 +386,7 @@ class ServicesInvoice extends InvoiceModel
         $data["content"] = array();
 
 
-        $res = $this->runRequest($sql1, [$invoice_id, $idSpace]);
+        $res = $this->runRequest($sql1, [$invoice_id, $id_space]);
         $detail = null;
         while ($detail = $res->fetch()) {
             $data["content"][] = array(
@@ -395,7 +395,7 @@ class ServicesInvoice extends InvoiceModel
                 "quantity" => $detail["quantity"]
             );
         }
-        $res = $this->runRequest($sql2, [$invoice_id, $idSpace]);
+        $res = $this->runRequest($sql2, [$invoice_id, $id_space]);
         $detail = null;
         while ($detail = $res->fetch()) {
             $data["content"][] = array(
@@ -410,12 +410,12 @@ class ServicesInvoice extends InvoiceModel
 
         // services
         $sqls = "SELECT * FROM se_services WHERE id_space=?";
-        $services = $this->runRequest($sqls, array($idSpace))->fetchAll();
+        $services = $this->runRequest($sqls, array($id_space))->fetchAll();
 
         $modelProject = new SeProject();
         // orders
         $sqlo = "SELECT id, no_identification FROM se_order WHERE id_invoice=? AND id_space=? AND deleted=0";
-        $orders = $this->runRequest($sqlo, array($invoice_id, $idSpace))->fetchAll();
+        $orders = $this->runRequest($sqlo, array($invoice_id, $id_space))->fetchAll();
 
         $data = array();
         $data["title"] = ServicesTranslator::Services($lang);
@@ -427,11 +427,11 @@ class ServicesInvoice extends InvoiceModel
         $data["content"] = array();
         foreach ($services as $service) {
             $sqlp = "SELECT DISTINCT id_project FROM se_project_service WHERE id_invoice=? AND id_service=? AND id_space=? AND deleted=0";
-            $projects = $this->runRequest($sqlp, array($invoice_id, $service["id"], $idSpace))->fetchAll();
+            $projects = $this->runRequest($sqlp, array($invoice_id, $service["id"], $id_space))->fetchAll();
             foreach ($projects as $project) {
 
                 $sqlsp = "SELECT * FROM se_project_service WHERE id_project=? AND id_invoice=? AND id_service=? AND id_space=? AND deleted=0";
-                $reqsp = $this->runRequest($sqlsp, array($project[0], $invoice_id, $service["id"], $idSpace));
+                $reqsp = $this->runRequest($sqlsp, array($project[0], $invoice_id, $service["id"], $id_space));
                 if ($reqsp->rowCount() > 0) {
                     $datap = $reqsp->fetchAll();
                     $quantity = 0;
@@ -440,7 +440,7 @@ class ServicesInvoice extends InvoiceModel
                     }
                     $data["content"][] = array(
                         "label" => $service["name"],
-                        "origin" => $modelProject->getName($idSpace, $project[0]),
+                        "origin" => $modelProject->getName($id_space, $project[0]),
                         "quantity" => $quantity
                     );
                 }
@@ -450,7 +450,7 @@ class ServicesInvoice extends InvoiceModel
             foreach ($orders as $order) {
 
                 $sqlso = "SELECT * FROM se_order_service WHERE id_service=? AND id_order=? AND id_space=? AND deleted=0";
-                $reqso = $this->runRequest($sqlso, array($service["id"], $order["id"], $idSpace));
+                $reqso = $this->runRequest($sqlso, array($service["id"], $order["id"], $id_space));
                 if ($reqso->rowCount() > 0) {
                     $datao = $reqso->fetchAll();
                     $quantity = 0;
@@ -469,24 +469,24 @@ class ServicesInvoice extends InvoiceModel
         */
     }
 
-    public function delete($idSpace, $id_invoice)
+    public function delete($id_space, $id_invoice)
     {
-        $this->deleteProjects($idSpace, $id_invoice);
-        $this->deleteOrders($idSpace, $id_invoice);
+        $this->deleteProjects($id_space, $id_invoice);
+        $this->deleteOrders($id_space, $id_invoice);
     }
 
     // ////////////////////////////////////////////////////////////////////// //
     //                        internal methods
     // ////////////////////////////////////////////////////////////////////// //
-    public function deleteProjects($idSpace, $id_invoice)
+    public function deleteProjects($id_space, $id_invoice)
     {
         $sql = "UPDATE se_project_service SET id_invoice=0 WHERE id_invoice=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_invoice, $idSpace));
+        $this->runRequest($sql, array($id_invoice, $id_space));
     }
 
-    public function deleteOrders($idSpace, $id_invoice)
+    public function deleteOrders($id_space, $id_invoice)
     {
         $sql = "UPDATE se_order SET id_invoice=0, id_status=1, date_close=null WHERE id_invoice=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_invoice, $idSpace));
+        $this->runRequest($sql, array($id_invoice, $id_space));
     }
 }

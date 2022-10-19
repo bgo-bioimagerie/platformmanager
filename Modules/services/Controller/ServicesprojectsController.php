@@ -46,13 +46,13 @@ class ServicesprojectsController extends ServicesController
         ];
     }
 
-    public function userAction($idSpace)
+    public function userAction($id_space)
     {
         if (!isset($_SESSION['id_user']) || !$_SESSION['id_user']) {
             throw new PfmAuthException('need login', 403);
         }
         $m = new SeProject();
-        $projects = $m->getUserProjects($idSpace, $_SESSION['id_user']);
+        $projects = $m->getUserProjects($id_space, $_SESSION['id_user']);
         return $this->render(['data' => ['projects' => $projects]]);
     }
 
@@ -61,20 +61,20 @@ class ServicesprojectsController extends ServicesController
      * If not, checks if user has all authorizations for services module
      * If not again, raises an exception
      */
-    public function checkProjectAccessAuthorization($idSpace, $id_project)
+    public function checkProjectAccessAuthorization($id_space, $id_project)
     {
         $projectModel = new SeProject();
-        if (!($projectModel->isProjectUser($idSpace, $_SESSION['id_user'], $id_project)
-                || $_SESSION['id_user'] == $projectModel->getResp($idSpace, $id_project))) {
-            $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        if (!($projectModel->isProjectUser($id_space, $_SESSION['id_user'], $id_project)
+                || $_SESSION['id_user'] == $projectModel->getResp($id_space, $id_project))) {
+            $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         }
     }
 
-    protected function getProjectPeriod($idSpace, $year)
+    protected function getProjectPeriod($id_space, $year)
     {
         $modelCoreConfig = new CoreConfig();
-        $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $idSpace);
-        $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $idSpace);
+        $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+        $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
         $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0,1,1];
         $previousYear = $year - 1;
@@ -89,9 +89,9 @@ class ServicesprojectsController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace, $year = "", $status = "")
+    public function indexAction($id_space, $year = "", $status = "")
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         // get sort action
@@ -115,25 +115,25 @@ class ServicesprojectsController extends ServicesController
         if ($status == "all") {
             $title = ServicesTranslator::All_projects($lang);
             $modelCoreConfig = new CoreConfig();
-            $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $idSpace);
-            $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $idSpace);
+            $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-            $years = $modelEntry->allProjectsYears($idSpace, $projectperiodbegin, $projectperiodend);
+            $years = $modelEntry->allProjectsYears($id_space, $projectperiodbegin, $projectperiodend);
             if ($year == "") {
                 $year = $years[count($years) - 1];
             }
-            $dates = $this->getProjectPeriod($idSpace, $year);
+            $dates = $this->getProjectPeriod($id_space, $year);
             $yearsUrl = "servicesprojectsall";
-            $entriesArray = $modelEntry->entries($idSpace, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
+            $entriesArray = $modelEntry->entries($id_space, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
         } elseif ($status == "opened") {
             $title = ServicesTranslator::Opened_projects($lang);
-            $entriesArray = $modelEntry->openedEntries($idSpace, $sortentry);
+            $entriesArray = $modelEntry->openedEntries($id_space, $sortentry);
         } elseif ($status == "closed") {
             $modelCoreConfig = new CoreConfig();
-            $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $idSpace);
-            $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $idSpace);
+            $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
-            $years = $modelEntry->closedProjectsPeriods($idSpace, $projectperiodend);
+            $years = $modelEntry->closedProjectsPeriods($id_space, $projectperiodend);
             $yearsUrl = "servicesprojectsclosed";
 
             if ($year == "") {
@@ -144,13 +144,13 @@ class ServicesprojectsController extends ServicesController
                 }
             }
 
-            $dates = $this->getProjectPeriod($idSpace, $year);
+            $dates = $this->getProjectPeriod($id_space, $year);
             $title = ServicesTranslator::Closed_projects($lang);
-            $entriesArray = $modelEntry->closedEntries($idSpace, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
+            $entriesArray = $modelEntry->closedEntries($id_space, $dates['yearBegin'], $dates['yearEnd'], $sortentry);
         } elseif ($status == "period") {
             $modelConfig = new CoreConfig();
-            $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $idSpace);
-            $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $idSpace);
+            $projectperiodbegin = $modelConfig->getParamSpace("projectperiodbegin", $id_space);
+            $projectperiodend = $modelConfig->getParamSpace("projectperiodend", $id_space);
             $projectperiodbeginArray = $projectperiodbegin ? explode("-", $projectperiodbegin) : [0, 1, 1];
             $projectperiodendArray = $projectperiodend ? explode("-", $projectperiodend) : [0, 12, 31];
             if ($projectperiodbeginArray[1] <= date("m", time())) {
@@ -183,15 +183,15 @@ class ServicesprojectsController extends ServicesController
             $periodStart = $year . "-" . $month . "-" . $day;
             $periodEnd = $yearp . "-" . $monthp . "-" . $dayp;
 
-            $entriesArray = $modelEntry->allPeriodProjects($idSpace, $periodStart, $periodEnd);
+            $entriesArray = $modelEntry->allPeriodProjects($id_space, $periodStart, $periodEnd);
         }
 
         $table = new TableView();
         $table->setTitle($title, 3);
         $table->setColorIndexes(array("all" => "color", "time_limit" => "time_color", "date_close" => "closed_color", "all_text" => "txtcolor"));
 
-        $table->addLineEditButton("servicesprojectsheet/" . $idSpace);
-        $table->addDeleteButton("servicesprojectdelete/" . $idSpace, "id", "id");
+        $table->addLineEditButton("servicesprojectsheet/" . $id_space);
+        $table->addDeleteButton("servicesprojectdelete/" . $id_space, "id", "id");
 
         $headersArray = array(
             "id" => "ID",
@@ -208,7 +208,7 @@ class ServicesprojectsController extends ServicesController
         $modelClient = new ClClient();
 
         $modelConfig = new CoreConfig();
-        $warning = intval($modelConfig->getParamSpace("SeProjectDelayWarning", $idSpace));
+        $warning = intval($modelConfig->getParamSpace("SeProjectDelayWarning", $id_space));
 
         for ($i = 0; $i < count($entriesArray); $i++) {
             $entriesArray[$i]["close_icon"] = "";
@@ -234,10 +234,10 @@ class ServicesprojectsController extends ServicesController
             $entriesArray[$i]["time_limit"] = CoreTranslator::dateFromEn($entriesArray[$i]["time_limit"], $lang);
 
             // get the pricing color
-            $clientAccounts = $modelClient->get($idSpace, $entriesArray[$i]["id_resp"]);
+            $clientAccounts = $modelClient->get($id_space, $entriesArray[$i]["id_resp"]);
 
             $entriesArray[$i]["resp_name"] = $clientAccounts["name"];
-            $pricingInfo = $modelPricing->get($idSpace, $clientAccounts["pricing"]);
+            $pricingInfo = $modelPricing->get($id_space, $clientAccounts["pricing"]);
 
             $entriesArray[$i]["color"] = $pricingInfo["color"];
             $entriesArray[$i]["txtcolor"] = $pricingInfo["txtcolor"];
@@ -257,7 +257,7 @@ class ServicesprojectsController extends ServicesController
         //
         $this->render(array(
             'lang' => $lang,
-            'id_space' => $idSpace,
+            'id_space' => $id_space,
             'tableHtml' => $tableHtml,
             'yearsUrl' => $yearsUrl,
             'years' => $years,
@@ -265,49 +265,49 @@ class ServicesprojectsController extends ServicesController
                 ), "indexAction");
     }
 
-    public function periodAction($idSpace, $year = "")
+    public function periodAction($id_space, $year = "")
     {
         $_SESSION["project_lastvisited"] = "period";
-        $this->indexAction($idSpace, $year, "period");
+        $this->indexAction($id_space, $year, "period");
     }
 
-    public function openedAction($idSpace, $year = "")
+    public function openedAction($id_space, $year = "")
     {
         $_SESSION["project_lastvisited"] = "opened";
-        $this->indexAction($idSpace, $year, "opened");
+        $this->indexAction($id_space, $year, "opened");
     }
 
-    public function closedAction($idSpace, $year = "")
+    public function closedAction($id_space, $year = "")
     {
         $_SESSION["project_lastvisited"] = "closed";
-        $this->indexAction($idSpace, $year, "closed");
+        $this->indexAction($id_space, $year, "closed");
     }
 
-    public function AllAction($idSpace, $year)
+    public function AllAction($id_space, $year)
     {
         $_SESSION["project_lastvisited"] = "all";
-        $this->indexAction($idSpace, $year, "all");
+        $this->indexAction($id_space, $year, "all");
     }
 
-    public function deleteAction($idSpace, $id)
+    public function deleteAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $serviceModel = new SeProject();
-        $serviceModel->delete($idSpace, $id);
-        $this->redirect("services/" . $idSpace);
+        $serviceModel->delete($id_space, $id);
+        $this->redirect("services/" . $id_space);
     }
 
-    public function closingAction($idSpace, $id)
+    public function closingAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelVisa = new SeVisa();
-        $visas = $modelVisa->getForList($idSpace);
+        $visas = $modelVisa->getForList($id_space);
 
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($idSpace, $id);
+        $project = $modelProject->getEntry($id_space, $id);
 
 
 
@@ -317,19 +317,19 @@ class ServicesprojectsController extends ServicesController
         $form->addTextArea("samplereturn", ServicesTranslator::SampleReturn($lang), false, $project["samplereturn"]);
         $form->addDate("samplereturndate", ServicesTranslator::DateSampleReturn($lang), false, $project["samplereturndate"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $idSpace . "/" . $id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectclosing/" . $id_space . "/" . $id);
 
 
         if ($form->check()) {
             $modelProject->closeProject(
-                $idSpace,
+                $id_space,
                 $id,
                 CoreTranslator::dateToEn($this->request->getParameter("date_close"), $lang),
                 $this->request->getParameter("closed_by")
             );
 
             $modelProject->sampleReturn(
-                $idSpace,
+                $id_space,
                 $id,
                 $this->request->getParameter("samplereturn"),
                 CoreTranslator::dateToEn($this->request->getParameter("samplereturndate"), $lang)
@@ -337,7 +337,7 @@ class ServicesprojectsController extends ServicesController
 
             $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
-            return $this->redirect("servicesprojectclosing/" . $idSpace . "/" . $id, [], ['project' => $project]);
+            return $this->redirect("servicesprojectclosing/" . $id_space . "/" . $id, [], ['project' => $project]);
         }
 
         $headerInfo["projectId"] = $id;
@@ -345,7 +345,7 @@ class ServicesprojectsController extends ServicesController
         $headerInfo["personInCharge"] = $project["in_charge"];
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "formHtml" => $form->getHtml($lang),
@@ -355,16 +355,16 @@ class ServicesprojectsController extends ServicesController
         ));
     }
 
-    public function samplestockAction($idSpace, $id)
+    public function samplestockAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelShelf = new StockShelf();
-        $cabinets = $modelShelf->getAllForProjectSelect($idSpace);
+        $cabinets = $modelShelf->getAllForProjectSelect($id_space);
 
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($idSpace, $id);
+        $project = $modelProject->getEntry($id_space, $id);
 
         $form = new Form($this->request, "projectreturnform");
 
@@ -372,12 +372,12 @@ class ServicesprojectsController extends ServicesController
         $form->addSelect("id_cabinet", ServicesTranslator::Cabinet($lang), $cabinets["names"], $cabinets["ids"], $project["id_sample_cabinet"]);
         $form->addTextArea("samplescomment", ServicesTranslator::Comment($lang), false, $project["samplescomment"]);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsample/" . $idSpace . "/" . $id);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsample/" . $id_space . "/" . $id);
 
 
         if ($form->check()) {
             $modelProject->setSampleStock(
-                $idSpace,
+                $id_space,
                 $id,
                 1,
                 $this->request->getParameter("id_cabinet"),
@@ -386,7 +386,7 @@ class ServicesprojectsController extends ServicesController
 
             $_SESSION['flash'] = ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
-            $this->redirect("servicesprojectsample/" . $idSpace . "/" . $id);
+            $this->redirect("servicesprojectsample/" . $id_space . "/" . $id);
             return;
         }
 
@@ -396,7 +396,7 @@ class ServicesprojectsController extends ServicesController
 
         $this->render(
             array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "formHtml" => $form->getHtml($lang),
@@ -405,13 +405,13 @@ class ServicesprojectsController extends ServicesController
         );
     }
 
-    protected function generateProjectForm($idSpace, $id, $lang)
+    protected function generateProjectForm($id_space, $id, $lang)
     {
         $modelProject = new SeProject();
         $form = new Form($this->request, "projectEditForm");
 
         // ADD USERS SELECTION
-        $projectUsers = $modelProject->getProjectUsersIds($idSpace, $id);
+        $projectUsers = $modelProject->getProjectUsersIds($id_space, $id);
         $projectUserIds = [];
         foreach ($projectUsers as $pUser) {
             array_push($projectUserIds, $pUser['id_user']);
@@ -419,7 +419,7 @@ class ServicesprojectsController extends ServicesController
 
         $value = null;
         if ($id > 0) {
-            $value = $modelProject->getEntry($idSpace, $id);
+            $value = $modelProject->getEntry($id_space, $id);
             array_push($projectUserIds, $value['id_user']);
         } else {
             $form->setTitle(ServicesTranslator::Add_projects($lang), 3);
@@ -431,12 +431,12 @@ class ServicesprojectsController extends ServicesController
         $modelUser = new CoreUser();
         $modelClient = new ClClient();
         $modelVisa = new SeVisa();
-        $users = $modelUser->getSpaceActiveUsersForSelect($idSpace, "name");
-        $clients = $modelClient->getForList($idSpace);
+        $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
+        $clients = $modelClient->getForList($id_space);
 
         if ($value['id_resp'] && !in_array($value['id_resp'], $clients["ids"])) {
             $modelCl = new ClClient();
-            $clName = $modelCl->getName($idSpace, $value['id_resp']);
+            $clName = $modelCl->getName($id_space, $value['id_resp']);
             if (!$clName) {
                 $clName = Constants::UNKNOWN;
             }
@@ -444,7 +444,7 @@ class ServicesprojectsController extends ServicesController
             array_push($clients["ids"], $value['id_resp']);
         }
 
-        $inChargeList = $modelVisa->getForList($idSpace);
+        $inChargeList = $modelVisa->getForList($id_space);
 
         $form->addText("name", ServicesTranslator::No_identification($lang), true, $value["name"]);
         // id_client is denominated id_resp in se_project table
@@ -459,7 +459,7 @@ class ServicesprojectsController extends ServicesController
         $form->addSelectMandatory("new_project", ServicesTranslator::New_project($lang), $newNames, $newIDs, $value["new_project"]);
 
         $modelOrigin = new SeOrigin();
-        $origins = $modelOrigin->getForList($idSpace);
+        $origins = $modelOrigin->getForList($id_space);
         $form->addSelectMandatory("id_origin", ServicesTranslator::servicesOrigin($lang), $origins['names'], $origins['ids'], $value["id_origin"]);
 
         $form->addDate("time_limit", ServicesTranslator::Time_limite($lang), true, $value["time_limit"]);
@@ -479,19 +479,19 @@ class ServicesprojectsController extends ServicesController
         return $form;
     }
 
-    public function sheetAction($idSpace, $id)
+    public function sheetAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($idSpace, $id);
+        $project = $modelProject->getEntry($id_space, $id);
 
-        $form = $this->generateProjectForm($idSpace, $id, $lang);
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $idSpace . "/" . $id);
+        $form = $this->generateProjectForm($id_space, $id, $lang);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectsheet/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-            $id = $this->updateProject($id, $idSpace, $lang);
+            $id = $this->updateProject($id, $id_space, $lang);
 
             if (!isset($_SESSION['flash'])) {
                 $_SESSION['flash'] = "";
@@ -499,7 +499,7 @@ class ServicesprojectsController extends ServicesController
             $_SESSION['flash'] = $_SESSION['flash'] . " " . ServicesTranslator::projectEdited($lang);
             $_SESSION["flashClass"] = 'success';
 
-            $this->redirect("servicesprojectsheet/" . $idSpace . "/" . $id);
+            $this->redirect("servicesprojectsheet/" . $id_space . "/" . $id);
             return;
         }
 
@@ -509,7 +509,7 @@ class ServicesprojectsController extends ServicesController
 
         $this->render(
             array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "formHtml" => $form->getHtml($lang),
@@ -519,16 +519,16 @@ class ServicesprojectsController extends ServicesController
         );
     }
 
-    public function followupAction($idSpace, $id)
+    public function followupAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelProject = new SeProject();
-        $project = $modelProject->getEntry($idSpace, $id);
+        $project = $modelProject->getEntry($id_space, $id);
 
         $table = new TableView();
         $table->addLineEditButton("editentry", "id", true);
-        $table->addDeleteButton("servicesprojectdeleteentry/" . $idSpace . "/" . $id, "id", "id");
+        $table->addDeleteButton("servicesprojectdeleteentry/" . $id_space . "/" . $id, "id", "id");
 
         $headersArray = array(
             "date" => CoreTranslator::Date($lang),
@@ -539,26 +539,26 @@ class ServicesprojectsController extends ServicesController
 
         $modelServices = new SeService();
         $modelInvoice = new InInvoice();
-        $items = $modelProject->getProjectServicesDefault($idSpace, $id);
+        $items = $modelProject->getProjectServicesDefault($id_space, $id);
         for ($i = 0; $i < count($items); $i++) {
-            $name = $modelServices->getItemName($idSpace, $items[$i]["id_service"]);
+            $name = $modelServices->getItemName($id_space, $items[$i]["id_service"]);
             if ($name == null) {
-                $name = '[!] '.($modelServices->getItemName($idSpace, $items[$i]["id_service"], true) ?? Constants::UNKNOWN);
+                $name = '[!] '.($modelServices->getItemName($id_space, $items[$i]["id_service"], true) ?? Constants::UNKNOWN);
             }
             $items[$i]["description"] = $name. ($items[$i]["quantity"] ? " [q=".$items[$i]["quantity"]."]" : "");
             $items[$i]["date"] = CoreTranslator::dateFromEn($items[$i]["date"], $lang);
-            $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($idSpace, $items[$i]["id_invoice"]);
+            $items[$i]["invoice"] = $modelInvoice->getInvoiceNumber($id_space, $items[$i]["id_invoice"]);
         }
         $tableHtml = $table->view($items, $headersArray);
 
-        $formEdit = $this->createEditEntryForm($idSpace, $lang);
+        $formEdit = $this->createEditEntryForm($id_space, $lang);
 
         $headerInfo["projectId"] = $id;
         $headerInfo["curentTab"] = "followup";
         $headerInfo["personInCharge"] = $project["in_charge"];
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
             "projectName" => $project['name'],
@@ -571,42 +571,42 @@ class ServicesprojectsController extends ServicesController
         ));
     }
 
-    public function kanbanAction($idSpace, $id_project)
+    public function kanbanAction($id_space, $id_project)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $isManager = $this->role >= CORESPACE::$MANAGER;
         $id_task = $this->request->params()["task"] ?? 0;
         $taskModel= new SeTask();
-        $tasks = $taskModel->getByProject($id_project, $idSpace);
+        $tasks = $taskModel->getByProject($id_project, $id_space);
 
         $projectModel = new SeProject();
-        $project = $projectModel->getEntry($idSpace, $id_project);
-        $projectServices = $projectModel->getProjectServicesDefault($idSpace, $id_project);
+        $project = $projectModel->getEntry($id_space, $id_project);
+        $projectServices = $projectModel->getProjectServicesDefault($id_space, $id_project);
 
 
         $serviceModel = new SeService();
         $services = array();
         foreach ($projectServices as $projectService) {
-            array_push($services, $serviceModel->getItem($idSpace, $projectService['id_service']));
+            array_push($services, $serviceModel->getItem($id_space, $projectService['id_service']));
         }
         for ($i=0; $i<count($tasks); $i++) {
-            $tasks[$i]['services'] = $taskModel->getTaskServicesIds($idSpace, $tasks[$i]['id']);
+            $tasks[$i]['services'] = $taskModel->getTaskServicesIds($id_space, $tasks[$i]['id']);
             // cast private boolean attribute to string
             $tasks[$i]['private'] = $tasks[$i]['private'] ? "true" : "false";
         }
 
 
         $categoryModel = new SeTaskCategory();
-        $categories = $categoryModel->getByProject($id_project, $idSpace);
+        $categories = $categoryModel->getByProject($id_project, $id_space);
 
         for ($i=0; $i<count($categories); $i++) {
             $categories[$i]['tasks'] = [];
         }
 
-        $projectName = $projectModel->getName($idSpace, $id_project);
-        $seProjectUsers = $projectModel->getProjectUsersIds($idSpace, $id_project);
+        $projectName = $projectModel->getName($id_space, $id_project);
+        $seProjectUsers = $projectModel->getProjectUsersIds($id_space, $id_project);
         $projectMainUser = $project['id_user'];
 
 
@@ -621,7 +621,7 @@ class ServicesprojectsController extends ServicesController
         }
 
         $csu = new CoreSpaceUser();
-        $managers = $csu->managersOrAdmin($idSpace);
+        $managers = $csu->managersOrAdmin($id_space);
         foreach ($managers as $manager) {
             if (in_array($manager['id_user'], $ids)) {
                 continue;
@@ -661,7 +661,7 @@ class ServicesprojectsController extends ServicesController
         $headerInfo["personInCharge"] = $project["in_charge"];
 
         return $this->render(array(
-            "id_space" => $idSpace,
+            "id_space" => $id_space,
             "sessionUserId" => $_SESSION["id_user"],
             "lang" => $lang,
             "tabsNames" => $this->tabsNames,
@@ -681,18 +681,18 @@ class ServicesprojectsController extends ServicesController
         ));
     }
 
-    public function setTaskAction($idSpace, $id_project)
+    public function setTaskAction($id_space, $id_project)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskData = $this->request->params()['task'];
         $taskModel = new SeTask();
 
         // delete removed services
         if ($taskData['id'] > 0) {
-            $dbTaskServices = $taskModel->getTaskServices($idSpace, $taskData['id']);
+            $dbTaskServices = $taskModel->getTaskServices($id_space, $taskData['id']);
             foreach ($dbTaskServices as $dbTaskService) {
                 if (!in_array($dbTaskService['id_service'], $taskData['services'])) {
-                    $taskModel->deleteTaskService($idSpace, $taskData['id'], $dbTaskService['id_service']);
+                    $taskModel->deleteTaskService($id_space, $taskData['id'], $dbTaskService['id_service']);
                 }
             }
         }
@@ -700,7 +700,7 @@ class ServicesprojectsController extends ServicesController
         // add/update task
         $id = $taskModel->set(
             $taskData['id'],
-            $idSpace,
+            $id_space,
             $id_project,
             $taskData['state'],
             $taskData['name'],
@@ -719,9 +719,9 @@ class ServicesprojectsController extends ServicesController
 
     // task files related methods => to be used in next release
 
-    /* public function uploadTaskFileAction($idSpace, $id_task) {
+    /* public function uploadTaskFileAction($id_space, $id_task) {
         $taskModel = new SeTask();
-        $target_dir = "data/services/projecttasks/" . $idSpace . "/";
+        $target_dir = "data/services/projecttasks/" . $id_space . "/";
         if (isset($_FILES) && isset($_FILES['file']) && $_FILES["file"]["name"] != "") {
             $fileName = pathinfo($_FILES["file"]["name"], PATHINFO_BASENAME);
             $url = $target_dir . $id_task . "_" . $fileName;
@@ -733,21 +733,21 @@ class ServicesprojectsController extends ServicesController
 
             $uploaded = FileUpload::uploadFile($target_dir, "file", $id_task . "_" . $fileName);
             if ($uploaded) {
-                $taskModel->setFile($idSpace, $id_task, $url, $fileName);
+                $taskModel->setFile($id_space, $id_task, $url, $fileName);
             }
         }
     }
 
-    public function getTaskFileAction($idSpace, $id_task) {
+    public function getTaskFileAction($id_space, $id_task) {
         $taskModel = new SeTask();
-        $file = $taskModel->getFile($idSpace, $id_task);
+        $file = $taskModel->getFile($id_space, $id_task);
         $this->render(['data' => $file]);
     }
 
-    public function openFileAction($idSpace, $id_task) {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+    public function openFileAction($id_space, $id_task) {
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
-        $task = $taskModel->getById($idSpace, $id_task);
+        $task = $taskModel->getById($id_space, $id_task);
 
         // If private task, check if user is the owner of the task or if user is at least manager
         if ($task['private'] == 1
@@ -755,7 +755,7 @@ class ServicesprojectsController extends ServicesController
                 throw new PfmAuthException('private document');
         }
 
-        $file = $taskModel->getFile($idSpace, $id_task)['file'];
+        $file = $taskModel->getFile($id_space, $id_task)['file'];
         if (file_exists($file)) {
             $mime = mime_content_type($file);
             header('Content-Description: File Transfer');
@@ -771,11 +771,11 @@ class ServicesprojectsController extends ServicesController
         }
     } */
 
-    public function getTasksAction($idSpace, $id_project)
+    public function getTasksAction($id_space, $id_project)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
-        $tasks = $taskModel->getByProject($id_project, $idSpace);
+        $tasks = $taskModel->getByProject($id_project, $id_space);
 
         $userModel = new CoreUser();
         for ($i=0; $i<count($tasks); $i++) {
@@ -784,49 +784,49 @@ class ServicesprojectsController extends ServicesController
         $this->render(['data' => ['elements' => $tasks]]);
     }
 
-    public function getTaskServicesAction($idSpace, $id_task)
+    public function getTaskServicesAction($id_space, $id_task)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $serviceModel = new SeService();
         $taskModel = new SeTask();
-        $serviceIds = $taskModel->getTaskServicesIds($idSpace, $id_task);
+        $serviceIds = $taskModel->getTaskServicesIds($id_space, $id_task);
 
         $services = [];
         foreach ($serviceIds as $serviceId) {
-            array_push($services, $serviceModel->getItem($idSpace, $serviceId));
+            array_push($services, $serviceModel->getItem($id_space, $serviceId));
         }
         $this->render(['data' => ['elements' => $services]]);
     }
 
-    public function deleteTaskAction($idSpace, $id_task)
+    public function deleteTaskAction($id_space, $id_task)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $taskModel = new SeTask();
-        return $taskModel->delete($idSpace, $id_task);
+        return $taskModel->delete($id_space, $id_task);
     }
 
-    public function setTaskCategoryAction($idSpace, $id_project)
+    public function setTaskCategoryAction($id_space, $id_project)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $categoryData = $this->request->params()['category'];
         $categoryModel = new SeTaskCategory();
-        $id = $categoryModel->set($categoryData['id'], $idSpace, $id_project, $categoryData['name'], $categoryData['position'], $categoryData['color']);
+        $id = $categoryModel->set($categoryData['id'], $id_space, $id_project, $categoryData['name'], $categoryData['position'], $categoryData['color']);
         $this->render(['data' => ['id' => $id]]);
     }
 
-    public function deleteTaskCategoryAction($idSpace, $id_category)
+    public function deleteTaskCategoryAction($id_space, $id_category)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $categoryModel = new SeTaskCategory();
-        return $categoryModel->delete($idSpace, $id_category);
+        return $categoryModel->delete($id_space, $id_category);
     }
 
-    protected function createEditEntryForm($idSpace, $lang)
+    protected function createEditEntryForm($id_space, $lang)
     {
         $form = new Form($this->request, "editNoteForm", true);
 
         $modelServices = new SeService();
-        $services = $modelServices->getForList($idSpace);
+        $services = $modelServices->getForList($id_space);
 
         $form->addHidden("formprojectentryid", 0);
         $form->addHidden("formprojectentryprojectid", 0);
@@ -837,11 +837,11 @@ class ServicesprojectsController extends ServicesController
 
         $form->setColumnsWidth(2, 9);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojecteditentryquery/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojecteditentryquery/" . $id_space);
         return $form->getHtml($lang);
     }
 
-    public function editentryqueryAction($idSpace)
+    public function editentryqueryAction($id_space)
     {
         $lang = $this->getLanguage();
 
@@ -853,64 +853,64 @@ class ServicesprojectsController extends ServicesController
         $comment = $this->request->getParameter("formservicecomment");
 
         $modelProject = new SeProject();
-        $id = $modelProject->setEntry($idSpace, $id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        $id = $modelProject->setEntry($id_space, $id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
 
-        return $this->redirect("servicesprojectfollowup/" . $idSpace . "/" . $id_project, [], ['entry' => ['id' => $id]]);
+        return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['entry' => ['id' => $id]]);
     }
 
-    public function deleteentryAction($idSpace, $id_project, $id)
+    public function deleteentryAction($id_space, $id_project, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $modelProject = new SeProject();
-        $modelProject->deleteEntry($idSpace, $id);
+        $modelProject->deleteEntry($id_space, $id);
 
-        $this->redirect("servicesprojectfollowup/" . $idSpace . "/" . $id_project);
+        $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project);
     }
 
-    public function editAction($idSpace, $id)
+    public function editAction($id_space, $id)
     {
-        $this->checkAuthorizationMenuSpace("services", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
-        $form = $this->generateProjectForm($idSpace, $id, $lang);
-        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $idSpace . "/" . $id);
+        $form = $this->generateProjectForm($id_space, $id, $lang);
+        $form->setValidationButton(CoreTranslator::Save($lang), "servicesprojectedit/" . $id_space . "/" . $id);
 
         if ($form->check()) {
-            $id_project = $this->updateProject($id, $idSpace, $lang);
-            return $this->redirect("servicesprojectfollowup/" . $idSpace . "/" . $id_project, [], ['project' => ['id' => $id_project]]);
+            $id_project = $this->updateProject($id, $id_space, $lang);
+            return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['project' => ['id' => $id_project]]);
         }
 
-        $this->render(array("id_space" => $idSpace, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
+        $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    protected function updateProject($id, $idSpace, $lang)
+    protected function updateProject($id, $id_space, $lang)
     {
         $modelProject = new SeProject();
-        $idUser = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
+        $id_user = $this->request->getParameter("id_user") == "" ? "0" : $this->request->getParameter("id_user");
         $pic = $this->request->getParameter("in_charge");
         $id_project =
             $modelProject->setProject(
                 $id,
-                $idSpace,
+                $id_space,
                 $this->request->getParameter("name"),
                 $this->request->getParameter("id_client"),
-                $idUser,
+                $id_user,
                 CoreTranslator::dateToEn($this->request->getParameter("date_open"), $lang),
                 CoreTranslator::dateToEn($this->request->getParameterNoException("date_close"), $lang),
                 $this->request->getParameter("new_team"),
                 $this->request->getParameter("new_project"),
                 CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang)
             );
-        $modelProject->setOrigin($idSpace, $id_project, $this->request->getParameter("id_origin"));
-        $modelProject->setInCharge($idSpace, $id_project, $pic);
+        $modelProject->setOrigin($id_space, $id_project, $this->request->getParameter("id_origin"));
+        $modelProject->setInCharge($id_space, $id_project, $pic);
 
         // add project users
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {
             $formProjectUserIds = $this->request->getParameter("users");
         }
-        if ($idUser && !in_array($idUser, $formProjectUserIds)) {
-            array_push($formProjectUserIds, $idUser);
+        if ($id_user && !in_array($id_user, $formProjectUserIds)) {
+            array_push($formProjectUserIds, $id_user);
             // if main project user not in users list, display warning
             $_SESSION['flash'] = ServicesTranslator::MainUserNotInList($lang);
         }
@@ -918,32 +918,32 @@ class ServicesprojectsController extends ServicesController
         if ($id>0) {
             // remove deleted users
             $dbProjectUserIds = [];
-            $dbProjectUsers = $modelProject->getProjectUsersIds($idSpace, $id);
+            $dbProjectUsers = $modelProject->getProjectUsersIds($id_space, $id);
             foreach ($dbProjectUsers as $dbProjectUser) {
                 array_push($dbProjectUserIds, $dbProjectUser["id_user"]);
             }
             $toDeleteList = array_diff($dbProjectUserIds, $formProjectUserIds);
             foreach ($toDeleteList as $toDelete) {
-                $modelProject->deleteProjectUser($idSpace, $toDelete, $id);
+                $modelProject->deleteProjectUser($id_space, $toDelete, $id);
             }
         }
 
         foreach ($formProjectUserIds as $user_id) {
-            $modelProject->setProjectUser($idSpace, $user_id, $id_project);
+            $modelProject->setProjectUser($id_space, $user_id, $id_project);
         }
         return $id_project;
     }
 
-    public function exportAction($idSpace, $id)
+    public function exportAction($id_space, $id)
     {
         // get project entries
         $modelProject = new SeProject();
-        $projectEntries = $modelProject->getProjectServicesBase($idSpace, $id);
+        $projectEntries = $modelProject->getProjectServicesBase($id_space, $id);
 
         // calculate total sum and price HT
         $modelClient = new ClClient();
-        $id_resp = $modelProject->getResp($idSpace, $id);
-        $LABpricingid = $modelClient->getPricingID($idSpace, $id_resp);
+        $id_resp = $modelProject->getResp($id_space, $id);
+        $LABpricingid = $modelClient->getPricingID($id_space, $id_resp);
 
         $itemPricing = new SePrice();
 
@@ -955,14 +955,14 @@ class ServicesprojectsController extends ServicesController
         foreach ($projectEntries as $entry) {
             $content .= $entry["date"] . ";";
             $content .= str_replace(";", ",", $entry["comment"]) . ";";
-            $content .= ($modelItem->getItemName($idSpace, $entry["id_service"]) ?? Constants::UNKNOWN) . ";";
-            if ($modelItem->getItemType($idSpace, $entry["id_service"]) == 4) {
+            $content .= ($modelItem->getItemName($id_space, $entry["id_service"]) ?? Constants::UNKNOWN) . ";";
+            if ($modelItem->getItemType($id_space, $entry["id_service"]) == 4) {
                 $content .= 1 . ";";
                 $unitPrice = $entry["quantity"];
                 $entry["quantity"] = 1;
             } else {
                 $content .= $entry["quantity"] . ";";
-                $unitPrice = $itemPricing->getPrice($idSpace, $entry["id_service"], $LABpricingid);
+                $unitPrice = $itemPricing->getPrice($id_space, $entry["id_service"], $LABpricingid);
                 //echo "price for service " . $entry["id_service"] . " and lab " . $LABpricingid . " = " .$unitPrice. " <br/>";
             }
             $content .= $unitPrice . ";";

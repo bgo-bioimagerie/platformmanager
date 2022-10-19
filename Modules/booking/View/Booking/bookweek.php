@@ -16,7 +16,7 @@ $toDate = $sundayDate;
 $nbDays = 7;
 $resourcesBase = $resourceBase ? [$resourceBase] : [];
 $calEntries = [$calEntries];
-$from = ["week", $date, $bk_id_resource, $bk_id_area, $idUser, $detailedView ? 'detailed' : 'simple'];
+$from = ["week", $date, $bk_id_resource, $bk_id_area, $id_user, $detailedView ? 'detailed' : 'simple'];
 $isUserAuthorizedToBook = [ $isUserAuthorizedToBook];
 if ($bk_id_area == null) {
     $bk_id_area = '';
@@ -25,7 +25,7 @@ if ($bk_id_resource == null) {
     $bk_id_resource = '';
 }
 
-echo drawNavigation('week', $idSpace, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $idUser, $detailedView, $lang);
+echo drawNavigation('week', $id_space, $startDate, $toDate, $beforeDate, $afterDate, $bk_id_resource, $bk_id_area, $id_user, $detailedView, $lang);
 if ($detailedView) {
     include_once 'Modules/booking/View/Booking/caldisplay.php';
 } else {

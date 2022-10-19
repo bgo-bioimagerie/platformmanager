@@ -40,81 +40,81 @@ class InvoicesconfigController extends PfmTemplateController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkSpaceAdmin($idSpace, $_SESSION["id_user"]);
+        $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($idSpace, 'invoices', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
         if ($formMenusactivation->check()) {
-            $this->menusactivation($idSpace, 'invoices', 'currency-euro');
-            return $this->redirect("invoicesconfig/" . $idSpace);
+            $this->menusactivation($id_space, 'invoices', 'currency-euro');
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         $modelCoreConfig = new CoreConfig();
         // period invoices
-        $formPeriod = $this->periodForm($modelCoreConfig, $idSpace, $lang);
+        $formPeriod = $this->periodForm($modelCoreConfig, $id_space, $lang);
         if ($formPeriod->check()) {
-            $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $idSpace);
-            $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $idSpace);
+            $modelCoreConfig->setParam("invoiceperiodbegin", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodbegin"), $lang), $id_space);
+            $modelCoreConfig->setParam("invoiceperiodend", CoreTranslator::dateToEn($this->request->getParameter("invoiceperiodend"), $lang), $id_space);
 
-            return $this->redirect("invoicesconfig/" . $idSpace);
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // options
-        $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($idSpace, $lang);
+        $formUseInvoiceDatePaid = $this->useInvoiceDatePaidForm($id_space, $lang);
         if ($formUseInvoiceDatePaid->check()) {
-            $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $idSpace);
-            return $this->redirect("invoicesconfig/" . $idSpace);
+            $modelCoreConfig->setParam("useInvoiceDatePaid", $this->request->getParameter("useInvoiceDatePaid"), $id_space);
+            return $this->redirect("invoicesconfig/" . $id_space);
         }
 
         // view
         $forms = array($formMenusactivation->getHtml($lang),
             $formPeriod->getHtml($lang)
         );
-        return $this->render(array("id_space" => $idSpace, "forms" => $forms, "lang" => $lang));
+        return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function pdftemplateAction($idSpace)
+    public function pdftemplateAction($id_space)
     {
-        return $this->pdftemplate($idSpace, 'invoices', new InvoicesTranslator());
+        return $this->pdftemplate($id_space, 'invoices', new InvoicesTranslator());
     }
 
-    public function pdftemplatedeleteAction($idSpace, $name)
+    public function pdftemplatedeleteAction($id_space, $name)
     {
-        return $this->pdftemplatedelete($idSpace, 'invoices', $name);
+        return $this->pdftemplatedelete($id_space, 'invoices', $name);
     }
 
-    protected function useInvoiceDatePaidForm($idSpace, $lang)
+    protected function useInvoiceDatePaidForm($id_space, $lang)
     {
         $modelConfig = new CoreConfig();
-        $useDatePaid = $modelConfig->getParamSpace("useInvoiceDatePaid", $idSpace);
+        $useDatePaid = $modelConfig->getParamSpace("useInvoiceDatePaid", $id_space);
 
         $form = new Form($this->request, "menusactivationForm");
         $form->addSeparator(InvoicesTranslator::useInvoiceDatePaid($lang));
 
         $form->addSelect("useInvoiceDatePaid", InvoicesTranslator::useInvoiceDatePaid($lang), array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1, 0), $useDatePaid);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
 
 
         return $form;
     }
 
-    public function periodForm($modelCoreConfig, $idSpace, $lang)
+    public function periodForm($modelCoreConfig, $id_space, $lang)
     {
-        $invoiceperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $idSpace);
-        $invoiceperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $idSpace);
+        $invoiceperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
+        $invoiceperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
         $form = new Form($this->request, "periodProjectForm");
         $form->addSeparator(InvoicesTranslator::invoiceperiod($lang));
         $form->addDate("invoiceperiodbegin", InvoicesTranslator::invoiceperiodbegin($lang), true, $invoiceperiodbegin);
         $form->addDate("invoiceperiodend", InvoicesTranslator::invoiceperiodend($lang), true, $invoiceperiodend);
 
-        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $idSpace);
+        $form->setValidationButton(CoreTranslator::Save($lang), "invoicesconfig/" . $id_space);
 
 
         return $form;

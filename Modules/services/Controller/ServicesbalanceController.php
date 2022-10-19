@@ -18,9 +18,9 @@ class ServicesbalanceController extends ServicesController
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($idSpace)
+    public function indexAction($id_space)
     {
-        $this->checkAuthorizationMenuSpace("statistics", $idSpace, $_SESSION["id_user"]);
+        $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
 
@@ -35,33 +35,33 @@ class ServicesbalanceController extends ServicesController
         if ($form->check()) {
             $date_start = CoreTranslator::dateToEn($form->getParameter("period_begin"), $lang);
             $date_end = CoreTranslator::dateToEn($form->getParameter("period_end"), $lang);
-            $this->generateBalance($idSpace, $date_start, $date_end);
+            $this->generateBalance($id_space, $date_start, $date_end);
             return;
         }
 
         $htmlForm = $form->getHtml($lang);
-        $this->render(array("htmlForm" => $htmlForm, "id_space" => $idSpace, "lang" => $lang));
+        $this->render(array("htmlForm" => $htmlForm, "id_space" => $id_space, "lang" => $lang));
     }
 
-    private function generateBalance($idSpace, $periodStart, $periodEnd, $spreadsheet=null)
+    private function generateBalance($id_space, $periodStart, $periodEnd, $spreadsheet=null)
     {
         //echo "not yet implemented <br/> " . $periodStart . "<br/>" . $periodEnd . "<br/>";
         // get all the opened projects informations
         $modelProjects = new SeProject();
-        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $idSpace);
+        $openedProjects = $modelProjects->getProjectsOpenedPeriod($periodStart, $periodEnd, $id_space);
 
         // get all the priced projects details
-        $projectsBalance = $modelProjects->getPeriodeServicesBalances($idSpace, $periodStart, $periodEnd);
-        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($idSpace, $periodStart, $periodEnd);
+        $projectsBalance = $modelProjects->getPeriodeServicesBalances($id_space, $periodStart, $periodEnd);
+        $projectsBilledBalance = $modelProjects->getPeriodeBilledServicesBalances($id_space, $periodStart, $periodEnd);
 
         // get the stats
         $modelStats = new SeStats();
-        $stats = $modelStats->computeStatsProjects($idSpace, $periodStart, $periodEnd);
+        $stats = $modelStats->computeStatsProjects($id_space, $periodStart, $periodEnd);
 
-        $this->makeBalanceXlsFile($idSpace, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats, $spreadsheet);
+        $this->makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats, $spreadsheet);
     }
 
-    private function makeBalanceXlsFile($idSpace, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats, $spreadsheet=null)
+    private function makeBalanceXlsFile($id_space, $periodStart, $periodEnd, $openedProjects, $projectsBalance, $projectsBilledBalance, $stats, $spreadsheet=null)
     {
         $modelUser = new CoreUser();
 
@@ -208,7 +208,7 @@ class ServicesbalanceController extends ServicesController
         foreach ($openedProjects as $proj) {
             // responsable, unité, utilisateur, no dossier, nouvelle equipe (accademique, PME), nouveau proj(ac, pme), delai (def, respecte), date cloture
             $curentLine++;
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
@@ -288,7 +288,7 @@ class ServicesbalanceController extends ServicesController
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item) ?? Constants::UNKNOWN;
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -298,7 +298,7 @@ class ServicesbalanceController extends ServicesController
         //$modelClient = new ClClient();
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
@@ -428,7 +428,7 @@ class ServicesbalanceController extends ServicesController
 
         foreach ($items as $item) {
             $itemIdx++;
-            $name = $modelItem->getItemName($idSpace, $item) ?? Constants::UNKNOWN;
+            $name = $modelItem->getItemName($id_space, $item) ?? Constants::UNKNOWN;
             $spreadsheet->getActiveSheet()->SetCellValue(Utils::get_col_letter($itemIdx) . $curentLine, $name);
         }
         $itemIdx++;
@@ -448,7 +448,7 @@ class ServicesbalanceController extends ServicesController
         $projects = $projectsBalance["projects"];
         foreach ($projects as $proj) {
             $curentLine++;
-            $unitName = $modelClient->getInstitution($idSpace, $proj["id_resp"]);
+            $unitName = $modelClient->getInstitution($id_space, $proj["id_resp"]);
             //$unitName = $modelUnit->getUnitName($modelUser->getUserUnit($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFullName($proj["id_resp"]));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
