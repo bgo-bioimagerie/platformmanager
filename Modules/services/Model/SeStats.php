@@ -1202,7 +1202,7 @@ class SeStats extends Model {
             if ($invoice["controller"] == "servicesinvoiceproject") {
                 $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
                 $visa = $modelVisa->get($id_space, $proj["in_charge"]);
-                $responsibleName = $modelUser->getUserFUllName($visa["id_user"]);
+                $responsibleName = $modelUser->getUserFUllName($visa["id_user"] ?? 0);
             }
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $responsibleName);
@@ -1464,9 +1464,9 @@ class SeStats extends Model {
             $curentLine++;
             $visa = $modelVisa->get($id_space, $proj["in_charge"]);
             $unitName = $modelClient->getInstitution($id_space ,$proj["id_resp"]);
-            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $modelUser->getUserFUllName($visa["id_user"] ?? 0));
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $unitName);
-            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"]));
+            $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $modelUser->getUserFUllName($proj["id_user"] ?? 0));
             $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $proj["name"]);
             $spreadsheet->getActiveSheet()->SetCellValue('E' . $curentLine, CoreTranslator::dateFromEn($proj["date_close"], $lang));
 

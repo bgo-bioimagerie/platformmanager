@@ -1,5 +1,13 @@
 # Changes
 
+## 2.9.4
+
+### Fixes
+
+* [statistics]
+  * fix service project quantities in case of non numeric value force conversion to float
+  * in case of invalid invoice item info, skip and log
+
 ## 2.9.3
 
 ### Fixes

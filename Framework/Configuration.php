@@ -20,7 +20,7 @@ class Configuration {
     /** Logger */
     private static $logger;
 
-    public static function getLogger() {
+    public static function getLogger(): Monolog\Logger {
         if (self::$logger == null) {
             self::$logger = new Logger('pfm');
             $level = Logger::INFO;
