@@ -126,7 +126,7 @@ function _get_body_attach($mbox, $mid) {
                 $partstring .= ($i+1);
 
                 if (array_key_exists($i, $parts)) {
-                    if (strtoupper($parts[$i]->disposition) == "ATTACHMENT" || strtoupper($parts[$i]->disposition) == "INLINE") { /* Attachment or inline images */
+                    if ($parts[$i]->ifdisposition && (strtoupper($parts[$i]->disposition) == "ATTACHMENT" || strtoupper($parts[$i]->disposition) == "INLINE")) { /* Attachment or inline images */
                         $filedata = imap_fetchbody($mbox, $mid, $partstring);
                         if ( $filedata != '' ) {
                             // handles base64 encoding or plain text
@@ -156,7 +156,7 @@ function _get_body_attach($mbox, $mid) {
                 }
             }
 
-            if (array_key_exists($i, $parts) && $parts[$i]->parts) {
+            if (array_key_exists($i, $parts) && isset($parts[$i]->parts)) {
                 if ( $parts[$i]->subtype != 'RELATED' ) {
                     // a glitch: embedded email message have one additional stack in the structure with subtype 'RELATED', but this stack is not present when using imap_fetchbody() to fetch parts.
                     $stack[] = array("p" => $parts, "i" => $i);
