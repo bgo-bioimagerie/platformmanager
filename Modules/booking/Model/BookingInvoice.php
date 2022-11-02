@@ -108,15 +108,15 @@ class BookingInvoice extends InvoiceModel {
 
     /**
      * Generate an invoice for the chosen period.
-     * 
+     *
      * To be noticed:
      * For each reservation, calculate its price (using $this->calculateTimeResDayNightWe()).
      * 2 general cases:
      * - resource booked price depends on duration, then it costs Unit price * reservation duration (in hours)
      * - resource booked price depends on a quantity of elements, then it costs Unit price * nb elements (quantity)
-     * 
+     *
      * Unit prices can depend on the period booked (day, night, week-end)
-     * 
+     *
      * Specific case:
      * - if a reservation depending on quantity of elements is stradding 2 types of period (i.e. night and day),
      * then applies a ratio.
@@ -124,7 +124,7 @@ class BookingInvoice extends InvoiceModel {
      * for a reservation covering 2 night hours and 6 day hours => nightRatio = 0.25 and dayRatio = 0.75
      * if nightPrice = 20 / element and dayPrice = 10 / element,
      * total price = nbElements * (nightPrice * nightRatio) + nbElements * (dayPrice * dayRatio)
-     * 
+     *
      */
     public function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $invoice_id, $lang) {
         // get all resources
@@ -219,7 +219,7 @@ class BookingInvoice extends InvoiceModel {
                         'id' => $reservation['id'],
                         'start_time' => $reservation['start_time'],
                         'end_time' => $reservation['end_time'],
-                        'nb_hours_day' => 1,
+                        'nb_hours_day' => 0,
                         'nb_hours_night' => 0,
                         'nb_hours_we' => 0,
                         'resource' => $reservation['resource_id'],
@@ -237,9 +237,6 @@ class BookingInvoice extends InvoiceModel {
 
                     if ($resaIsInvoicingUnit) {
                         if ($reservation["quantities"] && $reservation["quantities"] != null) {
-                            
-
-
                             // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
                             // get number of resources booked
                             $strToFind = strval($resaQuantityId) . "=";
@@ -294,7 +291,7 @@ class BookingInvoice extends InvoiceModel {
                             'user' => $reservation['recipient_id']
                         ];
                         */
-                    }              
+                    }
                 }
 
                 $modelCal->setReservationInvoice($id_space, $reservation["id"], $invoice_id);
