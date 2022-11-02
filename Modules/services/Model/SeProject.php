@@ -583,6 +583,13 @@ class SeProject extends Model {
         $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
         $invoiceItem = $this->runRequest($sql, array($id_invoice, $id_space))->fetch();
         $details = explode(";", $invoiceItem["details"]);
+        if (count($details) < 2) {
+            Configuration::getLogger()->warning('[services][getInfoFromInvoice] Invalid invoice item', ['item' => $invoiceItem]);
+            $info = array();
+            $info['closed_by'] = "";
+            $info['closed_by_in'] = "";
+            return $info;
+        }
         $proj = explode("=", $details[count($details) - 2]);
         $projUrl = explode("/", $proj[1]);
         $projID = $projUrl[2];
@@ -747,7 +754,7 @@ class SeProject extends Model {
             foreach ($projectEntries as $order) {
                 //print_r($order);
                 if ($order["id_service"] == $activeItems[$i]) {
-                    $qi += $order["quantity"];
+                    $qi += floatval($order["quantity"]);
                 }
             }
             $activeItemsSummary[$i]["id"] = $activeItems[$i];
