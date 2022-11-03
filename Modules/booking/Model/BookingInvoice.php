@@ -185,6 +185,7 @@ class BookingInvoice extends InvoiceModel {
             foreach ($reservations as $reservation) {
                 $resaIsInvoicingUnit = false;
                 $resaQuantityId = "";
+                // $resaQuantityName = "";
                 /*
                  * For a reservation with invoicing units:
                  * if there is a non deleted invoicing unit for this resource and it is used in this reservation, this is the one which will be used: it replaces the deleted one.
@@ -205,6 +206,7 @@ class BookingInvoice extends InvoiceModel {
                     foreach ($invoicableCalQtes as $invoicableQte) {
                         if (in_array($invoicableQte['id'], $resaQteIds)) {
                             $resaQuantityId = $invoicableQte['id'];
+                            // $resaQuantityName = $invoicableQte['name'];
                             $resaIsInvoicingUnit = true;
                             break;
                         }
@@ -222,7 +224,11 @@ class BookingInvoice extends InvoiceModel {
                         'nb_hours_day' => 0,
                         'nb_hours_night' => 0,
                         'nb_hours_we' => 0,
+                        'unit' => 'package',
+                        'unitName' => $modelPackage->getName($id_space, $reservation['package_id']),
+                        'unitId' => $reservation['package_id'],
                         'resource' => $reservation['resource_id'],
+                        'resourceName' => $res["name"],
                         'user' => $reservation['recipient_id']
                     ];
                     */
@@ -271,7 +277,11 @@ class BookingInvoice extends InvoiceModel {
                             'nb_hours_day' => $tmpDayQte,
                             'nb_hours_night' => $tmpNightQte,
                             'nb_hours_we' => $tmpWeQte,
+                            'unit' => 'unit',
+                            'unitName' => $resaQuantityName,
+                            'unitId' => $resaQuantityId,
                             'resource' => $reservation['resource_id'],
+                            'resourceName' => $res["name"],
                             'user' => $reservation['recipient_id']
                         ];
                         */
@@ -288,6 +298,8 @@ class BookingInvoice extends InvoiceModel {
                             'nb_hours_night' => $resaDayNightWe["nb_hours_night"],
                             'nb_hours_we' => $resaDayNightWe["nb_hours_we"],
                             'resource' => $reservation['resource_id'],
+                            'resourceName' => $res["name"],
+                            'unit' => 'time',
                             'user' => $reservation['recipient_id']
                         ];
                         */
