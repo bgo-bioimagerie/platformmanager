@@ -85,8 +85,7 @@ class StatisticsglobalController extends StatisticsController
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION["flash"] = ServicesTranslator::Dates_are_not_correct($lang);
-                $this->redirect('statisticsglobal/' . $id_space);
-                return;
+                return $this->redirect('statisticsglobal/' . $id_space);
             }
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
@@ -115,6 +114,6 @@ class StatisticsglobalController extends StatisticsController
             return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
-        $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
+        return $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
     }
 }
