@@ -2,34 +2,35 @@
 
 require_once 'Framework/Routing.php';
 
-class AntibodiesRouting extends Routing {
-    
-    public function routes($router) {
-        $router->map('POST', '/anticorpscsv/[i:id_space]' , 'antibodies/antibodieslist/anticorpscsv', 'antibodies_csv');
+class AntibodiesRouting extends Routing
+{
+    public function routes($router)
+    {
+        $router->map('POST', '/anticorpscsv/[i:id_space]', 'antibodies/antibodieslist/anticorpscsv', 'antibodies_csv');
     }
 
-    public function listRoutes(){
-        
+    public function listRoutes()
+    {
         // config
         $this->addRoute("antibodiesconfig", "antibodiesconfig", "antibodiesconfig", "index", array("id_space"), array(""));
 
         // add here the module routes
         $this->addRoute("antibodies", "antibodies", "antibodieslist", "index", array("id_space", "sortentry"), array("", ""));
-        $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodies", "tissus", array("id_space", "id_tissus"), array("", ""),true);
+        $this->addRoute("apiantibodytissus", "apiantibodytissus", "antibodies", "tissus", array("id_space", "id_tissus"), array("", ""), true);
         $this->addRoute("deletetissus", 'deletetissus', 'antibodieslist', "deletetissus", array('id_space', 'id_tissus'), array("", ""));
         $this->addRoute("deleteowner", 'deleteowner', 'antibodieslist', "deleteowner", array('id_space', 'id_owner'), array("", ""));
-        
+
         $this->addRoute("antibodydeleteconfirmed", "antibodydeleteconfirmed", 'antibodieslist', 'deleteconfirmed', array('id_space', 'id'), array("", ""));
         $this->addRoute("antibodydelete", "antibodydelete", 'antibodieslist', 'delete', array('id_space', 'id'), array("", ""));
-        
-        
-        $this->addRoute("apiantibodyowner", "apiantibodyowner", "antibodies", "owner", array("id_space", "id_owner"), array("", ""),true);
+
+
+        $this->addRoute("apiantibodyowner", "apiantibodyowner", "antibodies", "owner", array("id_space", "id_owner"), array("", ""), true);
         $this->addRoute("antibodiesedittissus", "antibodiesedittissus", "antibodieslist", "edittissus", array("id_space"), array(""));
         $this->addRoute("antibodieseditowner", "antibodieseditowner", "antibodieslist", "editowner", array("id_space"), array(""));
-        
+
         $this->addRoute("anticorpscsv", "anticorpscsv", "antibodieslist", "anticorpscsv", array("id_space"), array(""));
-        
-        
+
+
         // acii
         $this->addRoute("acii", "acii", "acii", "index", array("id_space"), array(""));
         $this->addRoute("aciiedit", "aciiedit", "acii", "edit", array("id_space", "id"), array("", ""));
@@ -108,12 +109,11 @@ class AntibodiesRouting extends Routing {
         $this->addRoute("anticorpseditquery", "anticorpseditquery", "antibodieslist", "editquery", array("id_space", "id"), array("", ""));
         // search
         $this->addRoute("anticorpsadvsearchquery", "anticorpsadvsearchquery", "antibodieslist", "advsearchquery", array("id_space", "source"), array("", ""));
-        
+
         // protocols
         $this->addRoute("protocols", "protocols", "protocols", "index", array("id_space", "sortEntry"), array("", ""));
         $this->addRoute("protocolsedit", "protocolsedit", "protocols", "edit", array("id_space", "id"), array("", ""));
         $this->addRoute("protocolseditquery", "protocolseditquery", "protocols", "editquery", array("id_space"), array(""));
         $this->addRoute("protocolsdelete", "protocolsdelete", "protocols", "delete", array("id_space", "id"), array("", ""));
-        
     }
 }

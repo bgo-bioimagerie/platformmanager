@@ -10,21 +10,21 @@ require_once 'Modules/quote/Model/QuoteItem.php';
  *
  * @author Sylvain Prigent
  */
-class QuoteInstall extends Model {
-
+class QuoteInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         $quote = new Quote();
         $quote->createTable();
-        
+
         $quoteitem = new QuoteItem();
         $quoteitem->createTable();
-        
+
         if (!file_exists('data/quote/')) {
             mkdir('data/quote/', 0755, true);
         }

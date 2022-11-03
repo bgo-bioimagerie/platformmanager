@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class StatisticsInstall extends Model {
-
+class StatisticsInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         if (!file_exists('data/statistics/')) {
             mkdir('data/statistics/', 0755, true);
         }

@@ -27,8 +27,8 @@
                                     ?>
                             <OPTION value="<?php echo $rId ?>"> <?php echo $rName ?> </OPTION>
                             <?php
-                        }
-                        ?>
+                                }
+?>
                     </select>
                 </div>
                 <div class="checkbox col-8 offset-4">

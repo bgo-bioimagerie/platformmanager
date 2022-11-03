@@ -26,9 +26,10 @@ use Firebase\JWT\JWT;
  * @author sprigent
  * Controller for the home page
  */
-class CoreaccountController extends Controller {
-
-    public function confirmAction() {
+class CoreaccountController extends Controller
+{
+    public function confirmAction()
+    {
         $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");
         try {
@@ -56,7 +57,7 @@ class CoreaccountController extends Controller {
             $data["firstname"],
             $data["email"]
         );
-        if($data["phone"]??"") {
+        if ($data["phone"]??"") {
             $modelCoreUser->setPhone($id_user, $data["phone"]);
         }
         $modelUsersInfo->set(
@@ -66,7 +67,7 @@ class CoreaccountController extends Controller {
             $data['organization'] ?? ''
         );
         // if specified a space, add to pending users in space
-        if(array_key_exists('id_space', $data) && $data['id_space']) {
+        if (array_key_exists('id_space', $data) && $data['id_space']) {
             $modelPeningAccounts = new CorePendingAccount();
             $modelPeningAccounts->add($id_user, $data["id_space"]);
         }
@@ -89,7 +90,8 @@ class CoreaccountController extends Controller {
         $this->redirect("coreaccountcreated");
     }
 
-    public function waitingAction() {
+    public function waitingAction()
+    {
         $lang = $this->getLanguage();
         $message = CoreTranslator::WaitingAccountMessage($lang);
 
@@ -103,7 +105,8 @@ class CoreaccountController extends Controller {
      * @param Array $spacesList {"id" => string, "name" => string}
      * @return Array
      */
-    protected function addMenuNamesToSpaceNames($spacesList) {
+    protected function addMenuNamesToSpaceNames($spacesList)
+    {
         $modelMenus = new CoreMainMenu();
         $modelSubMenus = new CoreMainSubMenu();
         $modelMenuItems = new CoreMainMenuItem();
@@ -111,19 +114,19 @@ class CoreaccountController extends Controller {
         $menus = $modelMenus->getAll();
         $subMenus = $modelSubMenus->getAll();
         $items = $modelMenuItems->getAll();
-        
-        for($i=0; $i<count($spacesList['ids']); $i++) {
+
+        for ($i=0; $i<count($spacesList['ids']); $i++) {
             $idSpace = $spacesList['ids'][$i];
-            for($j=0; $j<count($items); $j++) {
+            for ($j=0; $j<count($items); $j++) {
                 // get id subMenu
                 if ($items[$j]['id_space'] && $items[$j]['id_space'] == $idSpace) {
                     $idSubMenu =  $items[$j]['id_sub_menu'];
-                    for($k=0; $k<count($subMenus); $k++) {
+                    for ($k=0; $k<count($subMenus); $k++) {
                         // get id menu
                         if ($subMenus[$k]['id'] && $subMenus[$k]['id'] == $idSubMenu) {
                             $idMenu =  $subMenus[$k]['id_main_menu'];
                             // add menu name
-                            for($l=0; $l<count($menus); $l++) {
+                            for ($l=0; $l<count($menus); $l++) {
                                 if ($menus[$l]['id'] && $menus[$l]['id'] == $idMenu) {
                                     $spacesList['names'][$i] .= (" - " . $menus[$l]['name']);
                                     break;
@@ -143,8 +146,9 @@ class CoreaccountController extends Controller {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction() {
-        if(! Configuration::get('allow_registration', false)) {
+    public function indexAction()
+    {
+        if (! Configuration::get('allow_registration', false)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
 
@@ -169,7 +173,6 @@ class CoreaccountController extends Controller {
         $form->setValidationButton(CoreTranslator::Ok($lang), "corecreateaccount");
 
         if ($form->check()) {
-
             $modelCoreUser = new CoreUser();
 
             if ($modelCoreUser->isLogin($form->getParameter("login"))) {
@@ -193,7 +196,7 @@ class CoreaccountController extends Controller {
                     "id_space" => $form->getParameter("id_space")
                 ]
             );
-            
+
             /**
              * IMPORTANT:
              * You must specify supported algorithms for your application. See
@@ -223,8 +226,8 @@ class CoreaccountController extends Controller {
             "formHtml" => $form->getHtml($lang)));
     }
 
-    public function createdAction() {
-
+    public function createdAction()
+    {
         $modelConfig = new CoreConfig();
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
@@ -238,7 +241,8 @@ class CoreaccountController extends Controller {
         ));
     }
 
-    public function isuniqueAction() {
+    public function isuniqueAction()
+    {
         $params = $this->request->params();
         $type = $params["type"];
         $value = $params["value"];
@@ -253,7 +257,7 @@ class CoreaccountController extends Controller {
         }
         if ($type === "email") {
             $isUnique = !$modelUser->isEmail($value, $email);
-        } else if ($type === "login") {
+        } elseif ($type === "login") {
             $isUnique = !$modelUser->isLogin($value, $login);
         } else {
             Configuration::getLogger()->error("[coreaccount:isunique] Invalid type received", ["type" => $type]);

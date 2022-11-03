@@ -16,46 +16,46 @@ require_once 'Modules/resources/Model/ReVisa.php';
  *
  * @author Sylvain Prigent
  */
-class ResourcesInstall extends Model {
-
+class ResourcesInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         $model1 = new ReArea();
         $model1->createTable();
-        
+
         $model2 = new ReCategory();
         $model2->createTable();
-        
+
         $model3 = new ResourceInfo();
         $model3->createTable();
-        
+
         $model4 = new ReState();
         $model4->createTable();
-        
+
         $model5 = new ReEventType();
         $model5->createTable();
-        
+
         $model6 = new ReEvent();
         $model6->createTable();
-        
+
         $model7 = new ReEventData();
         $model7->createTable();
-        
+
         $model8 = new ReResps();
         $model8->createTable();
-        
+
         $model9 = new ReRespsStatus();
         $model9->createTable();
-        
+
         $model10 = new ReVisa();
         $model10->createTable();
-        
-        
+
+
         if (!file_exists('data/resources/events')) {
             mkdir('data/resources/events', 0755, true);
         }

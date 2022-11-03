@@ -14,19 +14,20 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CorespacehistoryController extends CoresecureController {
-
+class CorespacehistoryController extends CoresecureController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $userSpaceStatus = $this->getUserSpaceStatus($id_space, $_SESSION["id_user"]);
-        if($userSpaceStatus < CoreSpace::$MANAGER ) {
+        if ($userSpaceStatus < CoreSpace::$MANAGER) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
         $lang = $this->getLanguage();
@@ -42,5 +43,3 @@ class CorespacehistoryController extends CoresecureController {
         ));
     }
 }
-
-?>

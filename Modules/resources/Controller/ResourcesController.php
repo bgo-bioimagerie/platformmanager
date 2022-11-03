@@ -22,17 +22,16 @@ require_once 'Modules/resources/Model/ReRespsStatus.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ResourcesController extends CoresecureController {
-
-
-    public function navbar($id_space) {
-        
+class ResourcesController extends CoresecureController
+{
+    public function navbar($id_space)
+    {
         $html = file_get_contents('Modules/resources/View/Resources/navbar.php');
-        
+
         $lang = $this->getLanguage();
         $html = str_replace('{{id_space}}', $id_space, $html);
         $html = str_replace('{{Resources}}', ResourcesTranslator::Resources($lang), $html);
@@ -45,8 +44,8 @@ class ResourcesController extends CoresecureController {
         $html = str_replace('{{Suivi}}', ResourcesTranslator::Suivi($lang), $html);
         $html = str_replace('{{States}}', ResourcesTranslator::States($lang), $html);
         $html = str_replace('{{Event_Types}}', ResourcesTranslator::Event_Types($lang), $html);
-        
-                $modelSpace = new CoreSpace();
+
+        $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("resources", $id_space);
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);

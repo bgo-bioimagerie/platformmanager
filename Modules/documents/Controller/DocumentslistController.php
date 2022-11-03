@@ -15,17 +15,18 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreConfig.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class DocumentslistController extends DocumentsController {
-
+class DocumentslistController extends DocumentsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -36,35 +37,35 @@ class DocumentslistController extends DocumentsController {
         $modelCoreConfig = new CoreConfig();
         $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
         $data = [];
-        if($this->role >= $editRole) {
+        if ($this->role >= $editRole) {
             $data = $modelDoc->getForSpace($id_space);
-        } else if($this->role == CoreSpace::$USER) {
+        } elseif ($this->role == CoreSpace::$USER) {
             $docids = [];
             $docs = $modelDoc->getPublicDocs($id_space);
-            foreach($docs as $doc) {
+            foreach ($docs as $doc) {
                 $data[] = $doc;
                 $docids[$doc['id']] = true;
             }
             $docs = $modelDoc->getRestrictedDocs($id_space, Document::$VISIBILITY_MEMBERS);
-            foreach($docs as $doc) {
-                if(array_key_exists($doc['id'], $docids)) {
+            foreach ($docs as $doc) {
+                if (array_key_exists($doc['id'], $docids)) {
                     continue;
                 }
                 $data[] = $doc;
             }
             $docs = $modelDoc->getRestrictedDocs($id_space, Document::$VISIBILITY_USER, $_SESSION['id_user']);
-            foreach($docs as $doc) {
-                if(array_key_exists($doc['id'], $docids)) {
+            foreach ($docs as $doc) {
+                if (array_key_exists($doc['id'], $docids)) {
                     continue;
                 }
                 $data[] = $doc;
             }
             $mc = new ClClientUser();
             $clients = $mc->getUserClientAccounts($_SESSION['id_user'], $id_space);
-            foreach($clients as $client) {
+            foreach ($clients as $client) {
                 $docs = $modelDoc->getRestrictedDocs($id_space, Document::$VISIBILITY_CLIENT, $client['id']);
-                foreach($docs as $doc) {
-                    if(array_key_exists($doc['id'], $docids)) {
+                foreach ($docs as $doc) {
+                    if (array_key_exists($doc['id'], $docids)) {
                         continue;
                     }
                     $data[] = $doc;
@@ -98,7 +99,6 @@ class DocumentslistController extends DocumentsController {
                     break;
             }
             $data[$i]["visibility"] = $visibility;
-
         }
 
         $headers = array(
@@ -106,12 +106,12 @@ class DocumentslistController extends DocumentsController {
             "user" => DocumentsTranslator::Owner($lang),
             "lastmodified" => DocumentsTranslator::LastModified($lang),
         );
-        if($this->role >= $editRole) {
+        if ($this->role >= $editRole) {
             $headers['visibility'] = 'Visibility';
         }
 
         $table->addLineButton("documentsopen/" . $id_space . "/", "id", DocumentsTranslator::Open($lang));
-        if($this->role > CoreSpace::$USER) {
+        if ($this->role > CoreSpace::$USER) {
             $table->addLineEditButton("documentsedit/" . $id_space . "/");
             $table->addDeleteButton("documentsdelete/" . $id_space . "/", "id", "title");
         }
@@ -119,20 +119,21 @@ class DocumentslistController extends DocumentsController {
 
         $this->render(array(
             "id_space" => $id_space,
-            "lang" => $lang, 
-            "tableHtml" => $tableView, 
+            "lang" => $lang,
+            "tableHtml" => $tableView,
             "userSpaceStatus" => $this->role,
             "dir" => $this->request->getParameterNoException("dir"),
             "data" => ["documents" => $data]
         ));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $modelCoreConfig = new CoreConfig();
         $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
 
-        if($this->role < $editRole) {
+        if ($this->role < $editRole) {
             throw new PfmAuthException('not enough privileges');
         }
         $lang = $this->getLanguage();
@@ -140,8 +141,8 @@ class DocumentslistController extends DocumentsController {
         $data = $model->get($id_space, $id);
 
         $dir = $this->request->getParameterNoException('dir');
-        if(!$data['id'] && $dir) {
-            if(str_starts_with($dir, '/')){
+        if (!$data['id'] && $dir) {
+            if (str_starts_with($dir, '/')) {
                 $dir = ltrim($dir, '/');
             }
             $data['title'] = $dir.'/newdocument';
@@ -154,7 +155,7 @@ class DocumentslistController extends DocumentsController {
 
 
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-        if($plan->hasFlag(CorePlan::FLAGS_DOCUMENTS)) {
+        if ($plan->hasFlag(CorePlan::FLAGS_DOCUMENTS)) {
             $form->addSelectMandatory(
                 "visibility",
                 "Visibility",
@@ -180,7 +181,7 @@ class DocumentslistController extends DocumentsController {
 
         if ($form->check()) {
             $title = $this->request->getParameter("title");
-            if(str_starts_with($title, '/')){
+            if (str_starts_with($title, '/')) {
                 $title = ltrim($title, '/');
             }
             $id_user = $_SESSION["id_user"];
@@ -196,11 +197,11 @@ class DocumentslistController extends DocumentsController {
             $id_ref = 0;
 
             $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-            if($plan->hasFlag(CorePlan::FLAGS_DOCUMENTS)) {
+            if ($plan->hasFlag(CorePlan::FLAGS_DOCUMENTS)) {
                 $visibility = $this->request->getParameter("visibility");
-                if($visibility == Document::$VISIBILITY_USER) {
+                if ($visibility == Document::$VISIBILITY_USER) {
                     $id_ref = $this->request->getParameter('id_ref_user');
-                } else if($visibility == Document::$VISIBILITY_CLIENT) {
+                } elseif ($visibility == Document::$VISIBILITY_CLIENT) {
                     $id_ref = $this->request->getParameter('id_ref_client');
                 }
             }
@@ -213,7 +214,8 @@ class DocumentslistController extends DocumentsController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
     }
 
-    public function openAction($id_space, $id) {
+    public function openAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
 
         $model = new Document();
@@ -222,31 +224,32 @@ class DocumentslistController extends DocumentsController {
             case Document::$VISIBILITY_PUBLIC:
                 break;
             case Document::$VISIBILITY_MEMBERS:
-                if(!$this->role >= CoreSpace::$USER) {
+                if (!$this->role >= CoreSpace::$USER) {
                     throw new PfmAuthException('private document');
                 }
                 break;
             case Document::$VISIBILITY_PRIVATE:
-                if(!$this->role >= CoreSpace::$MANAGER) {
+                if (!$this->role >= CoreSpace::$MANAGER) {
                     throw new PfmAuthException('private document');
                 }
                 break;
             case Document::$VISIBILITY_USER:
-                if($_SESSION['id_user'] != $doc['id_ref']) {
+                if ($_SESSION['id_user'] != $doc['id_ref']) {
                     throw new PfmAuthException('private document');
                 }
+                // no break
             case Document::$VISIBILITY_CLIENT:
                 $m = new ClClientUser();
                 $clients = $m->getUserClientAccounts($_SESSION['id_user'], $id_space);
                 $isClient = false;
                 foreach ($clients as $client) {
-                    if($client['id'] == $doc['id_ref']){
+                    if ($client['id'] == $doc['id_ref']) {
                         $isClient = true;
                         break;
                     }
                 }
-                if(!$isClient) {
-                    throw new PfmAuthException('private document'); 
+                if (!$isClient) {
+                    throw new PfmAuthException('private document');
                 }
                 break;
             default:
@@ -257,7 +260,7 @@ class DocumentslistController extends DocumentsController {
         if (file_exists($file)) {
             header("Cache-Control: public");
             header("Content-Description: File Transfer");
-            header('Content-Disposition: attachment; filename="'.basename($file).'"' );
+            header('Content-Disposition: attachment; filename="'.basename($file).'"');
             header("Content-Type: binary/octet-stream");
             header("Content-Transfer-Encoding: binary");
             // read the file from disk
@@ -269,11 +272,12 @@ class DocumentslistController extends DocumentsController {
         }
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("documents", $id_space, $_SESSION["id_user"]);
         $modelCoreConfig = new CoreConfig();
         $editRole = $modelCoreConfig->getParamSpace("documentsEdit", $id_space, CoreSpace::$MANAGER);
-        if($this->role < $editRole) {
+        if ($this->role < $editRole) {
             throw new PfmAuthException('not enough privileges');
         }
         $model = new Document();
@@ -281,5 +285,4 @@ class DocumentslistController extends DocumentsController {
 
         $this->redirect("documents/" . $id_space);
     }
-
 }

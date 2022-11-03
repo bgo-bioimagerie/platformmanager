@@ -12,18 +12,18 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingblockController extends BookingsettingsController {
-
+class BookingblockController extends BookingsettingsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelResources = new ResourceInfo();
@@ -67,9 +67,8 @@ class BookingblockController extends BookingsettingsController {
             $blockedEntries[$i]['end'] = CoreTranslator::dateFromEn($end->format('Y-m-d'), $lang)." ".$end->format('H:i');
             $blockedEntries[$i]['reason'] = BookingTranslator::BlockReason($e['reason'], $lang);
             $blockedEntries[$i]['resource'] = $rmap[$e['resource_id']];
-
         }
-        
+
 
         $headers = array(
             "id" => "ID",
@@ -78,7 +77,7 @@ class BookingblockController extends BookingsettingsController {
             "resource" => ResourcesTranslator::resource($lang),
             "reason" => BookingTranslator::Reason($lang)
         );
-            
+
         $tableHtml = $table->view($blockedEntries, $headers);
 
         $lang = $this->getLanguage();
@@ -93,9 +92,10 @@ class BookingblockController extends BookingsettingsController {
 
     /**
      * Query to make several resources unavailable
-     * 
+     *
      */
-    public function blockresourcesqueryAction($id_space) {
+    public function blockresourcesqueryAction($id_space)
+    {
         $lang = $this->getLanguage();
 
         // get form variables
@@ -109,14 +109,14 @@ class BookingblockController extends BookingsettingsController {
         $end_min = $this->request->getParameter("end_min");
         $color_type_id = $this->request->getParameter("color_code_id");
         $reason = $this->request->getParameterNoException("reason");
-        if($reason == '') {
+        if ($reason == '') {
             $reason = BkCalendarEntry::$REASON_BOOKING;
         }
 
-        if($begin_date == "") {
+        if ($begin_date == "") {
             throw new PfmParamException("invalid begin date");
         }
-        if($end_date == "") {
+        if ($end_date == "") {
             throw new PfmParamException("invalid end date");
         }
 
@@ -150,7 +150,6 @@ class BookingblockController extends BookingsettingsController {
         $modelCalEntry = new BkCalendarEntry();
         $userID = $_SESSION["id_user"];
         foreach ($resources as $resource_id) {
-
             $conflict = $modelCalEntry->isConflict($id_space, $start_time, $end_time, [$resource_id]);
 
             if ($conflict) {
@@ -181,5 +180,4 @@ class BookingblockController extends BookingsettingsController {
 
         $this->redirect("bookingblock/" . $id_space);
     }
-
 }

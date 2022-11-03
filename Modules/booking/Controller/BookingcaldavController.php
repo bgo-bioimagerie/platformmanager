@@ -4,14 +4,15 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
-class BookingcaldavController extends CorecookiesecureController {
-
-    public function discoveryAction($id_space=0) {
-        if($id_space) {
+class BookingcaldavController extends CorecookiesecureController
+{
+    public function discoveryAction($id_space=0)
+    {
+        if ($id_space) {
             $sm = new CoreSpace();
             $space = $sm->getSpace($id_space);
             $plan = new CorePlan($space['plan'], $space['plan_expire']);
-            if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+            if (!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
                 throw new PfmParamException('Caldav not available in your space plan');
             }
         }
@@ -21,16 +22,17 @@ class BookingcaldavController extends CorecookiesecureController {
 
 
 
-    public function propfindAction($id_space, $id_cal=0) {
+    public function propfindAction($id_space, $id_cal=0)
+    {
         $allowed = true;
         $id_user = $this->auth();
 
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-        if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+        if (!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             Configuration::getLogger()->debug('Caldav not available in your space plan');
             $allowed = false;
         }
-        if($id_user == 0) {
+        if ($id_user == 0) {
             http_response_code(401);
             header('Content-Type: text/xml');
             header('WWW-Authenticate: Basic realm="server"');
@@ -47,7 +49,7 @@ class BookingcaldavController extends CorecookiesecureController {
             ', $id_space, $id_cal);
             return;
         }
-        if(!$allowed) {
+        if (!$allowed) {
             http_response_code(403);
             header('Content-Type: text/xml');
             echo sprintf('<?xml version="1.0" encoding="utf-8" ?>
@@ -74,14 +76,14 @@ class BookingcaldavController extends CorecookiesecureController {
         //$prop = $doc->xpath('a:prop');
         $result_props = [];
         $currentUserPrincipal = $doc->xpath('//a:current-user-principal');
-        if(!empty($currentUserPrincipal)) {
+        if (!empty($currentUserPrincipal)) {
             $result_props[] = '
                         <d:current-user-principal>
                             <d:href>/caldav/'.$id_space.'/'.$id_cal.'/</d:href>
                         </d:current-user-principal>';
         }
         $currentUserPrivilegeSet = $doc->xpath('//a:current-user-privilege-set');
-        if(!empty($currentUserPrivilegeSet)) {
+        if (!empty($currentUserPrivilegeSet)) {
             $result_props[] = '
             <d:current-user-privilege-set>
                 <d:privilege><d:read/></d:privilege>
@@ -90,8 +92,8 @@ class BookingcaldavController extends CorecookiesecureController {
 
 
         $resourceType = $doc->xpath('//a:resourcetype');
-        if(!empty($resourceType)) {
-            if($depth==1){
+        if (!empty($resourceType)) {
+            if ($depth==1) {
                 $result_props[] = '<d:resourcetype><cal:calendar/></d:resourcetype>';
             } else {
                 $result_props[] = '<d:resourcetype><d:collection/><cal:calendar/></d:resourcetype>';
@@ -99,15 +101,15 @@ class BookingcaldavController extends CorecookiesecureController {
         }
 
         $calendarHomeSet = $doc->xpath('//C:calendar-home-set');
-        if(!empty($calendarHomeSet)) {
+        if (!empty($calendarHomeSet)) {
             $result_props[] = '
             <C:calendar-home-set>
                 <d:href>/caldav/'.$id_space.'/1/</d:href>
-            </C:calendar-home-set>';           
+            </C:calendar-home-set>';
         }
 
         $supportedReportSet = $doc->xpath('//a:supported-report-set');
-        if(!empty($supportedReportSet)) {
+        if (!empty($supportedReportSet)) {
             $result_props[] = '
             <d:supported-report-set>
                 <d:supported-report>
@@ -124,7 +126,7 @@ class BookingcaldavController extends CorecookiesecureController {
         }
 
         $supportedCalendarComponentSet = $doc->xpath('//C:supported-calendar-component-set');
-        if(!empty($supportedCalendarComponentSet)) {
+        if (!empty($supportedCalendarComponentSet)) {
             $result_props[] = '
             <C:supported-calendar-component-set>
                 <C:comp name="VEVENT" />
@@ -133,8 +135,8 @@ class BookingcaldavController extends CorecookiesecureController {
 
 
         $contentTag = $doc->xpath('//a:getcontenttype');
-        if(!empty($contentTag)) {
-            if($depth==0) {
+        if (!empty($contentTag)) {
+            if ($depth==0) {
                 $result_props[] = '<d:getcontenttype>httpd/unix-directory</d:getcontenttype>';
             } else {
                 $result_props[] = '<d:getcontenttype>text/calendar;charset=utf-8;component=vevent</d:getcontenttype>';
@@ -142,37 +144,37 @@ class BookingcaldavController extends CorecookiesecureController {
         }
 
         $geteTag = $doc->xpath('//a:getetag');
-        if(!empty($geteTag) && $depth==1) {
+        if (!empty($geteTag) && $depth==1) {
             Configuration::getLogger()->debug('[caldav] get etag');
             $bm = new BkCalendarEntry();
-            
+
             $updates = $bm->lastUser($id_space, $id_user);
-        
+
             $eTag = 0;
             Configuration::getLogger()->debug('[caldav] get etag', ['u' => $updates]);
-            if($updates) {
+            if ($updates) {
                 $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
             }
             $result_props[] = sprintf('<d:getetag>"%s"</d:getetag>', $eTag);
         }
         $cTag = $doc->xpath('//cs:getctag');
-        if(!empty($cTag)) {
+        if (!empty($cTag)) {
             Configuration::getLogger()->debug('[caldav] get ctag');
             $bm = new BkCalendarEntry();
-            
+
             $updates = $bm->lastUser($id_space, $id_user);
-        
+
             $eTag = 0;
             Configuration::getLogger()->debug('[caldav] get etag', ['u' => $updates]);
-            if($updates) {
+            if ($updates) {
                 $eTag = max(intval($updates['last_update']), intval($updates['last_delete']), intval($updates['last_start']));
             }
             $result_props[] = sprintf('<d:getctag>"%s"</d:getctag>', $eTag);
         }
 
         $displayName = $doc->xpath('//a:displayname');
-        if(!empty($displayName)) {
-            if($depth == 1) {
+        if (!empty($displayName)) {
+            if ($depth == 1) {
                 $result_props[] = '<d:displayname>bookings</d:displayname>';
             } else {
                 $result_props[] = sprintf('<d:displayname>%s</d:displayname>', $this->currentSpace['name']);
@@ -180,7 +182,7 @@ class BookingcaldavController extends CorecookiesecureController {
         }
 
         $extra_response = [];
-        if(1==0&& $depth==1 && !empty($resourceType)){
+        if (1==0&& $depth==1 && !empty($resourceType)) {
             $extra_response[] = sprintf('<d:response>
             <d:href>/caldav/%s/0/</d:href>
             <d:propstat>
@@ -211,9 +213,10 @@ class BookingcaldavController extends CorecookiesecureController {
         echo $data;
     }
 
-    protected function auth(){
+    protected function auth()
+    {
         $um  = new CoreUser();
-        if(!isset($_SERVER['PHP_AUTH_USER'])) {
+        if (!isset($_SERVER['PHP_AUTH_USER'])) {
             return 0;
         }
         $login = $_SERVER['PHP_AUTH_USER'];
@@ -243,7 +246,8 @@ class BookingcaldavController extends CorecookiesecureController {
         return $user ? $user['idUser'] : 0;
     }
 
-    public function reportAction($id_space) {
+    public function reportAction($id_space)
+    {
         $id_user = $this->auth();
 
         try {
@@ -266,7 +270,7 @@ class BookingcaldavController extends CorecookiesecureController {
             return;
         }
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-        if(!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+        if (!$plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             throw new PfmParamException('Caldav not available in your space plan');
         }
 
@@ -282,13 +286,13 @@ class BookingcaldavController extends CorecookiesecureController {
         $bm = new BkCalendarEntry();
 
         $doc->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
-        if ($doc->getName() == 'calendar-query'){
+        if ($doc->getName() == 'calendar-query') {
             $filter = $doc->xpath('a:filter');
-            if($filter) {
+            if ($filter) {
                 $filter[0]->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
                 $comp_filter = $filter[0]->xpath('a:comp-filter');
 
-                foreach($comp_filter as $cf){
+                foreach ($comp_filter as $cf) {
                     $cf->registerXPathNamespace('a', 'urn:ietf:params:xml:ns:caldav');
                     $tr = $cf->xpath('//a:time-range');
                     foreach ($tr as $range) {
@@ -299,19 +303,18 @@ class BookingcaldavController extends CorecookiesecureController {
                     }
                 }
             }
-
         }
-        foreach($doc->children('DAV:') as $child) {
-            if($child->getName() != 'href') {
+        foreach ($doc->children('DAV:') as $child) {
+            if ($child->getName() != 'href') {
                 continue;
             }
             $url = (string)$child;
             $urlElts = explode('/', $url);
             $info = $urlElts[count($urlElts)-1];
             $queryElts = explode('-', str_replace('.ics', '', $info));
-            if(count($queryElts) == 2){
-            $fromTS = intval($queryElts[0]);
-            $toTS = intval($queryElts[1]);
+            if (count($queryElts) == 2) {
+                $fromTS = intval($queryElts[0]);
+                $toTS = intval($queryElts[1]);
             }
         }
 
@@ -320,10 +323,10 @@ class BookingcaldavController extends CorecookiesecureController {
         $updates = $bm->lastUserPeriod($id_space, $id_user, $fromTS, $toTS);
         $eTag = 0;
 
-        if($updates) {
+        if ($updates) {
             $eTag = max($updates['last_update'], $updates['last_delete'], $updates['last_start']);
         }
-        
+
         $bookings = $bm->getUserPeriodBooking($id_space, $id_user, $fromTS, $toTS);
         $responses = '';
         foreach ($bookings as $booking) {
@@ -376,6 +379,3 @@ VERSION:2.0
         echo $data;
     }
 }
-
-
-?>

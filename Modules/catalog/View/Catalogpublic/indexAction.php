@@ -14,20 +14,19 @@
             <div class="col-2">
                 <?php
                 $imageFile = "data/catalog/" . $entry["image_url"];
-                if (!file_exists($imageFile) || is_dir($imageFile)) {
-                   ?>
+        if (!file_exists($imageFile) || is_dir($imageFile)) {
+            ?>
                     <div style="height: 70px;"></div>
                     <?php
-                }
-                else{
-                    list($width, $height, $type, $attr) = getimagesize($imageFile);
-                    ?>
+        } else {
+            list($width, $height, $type, $attr) = getimagesize($imageFile);
+            ?>
                     <a href="<?php echo $imageFile ?>">
                         <img alt="entry photo" src="<?php echo $imageFile ?>" width="100%" />
                     </a>
-                <?php 
-                }
-                ?>
+                <?php
+        }
+        ?>
             </div>
             <div class="col-10">
                 <div style="font-weight: bold;"><?php echo $entry["title"] ?></div>

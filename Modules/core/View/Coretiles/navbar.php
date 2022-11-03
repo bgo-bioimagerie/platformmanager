@@ -7,7 +7,7 @@
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <?php
-                foreach( $mainSubMenus as $menu ){
+                foreach ($mainSubMenus as $menu) {
                     ?>
                     <li class="nav-item"><a class="nav-link" href="coretiles/2/<?php echo $menu["id"] ?>" ><?php echo $menu["name"] ?></a></li>
                     <?php

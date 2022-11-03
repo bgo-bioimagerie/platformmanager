@@ -11,13 +11,14 @@ require_once 'Modules/core/Model/CoreInstall.php';
  * @author sprigent
  *     Install the Core database
  */
-class CoreinstallController extends Controller {
-
+class CoreinstallController extends Controller
+{
     protected $installModel;
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->installModel = new CoreInstall();
     }
@@ -26,10 +27,10 @@ class CoreinstallController extends Controller {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($message = "") {
-
+    public function indexAction($message = "")
+    {
         $lang = $this->getLanguage();
-        
+
         $form = new Form($this->request, "installform");
         $form->setTitle(CoreTranslator::SQL_configuration($lang));
         $form->setSubTitle(CoreTranslator::this_will_edit_the_configuration_file($lang));
@@ -41,7 +42,6 @@ class CoreinstallController extends Controller {
 
 
         if ($form->check()) {
-
             // get request variables
             $sql_host = $this->request->getParameter("sql_host");
             $login = $this->request->getParameter("login");
@@ -51,19 +51,17 @@ class CoreinstallController extends Controller {
             // test the connection
             $installModel = new CoreInstall();
             $testVal = $installModel->testConnection($sql_host, $login, $password, $db_name);
-            //echo 'test connection return val = ' . $testVal . '-----'; 
+            //echo 'test connection return val = ' . $testVal . '-----';
             if ($testVal == 'success') {
-                
                 // edit the config file
                 $this->writedbConfig($sql_host, $login, $password, $db_name);
-                
+
                 $modelCreateDatabase = new CoreInstall();
                 $dsn = 'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8';
                 $modelCreateDatabase->setDatabase($dsn, $login, $password);
                 $modelCreateDatabase->createDatabase();
-                
+
                 $this->redirect("coretiles");
-                
             } else {
                 $this->indexAction($testVal);
             }
@@ -71,16 +69,17 @@ class CoreinstallController extends Controller {
         $formHtml = $form->getHtml($lang);
         return $this->render(array("formHtml" => $formHtml, "message" => $message));
     }
-    
+
     /**
-     * 
+     *
      * @param type $sql_host
      * @param type $login
      * @param type $password
      * @param type $db_name
      * @throws Exception
      */
-    private function writedbConfig($sql_host, $login, $password, $db_name) {
+    private function writedbConfig($sql_host, $login, $password, $db_name)
+    {
         if (!$this->installModel->writedbConfig($sql_host, $login, $password, $db_name)) {
             throw new PfmException("Cannot write db config file", 500);
         }

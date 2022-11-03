@@ -7,7 +7,7 @@
         <div class="col-12" id="doctree">
 
 
-        <?php if($userSpaceStatus >= CoreSpace::$MANAGER){ ?> 
+        <?php if ($userSpaceStatus >= CoreSpace::$MANAGER) { ?> 
         <div class="col-2" style="padding-top:7px;">
             <button type="button" class="btn btn-default" v-on:click="create()">
                 <span class="bi-plus" aria-hidden="true"></span> <?php echo DocumentsTranslator::Add_Doc($lang) ?>
@@ -36,7 +36,7 @@
                         <td>{{doc.display}} <span style="margin-left: 10px" v-if="!doc.folder && doc.visibility!='Public'" class="bi-file-lock"></span></td>
                         <td><span v-if="!doc.folder">{{doc.date_modified}}</span></td>
                         <td><span v-if="!doc.folder">{{doc.user}}</span></td>
-                        <td><?php if($context['role'] > CoreSpace::$USER) { ?>
+                        <td><?php if ($context['role'] > CoreSpace::$USER) { ?>
                             <div v-if="!doc.folder">
                                 <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + doc.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                 <button v-on:click="confirmDelete(doc)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
@@ -61,7 +61,7 @@
                         <tr v-for="match in matches">
                             <td><div aria-label="download" v-on:click="download(match.id)"><span class="bi-download"></span></div></td>
                             <td>{{match.title}}</td>
-                            <td><?php if($context['role'] > CoreSpace::$USER) { ?>
+                            <td><?php if ($context['role'] > CoreSpace::$USER) { ?>
                                 <div>
                                     <a v-bind:href="'documentsedit/<?php echo $id_space ?>/' + match.id" ><button type="button" class="btn btn-sm btn-primary">Edit</button></a>
                                     <button v-on:click="confirmDelete(match)" type="button" class="btn btn-sm btn-danger">Delete</button></a>
@@ -83,10 +83,10 @@ doclist.forEach((doc) => {
     doc.size = elts.length;
 });
 
-<?php if($dir){ 
+<?php if ($dir) {
     $elts = explode('/', $dir);
     $l = count($elts);
-}   else {
+} else {
     $l = 0;
 }
 ?>
@@ -96,7 +96,11 @@ Vue.createApp({
     data () {
         return {
             docs: [],
-            level: <?php if($dir) {echo count(explode('/', $dir));} else {echo 0;} ?>,
+            level: <?php if ($dir) {
+                echo count(explode('/', $dir));
+            } else {
+                echo 0;
+            } ?>,
             path: <?php echo "'$dir'" ?? 'null' ?>,
             search: '',
             matches: []

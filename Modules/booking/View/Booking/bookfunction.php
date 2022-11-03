@@ -1,10 +1,12 @@
-<?php 
+<?php
+
 
 require_once 'Modules/booking/Model/BkCalSupInfo.php';
 
-function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0){
+function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day_end, $calEntries, $isUserAuthorizedToBook, $isDayAvailable, $agendaStyle, $resourceID = -1, $from=[], $role=0)
+{
     $q = '?';
-    if(!empty($from)) {
+    if (!empty($from)) {
         $elts = implode(':', $from);
         $q .= "from=$elts";
     }
@@ -21,13 +23,13 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
 
     $caseTimeLength = 3600;
     $nbBlocks = 1;
-    if ($size_bloc_resa == 900){
+    if ($size_bloc_resa == 900) {
         $caseTimeLength = 900;
         $nbBlocks = 4;
-    } else if($size_bloc_resa == 1800) {
+    } elseif ($size_bloc_resa == 1800) {
         $caseTimeLength = 1800;
         $nbBlocks = 2;
-    } else if($size_bloc_resa == 3600) {
+    } elseif ($size_bloc_resa == 3600) {
         $caseTimeLength = 3600;
         $nbBlocks = 1;
     } else {
@@ -35,26 +37,38 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
         $nbBlocks = 1;
     }
 
-    for($i=$day_begin;$i<$day_end;$i++) {
+    for ($i=$day_begin;$i<$day_end;$i++) {
         $calRows[$i] = [];
-        for($j=0;$j<$nbBlocks;$j++) {
+        for ($j=0;$j<$nbBlocks;$j++) {
             $he = [$i, $j];
-            if ($isDayAvailable){
-                if($caseTimeLength == 900) {
-                    if ($he[1] == 0){$he[1] = "00";}
-                    if ($he[1] == 1){$he[1] = "15";}
-                    if ($he[1] == 2){$he[1] = "30";}
-                    if ($he[1] == 3){$he[1] = "45";}
-                } else if($caseTimeLength == 1800){
-                    if ($he[1] == 0){$he[1] = "00";}
-                    if ($he[1] == 1){$he[1] = "30";}
+            if ($isDayAvailable) {
+                if ($caseTimeLength == 900) {
+                    if ($he[1] == 0) {
+                        $he[1] = "00";
+                    }
+                    if ($he[1] == 1) {
+                        $he[1] = "15";
+                    }
+                    if ($he[1] == 2) {
+                        $he[1] = "30";
+                    }
+                    if ($he[1] == 3) {
+                        $he[1] = "45";
+                    }
+                } elseif ($caseTimeLength == 1800) {
+                    if ($he[1] == 0) {
+                        $he[1] = "00";
+                    }
+                    if ($he[1] == 1) {
+                        $he[1] = "30";
+                    }
                 } else {
                     $he[1] = "00";
                 }
                 $hed = $he[0] . "-" .$he[1];
 
                 $curBlockTs = (new DateTime())->setTimestamp($date_unix)->setTime($he[0], $he[1])->getTimestamp();
-                if( $user_space_role >= CoreSpace::$MANAGER  || ($isUserAuthorizedToBook && $curBlockTs > time())){
+                if ($user_space_role >= CoreSpace::$MANAGER  || ($isUserAuthorizedToBook && $curBlockTs > time())) {
                     $linkAdress = "bookingeditreservation/". $id_space ."/t_" . $dateString."_".$hed."_".$resourceID.$q;
                     $calRows[$i][] = [
                         'free' => true,
@@ -84,53 +98,52 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
         }
     }
 
-    foreach ($calEntries as $c => $calEntry){
-
+    foreach ($calEntries as $c => $calEntry) {
         $caseTimeBegin = $date_unix + $day_begin*3600;
         $caseTimeEnd = $date_unix + $day_end*3600;
-        if($calEntry['start_time'] < $caseTimeBegin) {
+        if ($calEntry['start_time'] < $caseTimeBegin) {
             $calEntry['start_time'] = $caseTimeBegin;
         }
-        if($calEntry['end_time'] > $caseTimeEnd) {
+        if ($calEntry['end_time'] > $caseTimeEnd) {
             $calEntry['end_time'] = $caseTimeEnd;
         }
         $calLen = $calEntry['end_time'] - $calEntry['start_time'];
         $calEntry['expand'] = false;
         $cal = [$calEntry];
-        if($calLen > $size_bloc_resa){
+        if ($calLen > $size_bloc_resa) {
             $elts = $calLen / $size_bloc_resa;
             $cal = [];
             $end = $calEntry['end_time'];
             //$curHour = date('G', $calEntry['start_time']);
-            for($i=0;$i<$elts;$i++) {
+            for ($i=0;$i<$elts;$i++) {
                 $calEntry['end_time'] = $calEntry['start_time'] + $size_bloc_resa;
 
-                if($calEntry['end_time'] > $end) {
+                if ($calEntry['end_time'] > $end) {
                     $calEntry['end_time'] = $end;
                 }
-                if($i>0){
+                if ($i>0) {
                     $calEntry['expand'] = true;
                 }
                 $cal[] = $calEntry;
                 $calEntry['start_time'] += $size_bloc_resa;
             }
         }
-        foreach($cal as $c) {
+        foreach ($cal as $c) {
             $blocSize = ($c['end_time'] - $c['start_time'])/($caseTimeLength);
             $curHour = date('G', $c['start_time']);
             $pixelHeight = $blocSize*$agendaStyle["line_height"];
             $shortDescription = $c['short_description'];
             $text = '';
-            if($c['reason'] && $c['reason'] > 0) {
+            if ($c['reason'] && $c['reason'] > 0) {
                 $text = BookingTranslator::BlockReason($c['reason'], $lang);
-                if($shortDescription){
+                if ($shortDescription) {
                     $text .= '<br/>'.$shortDescription;
                 }
             } else {
-                if($c['id'] && $role >= CoreSpace::$USER) {
+                if ($c['id'] && $role >= CoreSpace::$USER) {
                     $text = $modelBookingSetting->getSummary($id_space, $c["recipient_fullname"], $c['phone'], $c['client_name'], $shortDescription, $c['full_description'], false, $role);
-                    $text .= $modelBookingSupplemetary->getSummary($id_space ,$calEntry["id"]);
-                    if($text === '') {
+                    $text .= $modelBookingSupplemetary->getSummary($id_space, $calEntry["id"]);
+                    if ($text === '') {
                         $text = '#'.$c['id'];
                     }
                 }
@@ -146,17 +159,29 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
             $c['day'] = date("l", $c['start_time']);
             $minutes = date('i', $c['start_time']);
             $blockNumber = 0;
-            if($caseTimeLength == 900) {
-                if ($minutes == "00"){$blockNumber = 0;}
-                if ($minutes == "15"){$blockNumber = 1;}
-                if ($minutes == "30"){$blockNumber = 2;}
-                if ($minutes == "45"){$blockNumber = 3;}
-            } else if($caseTimeLength == 1800){
-                if ($minutes == "00"){$blockNumber = 0;}
-                if ($minutes == "30"){$blockNumber = 1;}
+            if ($caseTimeLength == 900) {
+                if ($minutes == "00") {
+                    $blockNumber = 0;
+                }
+                if ($minutes == "15") {
+                    $blockNumber = 1;
+                }
+                if ($minutes == "30") {
+                    $blockNumber = 2;
+                }
+                if ($minutes == "45") {
+                    $blockNumber = 3;
+                }
+            } elseif ($caseTimeLength == 1800) {
+                if ($minutes == "00") {
+                    $blockNumber = 0;
+                }
+                if ($minutes == "30") {
+                    $blockNumber = 1;
+                }
             }
-            
-            if($c['id'] == 0) {
+
+            if ($c['id'] == 0) {
                 $c = [
                     'free' => true,
                     'link' => '',
@@ -169,28 +194,23 @@ function compute($id_space, $lang, $size_bloc_resa, $date_unix, $day_begin, $day
                     'hour' => $he[0].'h'.$he[1]
                 ];
             }
-                $calRows[$curHour][$blockNumber] = $c;
+            $calRows[$curHour][$blockNumber] = $c;
 
-                if($c['id']) {
-                    for($j=$blockNumber;$j>=0;$j--) {
-                        if($calRows[$curHour][$j]['id'] == $c['id']) {
-                            if($j==0 || $calRows[$curHour][$j-1]['id'] != $c['id']) {
-                                $calRows[$curHour][$j]['span'] = $blockNumber-$j+1;
-                                $calRows[$curHour][$j]['end_time'] = $c['end_time'];
-                                $calRows[$curHour][$j]['hend'] = date('H:i', $c['end_time']);
-                            } else {
-                                $calRows[$curHour][$j]['text'] = '';
-                            }
+            if ($c['id']) {
+                for ($j=$blockNumber;$j>=0;$j--) {
+                    if ($calRows[$curHour][$j]['id'] == $c['id']) {
+                        if ($j==0 || $calRows[$curHour][$j-1]['id'] != $c['id']) {
+                            $calRows[$curHour][$j]['span'] = $blockNumber-$j+1;
+                            $calRows[$curHour][$j]['end_time'] = $c['end_time'];
+                            $calRows[$curHour][$j]['hend'] = date('H:i', $c['end_time']);
+                        } else {
+                            $calRows[$curHour][$j]['text'] = '';
                         }
-                        
                     }
                 }
-
-            
+            }
         }
     }
 
     return $calRows;
 }
-
-?>

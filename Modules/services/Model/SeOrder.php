@@ -9,13 +9,15 @@ require_once 'Modules/clients/Model/ClClientUser.php';
  *
  * @author Sylvain Prigent
  */
-class SeOrder extends Model {
-
-    public function __construct() {
+class SeOrder extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "se_order";
     }
 
-    public function createTable() {
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `id_resp` int(11) NOT NULL,
@@ -49,34 +51,39 @@ class SeOrder extends Model {
         $this->runRequest($sql2);
     }
 
-    public function setCreatedBy($id_space, $id, $id_user){
+    public function setCreatedBy($id_space, $id, $id_user)
+    {
         $sql = "UPDATE se_order SET created_by_id=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_user, $id, $id_space));
     }
 
-    public function setModifiedBy($id_space, $id, $id_user){
+    public function setModifiedBy($id_space, $id, $id_user)
+    {
         $sql = "UPDATE se_order SET modified_by_id=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_user, $id, $id_space));
     }
 
-    public function setInvoiceID($id_space, $id, $id_invoice){
+    public function setInvoiceID($id_space, $id, $id_invoice)
+    {
         $sql = "UPDATE se_order SET id_invoice=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_invoice, $id, $id_space));
     }
 
-    public function setInvoiceIDByNum($id_space, $no_identification, $id_invoice){
+    public function setInvoiceIDByNum($id_space, $no_identification, $id_invoice)
+    {
         $sql = "UPDATE se_order SET id_invoice=? WHERE no_identification=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_invoice, $no_identification, $id_space));
     }
 
-    public function setService($id_space, $id_order, $id_service, $quantity) {
+    public function setService($id_space, $id_order, $id_service, $quantity)
+    {
         $orderHasService = $this->isOrderService($id_space, $id_order, $id_service);
         if ($orderHasService == 1) {
             $sql = "UPDATE se_order_service SET quantity=? WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
             $this->runRequest($sql, array($quantity, $id_order, $id_service, $id_space));
         } else {
             // if multiple instance of service were registered (backward fix), remove them before setting new service quantity
-            if($orderHasService > 1) {
+            if ($orderHasService > 1) {
                 $sql = 'UPDATE se_order_service SET deleted=1,deleted_at=NOW() WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0';
                 $this->runRequest($sql, array($id_order, $id_service, $id_space));
             }
@@ -85,13 +92,15 @@ class SeOrder extends Model {
         }
     }
 
-    public function isOrderService($id_space, $id_order, $id_service):int {
+    public function isOrderService($id_space, $id_order, $id_service): int
+    {
         $sql = "SELECT * FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id_order, $id_service, $id_space));
         return $req->rowCount();
     }
 
-    public function getOrderServices($id_space, $id_order) {
+    public function getOrderServices($id_space, $id_order)
+    {
         $sql = "SELECT orders.*, services.type_id as quantity_type "
                 . "FROM se_order_service as orders "
                 . "INNER JOIN se_services as services ON orders.id_service = services.id "
@@ -101,7 +110,7 @@ class SeOrder extends Model {
         $services = array();
         $quantities = array();
         $quantity_types = array();
-        foreach($data as $d){
+        foreach ($data as $d) {
             $services[] = $d["id_service"];
             $quantities[] = $d["quantity"];
             $quantity_types[] = $d["quantity_type"];
@@ -109,17 +118,19 @@ class SeOrder extends Model {
         return array("services" => $services, "quantities" => $quantities, "quantity_types" => $quantity_types);
     }
 
-    public function getOrderServiceQuantity($id_space, $id_order, $id_service){
+    public function getOrderServiceQuantity($id_space, $id_order, $id_service)
+    {
         $sql = "SELECT sum(quantity) as total FROM se_order_service WHERE id_order=? AND id_service=? AND id_space=? AND deleted=0";
 
         $req =  $this->runRequest($sql, array($id_order, $id_service, $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() == 1) {
             return $req->fetch()['total'];
         }
         return 0;
     }
 
-    public function setOrder($id, $id_space, $id_user, $id_client, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = ""){
+    public function setOrder($id, $id_space, $id_user, $id_client, $no_identification, $id_creator, $date_open, $date_last_modified = "", $date_close = "")
+    {
         $id_status = 0;
 
         if ($date_close == "") {
@@ -127,44 +138,45 @@ class SeOrder extends Model {
             $id_status = 1;
         }
 
-        if($date_open == "") {
+        if ($date_open == "") {
             $date_open = null;
         }
 
-        if($date_last_modified == "") {
+        if ($date_last_modified == "") {
             $date_last_modified = null;
         }
 
-        if ($this->isOrder($id_space, $id)){
+        if ($this->isOrder($id_space, $id)) {
             $this->updateEntry($id, $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
             return $id;
-        }
-        else{
+        } else {
             $idNew = $this->addEntry($id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close);
             $this->setCreatedBy($id_space, $idNew, $id_creator);
             return $idNew;
         }
     }
 
-    public function isOrder($id_space, $id){
+    public function isOrder($id_space, $id)
+    {
         $sql = "SELECT * FROM se_order WHERE id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
-        if ($req->rowCount() == 1){
+        if ($req->rowCount() == 1) {
             return true;
         }
         return false;
     }
 
-    public function addEntry($id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {
-        if($date_close == "") {
+    public function addEntry($id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "")
+    {
+        if ($date_close == "") {
             $date_close = null;
         }
 
-        if($date_open == "") {
+        if ($date_open == "") {
             $date_open = null;
         }
 
-        if($date_last_modified == "") {
+        if ($date_last_modified == "") {
             $date_last_modified = null;
         }
 
@@ -176,17 +188,18 @@ class SeOrder extends Model {
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateEntry($id, $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "") {      
+    public function updateEntry($id, $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified = "", $date_close = "")
+    {
         if ($date_close == "") {
             $date_close = null;
             $id_status = 1;
         }
 
-        if($date_open == "") {
+        if ($date_open == "") {
             $date_open = null;
         }
 
-        if($date_last_modified == "") {
+        if ($date_last_modified == "") {
             $date_last_modified = null;
         }
         $sql = "UPDATE se_order set id_user=?, id_resp=?, no_identification=?, id_status=?, date_open=?, date_last_modified=?, date_close=?
@@ -194,8 +207,8 @@ class SeOrder extends Model {
         $this->runRequest($sql, array($id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id, $id_space));
     }
 
-    public function entries($id_space, $sortentry = 'id') {
-
+    public function entries($id_space, $sortentry = 'id')
+    {
         $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name  as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
         $entries = $req->fetchAll();
@@ -208,7 +221,8 @@ class SeOrder extends Model {
         return $entries;
     }
 
-    public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space) {
+    public function openedForClientPeriod($dateBegin, $dateEnd, $id_client, $id_space)
+    {
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_client' => $id_client, 'id_space' => $id_space);
         $sql = "SELECT * FROM se_order WHERE id_status=1 "
                 . "AND id_resp=:id_client "
@@ -219,7 +233,8 @@ class SeOrder extends Model {
         return $req->fetchAll();
     }
 
-    public function openedEntries($id_space, $sortentry = 'id') {
+    public function openedEntries($id_space, $sortentry = 'id')
+    {
         $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_status=1 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         //$sql = "select * from se_order where deleted=0 AND id_space=? AND id_status=1 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
@@ -234,7 +249,8 @@ class SeOrder extends Model {
         return $entries;
     }
 
-    public function closedEntries($id_space, $sortentry = 'id') {
+    public function closedEntries($id_space, $sortentry = 'id')
+    {
         $sql = "SELECT se_order.*, core_users.firstname as firstname, core_users.name as name, cl_clients.name as client_name from se_order LEFT JOIN core_users ON se_order.id_user=core_users.id LEFT JOIN cl_clients ON cl_clients.id=se_order.id_resp WHERE se_order.id_status=0 AND se_order.id_space=? AND se_order.deleted=0 order by se_order." . $sortentry . " ASC;";
         // $sql = "select * from se_order where id_space=? AND deleted=0 AND id_status=0 order by " . $sortentry . " ASC;";
         $req = $this->runRequest($sql, array($id_space));
@@ -250,8 +266,8 @@ class SeOrder extends Model {
         return $entries;
     }
 
-    public function defaultEntryValues() {
-
+    public function defaultEntryValues()
+    {
         $entry["id"] = "";
         $entry["id_user"] = "";
         $entry["id_resp"] = "";
@@ -265,30 +281,35 @@ class SeOrder extends Model {
         return $entry;
     }
 
-    public function getEntry($id_space, $id) {
+    public function getEntry($id_space, $id)
+    {
         $sql = "SELECT * from se_order where id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         return $req->fetch();
     }
 
-    public function setEntryClosed($id_space, $id) {
+    public function setEntryClosed($id_space, $id)
+    {
         $sql = "UPDATE se_order set id_status=0, date_close=?
                 where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(date("Y-m-d", time()), $id, $id_space));
     }
 
-    public function reopenEntry($id_space, $no_identification){
+    public function reopenEntry($id_space, $no_identification)
+    {
         $sql = "UPDATE se_order set id_status=1, date_close=null
                 where no_identification=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($no_identification, $id_space));
     }
 
-    public function openedOrdersItems($id_space, $id_orders) {
+    public function openedOrdersItems($id_space, $id_orders)
+    {
         $sql = "SELECT * FROM se_order_service WHERE id_order IN (".implode(',', $id_orders).") AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function openedItemsForClient($id_space, $id_client){
+    public function openedItemsForClient($id_space, $id_client)
+    {
         //$userList = " SELECT id_user FROM cl_j_client_user WHERE id_client=? AND id_space=? AND deleted=0 ";
         //$orderList = " SELECT id FROM se_order WHERE id_user IN (".$userList.") AND id_status=1 AND id_space=? AND deleted=0";
         $orderList = " SELECT id FROM se_order WHERE id_resp=? AND id_status=1 AND id_space=? AND deleted=0";
@@ -297,27 +318,28 @@ class SeOrder extends Model {
         //return $this->runRequest($sql, array($id_client, $id_space, $id_space))->fetchAll();
     }
 
-    public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd){
+    public function getOrdersOpenedPeriod($id_space, $periodStart, $periodEnd)
+    {
         $sql = "SELECT * FROM se_order WHERE deleted=0 AND id_space = ? AND date_open >= ? AND date_open <= ?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
-        for($i = 0 ; $i < count($orders) ; $i++){
-            if ($orders[$i]["id_resp"] == 0){
+        for ($i = 0 ; $i < count($orders) ; $i++) {
+            if ($orders[$i]["id_resp"] == 0) {
                 $sql = "SELECT id_client FROM cl_j_client_user WHERE id_user=? AND id_space=? AND deleted=0";
                 $res = $this->runRequest($sql, array($orders[$i]["id_user"], $id_space));
-                if($res->rowCount() == 1) {
+                if ($res->rowCount() == 1) {
                     $resp_id = $res->fetch();
                     $orders[$i]["id_resp"] = $resp_id[0];
                 } else {
                     Configuration::getLogger()->error('Client is unknown and cannot be guessed!', ['user' => $orders[$i]["id_user"], 'order' => $orders[$i]['id']]);
-
                 }
             }
         }
         return $orders;
     }
 
-    public function getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd){
+    public function getPeriodeServicesBalancesOrders($id_space, $periodStart, $periodEnd)
+    {
         $sql = "select * from se_order where deleted=0 AND id_space=? AND date_open>=? OR date_open=?";
         $req = $this->runRequest($sql, array($id_space, $periodStart, $periodEnd));
         $orders = $req->fetchAll();
@@ -330,9 +352,9 @@ class SeOrder extends Model {
         $filteredOrders = [];
         for ($i = 0; $i < count($orders); $i++) {
             $order = $orders[$i];
-            if( !isset($order["id_resp"]) || $order["id_resp"] == 0 ){
+            if (!isset($order["id_resp"]) || $order["id_resp"] == 0) {
                 $resps = $modelClientUser->getUserClientAccounts($order["id_user"], $id_space);
-                if($resps && count($resps) == 1) {
+                if ($resps && count($resps) == 1) {
                     $order["id_resp"] = $resps[0]['id'];
                 } else {
                     Configuration::getLogger()->error('Client is unknown and cannot be guessed!', ['user' => $orders[$i]["id_user"], 'order' => $orders[$i]['id']]);
@@ -352,12 +374,12 @@ class SeOrder extends Model {
         return array("items" => $items, "orders" => $filteredOrders);
     }
 
-    protected function calculateOrderTotal($id_space, $itemsSummary, $LABpricingid){
-
+    protected function calculateOrderTotal($id_space, $itemsSummary, $LABpricingid)
+    {
         $itemPricing = new SePrice();
         $totalHT = 0;
-        foreach($itemsSummary as $item){
-            if($item["quantity"] > 0){
+        foreach ($itemsSummary as $item) {
+            if ($item["quantity"] > 0) {
                 $unitaryPrice = $itemPricing->getPrice($id_space, $item["id_service"], $LABpricingid);
                 $totalHT += (float) $item["quantity"] * (float) $unitaryPrice;
             }
@@ -365,7 +387,8 @@ class SeOrder extends Model {
         return $totalHT;
     }
 
-    public function getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd){
+    public function getPeriodeBilledServicesBalancesOrders($id_space, $periodStart, $periodEnd)
+    {
         // get the projects
         $sql1 = "SELECT * FROM se_order WHERE deleted=0 AND id_space=? AND id_invoice > 0 AND date_open >= ? AND date_open <= ?";
         $req1 = $this->runRequest($sql1, array($id_space, $periodStart, $periodEnd));
@@ -377,10 +400,10 @@ class SeOrder extends Model {
         $filteredOrders = [];
         for ($i = 0; $i < count($orders); $i++) {
             $order = $orders[$i];
-            
-            if( !isset($order["id_resp"]) || $order["id_resp"] == 0 ){
+
+            if (!isset($order["id_resp"]) || $order["id_resp"] == 0) {
                 $resps = $modelUserClient->getUserClientAccounts($orders[$i]["id_user"], $id_space);
-                if($resps && count($resps) == 1) {
+                if ($resps && count($resps) == 1) {
                     $order["id_resp"] = $resps[0]['id'];
                 } else {
                     Configuration::getLogger()->error('Client is unknown and cannot be guessed!', ['user' => $orders[$i]["id_user"], 'order' => $orders[$i]['id']]);
@@ -403,7 +426,8 @@ class SeOrder extends Model {
      * Delete a unit
      * @param number $id Unit ID
      */
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         $sql = "UPDATE se_order SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
@@ -413,9 +437,9 @@ class SeOrder extends Model {
      * @param number $id_space
      * @param number $id se_order_service
      */
-    public function deleteOrderService($id_space, $id_service, $id_order) {
+    public function deleteOrderService($id_space, $id_service, $id_order)
+    {
         $sql = "UPDATE se_order_service SET deleted=1, deleted_at=NOW() WHERE id_service=? AND id_order=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($id_service, $id_order, $id_space));
     }
-
 }

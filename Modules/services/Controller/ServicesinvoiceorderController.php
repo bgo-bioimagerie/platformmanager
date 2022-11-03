@@ -28,12 +28,13 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
  * @author sprigent
  * Controller for the home page
  */
-class ServicesinvoiceorderController extends InvoiceAbstractController {
-
+class ServicesinvoiceorderController extends InvoiceAbstractController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $_SESSION["openedNav"] = "invoices";
     }
@@ -42,8 +43,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -61,7 +62,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $formUnit->getHtml($lang)));
     }
 
-    public function editAction($id_space, $id_invoice, $pdf = 0) {
+    public function editAction($id_space, $id_invoice, $pdf = 0)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $modelInvoice = new InInvoice();
@@ -100,7 +102,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
 
             $_SESSION['flash'] = InvoicesTranslator::InvoiceHasBeenSaved($lang);
             $_SESSION['flashClass'] = 'success';
-            
+
             Events::send([
                 "action" => Events::ACTION_INVOICE_EDIT,
                 "space" => ["id" => intval($id_space)],
@@ -115,14 +117,14 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             "invoice" => $invoice), "editformAction");
     }
 
-    public function deleteAction($id_space, $id_invoice) {
-
+    public function deleteAction($id_space, $id_invoice)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         // get orders
         $modelInvoiceItem = new InInvoiceItem();
         $id_items = $modelInvoiceItem->getInvoiceItems($id_space, $id_invoice);
-        $details = $this->unparseDetails($id_space ,$id_items);
+        $details = $this->unparseDetails($id_space, $id_items);
         $modelOrder = new SeOrder();
 
         // re-open orders and remove invoice number
@@ -132,7 +134,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         }
     }
 
-    protected function createByUnitForm($id_space, $lang) {
+    protected function createByUnitForm($id_space, $lang)
+    {
         $form = new Form($this->request, "invoicebyunitform");
         $form->setTitle(ServicesTranslator::Invoice_by_client($lang));
 
@@ -144,8 +147,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $clients = $modelClient->getAll($id_space);
         $clientsNames = [];
         $clientsIds = [];
-        
-        foreach($clients as $client) {
+
+        foreach ($clients as $client) {
             array_push($clientsNames, $client['name']);
             array_push($clientsIds, $client['id']);
         }
@@ -159,7 +162,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $form;
     }
 
-    private function generateClientBill($beginPeriod, $endPeriod, $id_client, $id_space) {
+    private function generateClientBill($beginPeriod, $endPeriod, $id_client, $id_space)
+    {
         $cv = new CoreVirtual();
         $rid = $cv->newRequest($id_space, "invoices", "orders[$id_client]:$beginPeriod => $endPeriod");
         Events::send([
@@ -174,8 +178,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         ]);
     }
 
-    protected function unparseContent($id_space ,$id_item) {
-
+    protected function unparseContent($id_space, $id_item)
+    {
         $modelServices = new SeService();
         $modelInvoiceItem = new InInvoiceItem();
         $item = $modelInvoiceItem->getItem($id_space, $id_item);
@@ -191,8 +195,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $contentList;
     }
 
-    public function editForm($id_item, $id_space, $id_invoice, $lang) {
-
+    public function editForm($id_item, $id_space, $id_invoice, $lang)
+    {
         $itemIds = array();
         $itemServices = array();
         $itemQuantities = array();
@@ -223,7 +227,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $modelServices = new SeService();
         $services = $modelServices->getForList($id_space);
         foreach ($itemServices as $s) {
-            if( ! in_array($s, $services["ids"])) {
+            if (! in_array($s, $services["ids"])) {
                 $services["ids"][] = $s;
                 $services["names"][] = '[!] '. $modelServices->getName($id_space, $s, true);
             }
@@ -243,7 +247,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $form->setFormAdd($formAdd);
 
         $modelInvoice = new InInvoice();
-        $discount = $modelInvoice->getDiscount($id_space ,$id_invoice);
+        $discount = $modelInvoice->getDiscount($id_space, $id_invoice);
         $form->addText("discount", ServicesTranslator::Discount($lang), false, $discount);
 
         $total = (1-floatval($discount)/100)*$total;
@@ -252,8 +256,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $form;
     }
 
-    protected function unparseDetails($id_space, $id_items) {
-
+    protected function unparseDetails($id_space, $id_items)
+    {
         $details = array();
         $modelItems = new InInvoiceItem();
         foreach ($id_items as $item) {
@@ -271,8 +275,8 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         return $details;
     }
 
-    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang) {
-
+    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
+    {
         $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
                     <tr>
                         <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
@@ -297,7 +301,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $total += floatval($d[1]) * floatval($d[2]);
         }
         $discount = floatval($invoice["discount"]);
-        if($discount>0){
+        if ($discount>0) {
             $total = (1-$discount/100)*$total;
             $table .= "<tr>";
             $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
@@ -307,7 +311,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
             $table .= "</tr>";
         }
         $table .= "</table>";
-        
+
         $modelClient = new ClClient();
         $unit = "";
         $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
@@ -315,5 +319,4 @@ class ServicesinvoiceorderController extends InvoiceAbstractController {
         $resp = $clientInfos["contact_name"];
         $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
-
 }

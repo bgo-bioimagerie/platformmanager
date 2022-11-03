@@ -9,16 +9,17 @@ require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class StatisticsconfigController extends CoresecureController {
-
+class StatisticsconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
@@ -31,8 +32,8 @@ class StatisticsconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
@@ -63,7 +64,8 @@ class StatisticsconfigController extends CoresecureController {
     }
 
 
-    public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
+    public function periodProjectForm($modelCoreConfig, $id_space, $lang)
+    {
         $projectperiodbegin = $modelCoreConfig->getParamSpace("statisticsperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("statisticsperiodend", $id_space);
 
@@ -77,5 +79,4 @@ class StatisticsconfigController extends CoresecureController {
 
         return $form;
     }
-
 }

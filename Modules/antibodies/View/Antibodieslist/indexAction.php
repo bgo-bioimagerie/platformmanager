@@ -34,8 +34,8 @@
                     <div class="dropdown-menu col-12" aria-labelledby="antibodiesmenu" style="background-color: transparent; border: none; box-shadow:none;">
                         <?php
                         $c = new AntibodiesController(new Request([], false));
-                        echo $c->dropDownMenu($id_space);
-                        ?>
+echo $c->dropDownMenu($id_space);
+?>
                     </div>
                 </div>
             </div>
@@ -55,137 +55,137 @@
             if ($letter == "All") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/All';"><?php echo AntibodiesTranslator::All($lang) ?></button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "A") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
+if ($letter == "A") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/A';">A</button>
             <button class="btn btn-outline-dark <?php
-                    if ($letter == "B") {
-                        echo "active";
-                    }
-                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
+        if ($letter == "B") {
+            echo "active";
+        }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/B';">B</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "C") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/C';">C</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "D") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
+if ($letter == "D") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/D';">D</button>
             <button class="btn btn-outline-dark <?php
-                    if ($letter == "E") {
-                        echo "active";
-                    }
-                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
+        if ($letter == "E") {
+            echo "active";
+        }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/E';">E</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "F") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/F';">F</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "G") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
+if ($letter == "G") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/G';">G</button>
             <button class="btn btn-outline-dark <?php
-                    if ($letter == "H") {
-                        echo "active";
-                    }
-                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
+        if ($letter == "H") {
+            echo "active";
+        }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/H';">H</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "I") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/I';">I</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "J") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/J';">J</button>
+if ($letter == "J") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/J';">J</button>
             <button class="btn btn-outline-dark <?php
-                    if ($letter == "K") {
-                        echo "active";
-                    }
-                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/K';">K</button>
+        if ($letter == "K") {
+            echo "active";
+        }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/K';">K</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "L") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/L';">L</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "M") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
+if ($letter == "M") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/M';">M</button>
             <button class="btn btn-outline-dark <?php
-                    if ($letter == "N") {
-                        echo "active";
-                    }
-                    ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
+        if ($letter == "N") {
+            echo "active";
+        }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/N';">N</button>
             <button class="btn btn-outline-dark <?php
             if ($letter == "O") {
                 echo "active";
             }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/O';">O</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "P") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
+if ($letter == "P") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/P';">P</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "Q") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
+if ($letter == "Q") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Q';">Q</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "R") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
+if ($letter == "R") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/R';">R</button>
             <button class="btn btn-outline-dark <?php
-            if ($letter == "S") {
-                echo "active";
-            }
-            ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
+if ($letter == "S") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/S';">S</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "T") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
+    if ($letter == "T") {
+        echo "active";
+    }
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/T';">T</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "U") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
+if ($letter == "U") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/U';">U</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "V") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
+if ($letter == "V") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/V';">V</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "W") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
+if ($letter == "W") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/W';">W</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "X") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
+if ($letter == "X") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/X';">X</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "Y") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
+if ($letter == "Y") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Y';">Y</button>
             <button class="btn btn-outline-dark <?php
-                if ($letter == "Z") {
-                    echo "active";
-                }
-                ?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
+if ($letter == "Z") {
+    echo "active";
+}
+?>" onclick="location.href = 'antibodies/<?php echo $id_space ?>/Z';">Z</button>
         </div>
 
     </div>
@@ -206,31 +206,31 @@
                     method="get">
 
                 <?php
-                if (!isset($searchName)) {
-                    $searchName = "";
-                }
-                if (!isset($searchNoH2P2)) {
-                    $searchNoH2P2 = "";
-                }
-                if (!isset($searchSource)) {
-                    $searchSource = "";
-                }
-                if (!isset($searchCible)) {
-                    $searchCible = "";
-                }
-                if (!isset($searchValide)) {
-                    $searchValide = "";
-                }
-                if (!isset($searchResp)) {
-                    $searchResp = "";
-                }
-                if (!isset($searchColumn)) {
-                    $searchColumn = "";
-                }
-                if (!isset($searchCom)) {
-                    $searchCom = "";
-                }
-                ?>
+if (!isset($searchName)) {
+    $searchName = "";
+}
+if (!isset($searchNoH2P2)) {
+    $searchNoH2P2 = "";
+}
+if (!isset($searchSource)) {
+    $searchSource = "";
+}
+if (!isset($searchCible)) {
+    $searchCible = "";
+}
+if (!isset($searchValide)) {
+    $searchValide = "";
+}
+if (!isset($searchResp)) {
+    $searchResp = "";
+}
+if (!isset($searchColumn)) {
+    $searchColumn = "";
+}
+if (!isset($searchCom)) {
+    $searchCom = "";
+}
+?>
                     <div class="col-1">
                         <label class="form-label">Recherche Avancée:</label>
                     </div>
@@ -265,11 +265,13 @@
                             <div class="col-2">
                                 <select class="form-select" id="searchValide" name="searchValide">
                                     <option value="0" <?php
-                                    if ($searchColumn == "0") {
-                                        echo $selected;
-                                    }?> >  </option>
+                    if ($searchColumn == "0") {
+                        echo $selected;
+                    }?> >  </option>
                                     <?php foreach ($status as $s) { ?>
-                                    <option value="<?php echo $s['id'] ?>"  <?php if ($searchValide == $s['id']) { echo "selected"; } ?> ><?php echo $s['nom'] ?></option>
+                                    <option value="<?php echo $s['id'] ?>"  <?php if ($searchValide == $s['id']) {
+                                        echo "selected";
+                                    } ?> ><?php echo $s['nom'] ?></option>
                                     <?php } ?>
                                 </select>
                             </div>
@@ -343,11 +345,11 @@
                         <tr>
                                 <?php
                                 $anticorpsId = $this->clean($anticorps['id']);
-                                $isCatalogue = "";
-                                if ($anticorps['export_catalog'] == 1) {
-                                    $isCatalogue = " (c)";
-                                }
-                                ?>
+    $isCatalogue = "";
+    if ($anticorps['export_catalog'] == 1) {
+        $isCatalogue = " (c)";
+    }
+    ?>
 
                             <td headers="antibody number"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['no_h2p2']); ?></a></td>
                             <td headers="antibody name"  class="text-left"><a href="anticorpsedit/<?php echo $id_space ?>/<?php echo $anticorpsId ?>"><?php echo $this->clean($anticorps ['nom']); ?></a></td>
@@ -364,229 +366,227 @@
 
                             <!--  PROTOCOLE -->
                             <td headers="protocol proto"  class="text-left" style="background-color: #ffeeee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-
-                                    if ($tissus[$i]['ref_protocol'] == "0") {
-                                        $val .= "<p>Manuel</p>";
-                                    } else {
-                                        $val .= "<p><a href=\"protocolsedit/".$id_space. "/". $tissus[$i]['id_protocol'] . "\">"
-                                                . $tissus[$i]['ref_protocol'] . "</a></p>";
-                                    }
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        if ($tissus[$i]['ref_protocol'] == "0") {
+            $val .= "<p>Manuel</p>";
+        } else {
+            $val .= "<p><a href=\"protocolsedit/".$id_space. "/". $tissus[$i]['id_protocol'] . "\">"
+                    . $tissus[$i]['ref_protocol'] . "</a></p>";
+        }
+    }
+    echo $val;
+    ?></td>
 
 
                             <td headers="protocol aci"  class="text-left" style="background-color: #ffeeee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>"
-                                            . ($tissus[$i]['dilution'] ? $tissus[$i]['dilution'] : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>"
+                . ($tissus[$i]['dilution'] ? $tissus[$i]['dilution'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
 
                             <!-- TISSUS -->
                             <td headers="tissues image" class="text-left" style="background-color: #eeffee;">
 
                                 <?php
-                                foreach ($anticorps['tissus'] as $tissus) {
-                                    $imageFile = "data/antibodies/" . $tissus["image_url"];
-                                    $printImage = true;
-                                    if (!file_exists($imageFile) || is_dir($imageFile)) {
-                                        $printImage = false;
-                                        //$imageFile = "Modules/antibodies/Theme/images_icon.png";
-                                    } else {
-                                        list($width, $height, $type, $attr) = getimagesize($imageFile);
-                                    }
-                                    if ($printImage) {
-                                        ?>
+    foreach ($anticorps['tissus'] as $tissus) {
+        $imageFile = "data/antibodies/" . $tissus["image_url"];
+        $printImage = true;
+        if (!file_exists($imageFile) || is_dir($imageFile)) {
+            $printImage = false;
+        //$imageFile = "Modules/antibodies/Theme/images_icon.png";
+        } else {
+            list($width, $height, $type, $attr) = getimagesize($imageFile);
+        }
+        if ($printImage) {
+            ?>
                                             <img onclick="viewImage('<?php echo $tissus['id'] ?>','<?php echo $imageFile ?>')" id="imgview_<?php echo $tissus["id"] ?>" src="<?php echo $imageFile ?>" class="img-fluid" alt="photo" />
 
                                         <?php
-                                    } else {
-                                        echo "<p> --- </p>";
-                                    }
-                                }
-                                ?>
+        } else {
+            echo "<p> --- </p>";
+        }
+    }
+    ?>
                             </td>
                             
                             <td headers="tissues comment"  class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>"
-                                            . ($tissus[$i]['comment'] ? $tissus[$i]['comment'] : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>"
+                . ($tissus[$i]['comment'] ? $tissus[$i]['comment'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
                             <td headers="tissues species"  class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>" . ($tissus[$i]['espece'] ? $tissus[$i]['espece'] : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>" . ($tissus[$i]['espece'] ? $tissus[$i]['espece'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
                             <td headers="tissues organ"  class="text-left" style="background-color: #eeffee;"><?php
                             $tissus = $anticorps ['tissus'];
-                            $val = "";
-                            for ($i = 0; $i < count($tissus); ++$i) {
-                                $val = $val . "<p>"
-                                        . ($tissus[$i]['organe'] ? $tissus[$i]['organe'] : ' --- ')
-                                        . "</p>";
-                            }
-                            echo $val;
-                                ?></td>
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>"
+                . ($tissus[$i]['organe'] ? $tissus[$i]['organe'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
                             <td headers="tissues status"  class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-
-                                    $statusTxt = "";
-                                    $background = "#ffffff";
-                                    foreach ($status as $stat) {
-                                        if ($tissus[$i]['status'] == $stat["id"]) {
-                                            $statusTxt = $stat['nom'];
-                                            $background = $stat["color"];
-                                        }
-                                    }
-                                    $val = $val . "<p style=\"background-color: #" . $background . "\">"
-                                            . ($statusTxt ? $statusTxt : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $statusTxt = "";
+        $background = "#ffffff";
+        foreach ($status as $stat) {
+            if ($tissus[$i]['status'] == $stat["id"]) {
+                $statusTxt = $stat['nom'];
+                $background = $stat["color"];
+            }
+        }
+        $val = $val . "<p style=\"background-color: #" . $background . "\">"
+                . ($statusTxt ? $statusTxt : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
 
                             <td headers="tissues refblock"  class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>"
-                                            . ($tissus[$i]['ref_bloc'] ? $tissus[$i]['ref_bloc'] : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>"
+                . ($tissus[$i]['ref_bloc'] ? $tissus[$i]['ref_bloc'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
                             <td headers="tissues sample"  class="text-left" style="background-color: #eeffee;"><?php
-                                $tissus = $anticorps ['tissus'];
-                                $val = "";
-                                for ($i = 0; $i < count($tissus); ++$i) {
-                                    $val = $val . "<p>"
-                                            . ($tissus[$i]['prelevement'] ? $tissus[$i]['prelevement'] : ' --- ')
-                                            . "</p>";
-                                }
-                                echo $val;
-                                ?></td>
+    $tissus = $anticorps ['tissus'];
+    $val = "";
+    for ($i = 0; $i < count($tissus); ++$i) {
+        $val = $val . "<p>"
+                . ($tissus[$i]['prelevement'] ? $tissus[$i]['prelevement'] : ' --- ')
+                . "</p>";
+    }
+    echo $val;
+    ?></td>
 
 
 
 
                             <td headers="owner name"  class="text-left" style="width:5em; background-color: #eeeeff;"><?php
-                                $owner = $anticorps ['proprietaire'];
-                                foreach ($owner as $ow) {
-                                    $name = $ow['name'] . " " . $ow['firstname'];
-                                    $dispo = $ow['disponible'];
-                                    if ($dispo == 1) {
-                                        $dispo = "disponible";
-                                    } else if ($dispo == 2) {
-                                        $dispo = "épuisé";
-                                    } else if ($dispo == 3) {
-                                        $dispo = "récupéré par équipe";
-                                    }
-                                    $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
-                                    $txt = $this->clean($name);
+    $owner = $anticorps ['proprietaire'];
+    foreach ($owner as $ow) {
+        $name = $ow['name'] . " " . $ow['firstname'];
+        $dispo = $ow['disponible'];
+        if ($dispo == 1) {
+            $dispo = "disponible";
+        } elseif ($dispo == 2) {
+            $dispo = "épuisé";
+        } elseif ($dispo == 3) {
+            $dispo = "récupéré par équipe";
+        }
+        $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
+        $txt = $this->clean($name);
 
-                                    if ($this->clean($dispo) == "épuisé") {
-                                        echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
-                                    } else {
-                                        echo '<p>' . $txt . '</p>';
-                                    }
-                                }
-                                ?>
+        if ($this->clean($dispo) == "épuisé") {
+            echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
+        } else {
+            echo '<p>' . $txt . '</p>';
+        }
+    }
+    ?>
                             </td>
 
                             <td headers="owner available"  class="text-left" style="background-color: #eeeeff;"><?php
-                                $owner = $anticorps ['proprietaire'];
-                                foreach ($owner as $ow) {
-                                    $dispo = $ow['disponible'];
-                                    if ($dispo == 1) {
-                                        $dispo = "disponible";
-                                    } else if ($dispo == 2) {
-                                        $dispo = "épuisé";
-                                    } else if ($dispo == 3) {
-                                        $dispo = "récupéré par équipe";
-                                    }
-                                    $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
-                                    $txt = $this->clean($dispo);
+    $owner = $anticorps ['proprietaire'];
+    foreach ($owner as $ow) {
+        $dispo = $ow['disponible'];
+        if ($dispo == 1) {
+            $dispo = "disponible";
+        } elseif ($dispo == 2) {
+            $dispo = "épuisé";
+        } elseif ($dispo == 3) {
+            $dispo = "récupéré par équipe";
+        }
+        $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
+        $txt = $this->clean($dispo);
 
-                                    if ($this->clean($dispo) == "épuisé") {
-                                        echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
-                                    } else {
-                                        echo '<p>' . $txt . '</p>';
-                                    }
-                                }
-                                ?>
+        if ($this->clean($dispo) == "épuisé") {
+            echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
+        } else {
+            echo '<p>' . $txt . '</p>';
+        }
+    }
+    ?>
                             </td>
 
                             <td headers="owner date"  class="text-left" style="background-color: #eeeeff;"><?php
-                                $owner = $anticorps ['proprietaire'];
-                                foreach ($owner as $ow) {
-                                    $name = $ow['name'] . " " . $ow['firstname'];
-                                    $dispo = $ow['disponible'];
-                                    if ($dispo == 1) {
-                                        $dispo = "disponible";
-                                    } else if ($dispo == 2) {
-                                        $dispo = "épuisé";
-                                    } else if ($dispo == 3) {
-                                        $dispo = "récupéré par équipe";
-                                    }
-                                    $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
-                                    $txt = $this->clean($date_recept);
+    $owner = $anticorps ['proprietaire'];
+    foreach ($owner as $ow) {
+        $name = $ow['name'] . " " . $ow['firstname'];
+        $dispo = $ow['disponible'];
+        if ($dispo == 1) {
+            $dispo = "disponible";
+        } elseif ($dispo == 2) {
+            $dispo = "épuisé";
+        } elseif ($dispo == 3) {
+            $dispo = "récupéré par équipe";
+        }
+        $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
+        $txt = $this->clean($date_recept);
 
-                                    if ($this->clean($dispo) == "épuisé") {
-                                        echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
-                                    } else {
-                                        echo '<p>' . $txt . '</p>';
-                                    }
-                                }
-                                ?>
+        if ($this->clean($dispo) == "épuisé") {
+            echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
+        } else {
+            echo '<p>' . $txt . '</p>';
+        }
+    }
+    ?>
                             </td>
 
                             <td headers="owner case"  class="text-left" style="background-color: #eeeeff;"><?php
-                                $owner = $anticorps ['proprietaire'];
-                                foreach ($owner as $ow) {
-                                    $name = $ow['name'] . " " . $ow['firstname'];
-                                    $dispo = $ow['disponible'];
-                                    if ($dispo == 1) {
-                                        $dispo = "disponible";
-                                    } else if ($dispo == 2) {
-                                        $dispo = "épuisé";
-                                    } else if ($dispo == 3) {
-                                        $dispo = "récupéré par équipe";
-                                    }
-                                    $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
-                                    $txt = $this->clean($ow['no_dossier']);
+    $owner = $anticorps ['proprietaire'];
+    foreach ($owner as $ow) {
+        $name = $ow['name'] . " " . $ow['firstname'];
+        $dispo = $ow['disponible'];
+        if ($dispo == 1) {
+            $dispo = "disponible";
+        } elseif ($dispo == 2) {
+            $dispo = "épuisé";
+        } elseif ($dispo == 3) {
+            $dispo = "récupéré par équipe";
+        }
+        $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
+        $txt = $this->clean($ow['no_dossier']);
 
-                                    if ($this->clean($dispo) == "épuisé") {
-                                        echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
-                                    } else {
-                                        echo '<p>' . $txt . '</p>';
-                                    }
-                                }
-                                ?>
+        if ($this->clean($dispo) == "épuisé") {
+            echo '<p style="background-color:#ffaaaa; color:#fff">' . $txt . '</p>';
+        } else {
+            echo '<p>' . $txt . '</p>';
+        }
+    }
+    ?>
                             </td>
                         </tr>
 <?php endforeach; ?>

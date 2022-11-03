@@ -17,7 +17,8 @@ $GLOBALS['_ti_base'] = null;
 $GLOBALS['_ti_stack'] = null;
 
 
-function emptyblock($name) {
+function emptyblock($name)
+{
     $trace = _ti_callingTrace();
     _ti_init($trace);
     _ti_insertBlock(
@@ -26,7 +27,8 @@ function emptyblock($name) {
 }
 
 
-function startblock($name, $filters=null) {
+function startblock($name, $filters=null)
+{
     $trace = _ti_callingTrace();
     _ti_init($trace);
     $stack =& $GLOBALS['_ti_stack'];
@@ -34,7 +36,8 @@ function startblock($name, $filters=null) {
 }
 
 
-function endblock($name=null) {
+function endblock($name=null)
+{
     $trace = _ti_callingTrace();
     _ti_init($trace);
     $stack =& $GLOBALS['_ti_stack'];
@@ -44,7 +47,7 @@ function endblock($name=null) {
             _ti_warning("startblock('{$block['name']}') does not match endblock('$name')", $trace);
         }
         _ti_insertBlock($block);
-    }else{
+    } else {
         _ti_warning(
             $name ? "orphan endblock('$name')" : "orphan endblock()",
             $trace
@@ -53,10 +56,11 @@ function endblock($name=null) {
 }
 
 
-function superblock() {
+function superblock()
+{
     if ($GLOBALS['_ti_stack']) {
         echo getsuperblock();
-    }else{
+    } else {
         _ti_warning(
             "superblock() call must be within a block",
             _ti_callingTrace()
@@ -65,7 +69,8 @@ function superblock() {
 }
 
 
-function getsuperblock() {
+function getsuperblock()
+{
     $stack =& $GLOBALS['_ti_stack'];
     if ($stack) {
         $hash =& $GLOBALS['_ti_hash'];
@@ -78,7 +83,7 @@ function getsuperblock() {
                 )
             );
         }
-    }else{
+    } else {
         _ti_warning(
             "getsuperblock() call must be within a block",
             _ti_callingTrace()
@@ -88,7 +93,8 @@ function getsuperblock() {
 }
 
 
-function flushblocks() {
+function flushblocks()
+{
     $base =& $GLOBALS['_ti_base'];
     if ($base) {
         $stack =& $GLOBALS['_ti_stack'];
@@ -109,12 +115,14 @@ function flushblocks() {
 }
 
 
-function blockbase() {
+function blockbase()
+{
     _ti_init(_ti_callingTrace());
 }
 
 
-function _ti_init($trace) {
+function _ti_init($trace)
+{
     $base =& $GLOBALS['_ti_base'];
     if ($base && !_ti_inBaseOrChild($trace)) {
         flushblocks(); // will set $base to null
@@ -137,13 +145,14 @@ function _ti_init($trace) {
 }
 
 
-function _ti_newBlock($name, $filters, $trace) {
+function _ti_newBlock($name, $filters, $trace)
+{
     $base =& $GLOBALS['_ti_base'];
     $stack =& $GLOBALS['_ti_stack'];
     while ($block = end($stack)) {
         if (_ti_isSameFile($block['trace'], $trace)) {
             break;
-        }else{
+        } else {
             array_pop($stack);
             _ti_insertBlock($block);
             _ti_warning(
@@ -159,15 +168,14 @@ function _ti_newBlock($name, $filters, $trace) {
     if ($filters) {
         if (is_string($filters)) {
             $filters = preg_split('/\s*[,|]\s*/', trim($filters));
-        }
-        else if (!is_array($filters)) {
+        } elseif (!is_array($filters)) {
             $filters = array($filters);
         }
         foreach ($filters as $i => $f) {
             if ($f && !is_callable($f)) {
                 _ti_warning(
                     is_array($f) ?
-                        "filter " . implode('::', $f) . " is not defined":
+                        "filter " . implode('::', $f) . " is not defined" :
                         "filter '$f' is not defined", // TODO: better messaging for methods
                     $trace
                 );
@@ -185,8 +193,8 @@ function _ti_newBlock($name, $filters, $trace) {
 }
 
 
-function _ti_insertBlock($block) { // at this point, $block is done being modified
-    $base =& $GLOBALS['_ti_base'];
+function _ti_insertBlock($block) // at this point, $block is done being modified
+{$base =& $GLOBALS['_ti_base'];
     $stack =& $GLOBALS['_ti_stack'];
     $hash =& $GLOBALS['_ti_hash'];
     $end =& $GLOBALS['_ti_end'];
@@ -201,20 +209,19 @@ function _ti_insertBlock($block) { // at this point, $block is done being modifi
         if ($stack) {
             // nested block
             $stack[count($stack)-1]['children'][] =& $block_anchor;
-        }else{
+        } else {
             // top-level block in base
             $base['children'][] =& $block_anchor;
         }
         $hash[$name] =& $block_anchor; // same reference as children array
-    }
-    else if (isset($hash[$name])) {
+    } elseif (isset($hash[$name])) {
         if (_ti_isSameFile($hash[$name]['block']['trace'], $block['trace'])) {
             _ti_warning(
                 "cannot define another block called '$name'",
                 _ti_callingTrace(),
                 $block['trace']
             );
-        }else{
+        } else {
             // top-level block in a child template; override the base's block
             $hash[$name]['block'] = $block;
         }
@@ -222,7 +229,8 @@ function _ti_insertBlock($block) { // at this point, $block is done being modifi
 }
 
 
-function _ti_bufferCallback($buffer) {
+function _ti_bufferCallback($buffer)
+{
     $base =& $GLOBALS['_ti_base'];
     $stack =& $GLOBALS['_ti_stack'];
     $end =& $GLOBALS['_ti_end'];
@@ -252,13 +260,14 @@ function _ti_bufferCallback($buffer) {
         // for error messages
         $parts[] = $after;
         return implode($parts);
-    }else{
+    } else {
         return '';
     }
 }
 
 
-function _ti_compile($block, $buffer) {
+function _ti_compile($block, $buffer)
+{
     $parts = array();
     $previ = $block['start'];
     foreach ($block['children'] as $child_anchor) {
@@ -286,12 +295,13 @@ function _ti_compile($block, $buffer) {
 }
 
 
-function _ti_warning($message, $trace, $warning_trace=null) {
+function _ti_warning($message, $trace, $warning_trace=null)
+{
     if (error_reporting() & E_USER_WARNING) {
         if (defined('STDIN')) {
             // from command line
             $format = "\nWarning: %s in %s on line %d\n";
-        }else{
+        } else {
             // from browser
             $format = "<br />\n<strong>Warning</strong>:  %s in <strong>%s</strong> on line <strong>%d</strong><br />\n";
         }
@@ -301,7 +311,7 @@ function _ti_warning($message, $trace, $warning_trace=null) {
         $s = sprintf($format, $message, $warning_trace[0]['file'], $warning_trace[0]['line']);
         if (!$GLOBALS['_ti_base'] || _ti_inBase($trace)) {
             echo $s;
-        }else{
+        } else {
             $GLOBALS['_ti_after'] .= $s;
         }
     }
@@ -312,7 +322,8 @@ function _ti_warning($message, $trace, $warning_trace=null) {
 ------------------------------------------------------------------------*/
 
 
-function _ti_callingTrace() {
+function _ti_callingTrace()
+{
     $trace = debug_backtrace();
     foreach ($trace as $i => $location) {
         if ($location['file'] !== __FILE__) {
@@ -322,12 +333,14 @@ function _ti_callingTrace() {
 }
 
 
-function _ti_inBase($trace) {
+function _ti_inBase($trace)
+{
     return _ti_isSameFile($trace, $GLOBALS['_ti_base']['trace']);
 }
 
 
-function _ti_inBaseOrChild($trace) {
+function _ti_inBaseOrChild($trace)
+{
     $base_trace = $GLOBALS['_ti_base']['trace'];
     return
         $trace && $base_trace &&
@@ -336,7 +349,8 @@ function _ti_inBaseOrChild($trace) {
 }
 
 
-function _ti_isSameFile($trace1, $trace2) {
+function _ti_isSameFile($trace1, $trace2)
+{
     return
         $trace1 && $trace2 &&
         $trace1[0]['file'] === $trace2[0]['file'] &&
@@ -344,8 +358,8 @@ function _ti_isSameFile($trace1, $trace2) {
 }
 
 
-function _ti_isSubtrace($trace1, $trace2) { // is trace1 a subtrace of trace2
-    $len1 = count($trace1);
+function _ti_isSubtrace($trace1, $trace2) // is trace1 a subtrace of trace2
+{$len1 = count($trace1);
     $len2 = count($trace2);
     if ($len1 > $len2) {
         return false;
@@ -357,6 +371,3 @@ function _ti_isSubtrace($trace1, $trace2) { // is trace1 a subtrace of trace2
     }
     return true;
 }
-
-
-?>

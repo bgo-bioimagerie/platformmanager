@@ -14,29 +14,30 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreSpaceAccessOptions.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ClientsconfigController extends CoresecureController {
-
+class ClientsconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -47,7 +48,7 @@ class ClientsconfigController extends CoresecureController {
             $this->menusactivation($id_space, 'clients', 'credit-card');
             $modelAccess = new CoreSpaceAccessOptions();
             $toolname = "clientsuseraccounts";
-            if ( $this->request->getParameter("clientsMenustatus") > 0 ) {
+            if ($this->request->getParameter("clientsMenustatus") > 0) {
                 $modelAccess->exists($id_space, $toolname)
                     ? $modelAccess->reactivate($id_space, $toolname)
                     : $modelAccess->set($id_space, $toolname, "clients", $toolname);
@@ -58,7 +59,7 @@ class ClientsconfigController extends CoresecureController {
             $this->redirect("clientsconfig/".$id_space);
             return;
         }
-        
+
         // menu name
         $menuNameForm = $this->menuNameForm($id_space, 'clients', $lang);
         if ($menuNameForm->check()) {
@@ -71,8 +72,7 @@ class ClientsconfigController extends CoresecureController {
         $forms = array($formMenusactivation->getHtml($lang),
                        $menuNameForm->getHtml($lang)
             );
-        
+
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
-
 }

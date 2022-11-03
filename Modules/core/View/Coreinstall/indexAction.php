@@ -8,7 +8,7 @@ Install - Platform-Manager
     
 <?php startblock('content') ?>
 
-<?php if ($message != ""){?>
+<?php if ($message != "") {?>
 <div class="container">
     <div class="alert alert-danger">
         <h1>Error:</h1>

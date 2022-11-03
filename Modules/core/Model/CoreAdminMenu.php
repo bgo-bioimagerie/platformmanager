@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class CoreAdminMenu extends Model {
-
+class CoreAdminMenu extends Model
+{
     /**
      * Create the menus tables
      *
      * @return PDOStatement
      */
-    public function __construct() {
-
+    public function __construct()
+    {
         $this->tableName = "core_adminmenu";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("name", "varchar(40)", "");
@@ -25,7 +25,8 @@ class CoreAdminMenu extends Model {
         $this->primaryKey = "id";
     }
 
-    public function setAdminMenu($name, $link, $icon, $status) {
+    public function setAdminMenu($name, $link, $icon, $status)
+    {
         if ($status > 0) {
             if (!$this->isAdminMenu($name)) {
                 $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
@@ -40,13 +41,12 @@ class CoreAdminMenu extends Model {
     /**
      * Add the default menus
      */
-    public function addCoreDefaultMenus() {
-
+    public function addCoreDefaultMenus()
+    {
         if (!$this->isAdminMenu("Menus")) {
             $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
             $this->runRequest($sql, array("Menus", "coremainmenus", "bi-list"));
-        }
-        else{
+        } else {
             $sql = "UPDATE core_adminmenu SET link=?, icon=? WHERE name=?";
             $this->runRequest($sql, array("coremainmenus", "bi-list", "Menus"));
         }
@@ -75,7 +75,8 @@ class CoreAdminMenu extends Model {
      * @param string $icon Menu bootstrap icon (for home page)
      * @return PDOStatement
      */
-    public function addAdminMenu($name, $link, $icon) {
+    public function addAdminMenu($name, $link, $icon)
+    {
         $sql = "INSERT INTO core_adminmenu (name, link, icon) VALUES(?,?,?)";
         $pdo = $this->runRequest($sql, array($name, $link, $icon));
         return $pdo;
@@ -86,7 +87,8 @@ class CoreAdminMenu extends Model {
      * @param unknown $name Menu name
      * @return PDOStatement
      */
-    public function removeAdminMenu($name) {
+    public function removeAdminMenu($name)
+    {
         $sql = "DELETE FROM core_adminmenu
                 WHERE name='" . $name . "';";
         $pdo = $this->runRequest($sql);
@@ -98,7 +100,8 @@ class CoreAdminMenu extends Model {
      * @param string $name Menu name
      * @return boolean
      */
-    public function isAdminMenu($name) {
+    public function isAdminMenu($name)
+    {
         $sql = "select id from core_adminmenu where name=?";
         $unit = $this->runRequest($sql, array($name));
         if ($unit->rowCount() == 1) {
@@ -112,10 +115,10 @@ class CoreAdminMenu extends Model {
      * Get all admin menus query
      * @return multitype
      */
-    public function getAdminMenus() {
+    public function getAdminMenus()
+    {
         $sql = "select name, link, icon from core_adminmenu";
         $data = $this->runRequest($sql);
         return $data->fetchAll();
     }
-
 }

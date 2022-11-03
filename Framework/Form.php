@@ -5,12 +5,12 @@ require_once 'Framework/FormAdd.php';
 require_once 'Framework/FormHtml.php';
 
 /**
- * Class allowing to generate and check a form html view. 
- * 
+ * Class allowing to generate and check a form html view.
+ *
  * @author Sylvain Prigent
  */
-class Form {
-
+class Form
+{
     /** request */
     private $request;
 
@@ -68,7 +68,8 @@ class Form {
      * @param Request $request Request that contains the post data
      * @param unknown $id Form ID
      */
-    public function __construct(Request $request, $id, $useAjax = false) {
+    public function __construct(Request $request, $id, $useAjax = false)
+    {
         $this->request = $request;
         $this->id = $id;
         $this->labelWidth = 4;
@@ -95,11 +96,12 @@ class Form {
     }
 
     /**
-     * 
+     *
      * @param type $labelWidth Number of bootstrap columns for the form labels
      * @param type $inputWidth Number of bootstrap columns for the form fields
      */
-    public function setColumnsWidth($labelWidth, $inputWidth) {
+    public function setColumnsWidth($labelWidth, $inputWidth)
+    {
         $this->labelWidth = $labelWidth;
         $this->inputWidth = $inputWidth;
     }
@@ -110,7 +112,8 @@ class Form {
      * @param type $url Action URL
      * @param type $type Bootstrap button type
      */
-    public function addExternalButton($name, $url, $type = "danger", $newtab = false) {
+    public function addExternalButton($name, $url, $type = "danger", $newtab = false)
+    {
         $this->externalButtons[] = array("name" => $name, "url" => $url, "type" => $type, "newtab" => $newtab);
     }
 
@@ -118,7 +121,8 @@ class Form {
      * Set the form title
      * @param string $title Form title
      */
-    public function setTitle($title, $level = 3) {
+    public function setTitle($title, $level = 3)
+    {
         $this->title = $title;
         $this->titlelevel = $level;
     }
@@ -127,7 +131,8 @@ class Form {
      * Set the form sub title
      * @param string $subtitle Form sub title
      */
-    public function setSubTitle($subtitle) {
+    public function setSubTitle($subtitle)
+    {
         $this->subtitle = $subtitle;
     }
 
@@ -136,16 +141,18 @@ class Form {
      * @param string $name Button text
      * @param string $url URL of the form post query
      */
-    public function setValidationButton($name, $url) {
+    public function setValidationButton($name, $url)
+    {
         $this->validationButtonName = $name;
         $this->validationURL = $url;
     }
 
     /**
-     * 
+     *
      * @param type $url URL of the validation button
      */
-    public function setValisationUrl($url) {
+    public function setValisationUrl($url)
+    {
         $this->validationURL = $url;
     }
 
@@ -154,7 +161,8 @@ class Form {
      * @param string $name Button text
      * @param string $url URL redirection
      */
-    public function setCancelButton($name, $url) {
+    public function setCancelButton($name, $url)
+    {
         $this->cancelButtonName = $name;
         $this->cancelURL = $url;
     }
@@ -165,7 +173,8 @@ class Form {
      * @param string $url URL of the query
      * @param string|number $dataID ID of the data to delete
      */
-    public function setDeleteButton($name, $url, $dataID) {
+    public function setDeleteButton($name, $url, $dataID)
+    {
         $this->deleteButtonName = $name;
         $this->deleteURL = $url;
         $this->deleteID = $dataID;
@@ -176,7 +185,8 @@ class Form {
      * @param string $name Value name
      * @param string $value Default value
      */
-    protected function setValue($value) {
+    protected function setValue($value)
+    {
         $this->values[] = $value;
     }
 
@@ -184,7 +194,8 @@ class Form {
      * Add a label of type h1 to partition the form
      * @param type $name Label of the separator
      */
-    public function addSeparator($name) {
+    public function addSeparator($name)
+    {
         $this->types[] = "separator";
         $this->names[] = $name;
         $this->labels[] = "";
@@ -204,7 +215,8 @@ class Form {
      * Add a label of type h2 to partition the form
      * @param type $name Label of the separator
      */
-    public function addSeparator2($name) {
+    public function addSeparator2($name)
+    {
         $this->types[] = "separator2";
         $this->names[] = $name;
         $this->labels[] = "";
@@ -224,7 +236,8 @@ class Form {
      * Add a comment field
      * @param type $text Text
      */
-    public function addComment($text) {
+    public function addComment($text)
+    {
         $this->types[] = "comment";
         $this->names[] = $text;
         $this->labels[] = "";
@@ -245,7 +258,8 @@ class Form {
      * @param string $name Input name
      * @param string $value Input default value
      */
-    public function addHidden($name, $value = "") {
+    public function addHidden($name, $value = "")
+    {
         $this->types[] = "hidden";
         $this->names[] = $name;
         $this->labels[] = "";
@@ -263,11 +277,11 @@ class Form {
 
     /**
      * Add an upload button to upload file
-     * @param type $name 
+     * @param type $name
      * @param type $label
      */
-    public function addUpload($name, $label, $value = "") {
-       
+    public function addUpload($name, $label, $value = "")
+    {
         $this->types[] = "upload";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -290,7 +304,8 @@ class Form {
      * @param string $label
      * @param string $url
      */
-    public function addDownloadButton($name, $label, $url) {
+    public function addDownloadButton($name, $label, $url)
+    {
         $this->types[] = "downloadbutton";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -309,12 +324,13 @@ class Form {
     /**
      * Add text input to the form
      * @param string $name Input name
-     * @param string $label Input label 
+     * @param string $label Input label
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
     // #105: add readonly
-    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false) {
+    public function addText($name, $label, $isMandatory = false, $value = "", $enabled = "", $readonly = "", $checkUnicity = false, $suggestLogin = false)
+    {
         $this->types[] = "text";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -339,7 +355,8 @@ class Form {
      * @param type $label Field label
      * @param type $isMandatory is mandatory field
      */
-    public function addPassword($name, $label, $isMandatory = true) {
+    public function addPassword($name, $label, $isMandatory = true)
+    {
         $this->types[] = "password";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -362,7 +379,8 @@ class Form {
      * @param type $isMandatory is mandatory field
      * @param type $value default value
      */
-    public function addDate($name, $label, $isMandatory = false, $value = "") {
+    public function addDate($name, $label, $isMandatory = false, $value = "")
+    {
         $this->types[] = "date";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -378,7 +396,8 @@ class Form {
         $this->checkUnicity[] = false;
     }
 
-    public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", "")) {
+    public function addDatetime($name, $label, $isMandatory = false, $value = array("", "", ""))
+    {
         $this->types[] = "datetime";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -394,7 +413,8 @@ class Form {
         $this->checkUnicity[] = false;
     }
 
-    public function addHour($name, $label, $isMandatory = false, $value = array("", "")) {
+    public function addHour($name, $label, $isMandatory = false, $value = array("", ""))
+    {
         $this->types[] = "hour";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -417,7 +437,8 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addColor($name, $label, $isMandatory = false, $value = "") {
+    public function addColor($name, $label, $isMandatory = false, $value = "")
+    {
         $this->types[] = "color";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -436,11 +457,12 @@ class Form {
     /**
      * Add email input to the form
      * @param string $name Input name
-     * @param string $label Input label 
+     * @param string $label Input label
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addEmail($name, $label, $isMandatory = false, $value = "", $checkUnicity = false) {
+    public function addEmail($name, $label, $isMandatory = false, $value = "", $checkUnicity = false)
+    {
         $this->types[] = "email";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -463,7 +485,8 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addNumber($name, $label, $isMandatory = false, $value = "") {
+    public function addNumber($name, $label, $isMandatory = false, $value = "")
+    {
         $this->types[] = "number";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -486,7 +509,8 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addFloat($name, $label, $isMandatory = false, $value = "") {
+    public function addFloat($name, $label, $isMandatory = false, $value = "")
+    {
         $this->types[] = "float";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -510,7 +534,8 @@ class Form {
      * @param unknown $choicesid List of options ids
      * @param string $value Input default value
      */
-    public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
+    public function addSelect($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false)
+    {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -525,7 +550,7 @@ class Form {
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
     }
-    
+
         /**
      * Add mandatory select input to the form
      * @param string $name Input name
@@ -534,7 +559,8 @@ class Form {
      * @param unknown $choicesid List of options ids
      * @param string $value Input default value
      */
-    public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false) {
+    public function addSelectMandatory($name, $label, $choices, $choicesid, $value = "", $submitOnChange = false)
+    {
         $this->types[] = "select";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -549,7 +575,7 @@ class Form {
         $this->readonly[] = false;
         $this->checkUnicity[] = false;
     }
-    
+
 
     /**
      * Add textarea input to the form
@@ -558,7 +584,8 @@ class Form {
      * @param string $isMandatory True if mandatory input
      * @param string $value Input default value
      */
-    public function addTextArea($name, $label, $isMandatory = false, $value = "", $userichtxt = false) {
+    public function addTextArea($name, $label, $isMandatory = false, $value = "", $userichtxt = false)
+    {
         $this->types[] = "textarea";
         $this->names[] = $name;
         $this->labels[] = $label;
@@ -576,13 +603,14 @@ class Form {
     }
 
     /**
-     * Add a combo list 
+     * Add a combo list
      * @param type $label Field label
      * @param type $listNames List of choices name
      * @param type $listIds List of choices ids
      * @param type $values Default value
      */
-    public function addChoicesList($label, $listNames, $listIds, $values) {
+    public function addChoicesList($label, $listNames, $listIds, $values)
+    {
         $this->types[] = "choicesList";
         $this->names[] = "";
         $this->labels[] = $label;
@@ -602,7 +630,8 @@ class Form {
      * @param FormAdd $formAdd FotmAdd to add
      * @param type $label Label of the formAdd
      */
-    public function setFormAdd(FormAdd $formAdd, $label = "") {
+    public function setFormAdd(FormAdd $formAdd, $label = "")
+    {
         $this->formAdd = $formAdd;
         $this->types[] = "formAdd";
         $this->names[] = "";
@@ -624,7 +653,8 @@ class Form {
      * If formAdd, gets its Id
      * @return String
      */
-    public function getFormAddId() {
+    public function getFormAddId()
+    {
         return $this->isFormAdd ? $this->formAdd->getId() : false;
     }
 
@@ -632,16 +662,18 @@ class Form {
      * Internal function to add the form header
      * @return type HTML content
      */
-    public function htmlOpen() {
+    public function htmlOpen()
+    {
         $formHtml = new FormHtml();
         return $formHtml->formHeader($this->validationURL, $this->id, $this->useUpload);
     }
 
     /**
-     * Internal function to add the form footer 
+     * Internal function to add the form footer
      * @return type
      */
-    public function htmlClose() {
+    public function htmlClose()
+    {
         $formHtml = new FormHtml();
         return $formHtml->formFooter();
     }
@@ -650,9 +682,8 @@ class Form {
      * Generate the html code
      * @return string
      */
-    public function getHtml($lang = "en", $headers = true) {
-
-
+    public function getHtml($lang = "en", $headers = true)
+    {
         $html = "";
 
         $formHtml = new FormHtml();
@@ -679,7 +710,7 @@ class Form {
             if ($this->checkUnicity[$i]) {
                 $checkUnicityElem = true;
             }
-            
+
             $required = "";
             if ($this->isMandatory[$i]) {
                 $required = "required";
@@ -695,9 +726,9 @@ class Form {
                 case 'separator2':
                     $html .= $formHtml->separator($this->names[$i], 5);
                     break;
-                case 'comment';
-                    $html .= $formHtml->comment($this->names[$i], $this->labelWidth, $this->inputWidth);
-                    break;
+                case 'comment':
+                $html .= $formHtml->comment($this->names[$i], $this->labelWidth, $this->inputWidth);
+                break;
                 case 'hidden':
                     $html .= $formHtml->hidden($this->names[$i], $this->values[$i], $required);
                     break;
@@ -766,7 +797,7 @@ class Form {
         if ($this->checkUnicity && in_array(true, $this->checkUnicity)) {
             $html .= $formHtml->checkUnicityScript();
         }
-        
+
         if ($this->suggestLogin) {
             $html .= $formHtml->suggestLoginScript();
         }
@@ -782,7 +813,8 @@ class Form {
      * Check if the form is valid
      * @return number
      */
-    public function check() {
+    public function check()
+    {
         $formID = $this->request->getParameterNoException("formid");
         if ($formID == $this->id) {
             Configuration::getLogger()->debug('[form=check] form submit', ['form' => $this->id, 'data' => $this->request->params()]);
@@ -796,8 +828,8 @@ class Form {
      * @param unknown $name Input name
      * @return string Input value
      */
-    public function getParameter($name) {
+    public function getParameter($name)
+    {
         return $this->request->getParameter($name);
     }
-
 }

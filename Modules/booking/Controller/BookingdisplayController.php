@@ -10,17 +10,18 @@ require_once 'Modules/resources/Model/ReArea.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingdisplayController extends BookingsettingsController {
-
+class BookingdisplayController extends BookingsettingsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -39,7 +40,8 @@ class BookingdisplayController extends BookingsettingsController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -67,5 +69,4 @@ class BookingdisplayController extends BookingsettingsController {
         }
         $this->render(array("id_space" => $id_space, "lang" => $lang, "htmlForm" => $form->getHtml($lang)));
     }
-
 }

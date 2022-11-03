@@ -10,16 +10,14 @@ require_once 'Modules/helpdesk/Model/Helpdesk.php';
  *
  * @author Olivier Sallou
  */
-class HelpdeskInstall extends Model {
-
+class HelpdeskInstall extends Model
+{
     /**
      * Create the Helpdesk database
      */
-    public function createDatabase() {
-
+    public function createDatabase()
+    {
         $model = new Helpdesk();
-    $model->createTable();
-
+        $model->createTable();
     }
 }
-?>

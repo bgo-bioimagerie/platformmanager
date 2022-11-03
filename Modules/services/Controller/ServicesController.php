@@ -13,13 +13,14 @@ require_once 'Modules/core/Controller/CorespaceController.php';
  * Controller for services module
  * Only index still used to redirect to serviceslisting  and navbar
  */
-class ServicesController extends CoresecureController {
-
+class ServicesController extends CoresecureController
+{
     private $serviceModel;
     private $typeModel;
 
 
-    public function sideMenu() {
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         return $this->navbar($id_space);
     }
@@ -27,7 +28,8 @@ class ServicesController extends CoresecureController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
@@ -38,8 +40,8 @@ class ServicesController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $modelCoreConfig = new CoreConfig();
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
         if ($servicesuseproject == 1) {
@@ -53,13 +55,13 @@ class ServicesController extends CoresecureController {
         return $this->redirect('serviceslisting/' . $id_space);
     }
 
-    public function navbar($id_space) {
-
+    public function navbar($id_space)
+    {
         $lang = $this->getLanguage();
 
         $html  = '<div style="color:{{color}}; background-color:{{bgcolor}}; padding: 10px">';
         $html .= '<div  style="height: 50px; padding-top: 15px; background-color:{{bgcolor}}; border-bottom: 1px solid #fff;">';
-        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="serviceslisting/'.$id_space.'"> {{title}}'; 
+        $html .= '<a style="background-color:{{bgcolor}}; color: {{color}};" href="serviceslisting/'.$id_space.'"> {{title}}';
         $html .= '    <span style="color: #fff; font-size:16px; float:right;" class=" hidden-xs showopacity glyphicon {{glyphicon}}"></span>';
         $html .= '</a>';
         $html .= '</div>';
@@ -81,7 +83,7 @@ class ServicesController extends CoresecureController {
             $htmlprojet = str_replace("{{visas}}", ServicesTranslator::servicesVisas($lang), $htmlprojet);
             $htmlprojet = str_replace("{{ganttopened}}", ServicesTranslator::GanttOpened($lang), $htmlprojet);
             $htmlprojet = str_replace("{{ganttperiod}}", ServicesTranslator::GanttPeriod($lang), $htmlprojet);
-            
+
             $htmlprojet = str_replace("{{stock}}", strtoupper(ServicesTranslator::servicesStock($lang)), $htmlprojet);
             $htmlprojet = str_replace("{{cabinets}}", ServicesTranslator::Cabinets($lang), $htmlprojet);
             $htmlprojet = str_replace("{{shelfs}}", ServicesTranslator::Shelfs($lang), $htmlprojet);
@@ -91,7 +93,6 @@ class ServicesController extends CoresecureController {
 
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
         if ($servicesusecommand == 1) {
-
             $htmlOrder = file_get_contents("Modules/services/View/Services/navbarorder.php");
 
             $htmlOrder = str_replace("{{id_space}}", $id_space, $htmlOrder);
@@ -136,7 +137,8 @@ class ServicesController extends CoresecureController {
         return $html;
     }
 
-    public function getServiceTypeAction($id_space, $id_service) {
+    public function getServiceTypeAction($id_space, $id_service)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelService = new SeService();
@@ -144,5 +146,4 @@ class ServicesController extends CoresecureController {
         $serviceTypeName = $modelType->getType($modelService->getItemType($id_space, $id_service));
         $this->render(['data' => ['elements' => ServicesTranslator::ServicesTypes($serviceTypeName, $lang)]]);
     }
-
 }

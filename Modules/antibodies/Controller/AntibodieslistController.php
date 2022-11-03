@@ -18,49 +18,48 @@ require_once 'Modules/antibodies/Form/OwnerForm.php';
 require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class AntibodieslistController extends AntibodiesController {
-
+class AntibodieslistController extends AntibodiesController
+{
     private $antibody;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->antibody = new Anticorps();
         $this->noSideMenu = true;
 
         //$this->checkAuthorizationMenu("antibodies");
-        
     }
 
-    protected function isAdvSearch(){
-        
-        if (isset($_SESSION["ac_advSearch"])){
+    protected function isAdvSearch()
+    {
+        if (isset($_SESSION["ac_advSearch"])) {
             $s = $_SESSION["ac_advSearch"];
-            if( $s['searchName'] == "" &&  $s['searchNoH2P2'] == "" 
-                    && $s['searchSource'] == "" && $s['searchCible'] == "" 
-                    && (!$s['searchValide']) && $s['searchResp'] == ""){
+            if ($s['searchName'] == "" &&  $s['searchNoH2P2'] == ""
+                    && $s['searchSource'] == "" && $s['searchCible'] == ""
+                    && (!$s['searchValide']) && $s['searchResp'] == "") {
                 return false;
             }
             return true;
         }
         return false;
-                
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $sortentry = "") {
-
+    public function indexAction($id_space, $sortentry = "")
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
-        
+
         if ($this->isAdvSearch()) {
             $this->advsearchqueryAction($id_space, "index");
             return;
@@ -83,7 +82,8 @@ class AntibodieslistController extends AntibodiesController {
         ));
     }
 
-    public function anticorpscsvAction($id_space) {
+    public function anticorpscsvAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -97,7 +97,6 @@ class AntibodieslistController extends AntibodiesController {
         $data .= " No; Nom; St; Fournisseur; Source; Réactivité; Référence; Clone; lot; Isotype; proto; Acl dil; commentaire; espèce; organe; statut; ref. bloc; prélèvement; Nom; disponibilité; Date réception;  No Dossier \r\n";
 
         foreach ($anticorpsArray as $anticorps) {
-
             $data .= $anticorps ['no_h2p2'] . " ; ";
             $data .= $anticorps ['nom'] . " ; ";
             $data .= $anticorps ['stockage'] . " ; ";
@@ -161,7 +160,6 @@ class AntibodieslistController extends AntibodiesController {
             $tissus = $anticorps ['tissus'];
             $val = "";
             for ($i = 0; $i < count($tissus); ++$i) {
-
                 $statusTxt = "";
                 foreach ($status as $stat) {
                     if ($tissus[$i]['status'] == $stat["id"]) {
@@ -193,9 +191,9 @@ class AntibodieslistController extends AntibodiesController {
                 $dispo = $ow['disponible'];
                 if ($dispo == 1) {
                     $dispo = "disponible";
-                } else if ($dispo == 2) {
+                } elseif ($dispo == 2) {
                     $dispo = "épuisé";
-                } else if ($dispo == 3) {
+                } elseif ($dispo == 3) {
                     $dispo = "récupéré par équipe";
                 }
                 $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
@@ -208,9 +206,9 @@ class AntibodieslistController extends AntibodiesController {
                 $dispo = $ow['disponible'];
                 if ($dispo == 1) {
                     $dispo = "disponible";
-                } else if ($dispo == 2) {
+                } elseif ($dispo == 2) {
                     $dispo = "épuisé";
-                } else if ($dispo == 3) {
+                } elseif ($dispo == 3) {
                     $dispo = "récupéré par équipe";
                 }
                 $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
@@ -225,9 +223,9 @@ class AntibodieslistController extends AntibodiesController {
                 $dispo = $ow['disponible'];
                 if ($dispo == 1) {
                     $dispo = "disponible";
-                } else if ($dispo == 2) {
+                } elseif ($dispo == 2) {
                     $dispo = "épuisé";
-                } else if ($dispo == 3) {
+                } elseif ($dispo == 3) {
                     $dispo = "récupéré par équipe";
                 }
                 $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
@@ -243,9 +241,9 @@ class AntibodieslistController extends AntibodiesController {
                 $dispo = $ow['disponible'];
                 if ($dispo == 1) {
                     $dispo = "disponible";
-                } else if ($dispo == 2) {
+                } elseif ($dispo == 2) {
                     $dispo = "épuisé";
-                } else if ($dispo == 3) {
+                } elseif ($dispo == 3) {
                     $dispo = "récupéré par équipe";
                 }
                 $date_recept = CoreTranslator::dateFromEn($ow['date_recept'], $lang);
@@ -263,7 +261,8 @@ class AntibodieslistController extends AntibodiesController {
         return;
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // informations form
@@ -274,7 +273,6 @@ class AntibodieslistController extends AntibodiesController {
         }
         $form = $this->createEditForm($id_space, $anticorps, $id);
         if ($form->check()) {
-
             $idNew = $this->antibody->setAntibody(
                 $id,
                 $id_space,
@@ -289,7 +287,7 @@ class AntibodieslistController extends AntibodiesController {
                 $form->getParameter("id_isotype"),
                 $form->getParameter("stockage")
             );
-            
+
             $this->antibody->setApplicationStaining(
                 $id_space,
                 $idNew,
@@ -307,19 +305,19 @@ class AntibodieslistController extends AntibodiesController {
         $modelTissus = new Tissus();
         $tissus = $modelTissus->getInfoForAntibody($id_space, $id);
         $tissusTable = $this->createTissusTable($id_space, $tissus);
-        
+
         // Add Catalogue form
         $catalogFormHtml = "";
         if ($id > 0) {
             $catalogForm = new Form($this->request, "setToCatalogForm");
-            $catalogForm->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang), 
+            $catalogForm->addSelect("export_catalog", AntibodiesTranslator::Export_catalog($lang), array(CoreTranslator::no($lang),
                 CoreTranslator::yes($lang)), array(0, 1), $anticorps["export_catalog"]);
             $catalogForm->setValidationButton(CoreTranslator::Save($lang), 'anticorpsedit/' . $id_space . '/' . $id);
             $catalogForm->setColumnsWidth(2, 10);
-            
+
             if ($catalogForm->check()) {
                 $this->antibody->setExportCatalog($id_space, $id, $form->getParameter("export_catalog"));
-            
+
                 $_SESSION["flash"] = AntibodiesTranslator::AntibodyInfoHaveBeenSaved($lang);
                 $_SESSION["flashClass"] = 'success';
 
@@ -332,14 +330,14 @@ class AntibodieslistController extends AntibodiesController {
         // Owner Table
         $modelOwner = new AcOwner();
         $owners = $modelOwner->getInfoForAntibody($id_space, $id);
-        
+
         $ownersTable = $this->createOwnerTable($id_space, $owners);
 
         $tissusFormGenerator = new TissusForm($this->request, "tissusForm", "antibodiesedittissus/" . $id_space);
         $tissusFormGenerator->setSpace($id_space);
         $tissusFormGenerator->setLang($lang);
         $tissusFormGenerator->render();
-        
+
         $ownerFormGenerator = new OwnerForm($this->request, "ownerForm", "antibodieseditowner/" . $id_space);
         $ownerFormGenerator->setSpace($id_space);
         $ownerFormGenerator->setLang($lang);
@@ -359,7 +357,8 @@ class AntibodieslistController extends AntibodiesController {
         ));
     }
 
-    public function edittissusAction($id_space) {
+    public function edittissusAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $id = $this->request->getParameter("id");
         $id_antibody = $this->request->getParameter("id_antibody");
@@ -376,12 +375,13 @@ class AntibodieslistController extends AntibodiesController {
         $modelTissus = new Tissus();
         $idNew = $modelTissus->setTissus($id_space, $id, $id_antibody, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment);
 
-        $this->uploadTissusImage($id_space ,$idNew);
+        $this->uploadTissusImage($id_space, $idNew);
 
         $this->redirect("anticorpsedit/" . $id_space . "/" . $id_antibody);
     }
 
-    public function editownerAction($id_space) {
+    public function editownerAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $id = $this->request->getParameter("owner_id");
         $id_antibody = $this->request->getParameter("owner_id_anticorps");
@@ -399,8 +399,8 @@ class AntibodieslistController extends AntibodiesController {
         $this->redirect("anticorpsedit/" . $id_space . "/" . $id_antibody);
     }
 
-    protected function createTissusTable($id_space, $data) {
-        
+    protected function createTissusTable($id_space, $data)
+    {
         $lang = $this->getLanguage();
 
         $table = new TableView("tissusTable");
@@ -423,19 +423,20 @@ class AntibodieslistController extends AntibodiesController {
         return $tableHtml;
     }
 
-    public function deletetissusAction($id_space, $id_tissus){
+    public function deletetissusAction($id_space, $id_tissus)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $modelTissus = new Tissus();
-        $tissus = $modelTissus->getTissusById($id_space ,$id_tissus);
-        
-        
-        $modelTissus->delete($id_space ,$id_tissus);
-        
+        $tissus = $modelTissus->getTissusById($id_space, $id_tissus);
+
+
+        $modelTissus->delete($id_space, $id_tissus);
+
         $this->redirect('anticorpsedit/'.$id_space.'/'.$tissus['id_anticorps']);
     }
-    
-    protected function createOwnerTable($id_space, $data) {
 
+    protected function createOwnerTable($id_space, $data)
+    {
         $lang = $this->getLanguage();
 
         $table = new TableView("ownerTable");
@@ -453,9 +454,9 @@ class AntibodieslistController extends AntibodiesController {
             $data[$i]["date_recept"] = CoreTranslator::dateFromEn($data[$i]["date_recept"], $lang);
             if ($data[$i]["disponible"] == 1) {
                 $data[$i]["disponible"] = "disponible";
-            } else if ($data[$i]["disponible"] == 2) {
+            } elseif ($data[$i]["disponible"] == 2) {
                 $data[$i]["disponible"] = "épuisé";
-            } else if ($data[$i]["disponible"] == 3) {
+            } elseif ($data[$i]["disponible"] == 3) {
                 $data[$i]["disponible"] = "récupéré par équipe";
             }
         }
@@ -465,17 +466,19 @@ class AntibodieslistController extends AntibodiesController {
         $tableHtml = $table->view($data, $headers);
         return $tableHtml;
     }
-    
-    public function deleteownerAction($id_space, $id_owner){
+
+    public function deleteownerAction($id_space, $id_owner)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $modelOwner = new AcOwner();
-        $owner = $modelOwner->get($id_space ,$id_owner);
-        $modelOwner->delete($id_space ,$id_owner);
-        
+        $owner = $modelOwner->get($id_space, $id_owner);
+        $modelOwner->delete($id_space, $id_owner);
+
         $this->redirect('anticorpsedit/'.$id_space.'/'.$owner['id_anticorps']);
     }
 
-    protected function createEditForm($id_space, $anticorps, $id) {
+    protected function createEditForm($id_space, $anticorps, $id)
+    {
         $lang = $this->getLanguage();
 
         $mandatoryEntries = [];
@@ -547,7 +550,8 @@ class AntibodieslistController extends AntibodiesController {
         return $form;
     }
 
-    protected function setMissingItemsWarning($mandatoryEntries) {
+    protected function setMissingItemsWarning($mandatoryEntries)
+    {
         $lang = $this->getLanguage();
         $missingItems = [];
         foreach ($mandatoryEntries as $entry => $list) {
@@ -563,7 +567,8 @@ class AntibodieslistController extends AntibodiesController {
         }
     }
 
-    public function uploadTissusImage($id_space, $id) {
+    public function uploadTissusImage($id_space, $id)
+    {
         //print_r($_FILES);
 
         $target_dir = "data/antibodies/";
@@ -573,7 +578,7 @@ class AntibodieslistController extends AntibodiesController {
             //$ext = pathinfo($_FILES["image_url"]["name"], PATHINFO_EXTENSION);
             $fileName = $id_space."_".$_FILES["image_url"]["name"];
             $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $fileName, $matches);
-            if(! $fileNameOK) {
+            if (! $fileNameOK) {
                 throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
             }
 
@@ -588,11 +593,11 @@ class AntibodieslistController extends AntibodiesController {
             // Check if $uploadOk is set to 0 by an error
             if ($uploadOk == 0) {
                 return "Error: your file was not uploaded.";
-                // if everything is ok, try to upload file
+            // if everything is ok, try to upload file
             } else {
                 if (move_uploaded_file($_FILES["image_url"]["tmp_name"], $target_file)) {
-                    //echo "set image URL to antibody " . $id . 
-                    $modelTissus->setImageUrl($id_space ,$id, $fileName);
+                    //echo "set image URL to antibody " . $id .
+                    $modelTissus->setImageUrl($id_space, $id, $fileName);
                     return "The image file" . basename($_FILES["image_url"]["name"]) . " has been uploaded.";
                 } else {
                     return "Error, there was an error uploading your file.";
@@ -601,7 +606,8 @@ class AntibodieslistController extends AntibodiesController {
         }
     }
 
-    public function searchqueryAction($id_space) {
+    public function searchqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -612,54 +618,52 @@ class AntibodieslistController extends AntibodiesController {
         $anticorpsModel = new Anticorps();
         if ($searchColumn == "0") {
             $anticorpsArray = $anticorpsModel->getAnticorpsInfo($id_space);
-        } else if ($searchColumn == "Nom") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space ,"nom", $searchTxt);
-        } else if ($searchColumn == "No_h2p2") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space ,"no_h2p2", $searchTxt);
-        } else if ($searchColumn == "Fournisseur") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space ,"fournisseur", $searchTxt);
-        } else if ($searchColumn == "Source") {
-
+        } elseif ($searchColumn == "Nom") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "nom", $searchTxt);
+        } elseif ($searchColumn == "No_h2p2") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "no_h2p2", $searchTxt);
+        } elseif ($searchColumn == "Fournisseur") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "fournisseur", $searchTxt);
+        } elseif ($searchColumn == "Source") {
             $modelSource = new Source();
             $st = $modelSource->getIdFromName($searchTxt, $id_space);
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "id_source", $st);
-        } else if ($searchColumn == "Reference") {
+        } elseif ($searchColumn == "Reference") {
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "reference", $searchTxt);
-        } else if ($searchColumn == "Clone") {
+        } elseif ($searchColumn == "Clone") {
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "clone", $searchTxt);
-        } else if ($searchColumn == "lot") {
+        } elseif ($searchColumn == "lot") {
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "lot", $searchTxt);
-        } else if ($searchColumn == "Isotype") {
-
+        } elseif ($searchColumn == "Isotype") {
             $modelIsotype = new Isotype();
             $st = $modelIsotype->getIdFromName($searchTxt, $id_space);
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "id_isotype", $st);
-        } else if ($searchColumn == "Stockage") {
+        } elseif ($searchColumn == "Stockage") {
             $anticorpsArray = $anticorpsModel->getAnticorpsInfoSearch($id_space, "stockage", $searchTxt);
-        } else if ($searchColumn == "dilution") {
+        } elseif ($searchColumn == "dilution") {
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "dilution", $searchTxt);
-        } else if ($searchColumn == "temps_incub") {
+        } elseif ($searchColumn == "temps_incub") {
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "temps_incubation", $searchTxt);
-        } else if ($searchColumn == "ref_proto") {
+        } elseif ($searchColumn == "ref_proto") {
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "ref_protocol", $searchTxt);
-        } else if ($searchColumn == "espece") {
+        } elseif ($searchColumn == "espece") {
             $modelEspece = new Espece();
             $id = $modelEspece->getIdFromName($searchTxt, $id_space);
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "espece", $searchTxt);
-        } else if ($searchColumn == "organe") {
+        } elseif ($searchColumn == "organe") {
             //$modelOrgane = new Organe();
             //$id = $modelOrgane->getIdFromName($searchTxt);
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "organe", $searchTxt);
-        } else if ($searchColumn == "valide") {
+        } elseif ($searchColumn == "valide") {
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "valide", $searchTxt);
-        } else if ($searchColumn == "ref_bloc") {
+        } elseif ($searchColumn == "ref_bloc") {
             $anticorpsArray = $anticorpsModel->getAnticorpsTissusSearch($id_space, "ref_bloc", $searchTxt);
-        } else if ($searchColumn == "nom_proprio") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space,"nom_proprio", $searchTxt);
-        } else if ($searchColumn == "disponibilite") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space,"disponibilite", $searchTxt);
-        } else if ($searchColumn == "date_recept") {
-            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space,"date_recept", CoreTranslator::dateToEn($searchTxt, $lang));
+        } elseif ($searchColumn == "nom_proprio") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space, "nom_proprio", $searchTxt);
+        } elseif ($searchColumn == "disponibilite") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space, "disponibilite", $searchTxt);
+        } elseif ($searchColumn == "date_recept") {
+            $anticorpsArray = $anticorpsModel->getAnticorpsProprioSearch($id_space, "date_recept", CoreTranslator::dateToEn($searchTxt, $lang));
         }
 
         $modelstatus = new Status();
@@ -673,11 +677,11 @@ class AntibodieslistController extends AntibodiesController {
                 ), "index");
     }
 
-    public function advsearchqueryAction($id_space, $source = "") {
+    public function advsearchqueryAction($id_space, $source = "")
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
 
         if ($source == "index") {
-
             //print_r($_SESSION["ac_advSearch"]);
             //return;
             $searchName = $_SESSION["ac_advSearch"]["searchName"];
@@ -725,24 +729,24 @@ class AntibodieslistController extends AntibodiesController {
                 ), "indexAction");
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         $form = new Form($this->request, "antibodiesdeleteform");
         $form->addComment(AntibodiesTranslator::ConfirmDeleteAntibody($lang));
         $form->setValidationButton(CoreTranslator::Save($lang), "antibodydeleteconfirmed/".$id_space.'/'.$id);
-        
+
         return $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
-        
     }
-    
-    public function deleteconfirmedAction($id_space, $id){
+
+    public function deleteconfirmedAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $anticorpsModel = new Anticorps();
-        $anticorpsModel->delete($id_space ,$id);
+        $anticorpsModel->delete($id_space, $id);
 
         $this->redirect("anticorps/" . $id_space);
     }
-
 }

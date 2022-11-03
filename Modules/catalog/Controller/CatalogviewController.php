@@ -17,17 +17,18 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CatalogviewController extends CoresecureController {
-
+class CatalogviewController extends CoresecureController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $idCategory = 0) {
+    public function indexAction($id_space, $idCategory = 0)
+    {
         $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -45,7 +46,7 @@ class CatalogviewController extends CoresecureController {
         $entries = $modelEntry->getCategoryEntries($id_space, $idCategory);
 
         $modelCoreConfig = new CoreConfig();
-        
+
         $useAntibodies = $modelCoreConfig->getParamSpace("ca_use_antibodies", $id_space);
         if ($useAntibodies == 1) {
             $categories[count($categories)]["id"] = -12;
@@ -56,16 +57,16 @@ class CatalogviewController extends CoresecureController {
             $categories[count($categories)]["id"] = -13;
             $categories[count($categories) - 1]["name"] = CatalogTranslator::Resources($lang);
         }
-        
-        if ($idCategory == -12 || ( $idCategory == 0 && $categories[0]["id"] == -12)) {
+
+        if ($idCategory == -12 || ($idCategory == 0 && $categories[0]["id"] == -12)) {
             $this->antibodiesAction($id_space, $categories);
             return;
         }
-        if ($idCategory == -13 || ( $idCategory == 0 && $categories[0]["id"] == -13)) {
+        if ($idCategory == -13 || ($idCategory == 0 && $categories[0]["id"] == -13)) {
             $this->resourcesAction($id_space, $categories);
             return;
         }
-        
+
         // view
         $this->render(array("id_space" => $id_space, "lang" => $lang,
             'categories' => $categories,
@@ -74,7 +75,8 @@ class CatalogviewController extends CoresecureController {
             'activeCategory' => $idCategory));
     }
 
-    public function antibodiesAction($id_space, $categories) {
+    public function antibodiesAction($id_space, $categories)
+    {
         $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -95,13 +97,14 @@ class CatalogviewController extends CoresecureController {
                 ), "antibodies");
     }
 
-    public function resourcesAction($id_space, $categories){
+    public function resourcesAction($id_space, $categories)
+    {
         $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         $modelResources = new ResourceInfo();
         $resources = $modelResources->getBySpace($id_space);
-        
+
         $this->render(array(
             'id_space' => $id_space,
             'categories' => $categories,

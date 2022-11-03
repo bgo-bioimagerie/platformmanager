@@ -9,16 +9,17 @@ require_once 'Modules/com/Model/ComTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ComconfigController extends CoresecureController {
-
+class ComconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
@@ -31,8 +32,8 @@ class ComconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -57,17 +58,16 @@ class ComconfigController extends CoresecureController {
             $this->redirect("comconfig/" . $id_space);
             return;
         }
-        
+
         $twitterForm = $this->twitterConfigForm($lang, $id_space);
-        if($twitterForm->check()){
-            
+        if ($twitterForm->check()) {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("use_twitter", $this->request->getParameter("use_twitter"), $id_space);
             $modelConfig->setParam("twitter_oauth_access_token", $this->request->getParameter("twitter_oauth_access_token"), $id_space);
             $modelConfig->setParam("twitter_oauth_access_token_sec", $this->request->getParameter("twitter_oauth_access_token_secret"), $id_space);
             $modelConfig->setParam("twitter_consumer_key", $this->request->getParameter("twitter_consumer_key"), $id_space);
             $modelConfig->setParam("twitter_consumer_secret", $this->request->getParameter("twitter_consumer_secret"), $id_space);
-            
+
             $this->redirect("comconfig/" . $id_space);
             return;
         }
@@ -80,7 +80,8 @@ class ComconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    protected function useComAsSpaceHomePage($lang, $id_space) {
+    protected function useComAsSpaceHomePage($lang, $id_space)
+    {
         $modelConfig = new CoreConfig();
         $space_home_page = $modelConfig->getParamSpace("space_home_page", $id_space);
         $useSpaceHomePage = 0;
@@ -99,7 +100,8 @@ class ComconfigController extends CoresecureController {
         return $form;
     }
 
-    protected function twitterConfigForm($lang, $id_space) {
+    protected function twitterConfigForm($lang, $id_space)
+    {
         $modelConfig = new CoreConfig();
         $use_twitter = $modelConfig->getParamSpace("use_twitter", $id_space);
         $twitter_oauth_access_token = $modelConfig->getParamSpace("twitter_oauth_access_token", $id_space);
@@ -121,5 +123,4 @@ class ComconfigController extends CoresecureController {
 
         return $form;
     }
-
 }

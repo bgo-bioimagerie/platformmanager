@@ -11,31 +11,31 @@
  *
  * @author sprigent
  */
-class Popup {
-
+class Popup
+{
     private $windowsActionId;
     private $windowshtml;
     private $useClassOrID;
 
-    public function __construct() {
-        
+    public function __construct()
+    {
     }
 
-    public function addWindow($actionID, $html, $classOrid = "id") {
+    public function addWindow($actionID, $html, $classOrid = "id")
+    {
         $this->windowsActionId[] = $actionID;
         $this->windowshtml[] = $html;
-        if($classOrid == "class"){
+        if ($classOrid == "class") {
             $this->useClassOrID[] = ".";
-        }
-        else{
+        } else {
             $this->useClassOrID[] = "#";
         }
     }
 
-    public function render($renderEmptyLinkss = false) {
-        
+    public function render($renderEmptyLinkss = false)
+    {
         $html = "";
-        if($renderEmptyLinkss){
+        if ($renderEmptyLinkss) {
             $html .= $this->renderEmptyLinks();
         }
         $html .= $this->renderWindows();
@@ -43,7 +43,8 @@ class Popup {
         echo $html;
     }
 
-    protected function renderWindows() {
+    protected function renderWindows()
+    {
         $html = "<div id=\"hider\" class=\"col-12\"></div> ";
         for ($i = 0; $i < count($this->windowsActionId); $i++) {
             $html .= $this->renderWindow($this->windowsActionId[$i], $this->windowshtml[$i]);
@@ -51,7 +52,8 @@ class Popup {
         return $html;
     }
 
-    protected function renderWindow($actionID, $html) {
+    protected function renderWindow($actionID, $html)
+    {
         $renderHtml = "<div id=\"".$actionID."popup_box\" class=\"pm_popup_box\" style=\"display: none;\"> "
                 . "<div class=\"col-1 offset-11\" style=\"text-align: right;\"><a id=\"".$actionID."buttonclose\" class=\"bi-x-circle-fill\"></a></div>"
                 . $html
@@ -59,7 +61,8 @@ class Popup {
         return $renderHtml;
     }
 
-    protected function renderJS() {
+    protected function renderJS()
+    {
         $html = "<script>$(document).ready(function () {";
         $html .= "$(\"#hider\") . hide();";
         for ($i = 0; $i < count($this->windowsActionId); $i++) {
@@ -69,7 +72,8 @@ class Popup {
         return $html;
     }
 
-    protected function renderWindowJS($classOrid, $actionID){
+    protected function renderWindowJS($classOrid, $actionID)
+    {
         $renderHtml = "$(\"#".$actionID."popup_box\") . hide(); ";
 
         //on click show the hider div and the message
@@ -86,8 +90,9 @@ class Popup {
         $renderHtml .= " });";
         return $renderHtml;
     }
-    
-    protected function renderEmptyLinks(){
+
+    protected function renderEmptyLinks()
+    {
         $html = "";
         for ($i = 0; $i < count($this->windowsActionId); $i++) {
             $html .= "<a id=\"".$this->windowsActionId[$i]."\"></a>";
@@ -95,4 +100,3 @@ class Popup {
         return $html;
     }
 }
-

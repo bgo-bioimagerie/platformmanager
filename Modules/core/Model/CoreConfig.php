@@ -8,12 +8,13 @@ require_once 'Framework/Configuration.php';
  *
  * @author Sylvain Prigent
  */
-class CoreConfig extends Model {
+class CoreConfig extends Model
+{
+    public static int $ONEXPIRE_INACTIVATE = 0;
+    public static int $ONEXPIRE_REMOVE = 1;
 
-    static int $ONEXPIRE_INACTIVATE = 0;
-    static int $ONEXPIRE_REMOVE = 1;
-
-    public function __construct() {
+    public function __construct()
+    {
         $this->tableName = "core_config";
     }
 
@@ -24,8 +25,8 @@ class CoreConfig extends Model {
      *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
         `keyname` varchar(30) NOT NULL DEFAULT '',
         `value` text NOT NULL,
@@ -37,7 +38,7 @@ class CoreConfig extends Model {
         $sqlCol = "SHOW COLUMNS FROM `core_config` WHERE Field='id';";
         $reqCol = $this->runRequest($sqlCol);
 
-        if ($reqCol->rowCount() > 0){
+        if ($reqCol->rowCount() > 0) {
             $sql2 = "ALTER TABLE core_config CHANGE id `keyname` varchar(30) NOT NULL;";
             $this->runRequest($sql2);
             $sql3 = "alter table core_config drop primary key;";
@@ -52,7 +53,8 @@ class CoreConfig extends Model {
      *
      * @return PDOStatement
      */
-    public function createDefaultConfig() {
+    public function createDefaultConfig()
+    {
         $adminEmail = Configuration::get('admin_email', 'admin@pfm.org');
         $this->setParam("admin_email", $adminEmail);
         $this->setParam("user_desactivate", "0");
@@ -64,7 +66,8 @@ class CoreConfig extends Model {
     /**
      * Check if a config key exists
      */
-    public function isKey($key, $id_space) {
+    public function isKey($key, $id_space)
+    {
         $this->loadParams($id_space);
         if (isset(self::$params[$id_space]) && isset(self::$params[$id_space][$key])) {
             return true;
@@ -76,7 +79,8 @@ class CoreConfig extends Model {
      * Load config parameters
      * @param string $id_space
      */
-    private function loadParams($id_space) {
+    private function loadParams($id_space)
+    {
         if (isset(self::$params[$id_space])) {
             return;
         }
@@ -92,7 +96,8 @@ class CoreConfig extends Model {
         }
     }
 
-    public static function clearParams() {
+    public static function clearParams()
+    {
         self::$params = null;
     }
 
@@ -101,10 +106,11 @@ class CoreConfig extends Model {
      * @param string $key
      * @param string $value
      */
-    public function addParam($key, $value, $id_space=0) {
+    public function addParam($key, $value, $id_space=0)
+    {
         $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
         $this->runRequest($sql, array($key, $value, $id_space));
-        if(!isset(self::$params[$id_space])) {
+        if (!isset(self::$params[$id_space])) {
             self::$params[$id_space] = [];
         }
         self::$params[$id_space][$key] = $value;
@@ -115,11 +121,12 @@ class CoreConfig extends Model {
      * @param string $key
      * @param string $value
      */
-    public function updateParam($key, $value, $id_space=0) {
+    public function updateParam($key, $value, $id_space=0)
+    {
         $sql = "update core_config set value=?  where keyname=? AND id_space=?";
         $this->runRequest($sql, array($value, $key, $id_space));
         $this->loadParams($id_space);
-        if(!isset(self::$params[$id_space])) {
+        if (!isset(self::$params[$id_space])) {
             self::$params[$id_space] = [];
         }
         self::$params[$id_space][$key] = $value;
@@ -131,7 +138,8 @@ class CoreConfig extends Model {
      * @param mixed $default default value
      * @return string value
      */
-    public function getParam($key, $default="") {
+    public function getParam($key, $default="")
+    {
         return $this->getParamSpace($key, 0, $default);
     }
 
@@ -140,7 +148,8 @@ class CoreConfig extends Model {
      * @param string $key
      * @return string value
      */
-    public function getParamSpace($key, $id_space, $default="") {
+    public function getParamSpace($key, $id_space, $default="")
+    {
         $this->loadParams($id_space);
         if (!isset(self::$params[$id_space])) {
             return $default;
@@ -156,7 +165,8 @@ class CoreConfig extends Model {
      * @param string $key
      * @param string $value
      */
-    public function setParam($key, $value, $id_space=0) {
+    public function setParam($key, $value, $id_space=0)
+    {
         if ($this->isKey($key, $id_space)) {
             $this->updateParam($key, $value, $id_space);
         } else {
@@ -164,13 +174,15 @@ class CoreConfig extends Model {
         }
     }
 
-    public function initParam($key, $value) {
+    public function initParam($key, $value)
+    {
         if (!$this->isKey($key, 0)) {
             $this->addParam($key, $value);
         }
     }
 
-    public function getExpirationChoices($lang) {
+    public function getExpirationChoices($lang)
+    {
         $choices = array();
         $choicesid = array();
         $choicesid[] = 1;

@@ -10,16 +10,16 @@ use GuzzleHttp\Client;
 
 /**
  * Example flux query on measurement uers for bucket test (space shortname)
- * 
+ *
  * from(bucket: "test")
  * |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
  * |> filter(fn: (r) => r["_measurement"] == "users")
  * |> filter(fn: (r) => r["_field"] == "value")
  * |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)
  * |> yield(name: "last")
- * 
+ *
  * Get last
- * 
+ *
  * from(bucket: "test")
  * |>range(start: -90d)
  * |> filter(fn: (r) => r["_measurement"] == "users")
@@ -27,10 +27,11 @@ use GuzzleHttp\Client;
  */
 
 
-class Grafana {
-
-    public function configured() {
-        if(!Configuration::get('grafana_url')) {
+class Grafana
+{
+    public function configured()
+    {
+        if (!Configuration::get('grafana_url')) {
             Configuration::getLogger()->info("[grafana] grafana not configured");
             return false;
         }
@@ -38,8 +39,9 @@ class Grafana {
     }
 
 
-    public function getOrg($name) {
-        if(!$this->configured()) {
+    public function getOrg($name)
+    {
+        if (!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -47,13 +49,14 @@ class Grafana {
             'timeout'  => 2.0,
         ]);
 
-        $response = $client->request('GET',
-        '/api/orgs/name/'.$name,
-        [
-            'headers' => ['Accept' => Constants::APPLICATION_JSON],
-            'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
-            'http_errors' => false
-        ]
+        $response = $client->request(
+            'GET',
+            '/api/orgs/name/'.$name,
+            [
+                'headers' => ['Accept' => Constants::APPLICATION_JSON],
+                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                'http_errors' => false
+            ]
         );
         $status = $response->getStatusCode();
         if ($status != 200) {
@@ -67,10 +70,11 @@ class Grafana {
     /**
      * Delete all pfm_xx dashboards for selected space
      */
-    public function dashboardsDelete($spaceObject) {
+    public function dashboardsDelete($spaceObject)
+    {
         $space = $spaceObject['shortname'];
         $orgID = $this->getOrg($space);
-        if(! $orgID) {
+        if (! $orgID) {
             Configuration::getLogger()->debug("[grafana][dashboard][import] org does not exists", ["org" => $space]);
             return false;
         }
@@ -80,8 +84,9 @@ class Grafana {
             'timeout'  => 2.0,
         ]);
 
-       
-        $client->request('POST',
+
+        $client->request(
+            'POST',
             '/api/user/using/'.$orgID,
             [
                 'headers' => [
@@ -92,7 +97,8 @@ class Grafana {
             ]
         );
 
-        $response = $client->request('GET',
+        $response = $client->request(
+            'GET',
             '/api/search',
             [
                 'headers' => [
@@ -104,31 +110,33 @@ class Grafana {
         );
         $dashboards = json_decode($response->getBody(), true);
         Configuration::getLogger()->debug('Dashboards', ['d' => $dashboards]);
-        foreach($dashboards as $d) {
+        foreach ($dashboards as $d) {
             if (!str_starts_with($d['uid'], 'pfm')) {
                 // delete only pfm_xx dashboards (managed by us)
                 continue;
             }
-            $client->request('DELETE',
-            '/api/dashboards/uid/'.$d['uid'],
-            [
-                'headers' => [
-                    'Accept' => Constants::APPLICATION_JSON
-                ],
-                'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
-                'http_errors' => false
-            ]
-        );
+            $client->request(
+                'DELETE',
+                '/api/dashboards/uid/'.$d['uid'],
+                [
+                    'headers' => [
+                        'Accept' => Constants::APPLICATION_JSON
+                    ],
+                    'auth' => [Configuration::get('grafana_user'), Configuration::get('grafana_password')],
+                    'http_errors' => false
+                ]
+            );
         }
     }
 
     /**
      * Load templates from externals/grafana/templates in grafana space
      */
-    public function dashboardsImport($spaceObject) {
+    public function dashboardsImport($spaceObject)
+    {
         $space = $spaceObject['shortname'];
         $orgID = $this->getOrg($space);
-        if(! $orgID) {
+        if (! $orgID) {
             Configuration::getLogger()->debug("[grafana][dashboard][import] org does not exists", ["org" => $space]);
             return false;
         }
@@ -139,7 +147,8 @@ class Grafana {
         ]);
 
         $req = [];
-        $client->request('POST',
+        $client->request(
+            'POST',
             '/api/user/using/'.$orgID,
             [
                 'headers' => [
@@ -152,7 +161,7 @@ class Grafana {
 
         $templates = scandir('externals/grafana/templates');
         $ok = true;
-        foreach($templates as $tmpl) {
+        foreach ($templates as $tmpl) {
             if (! str_ends_with($tmpl, ".json")) {
                 continue;
             }
@@ -175,7 +184,8 @@ class Grafana {
             ]);
 
             # Create template
-            $response =  $client->request('POST',
+            $response =  $client->request(
+                'POST',
                 '/api/dashboards/db',
                 [
                     'headers' => [
@@ -200,23 +210,25 @@ class Grafana {
     /**
      * @param mixed $space space object
      */
-    public function createOrg($spaceObject) {
-        if(!$this->configured()) {
+    public function createOrg($spaceObject)
+    {
+        if (!$this->configured()) {
             return false;
         }
         $space = $spaceObject['shortname'];
         Configuration::getLogger()->debug("[grafana] create org", ["org" => $space]);
         $orgID = $this->getOrg($space);
-        if($orgID) {
+        if ($orgID) {
             Configuration::getLogger()->debug("[grafana][create] org already exists", ["org" => $space]);
         } else {
             $client = new Client([
                 'base_uri' => Configuration::get('grafana_url'),
                 'timeout'  => 2.0,
             ]);
-    
+
             $req = ['name' => $space];
-            $response = $client->request('POST',
+            $response = $client->request(
+                'POST',
                 '/api/orgs',
                 [
                     'headers' => [
@@ -227,7 +239,7 @@ class Grafana {
                     'http_errors' => false
                 ]
             );
-            
+
             $status = $response->getStatusCode();
             if ($status != 200) {
                 Configuration::getLogger()->error('[grafana][error] failed to create org', ["org" => $space, "err" => $response->getBody(), 'req' => $req]);
@@ -237,7 +249,6 @@ class Grafana {
             $json = json_decode($body, true);
             $orgID = $json['orgId'];
             Configuration::getLogger()->debug("[grafana][create] org created", ["org" => $space, "id" => $orgID]);
-
         }
 
         # switch to org
@@ -247,7 +258,8 @@ class Grafana {
         ]);
 
         $req = [];
-        $client->request('POST',
+        $client->request(
+            'POST',
             '/api/user/using/'.$orgID,
             [
                 'headers' => [
@@ -263,7 +275,7 @@ class Grafana {
         $org = Configuration::get('influxdb_org', 'pfm');
         $token = $bucketObj['token'];
         $bucket = $bucketObj['bucket'];
-        
+
         # create influx data source
         $req = [
             "jsonData" => ["defaultBucket" => $bucket, "organization" => $org, "version" => "Flux", "httpMode" => "POST"],
@@ -289,7 +301,8 @@ class Grafana {
         ];
         Configuration::getLogger()->debug('[grafana] Create influxdb data source', ['source' => $req]);
 
-        $response = $client->request('POST',
+        $response = $client->request(
+            'POST',
             '/api/datasources',
             [
                 'headers' => [
@@ -316,7 +329,7 @@ class Grafana {
             "type" => "mysql",
             "typeLogoUrl" => "",
             "access" => "proxy",
-            "url" => sprintf("%s:%s", Configuration::get('mysql_host', 'mysql'),Configuration::get('mysql_port', 3306)),
+            "url" => sprintf("%s:%s", Configuration::get('mysql_host', 'mysql'), Configuration::get('mysql_port', 3306)),
             "password" => "",
             "user" => $mysqlID,
             "database" => $mysqlID,
@@ -331,7 +344,8 @@ class Grafana {
         ];
         Configuration::getLogger()->debug('[grafana] Create mysql data source', ['source' => $req]);
 
-        $response = $client->request('POST',
+        $response = $client->request(
+            'POST',
             '/api/datasources',
             [
                 'headers' => [
@@ -348,13 +362,13 @@ class Grafana {
             Configuration::getLogger()->error('[grafana][error] failed to create datasource', ["org" => $space, "err" => $response->getBody()]);
         }
 
-       return $this->dashboardsImport($spaceObject);
-
+        return $this->dashboardsImport($spaceObject);
     }
 
 
-    public function getUser($name) {
-        if(!$this->configured()) {
+    public function getUser($name)
+    {
+        if (!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -362,7 +376,8 @@ class Grafana {
             'timeout'  => 2.0,
         ]);
 
-        $response =  $client->request('GET',
+        $response =  $client->request(
+            'GET',
             '/api/users/lookup',
             [
                 'headers' => [
@@ -384,12 +399,13 @@ class Grafana {
         return $json['id'];
     }
 
-    public function updateUserPassword($name, $apikey) {
-        if(!$this->configured()) {
+    public function updateUserPassword($name, $apikey)
+    {
+        if (!$this->configured()) {
             return false;
         }
         $user = $this->getUser($name);
-        if(!$user) {
+        if (!$user) {
             return false;
         }
         $client = new Client([
@@ -401,7 +417,8 @@ class Grafana {
             "password" => $apikey,
         ];
 
-        $response =  $client->request('PUT',
+        $response =  $client->request(
+            'PUT',
             "/api/admin/users/".$user."/password",
             [
                 'headers' => [
@@ -423,8 +440,9 @@ class Grafana {
     /**
      * Create user and remove from main org
      */
-    public function createUser($name, $apikey) {
-        if(!$this->configured()) {
+    public function createUser($name, $apikey)
+    {
+        if (!$this->configured()) {
             return null;
         }
         $client = new Client([
@@ -439,7 +457,8 @@ class Grafana {
             "orgId" => 1
         ];
 
-        $response =  $client->request('POST',
+        $response =  $client->request(
+            'POST',
             "/api/admin/users",
             [
                 'headers' => [
@@ -459,7 +478,8 @@ class Grafana {
         $json = json_decode($body, true);
         $user = $json["id"];
 
-        $client->request('DELETE',
+        $client->request(
+            'DELETE',
             "/api/orgs/1/users/".$user,
             [
                 'headers' => [
@@ -481,22 +501,23 @@ class Grafana {
 
     /**
      * Create user if needed and add to org
-     * 
+     *
      * @var mixed space space object
      * @var string name  user login
      * @var string apikey used for password
      */
-    public function addUser($space, string $name, string $apikey) {
-        if(!$this->configured()) {
+    public function addUser($space, string $name, string $apikey)
+    {
+        if (!$this->configured()) {
             return false;
         }
         $orgID = $this->getOrg($space);
-        if(!$orgID) {
+        if (!$orgID) {
             Configuration::getLogger()->debug('[grafana][user_add] org not found', ['space' => $space, 'user' => $name]);
             return false;
         }
         $user = $this->getUser($name);
-        if(!$user) {
+        if (!$user) {
             $this->createUser($name, $apikey);
         }
 
@@ -511,7 +532,8 @@ class Grafana {
             "role" => "Editor"
         ];
 
-        $response =  $client->request('POST',
+        $response =  $client->request(
+            'POST',
             "/api/orgs/".$orgID."/users",
             [
                 'headers' => [
@@ -534,17 +556,18 @@ class Grafana {
     /**
      * Remove user role from org
      */
-    public function delUser($space, $name) {
-        if(!$this->configured()) {
+    public function delUser($space, $name)
+    {
+        if (!$this->configured()) {
             return false;
         }
         $orgID = $this->getOrg($space);
-        if(!$orgID) {
+        if (!$orgID) {
             Configuration::getLogger()->debug('[grafana][delete_user] org not found', ['space' => $space, 'user' => $name]);
             return false;
         }
         $user = $this->getUser($name);
-        if(!$user) {
+        if (!$user) {
             return false;
         }
         $client = new Client([
@@ -552,7 +575,8 @@ class Grafana {
             'timeout'  => 2.0,
         ]);
 
-        $response =  $client->request('DELETE',
+        $response =  $client->request(
+            'DELETE',
             "/api/orgs/".$orgID."/users/".$user,
             [
                 'headers' => [
@@ -570,5 +594,3 @@ class Grafana {
         return true;
     }
 }
-
-?>

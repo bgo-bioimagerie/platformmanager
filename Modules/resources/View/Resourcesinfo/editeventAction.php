@@ -13,7 +13,7 @@
         <?php echo $formEvent ?>
     </div>
     
-    <?php if ($id_event > 0){ ?>
+    <?php if ($id_event > 0) { ?>
     <div class="col-12">
         <div class="col-12 pm-form">
             <?php echo $formDownload ?>

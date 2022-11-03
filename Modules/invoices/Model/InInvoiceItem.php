@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class InInvoiceItem extends Model {
-
+class InInvoiceItem extends Model
+{
     /**
      * Create the site table
-     * 
+     *
      * @return PDOStatement
      */
-    public function __construct() {
-
+    public function __construct()
+    {
         $this->tableName = "in_invoice_item";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_invoice", "int(11)", 0);
@@ -27,23 +27,27 @@ class InInvoiceItem extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getInvoiceItems($id_space, $id_invoice) {
+    public function getInvoiceItems($id_space, $id_invoice)
+    {
         $sql = "SELECT id FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_invoice, $id_space))->fetchAll();
     }
 
-    public function getItem($id_space, $id) {
+    public function getItem($id_space, $id)
+    {
         $sql = "SELECT * FROM in_invoice_item WHERE id=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
-    
-    public function getForInvoice($id_space, $id_invoice){
+
+    public function getForInvoice($id_space, $id_invoice)
+    {
         $sql = "SELECT * FROM in_invoice_item WHERE id_invoice=? AND id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_invoice, $id_space))->fetch();
     }
 
-    public function setItem($id_space ,$id, $id_invoice, $module, $controller, $content, $details, $total_ht) {
-        if (!$this->isItem($id_space ,$id)) {
+    public function setItem($id_space, $id, $id_invoice, $module, $controller, $content, $details, $total_ht)
+    {
+        if (!$this->isItem($id_space, $id)) {
             $sql = "INSERT INTO in_invoice_item (id_invoice, module, controller, content, details, total_ht, id_space) VALUES (?,?,?,?,?,?,?)";
             $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id_space));
         } else {
@@ -51,18 +55,21 @@ class InInvoiceItem extends Model {
             $this->runRequest($sql, array($id_invoice, $module, $controller, $content, $details, $total_ht, $id, $id_space));
         }
     }
-    
-    public function setItemContent($id_space, $id_invoice, $content){
+
+    public function setItemContent($id_space, $id_invoice, $content)
+    {
         $sql = "UPDATE in_invoice_item SET content=? WHERE id_invoice=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($content, $id_invoice, $id_space));
     }
 
-    public function editItemContent($id_space, $id, $content, $total_ht) {
+    public function editItemContent($id_space, $id, $content, $total_ht)
+    {
         $sql = "UPDATE in_invoice_item SET content=?, total_ht=? WHERE id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($content, $total_ht, $id, $id_space));
     }
 
-    public function isItem($id_space, $id) {
+    public function isItem($id_space, $id)
+    {
         $sql = "SELECT id FROM in_invoice_item WHERE id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
@@ -70,10 +77,10 @@ class InInvoiceItem extends Model {
         }
         return false;
     }
-    
-    public function deleteForInvoice($id_space, $id_invoice){
+
+    public function deleteForInvoice($id_space, $id_invoice)
+    {
         $sql = "UPDATE in_invoice_item SET deleted=1,deleted_at=NOW() WHERE id_invoice=? AND id_space=?";
         $this->runRequest($sql, array($id_invoice, $id_space));
     }
-
 }

@@ -8,27 +8,28 @@ require_once 'Modules/core/Model/CoreLdapConfiguration.php';
 /**
  * @deprecated
  * @author sprigent
- * 
+ *
  * Config the LDAP access
  */
-class CoreldapconfigController extends CoresecureController {
-
+class CoreldapconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->checkAuthorization(CoreStatus::$ADMIN);
     }
-    
+
     /**
      * (non-PHPdoc)
      * Show the config index page
-     * 
+     *
      * @see Controller::index()
      */
-    public function indexAction() {
-
+    public function indexAction()
+    {
         // LDAP configuration
 
         //$modelSettings = new CoreConfig();
@@ -46,44 +47,53 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConnect["ldap_password"] = CoreLdapConfiguration::get("ldap_password", "");
         $ldapConnect["ldap_dn"] = CoreLdapConfiguration::get("ldap_search_dn", "");
         $ldapConnect["ldap_tls"] = CoreLdapConfiguration::get("ldap_tls", false);
-        
+
         $lang = $this->getLanguage();
         $form = new Form($this->request, "coreldapconfig");
-        
+
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
-        $form->addSelect("useLdap", CoreTranslator::UseLdap($lang), 
-                array(CoreTranslator::yes($lang), CoreTranslator::no($lang)), array(1,0), $ldapConfig["useLdap"]);
-        $form->addSelect("ldapDefaultStatus", CoreTranslator::userDefaultStatus($lang), 
-                array(CoreTranslator::Translate_status($lang, "visitor"), CoreTranslator::Translate_status($lang, "user")), array(1,2), $ldapConfig["ldapDefaultStatus"]);
+        $form->addSelect(
+            "useLdap",
+            CoreTranslator::UseLdap($lang),
+            array(CoreTranslator::yes($lang), CoreTranslator::no($lang)),
+            array(1,0),
+            $ldapConfig["useLdap"]
+        );
+        $form->addSelect(
+            "ldapDefaultStatus",
+            CoreTranslator::userDefaultStatus($lang),
+            array(CoreTranslator::Translate_status($lang, "visitor"), CoreTranslator::Translate_status($lang, "user")),
+            array(1,2),
+            $ldapConfig["ldapDefaultStatus"]
+        );
         $form->addText("ldapSearchAtt", CoreTranslator::ldapSearch($lang), false, $ldapConfig["ldapSearchAtt"]);
         $form->addText("ldapNameAtt", CoreTranslator::ldapName($lang), false, $ldapConfig["ldapNameAtt"]);
         $form->addText("ldapFirstnameAtt", CoreTranslator::ldapFirstname($lang), false, $ldapConfig["ldapFirstnameAtt"]);
         $form->addText("ldapMailAtt", CoreTranslator::ldapMail($lang), false, $ldapConfig["ldapMailAtt"]);
-        
+
         $form->addSeparator(CoreTranslator::LdapAccess($lang));
         $form->addText("ldap_host", CoreTranslator::ldapAdress($lang), false, $ldapConnect["ldap_host"], false, true);
         $form->addText("ldap_port", CoreTranslator::ldapPort($lang), false, $ldapConnect["ldap_port"], false, true);
         $form->addText("ldap_user", CoreTranslator::ldapId($lang), false, $ldapConnect["ldap_user"], false, true);
-        $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);        
-        
+        $form->addText("ldap_dn", CoreTranslator::ldapBaseDN($lang), false, $ldapConnect["ldap_dn"], false, true);
+
 
         $form->setValidationButton(CoreTranslator::Save($lang), "coreldapconfig");
-        
-        if ($form->check()){
+
+        if ($form->check()) {
             $this->editquery();
             $this->redirect("coreconfigadmin");
             return;
         }
-        
-        $this->render( array("formHtml" => $form->getHtml($lang)));
-        
+
+        $this->render(array("formHtml" => $form->getHtml($lang)));
     }
 
     /**
      * Edit the LDAP access informations
      */
-    protected function editquery() {
-
+    protected function editquery()
+    {
         // get the post parameters
         $ldapConfig["useLdap"] = $this->request->getParameter("useLdap");
         $ldapConfig["ldapDefaultStatus"] = $this->request->getParameter("ldapDefaultStatus");
@@ -91,7 +101,7 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConfig["ldapNameAtt"] = $this->request->getParameter("ldapNameAtt");
         $ldapConfig["ldapFirstnameAtt"] = $this->request->getParameter("ldapFirstnameAtt");
         $ldapConfig["ldapMailAtt"] = $this->request->getParameter("ldapMailAtt");
-        
+
         /*
         $ldapConnect["ldap_host"] = $this->request->getParameter("ldap_host", "");
         $ldapConnect["ldap_port"] = intval($this->request->getParameter("ldap_port", 389));
@@ -100,7 +110,7 @@ class CoreldapconfigController extends CoresecureController {
         $ldapConnect["ldap_dn"] = $this->request->getParameter("ldap_dn", "");
         $ldapConnect["ldap_tls"] = $this->request->getParameter("ldap_tls");
         */
-        
+
 
         // update the database
         $modelSettings = new CoreConfig();
@@ -110,7 +120,7 @@ class CoreldapconfigController extends CoresecureController {
         $modelSettings->setParam("ldapNameAtt", $ldapConfig["ldapNameAtt"]);
         $modelSettings->setParam("ldapFirstnameAtt", $ldapConfig["ldapFirstnameAtt"]);
         $modelSettings->setParam("ldapMailAtt", $ldapConfig["ldapMailAtt"]);
-        
+
         // update the config file
         /*
         $useTls = 0;
@@ -129,5 +139,4 @@ class CoreldapconfigController extends CoresecureController {
 
         $this->redirect("coreconfig");
     }
-
 }

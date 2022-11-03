@@ -17,12 +17,13 @@ require_once 'Modules/core/Model/CoreConfig.php';
  * @author sprigent
  * Controller for the home page
  */
-class CoreconfigadminController extends CoresecureController {
-
+class CoreconfigadminController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
@@ -34,9 +35,8 @@ class CoreconfigadminController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
-
-
+    public function indexAction()
+    {
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
 
@@ -58,7 +58,7 @@ class CoreconfigadminController extends CoresecureController {
             return;
         }
         */
-        
+
 
 
 
@@ -108,7 +108,6 @@ class CoreconfigadminController extends CoresecureController {
 
         $formNavbar = $this->navbarColorForm($modelCoreConfig, $lang);
         if ($formNavbar->check()) {
-
             $modelCoreConfig->setParam("navbar_bg_color", $this->request->getParameter("navbar_bg_color"));
             $modelCoreConfig->setParam("navbar_bg_highlight", $this->request->getParameter("navbar_bg_highlight"));
             $modelCoreConfig->setParam("navbar_text_color", $this->request->getParameter("navbar_text_color"));
@@ -144,7 +143,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function maintenanceForm($modelCoreConfig, $lang) {
+    protected function maintenanceForm($modelCoreConfig, $lang)
+    {
         $is_maintenance = $modelCoreConfig->getParam("is_maintenance", 0);
         $maintenance_message = $modelCoreConfig->getParam("maintenance_message");
 
@@ -163,8 +163,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function installForm($lang) {
-
+    protected function installForm($lang)
+    {
         $form = new Form($this->request, "installForm");
         $form->addSeparator(CoreTranslator::Install_Repair_database($lang));
         $form->addComment(CoreTranslator::Install_Txt($lang));
@@ -179,8 +179,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function ldapForm($lang) {
-
+    protected function ldapForm($lang)
+    {
         $form = new Form($this->request, "ldapForm");
         $form->addSeparator(CoreTranslator::LdapConfig($lang));
 
@@ -195,8 +195,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param string $lang
      * @return \Form
      */
-    protected function homePageForm($modelCoreConfig, $lang) {
-
+    protected function homePageForm($modelCoreConfig, $lang)
+    {
         $form = new Form($this->request, "homePageForm");
         $form->addSeparator(CoreTranslator::Home($lang));
         $form->addText("default_home_path", CoreTranslator::Home_page($lang), true, $modelCoreConfig->getParam("default_home_path"));
@@ -212,8 +212,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param string $lang
      * @return \Form
      */
-    protected function connectionPageForm($modelCoreConfig, $lang) {
-
+    protected function connectionPageForm($modelCoreConfig, $lang)
+    {
         $home_title = $modelCoreConfig->getParam("home_title");
         $home_message = $modelCoreConfig->getParam("home_message");
 
@@ -226,7 +226,8 @@ class CoreconfigadminController extends CoresecureController {
         return $form;
     }
 
-    protected function spaceIconForm($modelCoreConfig, $lang) {
+    protected function spaceIconForm($modelCoreConfig, $lang)
+    {
         $value = $modelCoreConfig->getParam("space_icon_type", 2);
         $choices = array();
         $choicesid = array();
@@ -250,8 +251,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param string $lang
      * @return \Form
      */
-    protected function desactivateUserForm($modelCoreConfig, $lang) {
-
+    protected function desactivateUserForm($modelCoreConfig, $lang)
+    {
         $value = $modelCoreConfig->getParam("user_desactivate", 1);
 
         $cc = new CoreConfig();
@@ -275,7 +276,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function emailForm($modelCoreConfig, $lang) {
+    protected function emailForm($modelCoreConfig, $lang)
+    {
         $value = $modelCoreConfig->getParam("admin_email");
 
         $form = new Form($this->request, "emailForm");
@@ -292,8 +294,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function backupForm($lang) {
-
+    protected function backupForm($lang)
+    {
         $form = new Form($this->request, "backupForm");
         $form->addSeparator(CoreTranslator::Backup($lang));
 
@@ -308,7 +310,8 @@ class CoreconfigadminController extends CoresecureController {
      * @param type $lang
      * @return \Form
      */
-    protected function navbarColorForm($modelCoreConfig, $lang) {
+    protected function navbarColorForm($modelCoreConfig, $lang)
+    {
         $navbar_bg_color = $modelCoreConfig->getParam("navbar_bg_color");
         $navbar_bg_highlight = $modelCoreConfig->getParam("navbar_bg_highlight");
         $navbar_text_color = $modelCoreConfig->getParam("navbar_text_color");
@@ -329,7 +332,8 @@ class CoreconfigadminController extends CoresecureController {
     /**
      * @deprecated
      */
-    protected function whoCanDeleteUserForm($modelCoreConfig, $lang) {
+    protected function whoCanDeleteUserForm($modelCoreConfig, $lang)
+    {
         $who_can_delete_user = $modelCoreConfig->getParam("who_can_delete_user", 2);
 
         $form = new Form($this->request, "whoCanDeleteUserForm");
@@ -347,5 +351,4 @@ class CoreconfigadminController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coreconfigadmin");
         return $form;
     }
-
 }

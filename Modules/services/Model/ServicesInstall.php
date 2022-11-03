@@ -20,15 +20,15 @@ require_once 'Modules/services/Model/SeTaskCategory.php';
  *
  * @author Sylvain Prigent
  */
-class ServicesInstall extends Model {
-
+class ServicesInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {
-
+    public function createDatabase()
+    {
         $modelService = new SeService();
         $modelService->createTable();
 
@@ -49,16 +49,16 @@ class ServicesInstall extends Model {
 
         $modelSePrice = new SePrice();
         $modelSePrice->createTable();
-        
+
         $modelOrigin = new SeOrigin();
         $modelOrigin->createTable();
-       
+
         $modelVisa = new SeVisa();
         $modelVisa->createTable();
-        
+
         $modelshelf = new StockShelf();
         $modelshelf->createTable();
-        
+
         $modelCabinet = new StockCabinet();
         $modelCabinet->createTable();
 
@@ -72,5 +72,4 @@ class ServicesInstall extends Model {
             mkdir('data/services/', 0755, true);
         }
     }
-
 }

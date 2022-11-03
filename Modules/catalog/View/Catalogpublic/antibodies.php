@@ -53,19 +53,19 @@
                     <td headers="antibodies image" class="text-left">
                         <?php
                         $imageFile = "data/antibodies/" . $entry["image_url"];
-                        if (!file_exists($imageFile) || is_dir($imageFile)) {
-                            ?>
+                if (!file_exists($imageFile) || is_dir($imageFile)) {
+                    ?>
                             <div style="height:25px;"></div>
                             <?php
-                        } else {
-                            list($width, $height, $type, $attr) = getimagesize($imageFile);
-                            ?>
+                } else {
+                    list($width, $height, $type, $attr) = getimagesize($imageFile);
+                    ?>
                             <a href="<?php echo $imageFile ?>" itemprop="contentUrl" data-size="<?php echo $width ?>x<?php echo $height ?>">
                                 <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
                             </a>
                             <?php
-                        }
-                        ?>
+                }
+                ?>
                     </td>
                     <td headers="antibodies number" class="text-left"><?php echo $this->clean($entry ['no_h2p2']); ?></td>
                     <td headers="antibodies name" class="text-left"><?php echo $this->clean($entry ['nom']); ?></td> 
@@ -74,48 +74,47 @@
 
                     <td headers="tissues species" class="text-left" style="background-color: #eeffee;">
                         <?php
-                        $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-                            $val = $val . "<p>" . $tissus[$i]['espece']
-                                    . "</p>";
-                        }
-                        echo $val;
-                        ?>
+                $tissus = $entry ['tissus'];
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $val = $val . "<p>" . $tissus[$i]['espece']
+                            . "</p>";
+                }
+                echo $val;
+                ?>
                     </td>
 
                     <td headers="tissues sample" class="text-left" style="background-color: #eeffee;"><?php
-                        $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-                            $val = $val . "<p>"
-                                    . $tissus[$i]['prelevement']
-                                    . "</p>";
-                        }
-                        echo $val;
-                        ?>
+                $tissus = $entry ['tissus'];
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $val = $val . "<p>"
+                            . $tissus[$i]['prelevement']
+                            . "</p>";
+                }
+                echo $val;
+                ?>
                     </td>
 
                     <td headers="tissues status" class="text-left" style="background-color: #eeffee;">
                         <?php
-                        $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-
-                            $statusTxt = "";
-                            $background = "#ffffff";
-                            foreach ($status as $stat) {
-                                if ($tissus[$i]['status'] == $stat["id"]) {
-                                    $statusTxt = $stat['nom'];
-                                    $background = $stat["color"];
-                                }
-                            }
-                            $val = $val . "<p style=\"background-color: #" . $background . "\">"
-                                    . $statusTxt
-                                    . "</p>";
+                $tissus = $entry ['tissus'];
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $statusTxt = "";
+                    $background = "#ffffff";
+                    foreach ($status as $stat) {
+                        if ($tissus[$i]['status'] == $stat["id"]) {
+                            $statusTxt = $stat['nom'];
+                            $background = $stat["color"];
                         }
-                        echo $val;
-                        ?>
+                    }
+                    $val = $val . "<p style=\"background-color: #" . $background . "\">"
+                            . $statusTxt
+                            . "</p>";
+                }
+                echo $val;
+                ?>
                     </td>
 
                 </tr>

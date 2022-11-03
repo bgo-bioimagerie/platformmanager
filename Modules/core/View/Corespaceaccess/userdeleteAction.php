@@ -1,1 +1,1 @@
-<?php include 'Modules/core/View/Corespaceaccess/layout.php' ?>
+<?php include 'Modules/core/View/Corespaceaccess/layout.php';

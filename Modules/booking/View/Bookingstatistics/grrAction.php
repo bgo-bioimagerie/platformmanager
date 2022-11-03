@@ -28,10 +28,10 @@
 
                     <?php
                     $date = "";
-                    if (isset($searchDate_start)) {
-                        $date = CoreTranslator::dateFromEn($searchDate_start, $lang);
-                    }
-                    ?> 
+if (isset($searchDate_start)) {
+    $date = CoreTranslator::dateFromEn($searchDate_start, $lang);
+}
+?> 
                     <input type='date' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_start" id="searchDate_start"
                            value="<?php echo $date ?>" />
                 </div>
@@ -42,11 +42,11 @@
             <div class="col-10">
                 <div class='input-group date'>
                     <?php
-                    $date = "";
-                    if (isset($searchDate_end)) {
-                        $date = CoreTranslator::dateFromEn($searchDate_end, $lang);
-                    }
-                    ?> 
+$date = "";
+if (isset($searchDate_end)) {
+    $date = CoreTranslator::dateFromEn($searchDate_end, $lang);
+}
+?> 
                     <input id="test32" type='date' class="form-control" data-date-format="YYYY-MM-DD" name="searchDate_end" 
                            value="<?php echo $date ?>" />
                 </div>
@@ -58,15 +58,15 @@
             <div class="col-10">
                 <select class="form-select" id="condition_et_ou" name="condition_et_ou" >
                     <OPTION value="and" <?php
-                    if (isset($condition_et_ou) && $condition_et_ou == 1) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Valide toutes les conditions suivantes </OPTION>
+if (isset($condition_et_ou) && $condition_et_ou == 1) {
+    echo "selected=\"selected\"";
+}
+?>> Valide toutes les conditions suivantes </OPTION>
                     <OPTION value="or" <?php
-                    if (isset($condition_et_ou) && $condition_et_ou == 0) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Valide au moins une des conditions suivantes </OPTION>
+if (isset($condition_et_ou) && $condition_et_ou == 0) {
+    echo "selected=\"selected\"";
+}
+?>> Valide au moins une des conditions suivantes </OPTION>
                 </select>
             </div>    
 
@@ -82,25 +82,25 @@
                         <select class="form-control" name="champ[]" >
                             <?php
                             $checkedArea = "";
-                            $checkedRes = "";
-                            $checkedC = "";
-                            $checkedS = "";
-                            $checkedF = "";
-                            $checkedRec = "";
-                            if ($champ[$i] == "area") {
-                                $checkedArea = "selected=\"selected\"";
-                            } else if ($champ[$i] == "resource") {
-                                $checkedRes = "selected=\"selected\"";
-                            } else if ($champ[$i] == "color_code") {
-                                $checkedC = "selected=\"selected\"";
-                            } else if ($champ[$i] == "short_description") {
-                                $checkedS = "selected=\"selected\"";
-                            } else if ($champ[$i] == "full_description") {
-                                $checkedF = "selected=\"selected\"";
-                            } else if ($champ[$i] == "recipient") {
-                                $checkedRec = "selected=\"selected\"";
-                            }
-                            ?>
+                    $checkedRes = "";
+                    $checkedC = "";
+                    $checkedS = "";
+                    $checkedF = "";
+                    $checkedRec = "";
+                    if ($champ[$i] == "area") {
+                        $checkedArea = "selected=\"selected\"";
+                    } elseif ($champ[$i] == "resource") {
+                        $checkedRes = "selected=\"selected\"";
+                    } elseif ($champ[$i] == "color_code") {
+                        $checkedC = "selected=\"selected\"";
+                    } elseif ($champ[$i] == "short_description") {
+                        $checkedS = "selected=\"selected\"";
+                    } elseif ($champ[$i] == "full_description") {
+                        $checkedF = "selected=\"selected\"";
+                    } elseif ($champ[$i] == "recipient") {
+                        $checkedRec = "selected=\"selected\"";
+                    }
+                    ?>
                             <OPTION value="area" <?php echo $checkedArea ?>> <?php echo BookingTranslator::Area($lang) ?> </OPTION>
                             <OPTION value="resource" <?php echo $checkedRes ?>> <?php echo BookingTranslator::Resource($lang) ?> </OPTION>
                             <OPTION value="color_code" <?php echo $checkedC ?>> <?php echo BookingTranslator::Color_code($lang) ?> </OPTION>
@@ -113,24 +113,24 @@
                     <div class="col-4">
                         <select class="form-select" name="type_recherche[]" >
                             <OPTION value="1" <?php
-                            if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
-                                echo "selected=\"selected\"";
-                            }
-                            ?>> <?php echo BookingTranslator::Contains($lang) ?> </OPTION>
+                    if (isset($type_recherche[$i]) && $type_recherche[$i] == 1) {
+                        echo "selected=\"selected\"";
+                    }
+                    ?>> <?php echo BookingTranslator::Contains($lang) ?> </OPTION>
                             <OPTION value="0" <?php
-                            if (isset($type_recherche[$i]) && $type_recherche[$i] == 0) {
-                                echo "selected=\"selected\"";
-                            }
-                            ?>> <?php echo BookingTranslator::Does_not_contain($lang) ?> </OPTION>
+                    if (isset($type_recherche[$i]) && $type_recherche[$i] == 0) {
+                        echo "selected=\"selected\"";
+                    }
+                    ?>> <?php echo BookingTranslator::Does_not_contain($lang) ?> </OPTION>
                         </select>
                     </div>
                     <div class="col-4">
                         <?php
                         $value = "";
-                        if (isset($text[$i])) {
-                            $value = $text[$i];
-                        }
-                        ?>
+                    if (isset($text[$i])) {
+                        $value = $text[$i];
+                    }
+                    ?>
                         <input type="text" class="form-control" name="text[]" value="<?php echo $value ?>" />
                     </div>
                     </div>
@@ -145,34 +145,33 @@
                 <select class="form-select" name="output">
                     <?php
                     if (isset($output)) {
-                        
                     }
-                    ?>
+?>
                     <OPTION value="1" <?php
-                    if (isset($output) && $output == 1) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Détails des réservations </OPTION>
+if (isset($output) && $output == 1) {
+    echo "selected=\"selected\"";
+}
+?>> Détails des réservations </OPTION>
                     <OPTION value="2" <?php
-                    if (isset($output) && $output == 2) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Résumé statistique </OPTION>
+if (isset($output) && $output == 2) {
+    echo "selected=\"selected\"";
+}
+?>> Résumé statistique </OPTION>
                     <OPTION value="3" <?php
-                    if (isset($output) && $output == 3) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Détails des réservations et résumé </OPTION>
+if (isset($output) && $output == 3) {
+    echo "selected=\"selected\"";
+}
+?>> Détails des réservations et résumé </OPTION>
                     <OPTION value="4" <?php
-                    if (isset($output) && $output == 4) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Fichier CSV des réservations </OPTION>
+if (isset($output) && $output == 4) {
+    echo "selected=\"selected\"";
+}
+?>> Fichier CSV des réservations </OPTION>
                     <OPTION value="5" <?php
-                    if (isset($output) && $output == 5) {
-                        echo "selected=\"selected\"";
-                    }
-                    ?>> Fichier CSV du résumé </OPTION>
+if (isset($output) && $output == 5) {
+    echo "selected=\"selected\"";
+}
+?>> Fichier CSV du résumé </OPTION>
                 </select>
             </div>
         </div>    
@@ -182,20 +181,20 @@
             <div class="col-10">
                 <select class="form-select" id="summary_rq" name="summary_rq">
                     <?php
-                    $checkedC = "";
-                    $checkedS = "";
-                    $checkedRec = "";
+$checkedC = "";
+$checkedS = "";
+$checkedRec = "";
 
-                    if (isset($summary_rq)) {
-                        if ($summary_rq == "color_code") {
-                            $checkedC = "selected=\"selected\"";
-                        } else if ($summary_rq == "short_description") {
-                            $checkedS = "selected=\"selected\"";
-                        } else if ($summary_rq == "recipient") {
-                            $checkedRec = "selected=\"selected\"";
-                        }
-                    }
-                    ?>
+if (isset($summary_rq)) {
+    if ($summary_rq == "color_code") {
+        $checkedC = "selected=\"selected\"";
+    } elseif ($summary_rq == "short_description") {
+        $checkedS = "selected=\"selected\"";
+    } elseif ($summary_rq == "recipient") {
+        $checkedRec = "selected=\"selected\"";
+    }
+}
+?>
                     <OPTION value="recipient" <?php echo $checkedRec ?>> <?php echo BookingTranslator::recipient($lang) ?> </OPTION>
                     <OPTION value="short_description" <?php echo $checkedS ?>> <?php echo BookingTranslator::Short_description($lang) ?> </OPTION>
                     <OPTION value="color_code" <?php echo $checkedC ?>> <?php echo BookingTranslator::Color_code($lang) ?> </OPTION>
@@ -241,9 +240,9 @@
 
                         <?php
                         $date = "debut : " . date("d/m/Y à H:i", $t["start_time"]) . "<br/>";
-                        $date .= "fin : " . date("d/m/Y à H:i", $t["end_time"]) . "<br/>";
-                        $date .= "durée : " . ($t["end_time"] - $t["start_time"]) / 60 . " minutes";
-                        ?>
+                    $date .= "fin : " . date("d/m/Y à H:i", $t["end_time"]) . "<br/>";
+                    $date .= "durée : " . ($t["end_time"] - $t["start_time"]) / 60 . " minutes";
+                    ?>
 
                         <td><?php echo $date ?></td>
                         <td><?php echo $t["full_description"] ?></td>
@@ -255,102 +254,102 @@
 
                     <?php
                 }
-                ?>
+        ?>
 
             </tbody>
         </table>
         <?php
     }
-    ?>
+?>
 
 </div>
 
 <div class="col-10 offset-2" id="pm-table">
 
     <?php
-    if (isset($summaryTable)) {
-        ?>
+if (isset($summaryTable)) {
+    ?>
         <table class="table table-striped text-center table-bordered">
             <caption>Résumé </caption>
 
             <?php
-            $countTable = $summaryTable['countTable'];
-            $timeTable = $summaryTable['timeTable'];
-            $resourcesNames = $summaryTable['resources'];
-            $entrySummary = $summaryTable['entrySummary'];
-            //print_r($timeTable);
-            ?>
+        $countTable = $summaryTable['countTable'];
+    $timeTable = $summaryTable['timeTable'];
+    $resourcesNames = $summaryTable['resources'];
+    $entrySummary = $summaryTable['entrySummary'];
+    //print_r($timeTable);
+    ?>
 
 
 
             <thead>
             <th scope="col"></th>
             <?php
-            foreach ($resourcesNames as $name) {
-                ?>
+    foreach ($resourcesNames as $name) {
+        ?>
                 <th scope="col"><?php echo $name ?></th>
                 <?php
-            }
-            ?>
+    }
+    ?>
 
             <th scope="col">Total</th>
             </thead>
 
             <tbody>
                 <?php
-                $i = -1;
-                $totalCG = 0;
-                $totalHG = 0;
-                foreach ($countTable as $coutT) {
-                    $i++;
-                    ?>
+        $i = -1;
+    $totalCG = 0;
+    $totalHG = 0;
+    foreach ($countTable as $coutT) {
+        $i++;
+        ?>
                     <tr>
                         <td><?php echo $entrySummary[$i] ?></td>
                         <?php
-                        $j = -1;
-                        $totalC = 0;
-                        $totalH = 0;
-                        foreach ($coutT as $col) {
-                            $j++;
-                            ?>
+            $j = -1;
+        $totalC = 0;
+        $totalH = 0;
+        foreach ($coutT as $col) {
+            $j++;
+            ?>
 
                             <td> (<?php echo $col ?>) <?php echo $timeTable[$entrySummary[$i]][$resourcesNames[$j]] / 3600 ?> </td>
                             <?php
-                            $totalC += $col;
-                            $totalH += $timeTable[$entrySummary[$i]][$resourcesNames[$j]];
-                        }
-                        ?>
+            $totalC += $col;
+            $totalH += $timeTable[$entrySummary[$i]][$resourcesNames[$j]];
+        }
+        ?>
                         <td>(<?php echo $totalC ?>) <?php echo $totalH / 3600 ?> </td>
                     </tr>
                     <?php
                     $totalCG += $totalC;
-                    $totalHG += $totalH;
-                }
-                ?>
+        $totalHG += $totalH;
+    }
+    ?>
 
                 <tr>
                     <td> Total </td>
                     <?php
-                    for ($i = 0; $i < count($resourcesNames); $i++) {
-                        $sumC = 0;
-                        $sumH = 0;
-                        for ($x = 0; $x < count($entrySummary); $x++) {
-                            $sumC += $countTable[$entrySummary[$x]][$resourcesNames[$i]];
-                            $sumH += $timeTable[$entrySummary[$x]][$resourcesNames[$i]];
-                        }
-                        ?>
+        for ($i = 0; $i < count($resourcesNames); $i++) {
+            $sumC = 0;
+            $sumH = 0;
+            for ($x = 0; $x < count($entrySummary); $x++) {
+                $sumC += $countTable[$entrySummary[$x]][$resourcesNames[$i]];
+                $sumH += $timeTable[$entrySummary[$x]][$resourcesNames[$i]];
+            }
+            ?>
                         <td> (<?php echo $sumC ?>) <?php echo $sumH / 3600 ?> </td>
                         <?php
-                    }
-                    ?>
+        }
+    ?>
                     <td> (<?php echo $totalCG ?>) <?php echo $totalHG / 3600 ?> </td>
                 </tr>
 
             </tbody>
         </table> 
         <?php
-    }
-    ?>
+}
+?>
 
 </div>
 

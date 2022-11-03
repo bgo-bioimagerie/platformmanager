@@ -7,16 +7,17 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
  *
  * @author Sylvain Prigent
  */
-class SeServiceType extends Model {
-
+class SeServiceType extends Model
+{
     private static $serviceTypes;
 
-     /**
-     * Constructor
-     */
-    public function __construct() {
+    /**
+    * Constructor
+    */
+    public function __construct()
+    {
         $this->tableName = "se_service_types";
-        
+
         self::$serviceTypes[1] = "Quantity";
         self::$serviceTypes[2] = "Time minutes";
         self::$serviceTypes[3] = "Time hours";
@@ -25,7 +26,8 @@ class SeServiceType extends Model {
         self::$serviceTypes[6] = "Day";
     }
 
-    public function updateServiceTypesReferences() {
+    public function updateServiceTypesReferences()
+    {
         // extract service types names and ids from database
         $sql = "SELECT `id`, `name` FROM se_service_types";
         $typesData = $this->runRequest($sql, array())->fetchAll();
@@ -68,11 +70,11 @@ class SeServiceType extends Model {
     // Should we leave createTable() here for upgrade ?
     /**
      * Create the unit table
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `se_service_types` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `name` varchar(100) NOT NULL DEFAULT '',
@@ -81,37 +83,40 @@ class SeServiceType extends Model {
         );";
         return $this->runRequest($sql);
     }
-    
+
     /**
      * get all service types
-     * 
+     *
      * @return array(string) serviceTypes
      */
-    public function getTypes() {
+    public function getTypes()
+    {
         return self::$serviceTypes;
     }
 
     /**
      * get a service type
-     * 
+     *
      * @param int|string $id_type
-     * 
+     *
      * @return array(string) serviceTypes
      */
-    public function getType($id_type) {
+    public function getType($id_type)
+    {
         return self::$serviceTypes[intval($id_type)];
     }
 
     /**
      * get all service types formatted for
      * framework to create a select field in form
-     * 
+     *
      * @return array("names" => array(string), "ids" => array(int))
      */
-    public function getAllForSelect() {
+    public function getAllForSelect()
+    {
         $names = [];
         $ids = [];
-        foreach(self::$serviceTypes as $id => $name) {
+        foreach (self::$serviceTypes as $id => $name) {
             array_push($ids, $id);
             array_push($names, $name);
         }
@@ -120,13 +125,13 @@ class SeServiceType extends Model {
 
     /**
      * get position of a type name in serviceTypes array
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @return int|bool index in serviceTypes array | false
      */
-    public function getIdFromName($name){
+    public function getIdFromName($name)
+    {
         return array_search($name, self::$serviceTypes);
     }
-
 }

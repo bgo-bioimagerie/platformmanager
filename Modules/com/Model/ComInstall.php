@@ -8,18 +8,18 @@ require_once 'Modules/com/Model/ComNews.php';
  *
  * @author Sylvain Prigent
  */
-class ComInstall extends Model {
-
+class ComInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         $model1 = new ComNews();
         $model1->createTable();
-        
+
         if (!file_exists('data/com/')) {
             mkdir('data/com/', 0755, true);
         }

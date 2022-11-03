@@ -9,24 +9,26 @@ require_once 'Modules/services/Model/SeOrigin.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ServicesoriginsController extends ServicesController {
-
+class ServicesoriginsController extends ServicesController
+{
     private $originModel;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->originModel = new SeOrigin();
     }
 
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -47,7 +49,8 @@ class ServicesoriginsController extends ServicesController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -62,28 +65,29 @@ class ServicesoriginsController extends ServicesController {
 
         $form->addText("name", CoreTranslator::Name($lang), true, $value["name"]);
         $form->addNumber("display_order", CoreTranslator::Display_order($lang), false, $value["display_order"]);
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), "serviceoriginedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "servicesorigins/" . $id_space);
 
         if ($form->check()) {
-            $origin_id = $this->originModel->set($id, 
-                    $this->request->getParameter("name"), 
-                    $this->request->getParameter("display_order"), $id_space);
-            
+            $origin_id = $this->originModel->set(
+                $id,
+                $this->request->getParameter("name"),
+                $this->request->getParameter("display_order"),
+                $id_space
+            );
+
             return $this->redirect("servicesorigins/" . $id_space, [], ['origin' => ['id' => $origin_id]]);
         }
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $this->originModel->delete($id_space, $id);
         $this->redirect("servicesorigins/" . $id_space);
     }
-
-   
-
 }

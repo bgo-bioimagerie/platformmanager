@@ -5,7 +5,7 @@
 
 <?php
     if ($showCom) {
-?>
+        ?>
 
 <?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
@@ -27,13 +27,13 @@ if ($space['color'] == "") {
 
         <?php
         require_once 'Modules/com/Controller/ComtileController.php';
-        $navController = new ComtileController(new Request(array(), false), $space);
-        echo $navController->indexAction($id_space);
-        ?>
+$navController = new ComtileController(new Request(array(), false), $space);
+echo $navController->indexAction($id_space);
+?>
 
 <?php
 if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
-?>
+    ?>
 <div class="row">
     <div class="col-12">
         <div class="alert alert-info"><?php echo CoreTranslator::NotConnectedMode($lang) ?></div>
@@ -51,9 +51,9 @@ if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
             <div class="pm-tiles bs-glyphicons">
                 <ul class="pm-tiles bs-glyphicons-list">
                     <?php
-                    $configModel = new CoreConfig();
-                    foreach ($spaceMenuItems as $item) {
-                        ?>
+                        $configModel = new CoreConfig();
+foreach ($spaceMenuItems as $item) {
+    ?>
                         <li style="background-color:<?php echo $item["color"]; ?>; <?php echo "; color: ".$item["txtcolor"]; ?>">
                             <a href="<?php echo $item["url"] . "/" . $id_space ?>">
                                 <span style="font-size: 1.4rem" height class="pm-tiles <?php echo $item["icon"] ?>" aria-hidden="true"></span>
@@ -62,9 +62,9 @@ if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
                             </a>
                         </li>
                         <?php
-                    }
-                    ?>
-                    <?php if($role > 1) { ?>
+}
+?>
+                    <?php if ($role > 1) { ?>
                         <li style="background-color:<?php echo $space['color'] ?>;">
                             <a href="<?php echo "coremail/" . $space["id"] ?>">
                                 <span style="font-size: 1.4rem" class="pm-tiles bi-bell-fill" aria-hidden="true"></span>
@@ -124,8 +124,8 @@ if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
             </div>
             <?php
         }
-        ?>
-        <?php if($_SESSION['id_user'] > 0 && $role<CoreSpace::$MANAGER && $role > 0 && $isMemberOfSpace) { ?>
+?>
+        <?php if ($_SESSION['id_user'] > 0 && $role<CoreSpace::$MANAGER && $role > 0 && $isMemberOfSpace) { ?>
         <div class="page-header">
                 <h2>
                     <?php echo CoreTranslator::RequestJoin(true, $lang)."?" ?>
@@ -148,7 +148,7 @@ if (!$_SESSION['id_user'] || $_SESSION['id_user'] < 0) {
 
 <?php
 $spaceModules = ['spaceaccess'];
-foreach($spaceMenuItems as $item) {
+foreach ($spaceMenuItems as $item) {
     $spaceModules[] = $item['url'];
 }
 
@@ -160,8 +160,12 @@ Vue.createApp({
     data() {
         return {
             id_space: <?php echo $id_space ?>,
-            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
-            modules: <?php echo json_encode($spaceModules ); ?> ,
+            logged: <?php if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+                echo "true";
+            } else {
+                echo "false";
+            } ?>,
+            modules: <?php echo json_encode($spaceModules); ?> ,
             notifs: {}
         }
     },

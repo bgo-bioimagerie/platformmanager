@@ -9,7 +9,7 @@
         <h1><?php echo DocumentsTranslator::configuration($lang) ?></h1>
     </div>
     
-    <?php foreach($forms as $form){ ?>
+    <?php foreach ($forms as $form) { ?>
     <div class="col-12" style="height: 7px;">
         <p></p>
     </div>

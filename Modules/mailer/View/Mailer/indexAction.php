@@ -60,7 +60,7 @@
                                 ?>
                                 <OPTION value="r_<?php echo $areaId ?>" > <?php echo ResourcesTranslator::Resource($lang) . ": " . $areaname ?> </OPTION>
         <?php }
-    } ?>
+                            } ?>
                     </select>
                 </div>
             </div>
@@ -154,4 +154,4 @@
 </script>
 <?php
 endblock();
-?>
+ ?>

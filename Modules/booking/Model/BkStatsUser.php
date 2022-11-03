@@ -15,10 +15,10 @@ require_once 'Modules/clients/Model/ClClient.php';
  *
  * @author Sylvain Prigent
  */
-class BkStatsUser extends Model {
-
-    public function authorizedUsersMail($file, $resource_id, $id_space) {
-
+class BkStatsUser extends Model
+{
+    public function authorizedUsersMail($file, $resource_id, $id_space)
+    {
         // get resource category
         $modelResource = new ReCategory();
         $resourceInfo = $modelResource->getName($id_space, $resource_id);
@@ -133,7 +133,7 @@ class BkStatsUser extends Model {
         // Header
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
-        if($reqIcon && $reqIcon['image']) {
+        if ($reqIcon && $reqIcon['image']) {
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
             $objDrawing->setName('PHPExcel logo');
             $objDrawing->setPath($reqIcon[0]);
@@ -259,7 +259,7 @@ class BkStatsUser extends Model {
         $sheet->getHeaderFooter()->setEvenFooter('&L ' . $footer . '&R Page &P / &N');
 
 
-        if($reqIcon && $reqIcon['image']) {
+        if ($reqIcon && $reqIcon['image']) {
             $ImageNews = $reqIcon[0];
 
             //on récupère l'extension du fichier
@@ -279,9 +279,9 @@ class BkStatsUser extends Model {
             //la largeur voulu dans le document excel
             $NouvelleHauteur = 80;
             //calcul du pourcentage de réduction par rapport à l’original
-            $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
+            $Reduction = (($NouvelleHauteur * 100) / $TailleImageChoisie[1]);
             //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
-            $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
+            $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100);
             //j’initialise la nouvelle image
             $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
 
@@ -298,14 +298,13 @@ class BkStatsUser extends Model {
             $objDrawing->setOffsetY(8);
             $objDrawing->setRenderingFunction(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::RENDERING_JPEG);
             $objDrawing->setMimeType(\PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing::MIMETYPE_DEFAULT);
-
         }
 
 
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
 
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
 
@@ -316,12 +315,12 @@ class BkStatsUser extends Model {
      * Statistics of the users allowed to book a resource
      * @param number $resource_id
      */
-    public function authorizedUsers($file, $resource_id, $id_space, $lang='en') {
-
+    public function authorizedUsers($file, $resource_id, $id_space, $lang='en')
+    {
         // get resource category
         $modelResource = new ReCategory();
         $resourceInfo = $modelResource->getName($id_space, $resource_id);
-        if(!$resourceInfo) {
+        if (!$resourceInfo) {
             throw new PfmParamException('resource not found');
         }
         // header
@@ -435,7 +434,7 @@ class BkStatsUser extends Model {
         $sqlIcon = "SELECT image FROM core_spaces WHERE id=?";
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
 
-        if($reqIcon && $reqIcon['image']) {
+        if ($reqIcon && $reqIcon['image']) {
             // Header
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
             $objDrawing->setName('PHPExcel logo');
@@ -578,7 +577,7 @@ class BkStatsUser extends Model {
         $sheet->getHeaderFooter()->setOddFooter('&L ' . $footer . '&R Page &P / &N');
         $sheet->getHeaderFooter()->setEvenFooter('&L ' . $footer . '&R Page &P / &N');
 
-        if($reqIcon && $reqIcon['image']) {
+        if ($reqIcon && $reqIcon['image']) {
             $ImageNews = $reqIcon[0];
 
             //on récupère l'extension du fichier
@@ -599,9 +598,9 @@ class BkStatsUser extends Model {
             //$NouvelleLargeur = 150;
             $NouvelleHauteur = 80;
             //calcul du pourcentage de réduction par rapport à l’original
-            $Reduction = ( ($NouvelleHauteur * 100) / $TailleImageChoisie[1] );
+            $Reduction = (($NouvelleHauteur * 100) / $TailleImageChoisie[1]);
             //PHPExcel m’aplatit verticalement l’image donc j’ai calculé de ratio d’applatissement de l’image et je l’étend préalablement
-            $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100 );
+            $NouvelleLargeur = (($TailleImageChoisie[0] * $Reduction) / 100);
             //j’initialise la nouvelle image
             $NouvelleImage = imagecreatetruecolor($NouvelleLargeur, $NouvelleHauteur);
 
@@ -623,23 +622,24 @@ class BkStatsUser extends Model {
         $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
 
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
 
         $writer->save($file);
     }
 
-    public function bookingUsers($id_space, $startdate, $enddate) {
+    public function bookingUsers($id_space, $startdate, $enddate)
+    {
         // convert start date to unix date
-        if($startdate == "") {
+        if ($startdate == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($enddate == "") {
+        if ($enddate == "") {
             throw new PfmParamException("invalid end date");
         }
         $tabDate = explode("-", $startdate);
-        $searchDate_start = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]), intval($tabDate[0]));        
+        $searchDate_start = mktime(0, 0, 0, intval($tabDate[1]), intval($tabDate[2]), intval($tabDate[0]));
 
         // convert end date to unix date
         $tabDate = explode("-", $enddate);
@@ -664,7 +664,6 @@ class BkStatsUser extends Model {
         $modelClient = new ClClient();
         $recss = array();
         for ($i = 0; $i < count($recs); $i++) {
-
             $recss[] = array('name' => $modelUser->getUserFUllName($recs[$i]['recipient_id']),
                 'email' => $modelUser->getEmail($recs[$i]['recipient_id']));
         }
@@ -672,11 +671,10 @@ class BkStatsUser extends Model {
             $clientInfo = $modelClient->get($id_space, $recresps[$i]['responsible_id']);
             $recss[] = array(
                 'name' => $clientInfo["contact_name"],
-                'email' => $clientInfo["email"] 
+                'email' => $clientInfo["email"]
             );
         }
 
         return $recss;
     }
-
 }

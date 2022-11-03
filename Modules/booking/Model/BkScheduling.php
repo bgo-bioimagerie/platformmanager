@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class BkScheduling extends Model {
-
+class BkScheduling extends Model
+{
     /**
      * Create the SyColorCode table
-     * 
+     *
      * @return PDOStatement
      */
-    public function __construct() {
-
+    public function __construct()
+    {
         $this->tableName = "bk_schedulings";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("is_monday", "int(1)", 1);
@@ -37,7 +37,8 @@ class BkScheduling extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getDefault() {
+    public function getDefault()
+    {
         return array(
             "id" => 0,
             "is_monday" => 1,
@@ -59,8 +60,9 @@ class BkScheduling extends Model {
         );
     }
 
-    
-    protected function getClosest($search, $arr) {
+
+    protected function getClosest($search, $arr)
+    {
         $closest = null;
         foreach ($arr as $item) {
             if ($closest === null || abs($search - $closest) > abs($item - $search)) {
@@ -70,20 +72,21 @@ class BkScheduling extends Model {
         return $closest;
     }
 
-    public function getClosestMinutes($id_space, $id_resource, $minutes){
-        if($minutes == "") {
+    public function getClosestMinutes($id_space, $id_resource, $minutes)
+    {
+        if ($minutes == "") {
             $minutes = 0;
         }
         $sql = "SELECT size_bloc_resa FROM bk_schedulings WHERE id_rearea=(SELECT id_area FROM re_info WHERE id=? AND deleted=0 AND id_space=? )";
         $req = $this->runRequest($sql, array($id_resource, $id_space));
-        if ($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             $d = $req->fetch();
             $step = $d[0];
-            
+
             $values = array();
             $values[] = 0;
             $last = 0;
-            while($last < 3600){
+            while ($last < 3600) {
                 $last += $step;
                 $values[] = $last;
             }
@@ -91,17 +94,16 @@ class BkScheduling extends Model {
             return $m/60;
         }
         return $minutes;
-        
     }
-    
+
     /**
      * get SyColorCodes informations
-     * 
+     *
      * @param string $sortentry Entry that is used to sort the SyColorCodes
      * @return multitype: array
      */
-    public function getAll($id_space, $sortentry = 'id') {
-
+    public function getAll($id_space, $sortentry = 'id')
+    {
         $sql = "SELECT * FROM bk_schedulings WHERE deleted=0 AND id_space=? order by " . $sortentry . " ASC;";
         $user = $this->runRequest($sql, array($id_space));
         return $user->fetchAll();
@@ -112,18 +114,19 @@ class BkScheduling extends Model {
      * @param unknown $id
      * @return mixed
      */
-    public function get($id_space, $id) {
-
-        if (!$this->exists($id_space, $id)){
+    public function get($id_space, $id)
+    {
+        if (!$this->exists($id_space, $id)) {
             return $this->getDefault();
         }
-        
+
         $sql = "SELECT * FROM bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
         $user = $this->runRequest($sql, array($id, $id_space));
         return $user->fetch();
     }
 
-    public function getByReArea($id_space, $id_rearea) {
+    public function getByReArea($id_space, $id_rearea)
+    {
         $sql = "SELECT * FROM bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
         $user = $this->runRequest($sql, array($id_rearea, $id_space));
         $scheduling = $user->fetch();
@@ -139,8 +142,8 @@ class BkScheduling extends Model {
      * @param string $name name of the SyColorCode
      * @param string $address address of the SyColorCode
      */
-    public function add($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0) {
-
+    public function add($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
+    {
         $sql = "insert into bk_schedulings(is_monday, is_tuesday, "
                 . " is_wednesday, is_thursday, is_friday, is_saturday, is_sunday, day_begin,"
                 . " day_end, size_bloc_resa, booking_time_scale,"
@@ -160,8 +163,8 @@ class BkScheduling extends Model {
      * @param string $name New name of the SyColorCode
      * @param string $color New Address of the SyColorCode
      */
-    public function update2($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0) {
-
+    public function update2($id_space, $id_rearea, $is_monday, $is_tuesday, $is_wednesday, $is_thursday, $is_friday, $is_saturday, $is_sunday, $day_begin, $day_end, $size_bloc_resa, $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages=0, $shared=0)
+    {
         $sql = "UPDATE bk_schedulings SET is_monday=?, is_tuesday=?, is_wednesday=?, is_thursday=?, is_friday=?, "
                 . "is_saturday=?, is_sunday=?, day_begin=?, day_end=?, size_bloc_resa=?, booking_time_scale=?, "
                 . "resa_time_setting=?, default_color_id=?, force_packages=?, shared=? "
@@ -171,16 +174,17 @@ class BkScheduling extends Model {
             $booking_time_scale, $resa_time_setting, $default_color_id, $force_packages, $shared, $id_rearea, $id_space));
     }
 
-    protected function onToBool($on){
-        if ($on == ""){
+    protected function onToBool($on)
+    {
+        if ($on == "") {
             return 0;
         }
-        if ($on == "on"){
+        if ($on == "on") {
             return 1;
         }
         return $on;
     }
-    
+
     public function edit(
         $id_space,
         $id_rearea,
@@ -250,13 +254,15 @@ class BkScheduling extends Model {
      * @param unknown $id
      * @return boolean
      */
-    public function exists($id_space, $id_bkScheduling) {
+    public function exists($id_space, $id_bkScheduling)
+    {
         $sql = "SELECT * from bk_schedulings WHERE id=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_bkScheduling, $id_space));
         return ($req->rowCount() == 1);
     }
 
-    public function getForSpace($id_space) {
+    public function getForSpace($id_space)
+    {
         $sql = "SELECT * from bk_schedulings WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
@@ -267,7 +273,8 @@ class BkScheduling extends Model {
      * @param string $id_rearea
      * @return boolean
      */
-    public function existsByReArea($id_space, $id_rearea): ?array {
+    public function existsByReArea($id_space, $id_rearea): ?array
+    {
         $sql = "SELECT * from bk_schedulings WHERE id_rearea=? AND deleted=0 AND id_space=?";
         $req = $this->runRequest($sql, array($id_rearea, $id_space));
         return ($req->rowCount() == 1) ? $req->fetch() : null;
@@ -277,15 +284,16 @@ class BkScheduling extends Model {
      * Remove a color code
      * @param unknown $id
      */
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         $sql = "UPDATE bk_schedulings SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         //$sql = "DELETE FROM bk_schedulings WHERE id = ? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 
-    public function setReArea($id_space, $id, $id_rearea) {
+    public function setReArea($id_space, $id, $id_rearea)
+    {
         $sql = "UPDATE bk_schedulings SET id_rearea=? WHERE id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($id_rearea, $id, $id_space));
     }
-
 }

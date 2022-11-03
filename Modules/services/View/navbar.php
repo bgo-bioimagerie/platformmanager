@@ -48,9 +48,9 @@ if ($ecmenucolortxt == "") {
         <h4 style="text-transform: uppercase;"><?php echo ServicesTranslator::services($lang) ?></h4>
     </div>
     
-    <?php 
+    <?php
     $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
-        if($servicesuseproject == 1){
+if ($servicesuseproject == 1) {
     ?>
     
     <div >
@@ -68,10 +68,10 @@ if ($ecmenucolortxt == "") {
     </div>
     
     <?php
-        }
-        
-        $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-        if($servicesusecommand == 1){
+}
+
+$servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
+if ($servicesusecommand == 1) {
     ?>
     
     
@@ -91,13 +91,13 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
     
-    <?php 
-        }
-    ?>
+    <?php
+}
+?>
     
     <?php
-    $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
-        if($servicesusestock == 1){
+$servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
+if ($servicesusestock == 1) {
     ?>
     <div >
         <p id="separatorp"><?php echo ServicesTranslator::Stock($lang) ?></p>
@@ -113,9 +113,9 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
     
-    <?php 
-        }
-    ?>
+    <?php
+}
+?>
     
     <div >
         <p id="separatorp"><?php echo ServicesTranslator::Listing($lang) ?></p>

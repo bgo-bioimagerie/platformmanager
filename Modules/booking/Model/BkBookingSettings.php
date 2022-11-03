@@ -9,8 +9,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
  *
  * @author Sylvain Prigent
  */
-class BkBookingSettings extends Model {
-
+class BkBookingSettings extends Model
+{
     public const DEFAULT_TAG_NAMES = [
         "User",
         "Phone",
@@ -18,8 +18,9 @@ class BkBookingSettings extends Model {
         "Desc",
         "Client"
     ];
-    
-    public function __construct() {
+
+    public function __construct()
+    {
         $this->tableName = "bk_booking_settings";
     }
 
@@ -28,8 +29,8 @@ class BkBookingSettings extends Model {
      *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_booking_settings` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `tag_name` varchar(100) NOT NULL,
@@ -43,13 +44,14 @@ class BkBookingSettings extends Model {
 
         return $this->runRequest($sql);
     }
-    
+
     /**
      * Get the list of all entries
      * @param string $sortEntry
      * @return array List of the entries
      */
-    public function entries($id_space, $sortEntry) {
+    public function entries($id_space, $sortEntry)
+    {
         try {
             $sql = "select * from bk_booking_settings WHERE id_space=? AND deleted=0 order by " . $sortEntry;
             $req = $this->runRequest($sql, array($id_space));
@@ -63,9 +65,10 @@ class BkBookingSettings extends Model {
         }
     }
 
-    public function getDefaultBkSettings() {
+    public function getDefaultBkSettings()
+    {
         $bookingSettings = [];
-        for($i=0;$i<count(self::DEFAULT_TAG_NAMES);$i++) {
+        for ($i=0;$i<count(self::DEFAULT_TAG_NAMES);$i++) {
             $bookingSettings[] = [
                 'tag_name' => self::DEFAULT_TAG_NAMES[$i],
                 'is_visible' => 0,
@@ -77,13 +80,14 @@ class BkBookingSettings extends Model {
         return $bookingSettings;
     }
 
-    public function getTagNames($id_space) {
+    public function getTagNames($id_space)
+    {
         $sql = "SELECT tag_name FROM bk_booking_settings WHERE id_space=? AND deleted=0;";
         $req = $this->runRequest($sql, array($id_space));
         $result = $req->fetchAll(PDO::FETCH_COLUMN);
         if (!empty($result)) {
             return $result;
-        } 
+        }
         return null;
     }
 
@@ -96,7 +100,8 @@ class BkBookingSettings extends Model {
      * @param string $font
      * @return string
      */
-    public function addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
+    public function addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    {
         $sql = "insert into bk_booking_settings(tag_name, is_visible, is_tag_visible, 
                                                 display_order, font, id_space)"
                 . " values(?,?,?,?,?,?)";
@@ -110,7 +115,8 @@ class BkBookingSettings extends Model {
      * @param string $tag_name
      * @return boolean
      */
-    public function isEntry1($tag_name, $id_space) {
+    public function isEntry1($tag_name, $id_space)
+    {
         $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array(
             $tag_name, $id_space
@@ -126,7 +132,8 @@ class BkBookingSettings extends Model {
      * @param number $display_order
      * @param string $font
      */
-    public function setEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
+    public function setEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    {
         if (!$this->isEntry1($tag_name, $id_space)) {
             $this->addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space);
         } else {
@@ -140,11 +147,12 @@ class BkBookingSettings extends Model {
      * @param string $tag_name
      * @return number
      */
-    public function getEntryID($tag_name, $id_space) {
+    public function getEntryID($tag_name, $id_space)
+    {
         $sql = "select id from bk_booking_settings where tag_name=? and id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($tag_name, $id_space));
         $tmp = $req->fetch();
-        return $tmp? $tmp[0]: null;
+        return $tmp ? $tmp[0] : null;
     }
 
     /**
@@ -152,7 +160,8 @@ class BkBookingSettings extends Model {
      * @param number $id
      * @return array entry info
      */
-    public function getEntry($id_space, $id) {
+    public function getEntry($id_space, $id)
+    {
         $sql = "select * from bk_booking_settings where id=? AND id_space=? AND deleted=0";
         $req = $this->runRequest($sql, array($id, $id_space));
         return $req->fetch();
@@ -167,7 +176,8 @@ class BkBookingSettings extends Model {
      * @param number $display_order
      * @param string $font
      */
-    public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
+    public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space)
+    {
         $sql = "update bk_booking_settings set tag_name=?, is_visible=?, is_tag_visible=?, 
                              display_order=?, font=?
                              where id=? AND id_space=? AND deleted=0";
@@ -176,7 +186,7 @@ class BkBookingSettings extends Model {
     }
 
     /**
-     * Get the summary of a reservation 
+     * Get the summary of a reservation
      * @param string $user User name
      * @param string $phone User phone
      * @param string $short_desc Reservation short description
@@ -184,7 +194,8 @@ class BkBookingSettings extends Model {
      * @param boolean $displayHorizontal
      * @return string Summmary in HTML
      */
-    public function getSummary($id_space, $user, $phone, $client, $short_desc, $desc, $displayHorizontal = true, $role=0) {
+    public function getSummary($id_space, $user, $phone, $client, $short_desc, $desc, $displayHorizontal = true, $role=0)
+    {
         $lang = "En";
         if (isset($_SESSION["user_settings"]["language"])) {
             $lang = $_SESSION["user_settings"]["language"];
@@ -199,9 +210,9 @@ class BkBookingSettings extends Model {
                 $last = true;
             }
 
-            if($entryList[$i]['is_visible'] == 2){
+            if ($entryList[$i]['is_visible'] == 2) {
                 $entryList[$i]['is_visible'] = 0;
-                if($role >= CoreSpace::$MANAGER){
+                if ($role >= CoreSpace::$MANAGER) {
                     $entryList[$i]['is_visible'] = 1;
                 }
             }
@@ -232,7 +243,8 @@ class BkBookingSettings extends Model {
      * @param unknown $last
      * @return Ambigous <string, unknown>
      */
-    protected function summaryEntry($i, $entryList, $content, $displayHorizontal, $tagNameTr, $last) {
+    protected function summaryEntry($i, $entryList, $content, $displayHorizontal, $tagNameTr, $last)
+    {
         $summary = "" ;
         if ($entryList[$i]['is_visible'] == 1) {
             if ($entryList[$i]['is_tag_visible'] == 1) {
@@ -259,5 +271,4 @@ class BkBookingSettings extends Model {
         }
         return $summary;
     }
-
 }
