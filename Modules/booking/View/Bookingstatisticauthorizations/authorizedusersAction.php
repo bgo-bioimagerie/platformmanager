@@ -36,7 +36,7 @@
                         <input id="email" class="form-check-input" type="checkbox" name="email">
                 </div>
 
-            </div>	
+            </div>    
             <div class="col-3 offset-9" id="button-div">
                 <input type="submit" class="btn btn-primary" value="<?php echo CoreTranslator::Ok($lang) ?>" />
                 

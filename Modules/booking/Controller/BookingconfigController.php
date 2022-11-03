@@ -262,7 +262,7 @@ class BookingconfigController extends CoresecureController {
         ' -- ',
         BookingTranslator::Both_short_and_full_description($lang),
         BookingTranslator::Only_short_description($lang),
-	    BookingTranslator::Only_full_description($lang));
+        BookingTranslator::Only_full_description($lang));
         $form->addSelect("BkDescriptionFields", BookingTranslator::Description_fields($lang), $choices, array(0,1,2,3), $BkDescriptionFields);
         
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingconfig/".$id_space);
@@ -286,7 +286,7 @@ class BookingconfigController extends CoresecureController {
     protected function editBookingMailingForm($id_space, $lang){
         
         $modelCoreConfig = new CoreConfig();
-	    $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
+        $BkEditBookingMailing = $modelCoreConfig->getParamSpace("BkEditBookingMailing", $id_space);
         $BkBookingMailingAdmins = $modelCoreConfig->getParamSpace("BkBookingMailingAdmins", $id_space);
         $BkBookingMailingDelete = $modelCoreConfig->getParamSpace("BkBookingMailingDelete", $id_space);
         if ($BkBookingMailingDelete == ""){

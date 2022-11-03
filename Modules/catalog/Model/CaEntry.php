@@ -15,15 +15,15 @@ class CaEntry extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `ca_entries` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`id_category` int(11) NOT NULL,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `id_category` int(11) NOT NULL,
         `title` varchar(100) NOT NULL,
-		`image_url` varchar(300) NOT NULL,
-		`short_desc` text NOT NULL,
-		`full_desc` text NOT NULL,
+        `image_url` varchar(300) NOT NULL,
+        `short_desc` text NOT NULL,
+        `full_desc` text NOT NULL,
         `id_space` int(11) NOT NULL, 
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
 

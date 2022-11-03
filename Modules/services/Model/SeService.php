@@ -15,16 +15,16 @@ class SeService extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_services` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(11) NOT NULL DEFAULT 0,
             `name` varchar(100) NOT NULL,
             `description` varchar(250) NOT NULL,
-            `display_order` int(11) NOT NULL DEFAULT 0,		
-            `is_active` int(1) NOT NULL DEFAULT 1,	 
+            `display_order` int(11) NOT NULL DEFAULT 0,        
+            `is_active` int(1) NOT NULL DEFAULT 1,     
             `type_id` int(11) NOT NULL DEFAULT 1,
             `quantity` varchar(128) NOT NULL DEFAULT '0',
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
     }

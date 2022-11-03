@@ -589,7 +589,7 @@ class CoreUser extends Model {
      * Verify that a user is in the database
      *
      * @param string $login
-     *        	the login
+     *            the login
      * @return boolean True if the user is in the database
      */
     public function isUser($login) {
@@ -607,7 +607,7 @@ class CoreUser extends Model {
      * Update the last login date attribut to the todau date
      *
      * @param int $userId
-     *        	Id of the user to update
+     *            Id of the user to update
      */
     public function updateLastConnection($userId) {
         $sql = "update core_users set date_last_login=? where id=?";
@@ -743,9 +743,9 @@ class CoreUser extends Model {
      * Change the password of a user
      *
      * @param int $id
-     *        	Id of the user to edit
+     *            Id of the user to edit
      * @param string $pwd
-     *        	new password
+     *            new password
      */
     public function changePwd($id, $pwd) {
         $sql = "update core_users set pwd=?, hash=? where id=?";
@@ -818,7 +818,7 @@ class CoreUser extends Model {
      * Get the users information
      *
      * @param string $sortentry
-     *        	column used to sort the users
+     *            column used to sort the users
      * @return multitype:
      */
     public function getActiveUsers($sortentry = 'id', $is_active = 1) {
@@ -831,7 +831,7 @@ class CoreUser extends Model {
      * Get the users summary (id, name, firstname)
      *
      * @param string $sortentry
-     *        	column used to sort the users
+     *            column used to sort the users
      * @return multitype:
      */
     public function getUsersSummary($sortentry = 'id', $active = 1) {
@@ -866,7 +866,7 @@ class CoreUser extends Model {
         // update
         else {
             $sql = "update core_users set firstname=?, name=?, email=?
-    			                  where login=?";
+                                  where login=?";
             $this->runRequest($sql, array(
                 $firstname,
                 $name,
@@ -988,7 +988,7 @@ class CoreUser extends Model {
      * get the informations of a user from it's id
      *
      * @param int $id
-     *        	Id of the user to query
+     *            Id of the user to query
      * @throws Exception if the user connot be found
      */
     public function userAllInfo($id) {

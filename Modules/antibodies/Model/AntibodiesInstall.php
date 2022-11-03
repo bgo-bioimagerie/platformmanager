@@ -33,85 +33,85 @@ require_once 'Modules/antibodies/Model/AcStaining.php';
  */
 class AntibodiesInstall extends Model {
 
-	/**
-	 * Create the anticorps database
-	 *
-	 * @return boolean True if the base is created successfully
-	 */
-	public function createDatabase(){
-		
-		$anticorpsModel = new Anticorps();
-		$anticorpsModel->createTable();
-		
-		$isotypeModel = new Isotype();
-		$isotypeModel->createTable();
-		
-		$sourceModel = new Source();
-		$sourceModel->createTable();
-		
-		$especeModel = new Espece();
-		$especeModel->createTable();
-		
-		$tissusModel = new Tissus();
-		$tissusModel->createTable();
-		
-		$protoModel = new AcProtocol();
-		$protoModel->createTable();
+    /**
+     * Create the anticorps database
+     *
+     * @return boolean True if the base is created successfully
+     */
+    public function createDatabase(){
+        
+        $anticorpsModel = new Anticorps();
+        $anticorpsModel->createTable();
+        
+        $isotypeModel = new Isotype();
+        $isotypeModel->createTable();
+        
+        $sourceModel = new Source();
+        $sourceModel->createTable();
+        
+        $especeModel = new Espece();
+        $especeModel->createTable();
+        
+        $tissusModel = new Tissus();
+        $tissusModel->createTable();
+        
+        $protoModel = new AcProtocol();
+        $protoModel->createTable();
 
-		$modelAcOwner = new AcOwner();
-		$modelAcOwner->createTable();
-		
-		$organeModel = new Organe();
-		$organeModel->createTable();
-		
-		$organePrelevement = new Prelevement();
-		$organePrelevement->createTable();
-		
-		$modelStatus = new Status();
-		$modelStatus->createTable();
-		
-		$modelacii = new Acii();
-		$modelacii->createTable();
-		
-		$modelaciinc = new Aciinc();
-		$modelaciinc->createTable();
-		
-		$modelaciinc = new Dem();
-		$modelaciinc->createTable();
-		
-		$modelinc = new Inc();
-		$modelinc->createTable();
-		
-		$modellinker = new Linker();
-		$modellinker->createTable();
-		
-		$model = new Kit();
-		$model->createTable();
-		
-		$model = new Proto();
-		$model->createTable();
-		
-		$model = new Fixative();
-		$model->createTable();
-		
-		$model = new AcOption();
-		$model->createTable();
-		
-		$model = new Enzyme();
-		$model->createTable();
+        $modelAcOwner = new AcOwner();
+        $modelAcOwner->createTable();
+        
+        $organeModel = new Organe();
+        $organeModel->createTable();
+        
+        $organePrelevement = new Prelevement();
+        $organePrelevement->createTable();
+        
+        $modelStatus = new Status();
+        $modelStatus->createTable();
+        
+        $modelacii = new Acii();
+        $modelacii->createTable();
+        
+        $modelaciinc = new Aciinc();
+        $modelaciinc->createTable();
+        
+        $modelaciinc = new Dem();
+        $modelaciinc->createTable();
+        
+        $modelinc = new Inc();
+        $modelinc->createTable();
+        
+        $modellinker = new Linker();
+        $modellinker->createTable();
+        
+        $model = new Kit();
+        $model->createTable();
+        
+        $model = new Proto();
+        $model->createTable();
+        
+        $model = new Fixative();
+        $model->createTable();
+        
+        $model = new AcOption();
+        $model->createTable();
+        
+        $model = new Enzyme();
+        $model->createTable();
                 
         $modelApp = new AcApplication();
-		$modelApp->createTable();
+        $modelApp->createTable();
                 
         $modelStaining = new AcStaining();
-		$modelStaining->createTable();
+        $modelStaining->createTable();
 
-		$dir= "data/antibodies";
-		if(!file_exists($dir)) {
+        $dir= "data/antibodies";
+        if(!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
                 
-		return 'success';
-	}
+        return 'success';
+    }
 }
 

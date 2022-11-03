@@ -24,7 +24,7 @@ class SeTask extends Model {
             `name` varchar(120) NOT NULL DEFAULT '',
             `content` varchar(250) NOT NULL DEFAULT '',
             `start_date` DATE,
-		    `end_date` DATE,
+            `end_date` DATE,
             `done` int(1) NOT NULL DEFAULT 0,
             `private` int(1) NOT NULL DEFAULT 0,
             /* `file` varchar(250) NOT NULL DEFAULT '',

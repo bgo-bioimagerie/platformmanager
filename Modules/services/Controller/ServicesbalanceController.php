@@ -137,7 +137,7 @@ class ServicesbalanceController extends ServicesController {
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
             ),
         );
-		
+        
         // ////////////////////////////////////////////////////
         //                  opened projects
         // ////////////////////////////////////////////////////

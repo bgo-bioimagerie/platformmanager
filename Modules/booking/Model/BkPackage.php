@@ -20,22 +20,22 @@ class BkPackage extends Model {
      */
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_packages` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
         `id_package` int(11) NOT NULL,
-		`id_resource` int(11) NOT NULL,
-		`duration` decimal(10,2) NOT NULL,
-		`name` varchar(100) NOT NULL,			
-		PRIMARY KEY (`id`)
-		);";
+        `id_resource` int(11) NOT NULL,
+        `duration` decimal(10,2) NOT NULL,
+        `name` varchar(100) NOT NULL,            
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
 
         $this->addColumn("bk_packages", "id_package", "int(11)", 0);
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `bk_j_packages_prices` (
-		`id_package` int(11) NOT NULL,
-		`id_pricing` int(11) NOT NULL,
-		`price` decimal(10,2) NOT NULL
-		);";
+        `id_package` int(11) NOT NULL,
+        `id_pricing` int(11) NOT NULL,
+        `price` decimal(10,2) NOT NULL
+        );";
         $this->runRequest($sql2);
 
         // delete package with zero id

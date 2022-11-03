@@ -3,14 +3,14 @@
 function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $toDate, string $beforeDate, string $afterDate, int|string $bk_id_resource, int|string $bk_id_area, string $id_user, bool $detailedView, string $lang) {
     
     $html = '<div class="m-1 row"  style="background-color: #ffffff; padding-bottom: 12px;">
-	<div class="col-12 col-md-7 text-left">
-		<div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
+    <div class="col-12 col-md-7 text-left">
+        <div class="btn-group" role="group" aria-label="navigate by '.$kind.'">';
 
-	$today = date("Y-m-d", time());
-	$qc = '?'.implode('&', ["bk_curentDate=$fromDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
-	$qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $today = date("Y-m-d", time());
+    $qc = '?'.implode('&', ["bk_curentDate=$fromDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qt = '?'.implode('&', ["bk_curentDate=$today", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qb = '?'.implode('&', ["bk_curentDate=$beforeDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
+    $qa = '?'.implode('&', ["bk_curentDate=$afterDate", "bk_id_resource=$bk_id_resource", "bk_id_area=$bk_id_area", "id_user=$id_user"]);
     $reload = 'booking'.$kind.'/'.$id_space.$qc;
 
     if(!$detailedView) {
@@ -25,23 +25,23 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
         $qa .= '&view=detailed';        
     }
 
-	$html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
-	$html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
-	$html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
-	$html .= '</div>';
+    $html .= '<a id="goback" rel="nofollow" aria-label="previous '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qb.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-left"></span> </button></a>';
+    $html .= '<a id="gonext" rel="nofollow" aria-label="next '.$kind.'" href="booking'.$kind.'/'.$id_space.'/'.$qa.'"><button type="button" class="btn btn-outline-dark"> <span class="bi-arrow-right"></span> </button></a>';
+    $html .= '<a id="gocurrent" rel="nofollow" aria-label="current '.$kind.'" href="booking'.$kind.'/'. $id_space.'/'.$qt.'"><button type="button" class="btn btn-outline-dark"> '.BookingTranslator::Today($lang).' </button></a>';
+    $html .= '</div>';
 
-	$d = explode("-", $fromDate);
-	$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
+    $d = explode("-", $fromDate);
+    $time = mktime(0,0,0,$d[1],$d[2],$d[0]);
 
-	$html .= '<strong> '.BookingTranslator::DateFromTime($time, $lang).' </strong>';
+    $html .= '<strong> '.BookingTranslator::DateFromTime($time, $lang).' </strong>';
 
-	if($toDate) {
+    if($toDate) {
     $d = explode("-", $toDate);
-	$time = mktime(0,0,0,$d[1],$d[2],$d[0]);
-	$html .= ' - <strong> '.BookingTranslator::DateFromTime($time, $lang).' </strong>';
+    $time = mktime(0,0,0,$d[1],$d[2],$d[0]);
+    $html .= ' - <strong> '.BookingTranslator::DateFromTime($time, $lang).' </strong>';
     }
 
-	$html .= '</div>';
+    $html .= '</div>';
 
     $dayselected = $kind == 'day' ? 'selected':'';
     $dayareaselected = $kind == 'dayarea' ? 'selected':'';
@@ -56,11 +56,11 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 
     $html .= '<div class="col-12 col-md-3 text-right">';
     $html .= '<select id="selectview" class="form-select" onchange="location.href=this.value">';
-    $html .='			<option aria-label="go to day view" value="bookingday/'.$id_space.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
-	$html .= '			<option aria-label="go to day area view" value="bookingdayarea/'.$id_space.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
-	$html .='			<option aria-label="go to week view" value="bookingweek/'.$id_space.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
-	$html .='			<option aria-label="go to week area view" value="bookingweekarea/'.$id_space.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
-	$html .='			<option aria-label="go to month view" value="bookingmonth/'.$id_space.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
+    $html .='            <option aria-label="go to day view" value="bookingday/'.$id_space.$qc.'" '.$dayselected.'>'.BookingTranslator::Day($lang).'</option>';
+    $html .= '            <option aria-label="go to day area view" value="bookingdayarea/'.$id_space.$qc.'" '.$dayareaselected.'>'.BookingTranslator::Day_Area($lang).'</option>';
+    $html .='            <option aria-label="go to week view" value="bookingweek/'.$id_space.$qc.'" '.$weekselected.' >'.BookingTranslator::Week($lang).'</option>';
+    $html .='            <option aria-label="go to week area view" value="bookingweekarea/'.$id_space.$qc.'" '.$weekareaselected.'>'.BookingTranslator::Week_Area($lang).'</option>';
+    $html .='            <option aria-label="go to month view" value="bookingmonth/'.$id_space.$qc.'" '.$monthselected.'>'.BookingTranslator::Month($lang).'</option>';
     $html .= '</select>';
     $html .= '</div>';
 
@@ -84,11 +84,11 @@ function drawNavigation(string $kind, int $id_space, string $fromDate, ?string $
 
 
 function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $agendaStyle, $resourceInfo, $nav=null, $from=[], $role=0) {
-	$q = '?';
-	if(!empty($from)) {
-		$elts = implode(':', $from);
-		$q .= "from=$elts";
-	}
+    $q = '?';
+    if(!empty($from)) {
+        $elts = implode(':', $from);
+        $q .= "from=$elts";
+    }
 
     $days_fr = ["Lun", "Mar", "Merc", "Jeu", "Ven", "Sam", "Dim"];
     $days_en = ["Mon", "Tue", "Web", "Thu", "Fri", "Sat", "Sun"];
@@ -113,11 +113,11 @@ function drawAgenda($id_space, $lang, $mois, $annee, $entries, $resourceBase, $a
 
     <div class="container">
         <div class="row"><div class="col-12" style="text-align: center"><?php
-		echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
-		if($resourceBase['last_state'] != ""){
-			echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
-		}
-		?></div></div>
+        echo '<strong>'.$strmonth.'</strong> - '.$resourceBase['name'];
+        if($resourceBase['last_state'] != ""){
+            echo '<br/><a class="btn btn-xs" href="resourcesevents/'.$id_space.'/'.$resourceBase['id'].'" style="background-color:'.$resourceBase['last_state'].' ; color: #fff; width:12px; height: 12px;"></a>';
+        }
+        ?></div></div>
         <table aria-label="table month view" class="table">
             <thead>
                 <?php $day_list = $days_en; if($lang == 'fr') { $day_list = $days_fr; } ?>

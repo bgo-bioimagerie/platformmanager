@@ -21,11 +21,11 @@ class TissusForm extends FormGenerator {
         $modelProto = new AcProtocol();
         $protoList = $modelProto->getForList($this->id_space);
         $this->form->addSelectMandatory(
-			'ref_protocol',
-			AntibodiesTranslator::Ref_protocol($this->lang),
-			$protoList["names"],
-			$protoList["ids"]
-		);
+            'ref_protocol',
+            AntibodiesTranslator::Ref_protocol($this->lang),
+            $protoList["names"],
+            $protoList["ids"]
+        );
         
         $this->form->addText("dilution", AntibodiesTranslator::Dilution($this->lang));
         $this->form->addTextArea("comment", AntibodiesTranslator::Comment($this->lang));
@@ -33,40 +33,40 @@ class TissusForm extends FormGenerator {
         $modelEspece = new Espece();
         $especeList = $modelEspece->getForList($this->id_space);
         $this->form->addSelectMandatory(
-			'espece',
-			AntibodiesTranslator::Espece($this->lang),
-			$especeList["names"],
-			$especeList["ids"]
-		);
+            'espece',
+            AntibodiesTranslator::Espece($this->lang),
+            $especeList["names"],
+            $especeList["ids"]
+        );
         
         $modelOrgane = new Organe();
         $organeList = $modelOrgane->getForList($this->id_space);
         $this->form->addSelectMandatory(
-			'organe',
-			AntibodiesTranslator::Organe($this->lang),
-			$organeList["names"],
-			$organeList["ids"]
-		);
+            'organe',
+            AntibodiesTranslator::Organe($this->lang),
+            $organeList["names"],
+            $organeList["ids"]
+        );
         
         $modelStatus = new Status();
         $statusList = $modelStatus->getForList($this->id_space);
         $this->form->addSelectMandatory(
-			'status',
-			AntibodiesTranslator::Valide($this->lang),
-			$statusList["names"],
-			$statusList["ids"]
-		);
+            'status',
+            AntibodiesTranslator::Valide($this->lang),
+            $statusList["names"],
+            $statusList["ids"]
+        );
         
         $this->form->addText("ref_bloc", AntibodiesTranslator::Ref_bloc($this->lang));
         
         $modelPrelevement = new Prelevement();
         $prelevList = $modelPrelevement->getForList($this->id_space);
         $this->form->addSelectMandatory(
-			'prelevement',
-			AntibodiesTranslator::Prelevement($this->lang),
-			$prelevList["names"],
-			$prelevList["ids"]
-		);
+            'prelevement',
+            AntibodiesTranslator::Prelevement($this->lang),
+            $prelevList["names"],
+            $prelevList["ids"]
+        );
         
         $this->form->addUpload("image_url", AntibodiesTranslator::Image($this->lang));
         

@@ -21,11 +21,11 @@ class Prelevement extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ac_prelevements` (
-				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`nom` varchar(30) NOT NULL,
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `nom` varchar(30) NOT NULL,
                 `id_space` int(11) NOT NULL,
-				PRIMARY KEY (`id`)
-				);";
+                PRIMARY KEY (`id`)
+                );";
 
         $pdo = $this->runRequest($sql);
         return $pdo;

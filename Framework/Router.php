@@ -302,7 +302,7 @@ class Router {
      * Instantiate the controller dedicated to the request
      *
      * @param Request $request
-     *        	Input Request
+     *            Input Request
      * @return Instance of a controller
      * @throws Exception If the controller cannot be instanciate
      */
@@ -375,7 +375,7 @@ class Router {
      * Manage error (exception)
      *
      * @param Exception $exception
-     *        	Thrown exception
+     *            Thrown exception
      */
     private function manageError(Throwable $exception, $type = '') {
         $sendReport = true;

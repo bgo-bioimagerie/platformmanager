@@ -28,35 +28,35 @@ class Anticorps extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ac_anticorps` (
-  				`id` int(11) NOT NULL AUTO_INCREMENT,
-  				`nom` varchar(30) NOT NULL DEFAULT '',
-  				`no_h2p2` int(11) NOT NULL DEFAULT '0',
-				`fournisseur` varchar(30) NOT NULL DEFAULT '',
-				`id_source` int(11) NOT NULL DEFAULT '0',
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                  `nom` varchar(30) NOT NULL DEFAULT '',
+                  `no_h2p2` int(11) NOT NULL DEFAULT '0',
+                `fournisseur` varchar(30) NOT NULL DEFAULT '',
+                `id_source` int(11) NOT NULL DEFAULT '0',
                 `reactivity` varchar(30) NOT NULL DEFAULT '',
-				`reference` varchar(30) NOT NULL DEFAULT '',
-				`clone` varchar(30) NOT NULL DEFAULT '',
- 				`lot` varchar(30) NOT NULL DEFAULT '',
-				`id_isotype` int(11) NOT NULL DEFAULT '0',
-				`stockage` varchar(30) NOT NULL DEFAULT '',
+                `reference` varchar(30) NOT NULL DEFAULT '',
+                `clone` varchar(30) NOT NULL DEFAULT '',
+                 `lot` varchar(30) NOT NULL DEFAULT '',
+                `id_isotype` int(11) NOT NULL DEFAULT '0',
+                `stockage` varchar(30) NOT NULL DEFAULT '',
                 `id_staining` FLOAT(11) NOT NULL DEFAULT 1,
                 `id_application` FLOAT(11) NOT NULL DEFAULT 1,
                 `export_calatog` int(1) NOT NULL DEFAULT 0,
                 `image_url` varchar(250) NOT NULL DEFAULT '',
                 `image_desc` varchar(250) NOT NULL DEFAULT '',
-				`id_space` int(11) NOT NULL DEFAULT 0,
-  				PRIMARY KEY (`id`)
-				)";
+                `id_space` int(11) NOT NULL DEFAULT 0,
+                  PRIMARY KEY (`id`)
+                )";
         $this->runRequest($sql);
-		
+        
         /*
-		$sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
-  				`id_anticorps` int(11) NOT NULL,
-  				`id_utilisateur` int(11) NOT NULL,	
-				`disponible` int(2) NOT NULL,		
-				`date_recept` DATE NOT NULL,
-				`no_dossier` varchar(12) NOT NULL,
-				`id_space` int(11) NOT NULL DEFAULT 0
+        $sql = "CREATE TABLE IF NOT EXISTS `ac_j_user_anticorps` (
+                  `id_anticorps` int(11) NOT NULL,
+                  `id_utilisateur` int(11) NOT NULL,    
+                `disponible` int(2) NOT NULL,        
+                `date_recept` DATE NOT NULL,
+                `no_dossier` varchar(12) NOT NULL,
+                `id_space` int(11) NOT NULL DEFAULT 0
                 )";
         $this->runRequest($sql);
         */
@@ -180,7 +180,7 @@ class Anticorps extends Model {
         }
 
         $sql = "insert into ac_anticorps(id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference, 
-										 clone, lot, id_isotype, stockage)"
+                                         clone, lot, id_isotype, stockage)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id_space, $nom, $new_no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage));
@@ -202,7 +202,7 @@ class Anticorps extends Model {
 
 
         $sql = "insert into ac_anticorps(id, id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference,
-										 clone, lot, id_isotype, stockage)"
+                                         clone, lot, id_isotype, stockage)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage));
@@ -212,8 +212,8 @@ class Anticorps extends Model {
 
     public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage) {
         $sql = "UPDATE ac_anticorps SET nom=?, no_h2p2=?, fournisseur=?, id_source=?, reactivity=?, reference=?, 
-										 clone=?, lot=?, id_isotype=?, stockage=?
-									WHERE id=? AND id_space=?";
+                                         clone=?, lot=?, id_isotype=?, stockage=?
+                                    WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
             $lot, $id_isotype, $stockage, $id, $id_space));
     }
@@ -443,12 +443,12 @@ class Anticorps extends Model {
     public function getOwners($id_space, $acId) {
 
         $sql = "SELECT ac_j_user_anticorps.id_utilisateur AS id_user, ac_j_user_anticorps.date_recept AS date_recept, 
-					   ac_j_user_anticorps.disponible AS disponible, ac_j_user_anticorps.no_dossier AS no_dossier, 
-					   core_users.name AS name, core_users.firstname AS firstname
-				FROM ac_j_user_anticorps
-				INNER JOIN core_users on core_users.id = ac_j_user_anticorps.id_utilisateur
-				WHERE ac_j_user_anticorps.id_anticorps=? AND ac_j_user_anticorps.id_space=? AND ac_j_user_anticorps.deleted=0
-				ORDER BY core_users.name";
+                       ac_j_user_anticorps.disponible AS disponible, ac_j_user_anticorps.no_dossier AS no_dossier, 
+                       core_users.name AS name, core_users.firstname AS firstname
+                FROM ac_j_user_anticorps
+                INNER JOIN core_users on core_users.id = ac_j_user_anticorps.id_utilisateur
+                WHERE ac_j_user_anticorps.id_anticorps=? AND ac_j_user_anticorps.id_space=? AND ac_j_user_anticorps.deleted=0
+                ORDER BY core_users.name";
 
         $user = $this->runRequest($sql, array($acId, $id_space));
         return $user->fetchAll();

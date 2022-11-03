@@ -22,20 +22,20 @@ class Tissus extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ac_j_tissu_anticorps` (
-  				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`id_anticorps` int(11) NOT NULL,
-  				`espece` int(11) NOT NULL,
-  				`organe` int(11) NOT NULL, 
-  				`status` int(1) NOT NULL,  
-  				`ref_bloc` varchar(30) NOT NULL,
-				`dilution` varchar(30) NOT NULL,
-				`temps_incubation` varchar(30) NOT NULL,
-  				`ref_protocol` varchar(11) NOT NULL,
-				`prelevement` int(1) NOT NULL,
-				`comment` text NOT NULL,
+                  `id` int(11) NOT NULL AUTO_INCREMENT,
+                `id_anticorps` int(11) NOT NULL,
+                  `espece` int(11) NOT NULL,
+                  `organe` int(11) NOT NULL, 
+                  `status` int(1) NOT NULL,  
+                  `ref_bloc` varchar(30) NOT NULL,
+                `dilution` varchar(30) NOT NULL,
+                `temps_incubation` varchar(30) NOT NULL,
+                  `ref_protocol` varchar(11) NOT NULL,
+                `prelevement` int(1) NOT NULL,
+                `comment` text NOT NULL,
                 `image_url` varchar(512) NOT NULL,
-  				PRIMARY KEY (`id`)
-				);";
+                  PRIMARY KEY (`id`)
+                );";
 
         $this->runRequest($sql);
 
@@ -74,10 +74,10 @@ class Tissus extends Model {
 
     public function addTissus($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
         $sql = "insert into ac_j_tissu_anticorps(id_space, id_anticorps, espece, 
-				                                    organe, status, ref_bloc,
-													dilution, temps_incubation, 
-													ref_protocol, prelevement,
-													comment, image_url)"
+                                                    organe, status, ref_bloc,
+                                                    dilution, temps_incubation, 
+                                                    ref_protocol, prelevement,
+                                                    comment, image_url)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment, ''));
         return $this->getDatabase()->lastInsertId();
@@ -85,9 +85,9 @@ class Tissus extends Model {
 
     public function importTissus($id, $id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment = "") {
         $sql = "insert into ac_j_tissu_anticorps(id, id_space, id_anticorps, espece,
-				                                    organe, status, ref_bloc,
-													dilution, temps_incubation, 
-				                                    ref_protocol, prelevement, comment)"
+                                                    organe, status, ref_bloc,
+                                                    dilution, temps_incubation, 
+                                                    ref_protocol, prelevement, comment)"
                 . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id, $id_space, $id_anticorps, $espece, $organe, $status, $ref_bloc, $dilution, $temps_incubation, $ref_protocol, $prelevement, $comment));
     }
@@ -95,13 +95,13 @@ class Tissus extends Model {
     public function getTissusCatalog($id_space, $id_anticorps) {
 
         $sql = "SELECT DISTINCT ac_j_tissu_anticorps.status AS status,
-				    ac_especes.nom AS espece,
-                                    ac_prelevements.nom AS prelevement			
-				FROM ac_j_tissu_anticorps
-				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
-				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
-				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
-				WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
+                    ac_especes.nom AS espece,
+                                    ac_prelevements.nom AS prelevement            
+                FROM ac_j_tissu_anticorps
+                INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
+                INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
+                INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
+                WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
         $res = $this->runRequest($sql, array($id_anticorps, $id_space));
@@ -119,15 +119,15 @@ class Tissus extends Model {
                     ac_j_tissu_anticorps.ref_bloc AS ref_bloc, 
                     ac_j_tissu_anticorps.image_url AS image_url,
                     ac_j_tissu_anticorps.id AS id, 
-				    ac_especes.nom AS espece,
+                    ac_especes.nom AS espece,
                                     ac_organes.nom AS organe,
                                     ac_prelevements.nom AS prelevement,
                                     ac_status.nom AS status
-				FROM ac_j_tissu_anticorps
-				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
-				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
-				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
-				INNER JOIN ac_status on ac_j_tissu_anticorps.status = ac_status.id
+                FROM ac_j_tissu_anticorps
+                INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
+                INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
+                INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
+                INNER JOIN ac_status on ac_j_tissu_anticorps.status = ac_status.id
                 WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
 
         //$sql = "select * from ac_j_tissu_anticorps where id_anticorps=?";
@@ -144,18 +144,18 @@ class Tissus extends Model {
                     ac_j_tissu_anticorps.dilution AS dilution,
                     ac_j_tissu_anticorps.temps_incubation AS temps_incubation,
                     ac_j_tissu_anticorps.ref_protocol AS ref_protocol,
-                    ac_j_tissu_anticorps.comment AS comment,	
+                    ac_j_tissu_anticorps.comment AS comment,    
                     ac_j_tissu_anticorps.image_url AS image_url,
                     ac_especes.nom AS espece, ac_especes.id AS espece_id,
                     ac_organes.nom AS organe, ac_organes.id AS organe_id,
                     ac_prelevements.nom AS prelevement, ac_prelevements.id AS prelevement_id,
-                    ac_protocol.id as id_protocol		
-				FROM ac_j_tissu_anticorps
-				INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
-				INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
-				INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
+                    ac_protocol.id as id_protocol        
+                FROM ac_j_tissu_anticorps
+                INNER JOIN ac_especes on ac_j_tissu_anticorps.espece = ac_especes.id
+                INNER JOIN ac_organes on ac_j_tissu_anticorps.organe = ac_organes.id
+                INNER JOIN ac_prelevements on ac_j_tissu_anticorps.prelevement = ac_prelevements.id
                 LEFT JOIN ac_protocol on ac_protocol.no_proto=ac_j_tissu_anticorps.ref_protocol 
-				WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
+                WHERE ac_j_tissu_anticorps.id_anticorps=? AND ac_j_tissu_anticorps.id_space=? AND ac_j_tissu_anticorps.deleted=0";
         
         if($catalog){
             $sql .= " AND ac_j_tissu_anticorps.status=1";

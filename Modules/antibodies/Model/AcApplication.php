@@ -21,11 +21,11 @@ class AcApplication extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ac_applications` (
-				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`name` varchar(30) NOT NULL,
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `name` varchar(30) NOT NULL,
                 `id_space` int(11),
-				PRIMARY KEY (`id`)
-				);";
+                PRIMARY KEY (`id`)
+                );";
 
         $this->runRequest($sql);
     }

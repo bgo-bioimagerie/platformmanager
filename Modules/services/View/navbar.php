@@ -123,6 +123,6 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="serviceslisting/<?php echo $id_space ?>"><?php echo ServicesTranslator::services($lang) ?></a>
             <a href="servicesedit/<?php echo $id_space ?>/0">+</a>
-        </div>	
+        </div>    
     </div>
 </div>

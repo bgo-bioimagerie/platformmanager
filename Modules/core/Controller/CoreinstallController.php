@@ -9,7 +9,7 @@ require_once 'Modules/core/Model/CoreInstall.php';
 /**
  * @deprecated
  * @author sprigent
- * 	Install the Core database
+ *     Install the Core database
  */
 class CoreinstallController extends Controller {
 

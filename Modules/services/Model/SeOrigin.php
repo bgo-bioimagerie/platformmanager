@@ -15,12 +15,12 @@ class SeOrigin extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_origin` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `name` varchar(255) NOT NULL DEFAULT '',
                 `display_order` int(11) NOT NULL DEFAULT 0,
                 `id_space` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
         $this->addColumn('se_origin', 'display_order', 'int(11)', 0);
     }

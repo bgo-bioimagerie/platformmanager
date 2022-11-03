@@ -23,11 +23,11 @@ class CoreUserSpaceSettings extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_user_space_settings` (
-		`user_id` int(11) NOT NULL,
-		`setting` varchar(30) NOT NULL DEFAULT '',
-		`value` varchar(40) NOT NULL DEFAULT '',
+        `user_id` int(11) NOT NULL,
+        `setting` varchar(30) NOT NULL DEFAULT '',
+        `value` varchar(40) NOT NULL DEFAULT '',
         `id_space` int(11) NOT NULL
-		);";
+        );";
 
         $pdo = $this->runRequest($sql);
         return $pdo;
@@ -116,7 +116,7 @@ class CoreUserSpaceSettings extends Model {
      */
     protected function addSetting($id_space, $user_id, $setting, $value) {
         $sql = "insert into core_user_space_settings (id_space, user_id, setting, value)
-				 VALUES(?,?,?,?)";
+                 VALUES(?,?,?,?)";
         $this->runRequest($sql, array($id_space, $user_id, $setting, $value));
     }
 

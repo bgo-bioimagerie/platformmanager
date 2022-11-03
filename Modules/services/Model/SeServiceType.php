@@ -74,11 +74,11 @@ class SeServiceType extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `se_service_types` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(100) NOT NULL DEFAULT '',
-		`local_name` varchar(100) NOT NULL DEFAULT '',		
-		PRIMARY KEY (`id`)
-		);";
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(100) NOT NULL DEFAULT '',
+        `local_name` varchar(100) NOT NULL DEFAULT '',        
+        PRIMARY KEY (`id`)
+        );";
         return $this->runRequest($sql);
     }
     

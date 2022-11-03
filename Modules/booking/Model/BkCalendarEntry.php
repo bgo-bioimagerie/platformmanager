@@ -33,27 +33,27 @@ class BkCalendarEntry extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calendar_entry` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,	
-		`start_time` int(11) NOT NULL,	
-		`end_time` int(11) NOT NULL,	
-		`resource_id` int(11) NOT NULL,	
-		`booked_by_id` int(11) NOT NULL,	
-		`recipient_id` int(11) NOT NULL,	
-		`last_update` timestamp NOT NULL,
-		`color_type_id` int(11) NOT NULL,						
-		`short_description` varchar(100) NOT NULL,	
-		`full_description` text NOT NULL,
-		`quantities` text NOT NULL,
-		`supplementaries` text NOT NULL,	
-		`package_id` int(11) NOT NULL DEFAULT 0,
-		`responsible_id` int(11) NOT NULL DEFAULT 0,
+        `id` int(11) NOT NULL AUTO_INCREMENT,    
+        `start_time` int(11) NOT NULL,    
+        `end_time` int(11) NOT NULL,    
+        `resource_id` int(11) NOT NULL,    
+        `booked_by_id` int(11) NOT NULL,    
+        `recipient_id` int(11) NOT NULL,    
+        `last_update` timestamp NOT NULL,
+        `color_type_id` int(11) NOT NULL,                        
+        `short_description` varchar(100) NOT NULL,    
+        `full_description` text NOT NULL,
+        `quantities` text NOT NULL,
+        `supplementaries` text NOT NULL,    
+        `package_id` int(11) NOT NULL DEFAULT 0,
+        `responsible_id` int(11) NOT NULL DEFAULT 0,
         `invoice_id` int(11) NOT NULL DEFAULT 0,
         `period_id` int(11) NOT NULL DEFAULT 0,
         `all_day_long` int(1) NOT NULL DEFAULT 0,
         `deleted` int(1) NOT NULL DEFAULT 0,
         `reason` int NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
 
@@ -321,7 +321,7 @@ class BkCalendarEntry extends Model {
     public function addEntry($id_space, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0, $reason=0) {
 
         $sql = "insert into bk_calendar_entry(start_time, end_time, resource_id, booked_by_id, recipient_id, 
-							last_update, color_type_id, short_description, full_description, quantities, package_id, id_space,supplementaries, reason)"
+                            last_update, color_type_id, short_description, full_description, quantities, package_id, id_space,supplementaries, reason)"
                 . " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
             $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id_space, '', $reason));
@@ -355,14 +355,14 @@ class BkCalendarEntry extends Model {
 
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'resp' => $id_resp, 'resource' => $id_resource, 'id_space' => $id_space);
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
-				start_time >=:start
+                start_time >=:start
                 AND start_time < :end
                 AND resource_id=:resource
                 AND responsible_id=:resp
                 AND invoice_id=0
                 AND deleted=0
                 AND id_space=:id_space 
-				ORDER BY id';
+                ORDER BY id';
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll();
     }
@@ -408,7 +408,7 @@ class BkCalendarEntry extends Model {
      */
     public function setRepeatID($id_space, $id, $repeat_id) {
         $sql = "update bk_calendar_entry set repeat_id=?
-									  where id=? AND deleted=0 AND id_space=?";
+                                      where id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($repeat_id, $id, $id_space));
     }
 
@@ -425,8 +425,8 @@ class BkCalendarEntry extends Model {
 
     public function updateEntry($id_space, $id, $start_time, $end_time, $resource_id, $booked_by_id, $recipient_id, $last_update, $color_type_id, $short_description, $full_description, $quantity = 0, $package = 0) {
         $sql = "update bk_calendar_entry set start_time=?, end_time=?, resource_id=?, booked_by_id=?, recipient_id=?, 
-							last_update=?, color_type_id=?, short_description=?, full_description=?, quantity=?, package_id=?
-									  where id=? AND deleted=0 AND id_space=?";
+                            last_update=?, color_type_id=?, short_description=?, full_description=?, quantity=?, package_id=?
+                                      where id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($start_time, $end_time, $resource_id, $booked_by_id, $recipient_id,
             $last_update, $color_type_id, $short_description, $full_description, $quantity, $package, $id, $id_space));
     }
@@ -451,10 +451,10 @@ class BkCalendarEntry extends Model {
 
         $q = array('start' => $dateBegin, 'end' => $dateEnd, 'id_space' => $id_space);
         $sql = 'SELECT * FROM bk_calendar_entry WHERE
-				(start_time <=:end AND end_time >= :start) 
+                (start_time <=:end AND end_time >= :start) 
                 AND deleted=0
                 AND id_space=:id_space
-				ORDER BY start_time';
+                ORDER BY start_time';
         $req = $this->runRequest($sql, $q);
         return $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
     }
@@ -481,7 +481,7 @@ class BkCalendarEntry extends Model {
                 INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
                 LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
                 WHERE
-				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                (bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id = :res
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=:id_space';
@@ -489,7 +489,7 @@ class BkCalendarEntry extends Model {
             $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
             $q['id_user'] = $id_user;
         }
-		$sql .=	 ' ORDER BY bk_calendar_entry.start_time';
+        $sql .=     ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
@@ -538,7 +538,7 @@ class BkCalendarEntry extends Model {
             INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
             LEFT JOIN cl_clients ON cl_clients.id=bk_calendar_entry.responsible_id
             WHERE
-				(bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
+                (bk_calendar_entry.start_time <=:end AND bk_calendar_entry.end_time >= :start)
                 AND bk_calendar_entry.resource_id IN ('.implode(',', $resource_ids).')
                 AND bk_calendar_entry.deleted=0
                 AND bk_calendar_entry.id_space=:id_space';
@@ -546,7 +546,7 @@ class BkCalendarEntry extends Model {
             $sql .= ' AND bk_calendar_entry.recipient_id=:id_user';
             $q['id_user'] = $id_user;
         }
-		$sql .= ' ORDER BY bk_calendar_entry.start_time';
+        $sql .= ' ORDER BY bk_calendar_entry.start_time';
 
         $req = $this->runRequest($sql, $q);
         $data = $req->fetchAll(); // Liste des bénéficiaire dans la période séléctionée
@@ -590,7 +590,7 @@ class BkCalendarEntry extends Model {
 
     public function isConflictPeriod($id_space, $start_time, $end_time, array $resources_id, $id_period) {
         $sql = "SELECT id, period_id FROM bk_calendar_entry WHERE
-			(
+            (
                 (start_time <=:start AND end_time > :start AND end_time <= :end) OR
                 (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
                 (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
@@ -598,7 +598,7 @@ class BkCalendarEntry extends Model {
             ) 
             AND deleted=0
             AND id_space = :id_space
-			AND resource_id in (:res);";
+            AND resource_id in (:res);";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
@@ -647,14 +647,14 @@ class BkCalendarEntry extends Model {
      */
     public function isConflict($id_space, $start_time, $end_time, array $resources_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
-			  ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
+              ((start_time <=:start AND end_time > :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time <=:end AND end_time >= :start AND end_time <= :end) OR
                            (start_time >=:start AND start_time < :end AND end_time >= :end) OR 
                            (start_time <=:start AND end_time >= :end) 
                            ) 
                            AND deleted=0
                            AND id_space = :id_space
-			AND resource_id in (:res);";
+            AND resource_id in (:res);";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => implode(',', $resources_id), 'id_space' => $id_space);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
@@ -680,10 +680,10 @@ class BkCalendarEntry extends Model {
      */
     public function isConflictOld($start_time, $end_time, $resource_id, $reservation_id = "") {
         $sql = "SELECT id FROM bk_calendar_entry WHERE
-			  ((start_time >=:start AND start_time < :end) OR	
-			  (end_time >:start AND end_time <= :end)) 
+              ((start_time >=:start AND start_time < :end) OR    
+              (end_time >:start AND end_time <= :end)) 
                           AND deleted=0
-			AND resource_id = :res;";
+            AND resource_id = :res;";
         $q = array('start' => $start_time, 'end' => $end_time, 'res' => $resource_id);
         $req = $this->runRequest($sql, $q);
         if ($req->rowCount() > 0) {
@@ -754,7 +754,7 @@ class BkCalendarEntry extends Model {
 
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'resp' => $resp_id, 'space' => $id_space);
         $sql = 'SELECT id FROM bk_calendar_entry WHERE
-				(start_time >=:start AND start_time <= :end) AND (responsible_id = :resp)
+                (start_time >=:start AND start_time <= :end) AND (responsible_id = :resp)
                                 AND resource_id IN (SELECT id FROM re_info WHERE id_space= :space)
                                 AND deleted=0
                                 AND id_space=:space
@@ -779,7 +779,7 @@ class BkCalendarEntry extends Model {
     public function hasUnitEntry($id_space, $unit_id, $startdate, $enddate) {
         $q = array('start' => $startdate, 'end' => $enddate, 'id_space' => $id_space);
         $sql = 'SELECT DISTINCT recipient_id, id FROM bk_calendar_entry WHERE
-				(start_time >=:start AND start_time <= :end)
+                (start_time >=:start AND start_time <= :end)
                 AND deleted=0
                 AND id_space=:id_space
                                 ';

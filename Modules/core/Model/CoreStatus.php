@@ -24,10 +24,10 @@ class CoreStatus extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_status` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(30) NOT NULL DEFAULT '',
-		PRIMARY KEY (`id`)
-		);";
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(30) NOT NULL DEFAULT '',
+        PRIMARY KEY (`id`)
+        );";
 
         $pdo = $this->runRequest($sql);
 

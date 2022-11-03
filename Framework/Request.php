@@ -24,7 +24,7 @@ class Request {
      * Constructor
      *
      * @param array $parameters
-     *        	Parameters of the request
+     *            Parameters of the request
      */
     public function __construct($parameters, $createSession = true) {
         $this->parameters = $parameters;
@@ -58,7 +58,7 @@ class Request {
      * Return true if a parameter exists in the request and is not empty
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return bool True if the parameter exists and is not empty
      */
     public function isParameterNotEmpty($name) {
@@ -69,7 +69,7 @@ class Request {
      * Return true if a parameter exists in the request
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return bool True if the parameter exists and is not empty
      */
     public function isParameter($name) {
@@ -80,7 +80,7 @@ class Request {
      * Return the value of a parameter
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return array|string Value of the parameter
      * @throws Exception If the parameter does not exist in the request
      */

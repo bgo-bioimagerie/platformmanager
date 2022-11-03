@@ -184,10 +184,10 @@ class FormAdd {
         if ($label != "") {
             $html = "<div class=\"form-group row mb-3\">";
             $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
-            $html .= "	<div class=\"col-12 col-md-" . $inputWidth . " table-responsive\" >";
+            $html .= "    <div class=\"col-12 col-md-" . $inputWidth . " table-responsive\" >";
         } else {
             $html .= "<div class=\"form-group row mb-3\">";
-            $html .= "	<div class=\"col-12 table-responsive\">";
+            $html .= "    <div class=\"col-12 table-responsive\">";
         }
 
         $tableID = $this->id . "table";

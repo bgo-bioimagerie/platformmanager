@@ -18,7 +18,7 @@ class HelpdeskInstall extends Model {
     public function createDatabase() {
 
         $model = new Helpdesk();
-	$model->createTable();
+    $model->createTable();
 
     }
 }

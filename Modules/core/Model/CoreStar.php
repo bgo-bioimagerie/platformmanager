@@ -27,11 +27,11 @@ class CoreStar extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_star` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`id_user` int(11) NOT NULL,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `id_user` int(11) NOT NULL,
         `id_space` int(11) NOT NULL,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
     }
     

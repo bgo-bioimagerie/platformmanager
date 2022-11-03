@@ -15,14 +15,14 @@ class BkPrice extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `bk_prices` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_resource` int(11) NOT NULL DEFAULT 0,
                 `id_package` int(11) NOT NULL DEFAULT 0,
                 `day_night_we` varchar(6) NOT NULL DEFAULT '',
                 `id_belonging` int(11) NOT NULL DEFAULT 0,
                 `price` varchar(128) NOT NULL DEFAULT '0',
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
     }

@@ -4,7 +4,7 @@
  ?>
 
 <?php startblock('meta') ?>
-	<meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex" />
 <?php endblock() ?>
 
 <?php startblock('stylesheet') ?>

@@ -66,7 +66,7 @@ class ServicesInstall extends Model {
         $modelTask->createTable();
 
         $modelTaskCategory = new SeTaskCategory();
-	    $modelTaskCategory->createTable();
+        $modelTaskCategory->createTable();
 
         if (!file_exists('data/services/')) {
             mkdir('data/services/', 0755, true);

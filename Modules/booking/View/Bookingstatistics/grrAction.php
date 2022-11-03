@@ -68,7 +68,7 @@
                     }
                     ?>> Valide au moins une des conditions suivantes </OPTION>
                 </select>
-            </div>	
+            </div>    
 
         </div>
 
@@ -175,7 +175,7 @@
                     ?>> Fichier CSV du résumé </OPTION>
                 </select>
             </div>
-        </div>	
+        </div>    
         <br>
         <div class="form-group row">
             <label for="summary_rq" class="control-label col-2">Résumé par (ne concerne que les résumés) :</label>
@@ -219,7 +219,7 @@
             <caption><?php echo count($table) ?> réservations trouvées </caption>
 
             <thead> <!-- En-tête du tableau -->
-                <tr>				
+                <tr>                
                     <th scope="col"><?php echo BookingTranslator::Area($lang) ?></th>
                     <th scope="col"><?php echo BookingTranslator::Resource($lang) ?></th>
                     <th scope="col"><?php echo BookingTranslator::Short_description($lang) ?></th>

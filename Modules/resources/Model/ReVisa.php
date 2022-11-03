@@ -26,13 +26,13 @@ class ReVisa extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `re_visas` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`id_resource_category` int(11) NOT NULL,
-		`id_instructor` int(11) NOT NULL,
-		`instructor_status` int(11) NOT NULL,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `id_resource_category` int(11) NOT NULL,
+        `id_instructor` int(11) NOT NULL,
+        `instructor_status` int(11) NOT NULL,
         `is_active` int(0) NOT NULL DEFAULT 1,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $pdo = $this->runRequest($sql);
         $this->addColumn('re_visas', 'is_active', 'int(0)', 1);

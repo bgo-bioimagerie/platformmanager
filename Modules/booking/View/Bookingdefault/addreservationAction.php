@@ -110,7 +110,7 @@
 
         <div class="col-12">
             <div id="buttons" class="col-4 offset-8">
-                <?php if ($userCanEdit) { ?>	
+                <?php if ($userCanEdit) { ?>    
                     <input type="submit" class="btn btn-primary" value="Save" />
                     <?php if ($id_reservation > 0) { ?>
                         <button onclick="showDelete()" id="deletebookingbutton" type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>

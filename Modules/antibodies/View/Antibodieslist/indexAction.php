@@ -254,7 +254,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-2">	
+                        <div class="row mb-2">    
                             <label for="searchCible" class="form-label col-1">Espèce:</label>
                             <div class="col-3">
                                 <input class="form-control" id="searchCible" type="text" name="searchCible" value="<?php echo $searchCible ?>"
@@ -299,7 +299,7 @@
         <div class="row">
             <div class="col-12">
             <table aria-label="list of antibodies" id="antibodies" class="table table-striped table-bordered" style="font-size: 10px;">
-                <thead>	 
+                <thead>     
                     <tr>
                         <th id="antibody" class="text-center" colspan="10" style="color:#337AB7;">Anticorps</th>
                         <th id="protocol" class="text-center" colspan="2" style="background-color: #ffeeee; color:#337AB7;">Protocole</th>
@@ -307,7 +307,7 @@
                         <th id="owner" class="text-center" colspan="4" style="background-color: #eeeeff; color:#337AB7;">Propriétaire</th>
                     </tr>
 
-                    <tr>		
+                    <tr>        
                         <th id="number" class="text-center" style="color:#337AB7;">No</th> 
                         <th id="name" class="text-center" style="color:#337AB7;">Nom</th>
                         <th id="temperature" class="text-center" style="color:#337AB7;">St</th>
@@ -328,7 +328,7 @@
                         <th id="organ" class="text-center" style="background-color: #eeffee; color:#337AB7;">organe</th>
                         <th id="status" class="text-center" style="background-color: #eeffee; color:#337AB7;">statut</th>
                         <th id="refblock" class="text-center" style="background-color: #eeffee; color:#337AB7;">ref. bloc</th>
-                        <th id="sample" class="text-center" style="background-color: #eeffee; color:#337AB7;">prélèvement</th>	
+                        <th id="sample" class="text-center" style="background-color: #eeffee; color:#337AB7;">prélèvement</th>    
 
                         <th id="name" class="text-center" style="background-color: #eeeeff; color:#337AB7;">Nom</th>
                         <th id="available" class="text-center" style="background-color: #eeeeff; color:#337AB7;">disponibilité</th>

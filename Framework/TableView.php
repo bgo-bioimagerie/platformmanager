@@ -281,7 +281,7 @@ class TableView {
         $html .= "</tr>";
         $html .= "</thead>";
 
-        // table body			
+        // table body            
         $html .= "<tbody>";
 
         $addDelete = false;
@@ -335,7 +335,7 @@ class TableView {
                     else{
                         if (isset($this->colorIndexes["all"])){
                             $ccolor = $dat[$this->colorIndexes["all"]];
-	    		        }
+                        }
                     }
                     $tcolor = '';
                     if(isset($this->colorIndexes["all_text"])) {
@@ -467,9 +467,9 @@ class TableView {
         $html = "<script type=\"text/javascript\">";
         $html .= "function Confirm".$this->tableID."Delete(id, name)";
         $html .= "{";
-        $html .= '	if (confirm(`Delete ${name} ?`))';
-        $html .= '		location.href=`'.$this->deleteURL . '/${id}`;';
-        $html .= "	}";
+        $html .= '    if (confirm(`Delete ${name} ?`))';
+        $html .= '        location.href=`'.$this->deleteURL . '/${id}`;';
+        $html .= "    }";
         $html .= "</script>";
         return $html;
     }
@@ -478,9 +478,9 @@ class TableView {
      * Generate a basic table view
      *
      * @param array $data
-     *        	table data ( 'key' => value)
+     *            table data ( 'key' => value)
      * @param array $headers
-     *        	table headers ( 'key' => 'headername' )
+     *            table headers ( 'key' => 'headername' )
      */
     public function exportCsv($data, $headers) {
 

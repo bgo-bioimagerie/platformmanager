@@ -575,10 +575,10 @@ class FormHtml {
         $html .= "</select>";
         if ($submitOnchange != "") {
             $html .= "<script type=\"text/javascript\">
-    				function updateResponsibe(sel) {
-    					$( \"#" . $submitOnchange . "\" ).submit();
-    				}
-				</script>";
+                    function updateResponsibe(sel) {
+                        $( \"#" . $submitOnchange . "\" ).submit();
+                    }
+                </script>";
         }
         return $html;
     }
@@ -604,7 +604,7 @@ class FormHtml {
 
         $html = "<div id=\"form_blk_$name\" class=\"mb-3 row\">";
         $html .= "<label class=\"col-form-label col-12 col-md-" . $labelWidth . "\">" . $label . $star . "</label>";
-        $html .= "	<div class=\"col-12 col-md-" . $inputWidth . "\">";
+        $html .= "    <div class=\"col-12 col-md-" . $inputWidth . "\">";
         $html .= FormHtml::inlineSelect($name, $choices, $choicesid, $value, $isMandatory, false, $submitOnChange);
         $html .= "</div>";
         $html .= "</div>";
@@ -624,7 +624,7 @@ class FormHtml {
     static public function choicesList($label, $choices, $choicesid, $values, $labelWidth, $inputWidth) {
         $html = "<div class=\"mb-3 row\">";
         $html .= "<label class=\"form-check-label col-12 col-md-" . $labelWidth . "\">" . $label . "</label>";
-        $html .= "	<div class=\"col-12 col-md-" . $inputWidth . "\">";
+        $html .= "    <div class=\"col-12 col-md-" . $inputWidth . "\">";
         for ($i = 0; $i < count($choices); $i++) {
 
             $html .= "<div id=\"form_blk_$choicesid[$i]\" class=\"checkbox\"> ";

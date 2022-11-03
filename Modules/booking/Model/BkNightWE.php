@@ -116,7 +116,7 @@ class BkNightWE extends Model {
      */
     public function addPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char) {
         $sql = "INSERT INTO bk_nightwe (id_belonging, id_space, tarif_unique, tarif_night, night_start,
-				                        night_end, tarif_we, choice_we ) VALUES(?,?,?,?,?,?,?,?)";
+                                        night_end, tarif_we, choice_we ) VALUES(?,?,?,?,?,?,?,?)";
         return $this->runRequest($sql, array($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char));
     }
 
@@ -132,8 +132,8 @@ class BkNightWE extends Model {
      */
     public function editPricing($id_belonging, $id_space, $tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char) {
         $sql = "UPDATE bk_nightwe SET tarif_unique=?, tarif_night=?, night_start=?,
-				                      night_end=?, tarif_we=?, choice_we=?
-									  WHERE id_belonging=? AND id_space=?";
+                                      night_end=?, tarif_we=?, choice_we=?
+                                      WHERE id_belonging=? AND id_space=?";
         $this->runRequest($sql, array($tarif_unique, $tarif_nuit, $night_start, $night_end, $tarif_we, $we_char, $id_belonging, $id_space));
     }
 

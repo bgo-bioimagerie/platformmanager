@@ -64,10 +64,10 @@ class MailerTranslator {
     public static function Install_Txt($lang = "") {
         if ($lang == "fr") {
             return "Cliquer sur \"Installer\" pour installer ou réparer la base de données de 'Mailer'.
-					Cela créera les tables qui n'existent pas";
+                    Cela créera les tables qui n'existent pas";
         }
         return "To repair the Mailer mudule, click \"Install\". This will create the
-				Mailer tables in the database if they don't exists ";
+                Mailer tables in the database if they don't exists ";
     }
 
     public static function Activate_desactivate_menus($lang = "") {

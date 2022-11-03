@@ -87,18 +87,18 @@ class Rating extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `rating` (
-		`id` int NOT NULL AUTO_INCREMENT,
+        `id` int NOT NULL AUTO_INCREMENT,
         `id_space` int NOT NULL,
         `campaign`int NOT NULL,
-		`rate` int NOT NULL,
+        `rate` int NOT NULL,
         `comment` VARCHAR(255),
         `module` VARCHAR(100) NOT NULL,
         `resourcename` VARCHAR(255) NOT NULL,
         `resource` int NOT NULL,
         `id_user` int NOT NULL,
         `anon` tinyint(1) NOT NULL DEFAULT 1,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
     }
 

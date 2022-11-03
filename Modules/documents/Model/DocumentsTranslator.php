@@ -39,10 +39,10 @@ class DocumentsTranslator {
     public static function Install_Txt($lang = "") {
         if ($lang == "fr") {
             return "Cliquer sur \"Installer\" pour installer ou réparer la base de données de 'Documents'.
-					Cela créera les tables qui n'existent pas";
+                    Cela créera les tables qui n'existent pas";
         }
         return "To repair the Documents mudule, click \"Install\". This will create the
-				Documents tables in the database if they don't exists ";
+                Documents tables in the database if they don't exists ";
     }
 
     public static function Activate_desactivate_menus($lang = "") {

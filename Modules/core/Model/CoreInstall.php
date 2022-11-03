@@ -494,7 +494,7 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             $statHandler->invoiceImport();
             Configuration::getLogger()->debug('[stats] import invoice stats, done!');
-	    }
+        }
 
         Configuration::getLogger()->debug('[core_users] fix column types');
         $sql = "alter table core_users modify phone varchar(255)";
@@ -744,9 +744,9 @@ class CoreDB extends Model {
 
         $sql = "CREATE TABLE IF NOT EXISTS `pfm_db` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
-		    `version` varchar(255) NOT NULL DEFAULT ".DB_VERSION.",
-		    PRIMARY KEY (`id`)
-		);";
+            `version` varchar(255) NOT NULL DEFAULT ".DB_VERSION.",
+            PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
     }
@@ -957,8 +957,8 @@ class CoreInstall extends Model {
 
         $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''));
         $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");        
-    	$modelConfig->initParam("home_title", "Platform-Manager");
-    	$modelConfig->initParam("home_message", "Connection");
+        $modelConfig->initParam("home_title", "Platform-Manager");
+        $modelConfig->initParam("home_message", "Connection");
 
         $modelConfig->setParam("navbar_bg_color", "#404040");
         $modelConfig->setParam("navbar_bg_highlight", "#333333");

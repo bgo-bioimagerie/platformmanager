@@ -17,20 +17,20 @@ class SeOrder extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_order` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
         `id_resp` int(11) NOT NULL,
         `id_space` int(11) NOT NULL,
         `id_user` int(11) NOT NULL,
-		`id_status` int(1) NOT NULL,
-		`date_open` DATE,
-		`date_last_modified` DATE,
-		`date_close` DATE,
+        `id_status` int(1) NOT NULL,
+        `date_open` DATE,
+        `date_last_modified` DATE,
+        `date_close` DATE,
         `no_identification` varchar(150) NOT NULL DEFAULT '',
         `id_invoice` int(11) NOT NULL DEFAULT 0,
         `created_by_id` int(11) NOT NULL DEFAULT 0,
         `modified_by_id` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
 
         $this->addColumn("se_order", "id_resp", "int(11)", 0);
@@ -39,12 +39,12 @@ class SeOrder extends Model {
         $this->addColumn("se_order", "modified_by_id", "int(11)", 0);
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_order_service` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_order` int(11) NOT NULL,
                 `id_service` int(11) NOT NULL,
-		`quantity` varchar(255) NOT NULL,
-		PRIMARY KEY (`id`)
-		);";
+        `quantity` varchar(255) NOT NULL,
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql2);
     }
@@ -169,7 +169,7 @@ class SeOrder extends Model {
         }
 
         $sql = "INSERT INTO se_order (id_space, id_user, id_resp, no_identification, id_status, date_open, date_last_modified, date_close)
-				 VALUES(?,?,?,?,?,?,?,?)";
+                 VALUES(?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
             $id_space, $id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close
         ));
@@ -190,7 +190,7 @@ class SeOrder extends Model {
             $date_last_modified = null;
         }
         $sql = "UPDATE se_order set id_user=?, id_resp=?, no_identification=?, id_status=?, date_open=?, date_last_modified=?, date_close=?
-		        where id=? AND id_space=?";
+                where id=? AND id_space=?";
         $this->runRequest($sql, array($id_user, $id_client, $no_identification, $id_status, $date_open, $date_last_modified, $date_close, $id, $id_space));
     }
 
@@ -273,13 +273,13 @@ class SeOrder extends Model {
 
     public function setEntryClosed($id_space, $id) {
         $sql = "UPDATE se_order set id_status=0, date_close=?
-		        where id=? AND id_space=? AND deleted=0";
+                where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array(date("Y-m-d", time()), $id, $id_space));
     }
 
     public function reopenEntry($id_space, $no_identification){
         $sql = "UPDATE se_order set id_status=1, date_close=null
-		        where no_identification=? AND id_space=? AND deleted=0";
+                where no_identification=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($no_identification, $id_space));
     }
 

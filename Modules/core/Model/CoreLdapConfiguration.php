@@ -41,7 +41,7 @@ class CoreLdapConfiguration
     {
         if (self::$parameters == null) {
 
-        	$urlFile = self::getConfigFile();
+            $urlFile = self::getConfigFile();
             if (!file_exists($urlFile)) {
                 Configuration::getLogger()->debug('[ldap] no config file found, use env var or conf.ini');
                 self::$parameters = [
@@ -57,7 +57,7 @@ class CoreLdapConfiguration
     }
     
     public static function getConfigFile(){
-    	return "Config/ldap.ini";
+        return "Config/ldap.ini";
     }
 
 /**

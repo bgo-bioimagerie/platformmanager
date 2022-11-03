@@ -21,12 +21,12 @@ class BkCalendarPeriod extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calendar_period` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,	
-		`choice` varchar(50) NOT NULL,	
-		`optionval` varchar(50) NOT NULL,
+        `id` int(11) NOT NULL AUTO_INCREMENT,    
+        `choice` varchar(50) NOT NULL,    
+        `optionval` varchar(50) NOT NULL,
         `enddate` DATE,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
         

@@ -142,8 +142,8 @@ class CoreSpace extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_spaces` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`name` varchar(30) NOT NULL DEFAULT '',
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `name` varchar(30) NOT NULL DEFAULT '',
         `status` int(1) NOT NULL DEFAULT 0,
         `color` varchar(7) NOT NULL DEFAULT '#000000',
         `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
@@ -157,8 +157,8 @@ class CoreSpace extends Model {
         `user_desactivate` int(1) NOT NULL DEFAULT 1,
         `termsofuse` varchar(255),  /* terms of use URL */
         `on_user_desactivate` int NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
         $this->addColumn('core_spaces', 'color', 'varchar(7)', "#000000");
         $this->addColumn('core_spaces', 'description', 'text', '');
@@ -172,16 +172,16 @@ class CoreSpace extends Model {
 
         /* Created in CoreSpaceUser
         $sql2 = "CREATE TABLE IF NOT EXISTS `core_j_spaces_user` (
-		`id_user` int(11) NOT NULL DEFAULT 1,
-		`id_space` int(11) NOT NULL DEFAULT 1,
+        `id_user` int(11) NOT NULL DEFAULT 1,
+        `id_space` int(11) NOT NULL DEFAULT 1,
                 `status` int(1) NOT NULL DEFAULT 1
-		);";
+        );";
         $this->runRequest($sql2);
         */
 
         // name = module
         $sql3 = "CREATE TABLE IF NOT EXISTS `core_space_menus` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(1) NOT NULL DEFAULT 1,
             `module` varchar(60) NOT NULL DEFAULT '',
             `url` varchar(120) NOT NULL DEFAULT '',
@@ -192,7 +192,7 @@ class CoreSpace extends Model {
             `color` varchar(7) NOT NULL DEFAULT '#000000',
             `txtcolor` varchar(7) NOT NULL DEFAULT '#ffffff',
             PRIMARY KEY (`id`)
-		);";
+        );";
         $this->runRequest($sql3);
 
         $this->addColumn('core_space_menus', 'display_order', 'int(11)', 0);

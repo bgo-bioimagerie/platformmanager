@@ -233,12 +233,12 @@ class BkAuthorization extends Model {
      */
     public function getActiveAuthorizationForResourceCategory($id_space, $resource_id) {
         $sql = "SELECT bk_authorization.id, bk_authorization.date, core_users.id AS user_id, core_users.name AS userName, core_users.firstname AS userFirstname, core_users.email AS userEmail, se_visa.name AS visa, re_category.name AS resource
-					from bk_authorization
-					     INNER JOIN core_users on bk_authorization.user_id = core_users.id
-					     INNER JOIN se_visa on bk_authorization.visa_id = se_visa.id
-					     INNER JOIN re_category on bk_authorization.resource_id = re_category.id
-				WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1 AND bk_authorization.deleted=0 AND bk_authorization.id_space=?
-				ORDER BY core_users.name;";
+                    from bk_authorization
+                         INNER JOIN core_users on bk_authorization.user_id = core_users.id
+                         INNER JOIN se_visa on bk_authorization.visa_id = se_visa.id
+                         INNER JOIN re_category on bk_authorization.resource_id = re_category.id
+                WHERE bk_authorization.resource_id=? AND bk_authorization.is_active=1 AND bk_authorization.deleted=0 AND bk_authorization.id_space=?
+                ORDER BY core_users.name;";
         $req = $this->runRequest($sql, array($resource_id, $id_space));
         $auth = $req->fetchAll();
 

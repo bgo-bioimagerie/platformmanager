@@ -32,7 +32,7 @@
             <div class="col-10">
                 <div style="font-weight: bold;"><?php echo $entry["title"] ?></div>
                 <div> <?php echo $entry["short_desc"] ?></div>
-            </div>	
+            </div>    
         </div>
     <div class="col-12" style="height:7px;"></div>
     <?php }

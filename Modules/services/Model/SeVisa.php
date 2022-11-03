@@ -15,11 +15,11 @@ class SeVisa extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_visa` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_user` int(11) NOT NULL,
             `id_space` int(11) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
         $this->runRequest($sql);
     }
 

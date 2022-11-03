@@ -1347,9 +1347,9 @@ class SeStats extends Model {
         $curentLine = 3;
         $spreadsheet->getActiveSheet()->setCellValue('D2', 'Projects per responsible');
         foreach($pstats['in_charge'] as $key=>$value) {
-        	$spreadsheet->getActiveSheet()->setCellValue('D'.$curentLine, $key);
-        	$spreadsheet->getActiveSheet()->setCellValue('E'.$curentLine, $value);
-        	$curentLine += 1;
+            $spreadsheet->getActiveSheet()->setCellValue('D'.$curentLine, $key);
+            $spreadsheet->getActiveSheet()->setCellValue('E'.$curentLine, $value);
+            $curentLine += 1;
         }
         for ($r = 1; $r <= $curentLine; $r++) {
             for ($c = 'D'; $c !== 'F'; $c++) {
@@ -1366,7 +1366,7 @@ class SeStats extends Model {
                 $spreadsheet->getActiveSheet()->setCellValue('G'.$curentLine, $key);
                 $spreadsheet->getActiveSheet()->setCellValue('H'.$curentLine, $value);
                 $curentLine += 1;
-	     }
+         }
         for ($r = 1; $r <= $curentLine; $r++) { 
             for ($c = 'G'; $c !== 'I'; $c++) {
                 $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);
@@ -1382,7 +1382,7 @@ class SeStats extends Model {
                 $spreadsheet->getActiveSheet()->setCellValue('J'.$curentLine, $key);
                 $spreadsheet->getActiveSheet()->setCellValue('K'.$curentLine, $value);
                 $curentLine += 1;
-	     }
+         }
         for ($r = 1; $r <= $curentLine; $r++) { 
             for ($c = 'J'; $c !== 'L'; $c++) {
                 $spreadsheet->getActiveSheet()->getStyle($c . $r)->applyFromArray($styleBorderedCell);

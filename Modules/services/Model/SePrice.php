@@ -15,12 +15,12 @@ class SePrice extends Model {
 
     public function createTable() {
         $sql = "CREATE TABLE IF NOT EXISTS `se_prices` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
                 `id_service` int(11) NOT NULL DEFAULT 0,
                 `id_belonging` int(11) NOT NULL DEFAULT 0,
                 `price` varchar(128) NOT NULL DEFAULT '0',
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
         

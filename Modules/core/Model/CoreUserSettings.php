@@ -23,10 +23,10 @@ class CoreUserSettings extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `core_users_settings` (
-		`user_id` int(11) NOT NULL,
-		`setting` varchar(30) NOT NULL DEFAULT '',
-		`value` varchar(40) NOT NULL DEFAULT ''
-		);";
+        `user_id` int(11) NOT NULL,
+        `setting` varchar(30) NOT NULL DEFAULT '',
+        `value` varchar(40) NOT NULL DEFAULT ''
+        );";
 
         $pdo = $this->runRequest($sql);
         return $pdo;
@@ -103,7 +103,7 @@ class CoreUserSettings extends Model {
      */
     protected function addSetting($user_id, $setting, $value) {
         $sql = "insert into core_users_settings (user_id, setting, value)
-				 VALUES(?,?,?)";
+                 VALUES(?,?,?)";
         $this->runRequest($sql, array($user_id, $setting, $value));
     }
 

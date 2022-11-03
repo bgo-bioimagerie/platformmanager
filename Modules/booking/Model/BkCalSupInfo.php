@@ -26,8 +26,8 @@ class BkCalSupInfo extends Model {
             `id_resource` int(11) NOT NULL,
             `name` varchar(30) NOT NULL DEFAULT '',
             `mandatory` int(1) NOT NULL,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
        return $this->runRequest($sql);
     }
@@ -198,7 +198,7 @@ class BkCalSupInfo extends Model {
 
         $sql = "UPDATE bk_calendar_entry
                 SET supplementary=?
-				WHERE id=? AND id_space=?";
+                WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($supData, $reservation_id, $id_space));
     }
 

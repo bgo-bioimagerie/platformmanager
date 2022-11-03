@@ -648,13 +648,13 @@ class BkStatsUser extends Model {
         //  get all the booking users
         $q = array('start' => $searchDate_start, 'end' => $searchDate_end, 'space' => $id_space);
         $sql = 'SELECT DISTINCT recipient_id FROM bk_calendar_entry WHERE
-				(start_time >=:start AND start_time <= :end)
+                (start_time >=:start AND start_time <= :end)
                 AND deleted=0 AND id_space=:space';
         $req = $this->runRequest($sql, $q);
         $recs = $req->fetchAll();
 
         $sql2 = 'SELECT DISTINCT responsible_id FROM bk_calendar_entry WHERE
-				(start_time >=:start AND start_time <= :end)
+                (start_time >=:start AND start_time <= :end)
                 AND deleted=0 AND id_space=:space';
         $req2 = $this->runRequest($sql2, $q);
         $recresps = $req2->fetchAll();

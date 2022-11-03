@@ -31,15 +31,15 @@ class BkBookingSettings extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_booking_settings` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
-		`tag_name` varchar(100) NOT NULL,
-		`is_visible` int NOT NULL,			
-		`is_tag_visible` int(1) NOT NULL,
-		`display_order` int(5) NOT NULL,
-		`font` varchar(20) NOT NULL,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `tag_name` varchar(100) NOT NULL,
+        `is_visible` int NOT NULL,            
+        `is_tag_visible` int(1) NOT NULL,
+        `display_order` int(5) NOT NULL,
+        `font` varchar(20) NOT NULL,
         `id_space` int(11) NOT NULL,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         return $this->runRequest($sql);
     }
@@ -98,7 +98,7 @@ class BkBookingSettings extends Model {
      */
     public function addEntry($tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
         $sql = "insert into bk_booking_settings(tag_name, is_visible, is_tag_visible, 
-			                                    display_order, font, id_space)"
+                                                display_order, font, id_space)"
                 . " values(?,?,?,?,?,?)";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
             $display_order, $font, $id_space));
@@ -169,8 +169,8 @@ class BkBookingSettings extends Model {
      */
     public function updateEntry($id, $tag_name, $is_visible, $is_tag_visible, $display_order, $font, $id_space) {
         $sql = "update bk_booking_settings set tag_name=?, is_visible=?, is_tag_visible=?, 
-			                 display_order=?, font=?
-			                 where id=? AND id_space=? AND deleted=0";
+                             display_order=?, font=?
+                             where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($tag_name, $is_visible, $is_tag_visible,
             $display_order, $font, $id, $id_space));
     }

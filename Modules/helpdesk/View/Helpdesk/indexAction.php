@@ -2,7 +2,7 @@
 <?php include 'Modules/layout.php' ?>
 
 <?php startblock('meta') ?>
-	<meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex" />
 <?php endblock() ?>
 
 

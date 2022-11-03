@@ -88,7 +88,7 @@ class CoreAdminMenu extends Model {
      */
     public function removeAdminMenu($name) {
         $sql = "DELETE FROM core_adminmenu
-				WHERE name='" . $name . "';";
+                WHERE name='" . $name . "';";
         $pdo = $this->runRequest($sql);
         return $pdo;
     }

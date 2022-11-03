@@ -43,7 +43,7 @@ class SeProject extends Model {
             `samplestocked` int(1) NOT NULL DEFAULT 0,
             `samplescomment` text,
             PRIMARY KEY (`id`)
-		);";
+        );";
         $this->runRequest($sql);
 
         $this->addColumn('se_project', 'id_origin', 'int(11)', 0);
@@ -56,7 +56,7 @@ class SeProject extends Model {
         $this->addColumn('se_project', 'samplescomment', 'TEXT', "");
 
         $sql2 = "CREATE TABLE IF NOT EXISTS `se_project_service` (
-		    `id` int(11) NOT NULL AUTO_INCREMENT,
+            `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_project` int(11) NOT NULL,
             `id_service` int(11) NOT NULL,
             `date` date,
@@ -64,7 +64,7 @@ class SeProject extends Model {
             `comment` varchar(255) NOT NULL,
             `id_invoice` int(11) NOT NULL DEFAULT 0,
             PRIMARY KEY (`id`)
-		);";
+        );";
 
         $this->runRequest($sql2);
 
@@ -464,7 +464,7 @@ class SeProject extends Model {
             $date_close = null;
         }
         $sql = "INSERT INTO se_project (id_space, name, id_resp, id_user, date_open, date_close, new_team, new_project, time_limit)
-				 VALUES(?,?,?,?,?,?,?,?,?)";
+                 VALUES(?,?,?,?,?,?,?,?,?)";
         $this->runRequest($sql, array(
             $id_space, $name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit
         ));
@@ -479,7 +479,7 @@ class SeProject extends Model {
             $date_close = null;
         }
         $sql = "update se_project set name=?, id_resp=?, id_user=?, date_open=?, date_close=?, new_team=?, new_project=?, time_limit=?
-		        where id=? AND id_space=? AND deleted=0";
+                where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($name, $id_resp, $id_user, $date_open, $date_close, $new_team, $new_project, $time_limit, $id, $id_space));
     }
 
@@ -575,7 +575,7 @@ class SeProject extends Model {
             $date_close = null;
         }
         $sql = "UPDATE se_project set date_close=?
-		        where id=? AND id_space=? AND deleted=0";
+                where id=? AND id_space=? AND deleted=0";
         $this->runRequest($sql, array($date_close, $id, $id_space));
     }
 

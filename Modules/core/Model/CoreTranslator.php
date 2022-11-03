@@ -661,10 +661,10 @@ class CoreTranslator {
     public static function CoreConfigAbstract($lang) {
         if ($lang == "fr") {
             return "Le module Core permet de gérer les paramètres de 
-					l'application et la base de données utilisateurs";
+                    l'application et la base de données utilisateurs";
         }
         return "The Core module allows to manage the application
-				settings and a user database";
+                settings and a user database";
     }
 
     public static function Core_configuration($lang = "") {
@@ -684,10 +684,10 @@ class CoreTranslator {
     public static function Install_Txt($lang = "") {
         if ($lang == "fr") {
             return "Cliquer sur \"Installer\" pour installer ou réparer la base de données de Core. 
-					Cela créera les tables qui n'existent pas";
+                    Cela créera les tables qui n'existent pas";
         }
         return "To repair the Core mudule, click \"Install\". This will create the
-				Core tables in the database if they don't exists ";
+                Core tables in the database if they don't exists ";
     }
 
     public static function Activate_desactivate_menus($lang = "") {
@@ -896,7 +896,7 @@ class CoreTranslator {
         if ($lang == "fr") {
             return "Êtes-vous sûr de vouloir supprimer définitivement l'utilisateur: " . $userName . " ?" .
                     "<br> Attention: Cela supprimera uniquement l'utilisateur de la base de données. Toute référence faite
-				    à cet utilisateur dans un autre module sera corrompue.";
+                    à cet utilisateur dans un autre module sera corrompue.";
         }
         return "Delete user: " . $userName . " ?" .
                 "<br> Warning: This will remove the user from the database. Any reference to this user in another module will be corrupted";
@@ -906,7 +906,7 @@ class CoreTranslator {
         if ($lang == "fr") {
             return "Êtes-vous sûr de vouloir supprimer définitivement l'unité: " . $unitName . " ?" .
                     "<br> Attention: Cela supprimera uniquement l'unité de la base de données. Toute référence faite
-				    à cet unité dans un autre module sera corrompue.";
+                    à cet unité dans un autre module sera corrompue.";
         }
         return "Delete unit: " . $unitName . " ?" .
                 "<br> Warning: This will remove the unit from the database. Any reference to this unit in another module will be corrupted";

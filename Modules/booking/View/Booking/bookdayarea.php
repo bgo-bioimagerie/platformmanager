@@ -1,7 +1,7 @@
 <?php include 'Modules/booking/View/layout.php' ?>
 
 <?php startblock('meta') ?>
-	<meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex" />
 <?php endblock() ?>
     
 <?php startblock('content') ?>
@@ -30,9 +30,9 @@ if($detailedView) {
 ?>
 
 <div class="row">
-	<div class="col-12">
-	<?php include_once "Modules/booking/View/colorcodenavbar.php"; ?>
-	</div>
+    <div class="col-12">
+    <?php include_once "Modules/booking/View/colorcodenavbar.php"; ?>
+    </div>
 </div>
 
 <?php endblock(); ?>

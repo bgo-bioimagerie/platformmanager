@@ -32,23 +32,23 @@ class AcProtocol extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `ac_protocol` (
-				`id` int(11) NOT NULL AUTO_INCREMENT,
-				`kit` int(11) NOT NULL,
-				`no_proto` varchar(11) NOT NULL,
-				`proto` int(11) NOT NULL,
-				`fixative` int(11) NOT NULL,
-				`option_` int(11) NOT NULL,
-				`enzyme` int(11) NOT NULL,
-				`dem` int(11) NOT NULL,
-				`acl_inc` int(11) NOT NULL,
-				`linker` int(11) NOT NULL,
-				`inc` int(11) NOT NULL,
-				`acll` int(11) NOT NULL,
-				`inc2` int(11) NOT NULL,
-				`associe` int(1) NOT NULL,
+                `id` int(11) NOT NULL AUTO_INCREMENT,
+                `kit` int(11) NOT NULL,
+                `no_proto` varchar(11) NOT NULL,
+                `proto` int(11) NOT NULL,
+                `fixative` int(11) NOT NULL,
+                `option_` int(11) NOT NULL,
+                `enzyme` int(11) NOT NULL,
+                `dem` int(11) NOT NULL,
+                `acl_inc` int(11) NOT NULL,
+                `linker` int(11) NOT NULL,
+                `inc` int(11) NOT NULL,
+                `acll` int(11) NOT NULL,
+                `inc2` int(11) NOT NULL,
+                `associe` int(1) NOT NULL,
                 `id_space` int(11) NOT NULL,
-				PRIMARY KEY (`id`)
-				);";
+                PRIMARY KEY (`id`)
+                );";
 
         $pdo = $this->runRequest($sql);
         return $pdo;
@@ -194,9 +194,9 @@ class AcProtocol extends Model {
 
     public function getProtocolsByAnticorps($id_space, $anticorpsId) {
 
-        $sql = "SELECT * FROM ac_protocol WHERE no_proto IN (SELECT ref_protocol		 			
-				FROM ac_j_tissu_anticorps
-				WHERE id_anticorps=? AND id_space=? AND deleted=0)";
+        $sql = "SELECT * FROM ac_protocol WHERE no_proto IN (SELECT ref_protocol                     
+                FROM ac_j_tissu_anticorps
+                WHERE id_anticorps=? AND id_space=? AND deleted=0)";
         $req = $this->runRequest($sql, array($anticorpsId, $id_space));
         $protos = $req->fetchAll();
 
