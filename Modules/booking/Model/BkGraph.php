@@ -10,6 +10,20 @@ require_once 'Modules/booking/Model/BkNightWE.php';
  */
 class BkGraph extends Model
 {
+
+    private function monthBegin($dateBegin)
+    {
+        if ($dateBegin == "") {
+            throw new PfmParamException("invalid date");
+        }
+        $dateBeginArray = explode("-", $dateBegin);
+        $dayStart = $dateBeginArray[2];
+        $monthStart = $dateBeginArray[1];
+        $yearStart = $dateBeginArray[0];
+
+        return mktime(0, 0, 0, $monthStart, $dayStart, $yearStart);
+    }
+
     public function getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode)
     {
         if ($dateBegin == "") {
@@ -18,6 +32,8 @@ class BkGraph extends Model
         if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
+
+        /*
         $dateBeginArray = explode("-", $dateBegin);
         $day_start = $dateBeginArray[2];
         $month_start = $dateBeginArray[1];
@@ -30,6 +46,10 @@ class BkGraph extends Model
 
         $timeBegin = mktime(0, 0, 0, $month_start, $day_start, $year_start);
         $timeEnd = mktime(0, 0, 0, $month_end, $day_end, $year_end);
+        */
+
+        $timeBegin = $this->monthBegin($dateBegin);
+        $timeEnd = $this->monthBegin($dateEnd);
 
         $data = array();
 
@@ -126,10 +146,15 @@ class BkGraph extends Model
             throw new PfmParamException("invalid end date");
         }
 
+        /*
         $dateBeginArray = explode('-', $dateBegin);
         $dateEndArray = explode('-', $dateEnd);
         $dstart = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]); // Le premier jour du mois en cours
         $dend = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
+        */
+        $dstart = $this->monthBegin($dateBegin);
+        $dend = $this->monthBegin($dateEnd);
+
 
         $sql = 'SELECT * FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND resource_id=? AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
         $sql .= ' AND color_type_id =?';
@@ -174,19 +199,22 @@ class BkGraph extends Model
             throw new PfmParamException("invalid end date");
         }
 
+        /*
         $dateBeginArray = explode('-', $dateBegin);
         $dateEndArray = explode('-', $dateEnd);
         $dstart = mktime(0, 0, 0, $dateBeginArray[1], $dateBeginArray[2], $dateBeginArray[0]); // Le premier jour du mois en cours
         $dend = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
+        */
+        $dstart = $this->monthBegin($dateBegin);
+        $dend = $this->monthBegin($dateEnd);
+
 
         foreach ($resourcesIds as $res) {
             $sql = 'SELECT * FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND resource_id=? AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
             if ($in_color != "") {
                 $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
             }
-            //echo 'sql = '.$sql . '<br/>';
             $req = $this->runRequest($sql, array($id_space, $res['id']));
-            //$countResa[] = $req->rowCount();
             $data = $req->fetchAll();
             $timeSec = 0;
             $timeSecCancelled = 0;
@@ -242,7 +270,10 @@ class BkGraph extends Model
                 $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . $dstart . ' AND end_time <=' . $dend . ' ORDER by resource_id';
                 $req = $this->runRequest($sql, array($id_space));
                 $numMachinesFormesTotal = $req->rowCount();
-                $machinesFormesListe = $req->fetchAll();
+                $machinesFormesListe = [];
+                if ($numMachinesFormesTotal) {
+                    $machinesFormesListe = $req->fetchAll();
+                }
 
                 $num = 0;
                 foreach ($machinesFormesListe as $machine) {
@@ -343,9 +374,11 @@ class BkGraph extends Model
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
-        $machinesFormesListe = $req->fetchAll();
-
-        $machineFormes = array();
+        $machinesFormesListe = [];
+        if ($numMachinesFormesTotal) {
+            $machinesFormesListe = $req->fetchAll();
+        }
+        // $machineFormes = array();
         $i = -1;
         foreach ($machinesFormesListe as $mFL) {
             $i++;
@@ -413,7 +446,10 @@ class BkGraph extends Model
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
-        $machinesFormesListe = $req->fetchAll();
+        $machinesFormesListe = [];
+        if ($numMachinesFormesTotal) {
+            $machinesFormesListe = $req->fetchAll();
+        }
         $numMachinesFormes = array();
 
         $i = -1;
@@ -475,7 +511,10 @@ class BkGraph extends Model
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
-        $machinesFormesListe = $req->fetchAll();
+        $machinesFormesListe = [];
+        if ($numMachinesFormesTotal) {
+            $machinesFormesListe = $req->fetchAll();
+        }
 
         $i = 0;
         $numMachinesFormes = array();
