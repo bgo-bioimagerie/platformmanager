@@ -9,31 +9,31 @@ require_once 'Modules/booking/Model/BkColorCode.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingcolorcodesController extends BookingsettingsController {
-
+class BookingcolorcodesController extends BookingsettingsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
 
         // get the user list
         $colorModel = new BkColorCode();
         $colorTable = $colorModel->getForSpace($id_space);
         $bkcodes = $colorTable;
-        for($i = 0 ; $i < count($colorTable) ; $i++){
+        for ($i = 0 ; $i < count($colorTable) ; $i++) {
             $colorTable[$i]["who_can_use"] = CoreTranslator::Translate_status_from_id($lang, $colorTable[$i]["who_can_use"]);
         }
 
-        $table = new TableView ();
+        $table = new TableView();
 
         $table->setTitle(BookingTranslator::Color_codes($lang), 3);
         $table->addLineEditButton("bookingcolorcodeedit/".$id_space);
@@ -51,16 +51,15 @@ class BookingcolorcodesController extends BookingsettingsController {
 
         return $this->render(array("data" => ["bkcodes" => $bkcodes], "id_space" => $id_space, "tableHtml" => $tableHtml, "lang" => $lang));
     }
-    
-    public function editAction($id_space, $id){
-        
+
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-        
+
         $model = new BkColorCode();
-        if ($id > 0){
+        if ($id > 0) {
             $data = $model->getColorCode($id_space, $id);
-        }
-        else{
+        } else {
             $data = $model->getDefault();
         }
         $lang = $this->getLanguage();
@@ -78,15 +77,14 @@ class BookingcolorcodesController extends BookingsettingsController {
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "bookingcolorcodes/".$id_space);
-        
-        if ($form->check()){
-            
+
+        if ($form->check()) {
             $newID = $model->editColorCode($id, $form->getParameter("name"), $form->getParameter("color"), $form->getParameter("text"), $id_space, $form->getParameter("display_order"));
             $model->setColorWhoCanUse($id_space, $newID, $form->getParameter("who_can_use"));
-            
+
             $_SESSION["flash"] = BookingTranslator::Item_created("colorcode", $lang);
             $_SESSION["flashClass"] = "success";
 
@@ -97,16 +95,16 @@ class BookingcolorcodesController extends BookingsettingsController {
             }
         }
         $formHtml = $form->getHtml($lang);
-        
+
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $formHtml));
     }
-    
-    public function deleteAction($id_space, $id){
+
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
-        
+
         $model = new BkColorCode();
         $model->delete($id_space, $id);
         $this->redirect("bookingcolorcodes/".$id_space);
     }
-
 }

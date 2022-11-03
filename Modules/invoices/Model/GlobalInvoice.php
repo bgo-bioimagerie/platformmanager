@@ -8,28 +8,28 @@ require_once 'Modules/invoices/Model/InInvoiceItem.php';
 require_once 'Modules/invoices/Model/InvoicesTranslator.php';
 
 
-class GlobalInvoice extends Model {
-
+class GlobalInvoice extends Model
+{
     public static string $INVOICES_GLOBAL_ALL = 'invoices_global_all';
     public static string $INVOICES_GLOBAL_CLIENT = 'invoices_global_client';
 
-    public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en') {
-
+    public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en')
+    {
         $clm = new ClClient();
         $resps = $clm->getAll($id_space);
         $found = false;
-        foreach( $resps as $resp ){
+        foreach ($resps as $resp) {
             $respFound  =  $this->invoice($id_space, $beginPeriod, $endPeriod, $resp["id"], $id_user, $lang);
-            if($respFound) {
+            if ($respFound) {
                 $found = true;
                 break;
             }
-            
         }
         return $found;
     }
 
-    public function invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en') {
+    public function invoice($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en')
+    {
         $modules = Configuration::get("modules");
         $found = false;
         foreach ($modules as $module) {
@@ -45,7 +45,7 @@ class GlobalInvoice extends Model {
                 }
             }
         }
-        if(!$found) {
+        if (!$found) {
             return false;
         }
 
@@ -64,10 +64,8 @@ class GlobalInvoice extends Model {
 
         try {
             foreach ($modules as $module) {
-
                 $invoiceModelFile = "Modules/" . strtolower($module) . "/Model/" . ucfirst(strtolower($module)) . "Invoice.php";
                 if (file_exists($invoiceModelFile)) {
-
                     require_once $invoiceModelFile;
                     $modelName = ucfirst(strtolower($module)) . "Invoice";
                     $model = new $modelName();
@@ -80,7 +78,6 @@ class GlobalInvoice extends Model {
                     $total_ht += floatval($moduleArray["data"]["total_ht"]);
                 }
             }
-
         } catch(Exception $e) {
             $modelInvoice->setNumber($id_space, $id_invoice, 'error');
             throw $e;
@@ -93,8 +90,5 @@ class GlobalInvoice extends Model {
         $modelInvoiceItem->setItem($id_space, 0, $id_invoice, "invoices", "invoiceglobal", json_encode($invoiceDataArray), "", $total_ht);
 
         return true;
-
-        }
-        
+    }
 }
-?>

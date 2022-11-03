@@ -9,18 +9,19 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingsettingsController extends CoresecureController {
-
-    public function sideMenu() {
+class BookingsettingsController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("bookingsettings", $id_space);
-       
+
         $dataView = [
             'id_space' => $id_space,
             'title' => BookingTranslator::Booking($lang),
@@ -43,15 +44,15 @@ class BookingsettingsController extends CoresecureController {
         ];
         return $this->twig->render("Modules/booking/View/Booking/navbar.twig", $dataView);
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
         $this->render(array("id_space" => $id_space, "lang" => $lang));
     }

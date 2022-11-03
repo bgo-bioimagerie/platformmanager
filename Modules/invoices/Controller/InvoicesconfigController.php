@@ -21,12 +21,13 @@ require_once 'Modules/core/Controller/CoreabstractpdftemplateController.php';
  * @author sprigent
  * Controller for the home page
  */
-class InvoicesconfigController extends PfmTemplateController {
-
+class InvoicesconfigController extends PfmTemplateController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
@@ -39,8 +40,8 @@ class InvoicesconfigController extends PfmTemplateController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -77,16 +78,18 @@ class InvoicesconfigController extends PfmTemplateController {
         return $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function pdftemplateAction($id_space) {
-        return $this->pdftemplate($id_space, 'invoices', new InvoicesTranslator());    
+    public function pdftemplateAction($id_space)
+    {
+        return $this->pdftemplate($id_space, 'invoices', new InvoicesTranslator());
     }
 
-    public function pdftemplatedeleteAction($id_space, $name) {
+    public function pdftemplatedeleteAction($id_space, $name)
+    {
         return $this->pdftemplatedelete($id_space, 'invoices', $name);
     }
 
-    protected function useInvoiceDatePaidForm($id_space, $lang) {
-
+    protected function useInvoiceDatePaidForm($id_space, $lang)
+    {
         $modelConfig = new CoreConfig();
         $useDatePaid = $modelConfig->getParamSpace("useInvoiceDatePaid", $id_space);
 
@@ -101,7 +104,8 @@ class InvoicesconfigController extends PfmTemplateController {
         return $form;
     }
 
-    public function periodForm($modelCoreConfig, $id_space, $lang) {
+    public function periodForm($modelCoreConfig, $id_space, $lang)
+    {
         $invoiceperiodbegin = $modelCoreConfig->getParamSpace("invoiceperiodbegin", $id_space);
         $invoiceperiodend = $modelCoreConfig->getParamSpace("invoiceperiodend", $id_space);
 
@@ -115,5 +119,4 @@ class InvoicesconfigController extends PfmTemplateController {
 
         return $form;
     }
-
 }

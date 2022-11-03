@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Errors.php';
 require_once 'Framework/Model.php';
 require_once 'Framework/Configuration.php';
@@ -6,18 +7,20 @@ require_once 'Framework/Configuration.php';
 /**
  * Generic file handler
  */
-class CoreFiles extends Model {
-
+class CoreFiles extends Model
+{
     public static int $READY=0;
     public static int $PENDING=1;
     public static int $IN_PROGRESS=2;
     public static int $ERROR=3;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->tableName = "core_files";
     }
 
-    public function createTable() {
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `core_files` (
         `id` int(11) NOT NULL AUTO_INCREMENT,
         `name` varchar(150) NOT NULL,
@@ -34,12 +37,13 @@ class CoreFiles extends Model {
 
     /**
      * Download file
-     * 
+     *
      * @param CoreFile $file file entry
      */
-    public function download($file) {
+    public function download($file)
+    {
         $path = $this->path($file);
-        if($path == null || !file_exists($path)) {
+        if ($path == null || !file_exists($path)) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
             throw new PfmFileException('file does not exists', 404);
         }
@@ -56,20 +60,21 @@ class CoreFiles extends Model {
 
     /**
      * Upload entry file to disk, file taken from request
-     * 
+     *
      * @param CoreFile $file file entry
      * @param string $formFileId  name of request parameter for this file
      */
-    public function upload($file, $formFileId) {
+    public function upload($file, $formFileId)
+    {
         $path = $this->path($file);
-        if($path == null) {
+        if ($path == null) {
             Configuration::getLogger()->warning('file not found', ['file' => $path]);
             throw new PfmFileException('file does not exists', 404);
         }
         $base = dirname($path);
         $name = basename($path);
-        
-        if(!is_dir($base)) {
+
+        if (!is_dir($base)) {
             mkdir($base, 0755, true);
         }
         FileUpload::uploadFile($base, $formFileId, $name);
@@ -79,7 +84,8 @@ class CoreFiles extends Model {
      * Return name used to save file
      */
 
-    private function internalName($file) {
+    private function internalName($file)
+    {
         $path_parts = pathinfo($file['name']);
         $extension = $path_parts['extension'];
         $id = $file['id'];
@@ -89,8 +95,9 @@ class CoreFiles extends Model {
     /**
      * Get path to file
      */
-    public function path($file) {
-        if(!$file) {
+    public function path($file)
+    {
+        if (!$file) {
             return null;
         }
         $rootDir = Configuration::get('data_path', '.');
@@ -100,10 +107,11 @@ class CoreFiles extends Model {
     /*
     * Copy file located at $path (uploaded, saved, ..) to expected location
     */
-    public function copyFile($file, $path) {
+    public function copyFile($file, $path)
+    {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
-        if(!is_dir($destDirName)) {
+        if (!is_dir($destDirName)) {
             mkdir($destDirName, 0755, true);
         }
         copy($path, $dest);
@@ -112,10 +120,11 @@ class CoreFiles extends Model {
     /*
     * Copy data to expected location
     */
-    public function copyData($file, $data) {
+    public function copyData($file, $data)
+    {
         $dest = $this->path($file);
         $destDirName = dirname($dest);
-        if(!is_dir($destDirName)) {
+        if (!is_dir($destDirName)) {
             mkdir($destDirName, 0755, true);
         }
         file_put_contents($dest, $data);
@@ -124,7 +133,8 @@ class CoreFiles extends Model {
     /**
      * Get file entry
      */
-    public function get($id) {
+    public function get($id)
+    {
         $sql = "SELECT * FROM core_files WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
@@ -132,9 +142,10 @@ class CoreFiles extends Model {
     /**
      * Delete file entry and delete related file
      */
-    public function delete($id) {
+    public function delete($id)
+    {
         $file = $this->get($id);
-        if(!$file) {
+        if (!$file) {
             return;
         }
         unlink($this->path($file));
@@ -145,7 +156,8 @@ class CoreFiles extends Model {
     /**
      * Create/update a new file entry
      */
-    public function set($id, $id_space, $name, $role, $module, $id_user) {
+    public function set($id, $id_space, $name, $role, $module, $id_user)
+    {
         if (!$id) {
             $sql = 'INSERT INTO core_files (id_space, `name`, module, `role`, id_user) VALUES (?,?,?,?,?)';
             $this->runRequest($sql, array($id_space, $name, $module, $role, $id_user));
@@ -157,17 +169,15 @@ class CoreFiles extends Model {
         }
     }
 
-    public function status(int $id_space, int $id, int $status, string $msg) {
+    public function status(int $id_space, int $id, int $status, string $msg)
+    {
         $sql = 'UPDATE core_files SET status=?,msg=? WHERE id=? AND id_space=? AND deleted=0';
-        $this->runRequest($sql, array($status, $msg, $id, $id_space));  
+        $this->runRequest($sql, array($status, $msg, $id, $id_space));
     }
 
-    public function getByModule(int $id_space, string $module, int $role) {
+    public function getByModule(int $id_space, string $module, int $role)
+    {
         $sql = "SELECT core_files.*, core_users.login as login FROM core_files INNER JOIN core_users ON core_users.id=core_files.id_user WHERE core_files.id_space=? AND core_files.module=? and core_files.role>=? ORDER BY core_files.id DESC";
         return $this->runRequest($sql, array($id_space, $module, $role))->fetchAll();
     }
-
 }
-
-
-?>

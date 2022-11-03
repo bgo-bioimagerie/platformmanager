@@ -7,15 +7,15 @@ require_once 'Framework/Model.php';
  *
  * @author Sylvain Prigent
  */
-class ComNews extends Model {
-
+class ComNews extends Model
+{
     /**
      * Create the site table
-     * 
+     *
      * @return PDOStatement
      */
-    public function __construct() {
-
+    public function __construct()
+    {
         $this->tableName = "com_news";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
@@ -27,7 +27,8 @@ class ComNews extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getForSpace($id_space, $limit = -1) {
+    public function getForSpace($id_space, $limit = -1)
+    {
         if ($limit <= 0) {
             $sql = "SELECT * FROM com_news WHERE id_space=?";
             $req = $this->runRequest($sql, array($id_space));
@@ -38,15 +39,17 @@ class ComNews extends Model {
         return $req->fetchAll();
     }
 
-    public function getByDate($id_space, $limit = -1) {
+    public function getByDate($id_space, $limit = -1)
+    {
         $today = date('Y-m-d');
         $sql = "SELECT * FROM com_news WHERE id_space=? AND expires>=? ORDER BY date ASC LIMIT ".$limit.";";
         $req = $this->runRequest($sql, array($id_space, $today));
         return $req->fetchAll();
     }
 
-    public function set($id, $id_space, $title, $content, $date, $expire) {
-        if($date == "") {
+    public function set($id, $id_space, $title, $content, $date, $expire)
+    {
+        if ($date == "") {
             $date = null;
         }
         if ($this->isNews($id_space, $id)) {
@@ -61,7 +64,8 @@ class ComNews extends Model {
         }
     }
 
-    public function isNews($id_space, $id) {
+    public function isNews($id_space, $id)
+    {
         $sql = "SELECT id FROM com_news WHERE id=? AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space));
         if ($req->rowCount() == 1) {
@@ -70,18 +74,21 @@ class ComNews extends Model {
         return false;
     }
 
-    public function setMedia($id_space, $id, $url) {
+    public function setMedia($id_space, $id, $url)
+    {
         $sql = "UPDATE com_news SET media=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($url, $id, $id_space));
     }
 
-    public function getMedia($id_space, $id) {
+    public function getMedia($id_space, $id)
+    {
         $sql = "SELECT media FROM com_news WHERE id=? AND id_space=?";
         $req = $this->runRequest($sql, array($id, $id_space))->fetch();
         return $req[0];
     }
 
-    public function get($id_space, $id) {
+    public function get($id_space, $id)
+    {
         if (!$id) {
             return array(
                 "id" => 0,
@@ -97,7 +104,8 @@ class ComNews extends Model {
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         // remove the file
         $sql = "SELECT * FROM com_news WHERE id=? AND id_space=?";
         $info = $this->runRequest($sql, array($id, $id_space))->fetch();
@@ -109,5 +117,4 @@ class ComNews extends Model {
         $sql2 = "DELETE FROM com_news WHERE id=? AND id_space=?";
         $this->runRequest($sql2, array($id, $id_space));
     }
-
 }

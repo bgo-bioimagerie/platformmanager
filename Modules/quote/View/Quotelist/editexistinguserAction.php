@@ -5,7 +5,7 @@
 
 <?php
 if ($id_quote > 0) {
-?>
+    ?>
     <div class="pm-form-short">
 <?php } else { ?>
         <div class="pm-form">
@@ -28,8 +28,8 @@ if ($id_quote > 0) {
     </div>
 
     <?php
-    if ($tableHtml != "") {
-        ?>
+        if ($tableHtml != "") {
+            ?>
         <div class="col-12 pm-form">
             <br/>
             <a onclick="addItem()" class="btn btn-primary" id="additembutton"><?php echo QuoteTranslator::NewItem($lang) ?></a>
@@ -39,8 +39,8 @@ if ($id_quote > 0) {
             
         </div>
         <?php
-    }
-    ?>
+        }
+?>
 
     <div id="entriespopup_box" class="modal" tabindex="-1">
     <div class="modal-dialog modal-lg">

@@ -11,12 +11,12 @@ require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
  * Manage the units (each user belongs to an unit)
- * 
+ *
  * @author sprigent
  *
  */
-class StockcabinetController extends ServicesController {
-
+class StockcabinetController extends ServicesController
+{
     /**
      * User model object
      */
@@ -25,18 +25,19 @@ class StockcabinetController extends ServicesController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        
-        $this->model = new StockCabinet ();
 
+        $this->model = new StockCabinet();
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -50,8 +51,8 @@ class StockcabinetController extends ServicesController {
         $table->addDeleteButton("stockcabinetdelete/" . $id_space);
         $tableHtml = $table->view($unitsArray, array(
             "room_number" => ServicesTranslator::RoomNumber($lang),
-            "name" => ServicesTranslator::Cabinet($lang), 
-            "id" => "ID" 
+            "name" => ServicesTranslator::Cabinet($lang),
+            "id" => "ID"
         ));
 
         $this->render(array(
@@ -64,13 +65,14 @@ class StockcabinetController extends ServicesController {
     /**
      * Edit an unit form
      */
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
         $unit = array("id" => 0, "name" => "", "room_number" => "");
         if ($id > 0) {
-            $unit = $this->model->getOne($id_space ,$id);
+            $unit = $this->model->getOne($id_space, $id);
         }
 
         // lang
@@ -83,13 +85,13 @@ class StockcabinetController extends ServicesController {
         $form->addHidden("id", $unit["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $unit["name"]);
         $form->addText("room_number", ServicesTranslator::RoomNumber($lang), false, $unit["room_number"]);
-        
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "stockcabinetedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "stockcabinets/" . $id_space);
 
         if ($form->check()) {
             // run the database query
-            $cab_id = $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number")); 
+            $cab_id = $this->model->set($id_space, $form->getParameter("id"), $form->getParameter("name"), $form->getParameter("room_number"));
             return $this->redirect("stockcabinets/" . $id_space, [], ['cabinet' => ['id' => $cab_id]]);
         } else {
             // set the view
@@ -107,11 +109,11 @@ class StockcabinetController extends ServicesController {
     /**
      * Remove an unit query to database
      */
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("services", $id_space, $_SESSION["id_user"]);
 
-        $this->model->delete($id_space ,$id);
+        $this->model->delete($id_space, $id);
         $this->redirect("stockcabinets/" . $id_space);
     }
-
 }

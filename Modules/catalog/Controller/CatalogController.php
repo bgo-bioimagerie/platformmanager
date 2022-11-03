@@ -8,19 +8,19 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CatalogController extends CoresecureController {
-
-    public function sideMenu() {
-
+class CatalogController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("catalogsettings", $id_space);
-       
+
         $dataView = [
             'id_space' => $id_space,
             'title' => CatalogTranslator::Catalog_settings($lang),
@@ -31,10 +31,10 @@ class CatalogController extends CoresecureController {
             'Prestations' => CatalogTranslator::Prestations($lang)
         ];
         return $this->twig->render("Modules/catalog/View/Catalog/navbar.twig", $dataView);
-        
     }
 
-    public function navbar($id_space) {
+    public function navbar($id_space)
+    {
         $html = file_get_contents('Modules/catalog/View/Catalog/navbar.php');
 
         $lang = $this->getLanguage();
@@ -47,7 +47,7 @@ class CatalogController extends CoresecureController {
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', CatalogTranslator::Catalog_settings($lang), $html);
-        
+
         return $html;
     }
 
@@ -55,11 +55,11 @@ class CatalogController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("catalog", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
         $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
-
 }

@@ -26,31 +26,31 @@
 
                     <?php
                     $priorityVal = $dnote["priority"];
-                    $cssStatus = "background-color:#FF8800;";
-                    if ($dnote["status"] == 2 || $dnote["status"] == 3) {
-                        $cssStatus = "background-color:#008000;";
-                    }
-                    ?>
+                $cssStatus = "background-color:#FF8800;";
+                if ($dnote["status"] == 2 || $dnote["status"] == 3) {
+                    $cssStatus = "background-color:#008000;";
+                }
+                ?>
                     <td id="task_status_<?php echo $dnote["id"] ?>" style="<?php echo $cssStatus ?>"><span></span></td>
 
 
                     <td><?php echo $priorityVal ?></td>
                     <td><span class="<?php echo $typeicon ?>"></span></td>
                     <?php
-                    $openlink = "opentask";
-                    ?>
+                $openlink = "opentask";
+                ?>
 
                     <td><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
                     <?php
-                    $editTxt = BulletjournalTranslator::MarkAsDone($lang);
-                    if ($dnote["status"] == 2) {
-                        $editTxt = BulletjournalTranslator::ReOpen($lang);
-                    }
-                    $cancelTxt = BulletjournalTranslator::Cancel($lang);
-                    if ($dnote["status"] == 3) {
-                        $cancelTxt = BulletjournalTranslator::ReOpen($lang);
-                    }
-                    ?>
+                $editTxt = BulletjournalTranslator::MarkAsDone($lang);
+                if ($dnote["status"] == 2) {
+                    $editTxt = BulletjournalTranslator::ReOpen($lang);
+                }
+                $cancelTxt = BulletjournalTranslator::Cancel($lang);
+                if ($dnote["status"] == 3) {
+                    $cancelTxt = BulletjournalTranslator::ReOpen($lang);
+                }
+                ?>
                     <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
                     <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                     <td><button id="migratetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-warning"><?php echo BulletjournalTranslator::Migrate($lang) ?></button></td>    
@@ -60,7 +60,7 @@
                 <?php
             }
         }
-        ?>
+                ?>
         </tbody>
     </table>
 </div>

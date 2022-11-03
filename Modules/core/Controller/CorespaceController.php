@@ -17,27 +17,29 @@ require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Model/CoreInstalledModules.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CorespaceController extends CoresecureController {
-
+class CorespaceController extends CoresecureController
+{
     private $spaceModel;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        $this->spaceModel = new CoreSpace ();
+        $this->spaceModel = new CoreSpace();
     }
 
     /**
      * List all spaces
      * API call only
      */
-    public function spacesAction() {
+    public function spacesAction()
+    {
         $sm = new CoreSpace();
         $spaces = $sm->getSpaces('id');
         $this->api(["spaces" => $spaces]);
@@ -47,24 +49,25 @@ class CorespaceController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction() {
+    public function indexAction()
+    {
     }
 
 
     /**
-     * 
+     *
      * @param type $id_space
      */
-    public function viewAction($id_space) {
-
+    public function viewAction($id_space)
+    {
         $space = $this->spaceModel->getSpace($id_space);
-        if(!$space) {
+        if (!$space) {
             throw new PfmUserException('space not found', 404);
         }
-        if(!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
+        if (!$space["status"] && !$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
-        if(!$space['status'] && $_SESSION['id_user'] < 0) {
+        if (!$space['status'] && $_SESSION['id_user'] < 0) {
             throw new PfmAuthException("Error 403: anonymous access denied", 403);
         }
 
@@ -127,7 +130,7 @@ class CorespaceController extends CoresecureController {
                 $menuColor = '#428bca';
             }
             $spaceMenuItems[$i]['color'] = $menuColor;
-            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"]: Constants::COLOR_WHITE;
+            $spaceMenuItems[$i]['txtcolor'] = $item["txtcolor"] ? $item["txtcolor"] : Constants::COLOR_WHITE;
         }
         return $this->render(array(
             "role" => $role,
@@ -143,12 +146,11 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $id_space
      */
-    public function configAction($id_space) {
-
-
+    public function configAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $space = $this->spaceModel->getSpace($id_space);
@@ -160,9 +162,8 @@ class CorespaceController extends CoresecureController {
      * @deprecated
      * @param type $id_space
      */
-    public function configusersAction($id_space) {
-
-
+    public function configusersAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -185,19 +186,19 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param string $lang
      * @param int $id_space
      * @return string
      */
-    protected function configModulesTable($lang, $id_space) {
+    protected function configModulesTable($lang, $id_space)
+    {
         $modules = Configuration::get("modules");
         //echo "modules = " ;print_r($modules);
         //return;
         $mods = array();
         $count = -1;
         for ($i = 0; $i < count($modules); ++$i) {
-
             $moduleName = ucfirst(strtolower($modules[$i]));
             $abstractMethod = $moduleName . "ConfigAbstract";
             $configFile = "Modules/" . strtolower($modules[$i]) . "/Controller/" . $moduleName . "configController.php";
@@ -227,12 +228,13 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $lang
      * @param type $id_space
      * @return type
      */
-    protected function configUsersTable($lang, $id_space) {
+    protected function configUsersTable($lang, $id_space)
+    {
         $data = $this->spaceModel->getUsers($id_space);
         //print_r($data);
         for ($i = 0; $i < count($data); $i++) {
@@ -258,11 +260,12 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $id_space
      * @param type $id_user
      */
-    public function configdeleteuserAction($id_space, $id_user) {
+    public function configdeleteuserAction($id_space, $id_user)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $spaceUserModel = new CoreSpaceUser();
         $spaceUserModel->delete($id_space, $id_user);
@@ -275,8 +278,8 @@ class CorespaceController extends CoresecureController {
      * @param type $id_space
      * @return \Form
      */
-    protected function configUsersForm($lang, $id_space) {
-
+    protected function configUsersForm($lang, $id_space)
+    {
         $modeluser = new CoreUser();
         $users = $modeluser->getActiveUsers("name");
         $usersNames = array();
@@ -300,26 +303,28 @@ class CorespaceController extends CoresecureController {
     }
 
     /**
-     * 
+     *
      * @param type $id_space
      * @return type
      */
-    public function spaceName($id_space) {
+    public function spaceName($id_space)
+    {
         $space = $this->spaceModel->getSpace($id_space);
         return $space["name"];
     }
 
-    protected function getSpaceMenus($id_space, $userRole) { 
+    protected function getSpaceMenus($id_space, $userRole)
+    {
         return $this->spaceModel->getSpaceMenus($id_space, $userRole);
     }
 
     /**
-     * 
+     *
      * @param int $id_space
      * @return string
      */
-    public function navbar($id_space) {
-
+    public function navbar($id_space)
+    {
         $space = $this->spaceModel->getSpace($id_space);
 
 
@@ -381,18 +386,16 @@ class CorespaceController extends CoresecureController {
         $html = str_replace("{{adminitems}}", $adminMenu, $html);
         return $html;
         */
-
     }
 
     /**
-     * 
+     *
      * @param int $id_space
      * @param string $name_module
      */
-    public function configmoduleAction($id_space, $name_module) {
-
+    public function configmoduleAction($id_space, $name_module)
+    {
         $path = $name_module . "config/";
         $this->redirect($path . $id_space);
     }
-
 }

@@ -1,19 +1,16 @@
 <?php
 
-class Constants {
+class Constants
+{
+    public const APPLICATION_JSON = 'application/json';
 
-    const APPLICATION_JSON = 'application/json';
+    public const COLOR_BLACK = '#000000';
+    public const COLOR_WHITE = '#ffffff';
 
-    const COLOR_BLACK = '#000000';
-    const COLOR_WHITE = '#ffffff';
+    public const DATEALL_FORMAT = 'Y-m-d H:i:s';
+    public const DATETIME_FORMAT = 'Y-m-d H:i';
+    public const DATE_FORMAT = 'Y-m-d';
+    public const TIME_FORMAT = 'H:i';
 
-    const DATEALL_FORMAT = 'Y-m-d H:i:s';
-    const DATETIME_FORMAT = 'Y-m-d H:i';
-    const DATE_FORMAT = 'Y-m-d';
-    const TIME_FORMAT = 'H:i';
-
-    const UNKNOWN = 'Unknown';
-
+    public const UNKNOWN = 'Unknown';
 }
-
-?>

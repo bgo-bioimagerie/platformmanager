@@ -8,23 +8,22 @@ require_once 'Modules/users/Model/UsersInfo.php';
  *
  * @author Sylvain Prigent
  */
-class UsersInstall extends Model {
-
+class UsersInstall extends Model
+{
     /**
      * Create the Users database
      */
-    public function createDatabase() {        
-
+    public function createDatabase()
+    {
         // initialise the Provider table
-        $model1 = new UsersInfo(); 
+        $model1 = new UsersInfo();
         $model1->createTable();
-        
+
         if (!file_exists('data/users/')) {
             mkdir('data/users/', 0755, true);
         }
         if (!file_exists('data/users/avatar/')) {
             mkdir('data/users/avatar/', 0755, true);
         }
-        
     }
 }

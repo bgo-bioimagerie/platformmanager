@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/TableView.php';
 require_once 'Framework/Form.php';
@@ -7,20 +8,22 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/Aciinc.php';
 require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class AciincController extends AntibodiesController {
-
+class AciincController extends AntibodiesController
+{
     /**
      * User model object
      */
     private $model;
 
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->model = new Aciinc();
     }
 
     // affiche la liste des Prelevements
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get the user list
         $aciincsArray = $this->model->getBySpace($id_space);
@@ -29,10 +32,10 @@ class AciincController extends AntibodiesController {
         $table->setTitle("AcIInc", 3);
         $table->addLineEditButton("aciincedit/".$id_space."/");
         $table->addDeleteButton("aciincdelete/".$id_space."/", "id", "nom");
-        
+
         $headers = array("id" => "ID", "nom" => "Nom");
         $tableHtml = $table->view($aciincsArray, $headers);
-        
+
         return $this->render(array(
             'lang' => $this->getLanguage(),
             'id_space' => $id_space,
@@ -40,26 +43,26 @@ class AciincController extends AntibodiesController {
         ));
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get isotype info
         $lang = $this->getLanguage();
-        $aciinc = $this->model->get($id_space ,$id);
-        
+        $aciinc = $this->model->get($id_space, $id);
+
         $form = new Form($this->request, "aciinceditform");
         $form->setTitle("Modifier AcIInc");
         $form->addText("nom", "nom", true, $aciinc["nom"]);
         $form->setValidationButton(CoreTranslator::Save($lang), "aciincedit/".$id_space.'/'.$id);
-        
-        if($form->check()){
+
+        if ($form->check()) {
             $name = $this->request->getParameter("nom");
-            if (!$id){
+            if (!$id) {
                 $id = $this->model->add($name, $id_space);
-            }
-            else{
+            } else {
                 $this->model->edit($id, $name, $id_space);
             }
-            
+
             return $this->redirect("aciinc/".$id_space, [], ['aciinc' => ['id' => $id]]);
         }
 
@@ -70,11 +73,11 @@ class AciincController extends AntibodiesController {
         ));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
         $this->model->delete($id_space, $id);
         $this->redirect("aciinc/" . $id_space);
     }
-
 }

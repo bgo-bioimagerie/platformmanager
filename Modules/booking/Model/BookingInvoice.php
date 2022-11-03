@@ -25,17 +25,18 @@ require_once 'Modules/core/Model/CoreTranslator.php';
  *
  * @author Sylvain Prigent
  */
-class BookingInvoice extends InvoiceModel {
-
+class BookingInvoice extends InvoiceModel
+{
     public static string $INVOICES_BOOKING_ALL = 'invoices_booking_all';
     public static string $INVOICES_BOOKING_CLIENT = 'invoices_booking_client';
 
 
-    public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp){
-        if($beginPeriod == "") {
+    public function hasActivity($id_space, $beginPeriod, $endPeriod, $id_resp)
+    {
+        if ($beginPeriod == "") {
             throw new PfmParamException("invalid begin period");
         }
-        if($endPeriod == "") {
+        if ($endPeriod == "") {
             throw new PfmParamException("invalid end period");
         }
         $beginArray = explode("-", $beginPeriod);
@@ -46,36 +47,37 @@ class BookingInvoice extends InvoiceModel {
 
         $sql = "SELECT id FROM bk_calendar_entry WHERE responsible_id=? AND start_time>=? AND start_time<=? AND deleted=0 AND id_space=? AND invoice_id=0";
         $req = $this->runRequest($sql, array($id_resp, $startPeriodeTime, $endPeriodeTime, $id_space));
-        if ( $req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             return true;
         }
         return false;
     }
 
-    public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en') {
+    public function invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang='en')
+    {
         $modelClient = new ClClient();
         $resps = $modelClient->getAll($id_space);
-        
+
         $doBill = false;
         foreach ($resps as $resp) {
-            
             $found = $this->invoiceClient($id_space, $beginPeriod, $endPeriod, intval($resp['id']), $id_user, $lang);
-            if($found) {
+            if ($found) {
                 $doBill = true;
             }
         }
-        if(!$doBill) {
+        if (!$doBill) {
             Configuration::getLogger()->debug('[invoice][booking][all] nothing to do');
             return false;
         }
         return true;
     }
 
-    public function invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en') {
+    public function invoiceClient($id_space, $beginPeriod, $endPeriod, $id_client, $id_user, $lang='en')
+    {
         Configuration::getLogger()->debug('[invoice][booking][all] create invoice', ['client' => $id_client, 'space' => $id_space]);
         $modelCal = new BkCalendarEntry();
         $found = $modelCal->hasResponsibleEntry($id_space, $id_client, $beginPeriod, $endPeriod);
-        if(!$found) {
+        if (!$found) {
             return false;
         }
 
@@ -96,7 +98,7 @@ class BookingInvoice extends InvoiceModel {
         }
         $modelInvoiceItem = new InInvoiceItem();
         $content = '';
-        foreach($contentAll['count'] as $c) {
+        foreach ($contentAll['count'] as $c) {
             $content .= $c['content'];
         }
         $details = BookinginvoiceTranslator::Details($lang) . "=" . "bookinginvoicedetail/" . $id_space . "/" . $invoice_id;
@@ -126,7 +128,8 @@ class BookingInvoice extends InvoiceModel {
      * total price = nbElements * (nightPrice * nightRatio) + nbElements * (dayPrice * dayRatio)
      *
      */
-    public function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $invoice_id, $lang) {
+    public function invoice($id_space, $beginPeriod, $endPeriod, $id_resp, $invoice_id, $lang)
+    {
         // get all resources
         Configuration::getLogger()->debug('[invoice][booking] create invoice', ['client' => $id_resp, 'space' => $id_space]);
 
@@ -154,7 +157,7 @@ class BookingInvoice extends InvoiceModel {
             // get list of quantities sorted by deleted (ASC), then by id (desc)
             $allCalQuantities = $bkCalQuantitiesModel->getByResource($id_space, $res["id"], include_deleted:true, sort:true);
             // get invoicable ones
-            $invoicableCalQtes = array_filter($allCalQuantities, function($calQte) {
+            $invoicableCalQtes = array_filter($allCalQuantities, function ($calQte) {
                 return $calQte["is_invoicing_unit"] == 1;
             });
 
@@ -180,7 +183,7 @@ class BookingInvoice extends InvoiceModel {
             // $userDetails = [];
 
             $totalQte = 0; // $totalQte = total number of items booked
-            
+
 
             foreach ($reservations as $reservation) {
                 $resaIsInvoicingUnit = false;
@@ -196,7 +199,7 @@ class BookingInvoice extends InvoiceModel {
                     // Genrate an array of quantity's ids used in this reservation
                     $resaQtes = explode(";", $reservation["quantities"]);
                     array_pop($resaQtes);
-                    $resaQteIds = array_map(function($qte) {
+                    $resaQteIds = array_map(function ($qte) {
                         return explode("=", $qte)[0];
                     }, $resaQtes);
 
@@ -233,7 +236,7 @@ class BookingInvoice extends InvoiceModel {
                     ];
                     */
                 } else {
-                    if(!$timePrices || !array_key_exists($res['id'], $timePrices)) {
+                    if (!$timePrices || !array_key_exists($res['id'], $timePrices)) {
                         Configuration::getLogger()->debug("[booking][invoice] calculate error, no timePrices", ["timePrices" => $timePrices, "reservation" => $reservation]);
                         throw new PfmParamException("No time pricing defined!");
                     }
@@ -246,16 +249,15 @@ class BookingInvoice extends InvoiceModel {
                             // varchar formatted like "$mandatory=$quantity;" in bk_calendar_entry
                             // get number of resources booked
                             $strToFind = strval($resaQuantityId) . "=";
-                            
+
                             $lastPos = 0;
                             $positions = array();
-                            while(($lastPos = strpos($reservation["quantities"], $strToFind, $lastPos))!==false) {
+                            while (($lastPos = strpos($reservation["quantities"], $strToFind, $lastPos))!==false) {
                                 $positions[] = $lastPos;
                                 $lastPos = $lastPos + strlen($strToFind);
                             }
                             $foundStr = substr($reservation["quantities"], $positions[0]);
                             $qte = intval(explode("=", $foundStr)[1]);
-
                         } else {
                             $qte = 0;
                         }
@@ -320,7 +322,6 @@ class BookingInvoice extends InvoiceModel {
                     $resourceCount["content"] = $res["id"] . "_day=" . $resourceCount['quantity'] . "=" . $resourceCount['unitprice'] . ";";
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-
                 }
                 if ($userTime["nb_hours_night"] > 0) {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::night($lang);
@@ -330,7 +331,6 @@ class BookingInvoice extends InvoiceModel {
 
                     $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                     $content["count"][] = $resourceCount;
-
                 }
                 if ($userTime["nb_hours_we"] > 0) {
                     $resourceCount["label"] = $res["name"] . " " . BookingTranslator::WE($lang);
@@ -346,17 +346,15 @@ class BookingInvoice extends InvoiceModel {
                     $content["details"][] = $resaDetails;
                 }
                 */
-                
+
                 foreach ($packagesPrices[$res["id"]] as $p) {
                     if ($userPackages[$p["id"]] > 0) {
-
-                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName($id_space, $p["id"] );
+                        $resourceCount["label"] = $res["name"] . " " . $modelPackage->getName($id_space, $p["id"]);
                         $resourceCount["quantity"] = $userPackages[$p["id"]];
                         $resourceCount["unitprice"] = $p["price"];
                         $resourceCount["content"] = $res["id"] . "_pk_" . $p['id'] .'=' . $resourceCount['quantity'] . "=" . $resourceCount['unitprice'] . ";";
                         $total_ht += floatval($resourceCount["quantity"]) * floatval($resourceCount["unitprice"]);
                         $content["count"][] = $resourceCount;
-
                     }
                 }
 
@@ -391,16 +389,14 @@ class BookingInvoice extends InvoiceModel {
                     }
                 }
             }
-
         }
         $content["total_ht"] = $total_ht;
 
         return $content;
-
-
     }
 
-    public function delete($id_space, $id_invoice){
+    public function delete($id_space, $id_invoice)
+    {
         // get items
         require_once 'Modules/booking/Model/BkCalendarEntry.php';
         $model = new BkCalendarEntry();
@@ -410,9 +406,8 @@ class BookingInvoice extends InvoiceModel {
         }
     }
 
-    public function details($id_space, $invoice_id, $lang){
-
-
+    public function details($id_space, $invoice_id, $lang)
+    {
         $sql = 'SELECT MIN(bk_calendar_entry.start_time) as dstart, MAX(bk_calendar_entry.start_time) as dend, SUM(bk_calendar_entry.end_time-bk_calendar_entry.start_time) as duration, re_info.name as label, core_users.name, core_users.firstname FROM bk_calendar_entry
         INNER JOIN re_info ON re_info.id=bk_calendar_entry.resource_id
         INNER JOIN core_users ON core_users.id=bk_calendar_entry.recipient_id
@@ -431,7 +426,7 @@ class BookingInvoice extends InvoiceModel {
             "quantity" => BookingTranslator::Quantities($lang)
         );
         $data["content"] = array();
-        while($details = $res->fetch()) {
+        while ($details = $res->fetch()) {
             $data["content"][] = array(
                 "label" => $details['label'],
                 "user" => $details['name'].' '.$details['firstname'],
@@ -494,7 +489,8 @@ class BookingInvoice extends InvoiceModel {
         */
     }
 
-    protected function getUnitTimePricesForEachResource(int $id_space, array $resources, ?int $LABpricingid, $id_client) {
+    protected function getUnitTimePricesForEachResource(int $id_space, array $resources, ?int $LABpricingid, $id_client)
+    {
         // get the pricing informations
         $pricingModel = new BkNightWE();
         $pricingInfo = $pricingModel->getPricing($LABpricingid, $id_space);
@@ -553,7 +549,7 @@ class BookingInvoice extends InvoiceModel {
             $timePrices[$resource["id"]]["night_start"] = $night_start;
             $timePrices[$resource["id"]]["we_array"] = $we_array;
 
-            $pday = $modelRessourcePricingOwner->getDayPrice($id_space ,$resource["id"], $id_client);
+            $pday = $modelRessourcePricingOwner->getDayPrice($id_space, $resource["id"], $id_client);
             if ($pday >= 0) {
                 $timePrices[$resource["id"]]["price_day"] = $pday;
             } else {
@@ -577,8 +573,8 @@ class BookingInvoice extends InvoiceModel {
         return $timePrices;
     }
 
-    protected function getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_client) {
-
+    protected function getUnitPackagePricesForEachResource($id_space, $resources, $LABpricingid, $id_client)
+    {
         // calculate the reservations for each equipments
         $packagesPrices = array();
         $modelPackage = new BkPackage();
@@ -586,7 +582,7 @@ class BookingInvoice extends InvoiceModel {
         $modelPriceOwner = new BkOwnerPrice();
         foreach ($resources as $resource) {
             // get the packages prices
-            $packages = $modelPackage->getByResource($id_space ,$resource["id"], include_deleted:true);
+            $packages = $modelPackage->getByResource($id_space, $resource["id"], include_deleted:true);
 
             $pricesPackages = array();
             for ($i = 0; $i < count($packages); $i++) {
@@ -602,5 +598,4 @@ class BookingInvoice extends InvoiceModel {
         }
         return $packagesPrices;
     }
-
 }

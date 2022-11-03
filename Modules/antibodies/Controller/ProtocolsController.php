@@ -7,27 +7,28 @@ require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/antibodies/Model/AcProtocol.php';
 require_once 'Modules/antibodies/Controller/AntibodiesController.php';
 
-class ProtocolsController extends AntibodiesController {
-
+class ProtocolsController extends AntibodiesController
+{
     /**
      * User model object
      */
     private $protocolModel;
 
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->protocolModel = new AcProtocol();
-
     }
 
     // affiche la liste des isotypes
-    public function indexAction($id_space, $sortEntry) {
+    public function indexAction($id_space, $sortEntry)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
-        if ($sortEntry == ""){
+        if ($sortEntry == "") {
             $sortEntry = "id";
         }
         // get the user list
-        $protocolesArray = $this->protocolModel->getProtocols2($id_space,$sortEntry);
+        $protocolesArray = $this->protocolModel->getProtocols2($id_space, $sortEntry);
 
         $table = new TableView();
         $table->setTitle("Protocoles");
@@ -47,11 +48,11 @@ class ProtocolsController extends AntibodiesController {
             "acll" => "acII",
             "inc2" => "acII Inc"
         );
-        
+
         $table->addLineEditButton('protocolsedit/'.$id_space, "id");
         $table->addDeleteButton("protocolsdelete/".$id_space, "id", "no_proto");
         $tableView = $table->view($protocolesArray, $headers);
-        
+
         $this->render(array(
             'id_space' => $id_space,
             'lang' => $this->getLanguage(),
@@ -65,7 +66,8 @@ class ProtocolsController extends AntibodiesController {
      * @deprecated
      */
 
-    public function protoref($id_space) {
+    public function protoref($id_space)
+    {
         throw new PfmException("deprecated method", 500);
 
         /*
@@ -88,7 +90,8 @@ class ProtocolsController extends AntibodiesController {
         */
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         $protocol ['id'] = "";
         $protocol ['kit'] = "";
@@ -122,16 +125,16 @@ class ProtocolsController extends AntibodiesController {
         $modelInc = new Inc();
         $modelAcii = new Acii();
 
-        $kits = $modelKit->getKits($id_space,"id");
-        $protos = $modelProto->getProtos($id_space,"id");
-        $fixatives = $modelFixative->getFixatives($id_space,"id");
-        $options = $modelOption->getOptions($id_space,"id");
-        $enzymes = $modelEnzyme->getEnzymes($id_space,"id");
-        $dems = $modelDem->getDems($id_space,"id");
-        $aciincs = $modelAciinc->getAciincs($id_space,"id");
-        $linkers = $modelLinker->getLinkers($id_space,"id");
-        $incs = $modelInc->getIncs($id_space,"id");
-        $aciis = $modelAcii->getAciis($id_space,"id");
+        $kits = $modelKit->getKits($id_space, "id");
+        $protos = $modelProto->getProtos($id_space, "id");
+        $fixatives = $modelFixative->getFixatives($id_space, "id");
+        $options = $modelOption->getOptions($id_space, "id");
+        $enzymes = $modelEnzyme->getEnzymes($id_space, "id");
+        $dems = $modelDem->getDems($id_space, "id");
+        $aciincs = $modelAciinc->getAciincs($id_space, "id");
+        $linkers = $modelLinker->getLinkers($id_space, "id");
+        $incs = $modelInc->getIncs($id_space, "id");
+        $aciis = $modelAcii->getAciis($id_space, "id");
 
         $this->render(array(
             'lang' => $this->getLanguage(),
@@ -150,7 +153,8 @@ class ProtocolsController extends AntibodiesController {
         ));
     }
 
-    public function editqueryAction($id_space) {
+    public function editqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get form variables
         $id = $this->request->getParameterNoException("id");
@@ -178,12 +182,12 @@ class ProtocolsController extends AntibodiesController {
         return $this->redirect("protocols/".$id_space. "/id", [], ['protocol' => ['id' => $id]]);
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("antibodies", $id_space, $_SESSION["id_user"]);
         // get source info
-        $this->protocolModel->delete($id_space,$id);
+        $this->protocolModel->delete($id_space, $id);
 
         $this->redirect("protocols/".$id_space. "/id");
     }
-
 }

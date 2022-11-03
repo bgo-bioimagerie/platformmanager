@@ -16,18 +16,19 @@ require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClCompany.php';
 
 
-abstract class PfmTemplateController extends CoresecureController {
-
-    public function generatePDF(int $id_space, string $module, mixed $data, object $translator, $toFile=false, $lang='en') {
+abstract class PfmTemplateController extends CoresecureController
+{
+    public function generatePDF(int $id_space, string $module, mixed $data, object $translator, $toFile=false, $lang='en')
+    {
         $address = nl2br($data['address']);
         $date = CoreTranslator::dateFromEn($data['date'], $lang);
-        
+
         $csm = new CoreSpace();
         $space = $csm->getSpace($id_space);
 
         $clcm = new ClCompany();
         $company = $clcm->getForSpace($id_space);
-        if(!isset($company['name'])) {
+        if (!isset($company['name'])) {
             $company = [
                 'name' => $this->currentSpace['name'],
                 'address' => '',
@@ -41,15 +42,15 @@ abstract class PfmTemplateController extends CoresecureController {
         }
 
         $number = $data['number'];
-        
-        if(!file_exists("data/$module/$id_space/template.twig") && file_exists("data/$module/$id_space/template.php")) {
+
+        if (!file_exists("data/$module/$id_space/template.twig") && file_exists("data/$module/$id_space/template.php")) {
             // backwark, templates were in PHP and no twig template available use old template
             ob_start();
             include_once("data/$module/$id_space/template.php");
             $content = ob_get_clean();
         } else {
             $template = "data/$module/$id_space/template.twig";
-            if(!file_exists($template)){
+            if (!file_exists($template)) {
                 $template = 'externals/pfm/templates/'.$module.'_template.twig';
             }
             Configuration::getLogger()->debug('['.$module.'][pdf]', ['template' => $template]);
@@ -78,7 +79,7 @@ abstract class PfmTemplateController extends CoresecureController {
                 'isquote' => $data["isquote"] ?? false
             ]);
         }
-        
+
         // convert in PDF
         $out = __DIR__."/../../../data/$module/$id_space/$module"."_"."$number.pdf";
         try {
@@ -86,7 +87,7 @@ abstract class PfmTemplateController extends CoresecureController {
             //$html2pdf->setModeDebug();
             $html2pdf->setDefaultFont('Arial');
             $html2pdf->writeHTML($content);
-            if($toFile || getenv("PFM_MODE") == "test") {
+            if ($toFile || getenv("PFM_MODE") == "test") {
                 $html2pdf->Output($out, 'F');
             } else {
                 $html2pdf->Output($unit . "_" . $resp . "_" . $number . '.pdf');
@@ -98,7 +99,8 @@ abstract class PfmTemplateController extends CoresecureController {
     }
 
 
-    private function checkTemplate(int $id_space, string $module, object $translator) {
+    private function checkTemplate(int $id_space, string $module, object $translator)
+    {
         $client = (new ClClient())->get($id_space, 0);
         $client["name"] = "my client";
         $client["address_delivery"] = "in britany of course";
@@ -137,7 +139,8 @@ abstract class PfmTemplateController extends CoresecureController {
         return $dest;
     }
 
-    public function pdftemplate(int $id_space, string $module, object $translator) {
+    public function pdftemplate(int $id_space, string $module, object $translator)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -148,7 +151,7 @@ abstract class PfmTemplateController extends CoresecureController {
                 $currentTemplate = null;
             }
 
-            if(!$currentTemplate) {
+            if (!$currentTemplate) {
                 $_SESSION['flash'] = 'Using default template';
                 $_SESSION['flashClass'] = 'warning';
             }
@@ -158,9 +161,9 @@ abstract class PfmTemplateController extends CoresecureController {
         $formDownload->setTitle(CoreTranslator::currentTemplate($lang));
         $hasTemplate = false;
         $template = 'data/'.$module.'/' . $id_space . '/template.twig';
-        if(file_exists('data/'.$module.'/' . $id_space . '/template.twig')) {
+        if (file_exists('data/'.$module.'/' . $id_space . '/template.twig')) {
             $hasTemplate = true;
-        } else if (file_exists('data/'.$module.'/' . $id_space . '/template.php')) {
+        } elseif (file_exists('data/'.$module.'/' . $id_space . '/template.php')) {
             $hasTemplate = true;
             $template = 'data/'.$module.'/' . $id_space . '/template.php';
         } else {
@@ -170,8 +173,7 @@ abstract class PfmTemplateController extends CoresecureController {
         $formDownload->addDownloadButton("url", CoreTranslator::Download($lang), $templateName);
 
         if ($formDownload->check()) {
-
-            if(!file_exists($template)) {
+            if (!file_exists($template)) {
                 throw new PfmFileException('File not found', 404);
             }
             header("Cache-Control: public");
@@ -187,13 +189,13 @@ abstract class PfmTemplateController extends CoresecureController {
 
         $formPreview = new Form($this->request, "formPreviewTemplate");
         $formPreview->setTitle('Preview');
-        if($hasTemplate) {
+        if ($hasTemplate) {
             $formPreview->addDownloadButton("url", "Preview", "template");
         }
-        if($formPreview->check()) {
+        if ($formPreview->check()) {
             Configuration::getLogger()->debug('[invoice][template] preview');
-            if(!file_exists('data/'.$module.'/' . $id_space . '/template.twig') && !file_exists('data/invoices/' . $id_space . '/template.php')) {
-               throw new PfmParamException('no template available');
+            if (!file_exists('data/'.$module.'/' . $id_space . '/template.twig') && !file_exists('data/invoices/' . $id_space . '/template.php')) {
+                throw new PfmParamException('no template available');
             }
             $f = $this->checkTemplate($id_space, $module, $translator);
             Configuration::getLogger()->debug('['.$module.'][template] shoud show', ['f' => $f]);
@@ -207,7 +209,7 @@ abstract class PfmTemplateController extends CoresecureController {
             header('Content-Length: ' . filesize($f));
             readfile($f);
             return null;
-        }   
+        }
 
         $formUpload = new Form($this->request, "formUploadTemplate");
         $formUpload->setTitle(CoreTranslator::uploadTemplate($lang));
@@ -219,7 +221,7 @@ abstract class PfmTemplateController extends CoresecureController {
                 mkdir('data/'.$module.'/' . $id_space, 0755, true);
             }
 
-            if(file_exists('data/'.$module.'/' . $id_space . '/template.twig')) {
+            if (file_exists('data/'.$module.'/' . $id_space . '/template.twig')) {
                 // backup
                 Configuration::getLogger()->debug('['.$module.'][template] backup existing template');
                 copy("data/$module/$id_space/template.twig", "data/$module/$id_space/template.twig.save");
@@ -229,7 +231,7 @@ abstract class PfmTemplateController extends CoresecureController {
             try {
                 $this->checkTemplate($id_space, $module, $translator);
             } catch(Exception $e) {
-                if(file_exists('data/'.$module.'/' . $id_space . '/template.twig.save')) {
+                if (file_exists('data/'.$module.'/' . $id_space . '/template.twig.save')) {
                     // backup
                     Configuration::getLogger()->debug('['.$module.'][template] revert existing template');
                     copy("data/$module/$id_space/template.twig.save", "data/$module/$id_space/template.twig");
@@ -239,7 +241,7 @@ abstract class PfmTemplateController extends CoresecureController {
                 throw $e;
             }
 
-            if(file_exists('data/'.$module.'/' . $id_space . '/template.twig.save')) {
+            if (file_exists('data/'.$module.'/' . $id_space . '/template.twig.save')) {
                 unlink('data/'.$module.'/' . $id_space . '/template.twig.save');
             }
 
@@ -284,18 +286,18 @@ abstract class PfmTemplateController extends CoresecureController {
         $tableHtml = $dataTable->view($data, $headers);
 
         return $this->render(array("id_space" => $id_space,
-            "formDownload" => $currentTemplate ? $formDownload->getHtml($lang): '',
+            "formDownload" => $currentTemplate ? $formDownload->getHtml($lang) : '',
             "formPreview" => $formPreview->getHtml($lang),
             "formUpload" => $formUpload->getHtml($lang), "tableHtml" => $tableHtml,
             "formUploadImages" => $formUploadImages->getHtml($lang),
             "lang" => $lang));
     }
 
-    public function pdftemplatedelete(int $id_space, string $module, string $name) {
+    public function pdftemplatedelete(int $id_space, string $module, string $name)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $namefile = str_replace("__pm__", '.', $name);
         unlink('data/'.$module.'/' . intval($id_space) . '/' . $namefile);
         return $this->redirect("$module/$id_space/pdftemplate");
     }
-
 }

@@ -22,18 +22,18 @@ require_once 'Modules/resources/Model/ResourceInfo.php';
 
 use League\CommonMark\CommonMarkConverter;
 
-
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CoretilesController extends CorecookiesecureController {
-
+class CoretilesController extends CorecookiesecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->user = new CoreUser();
         //$this->checkAuthorization(CoreStatus::$USER);
@@ -43,53 +43,52 @@ class CoretilesController extends CorecookiesecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction($level = 1, $id = -1) {
-        if($level === "") {
+    public function indexAction($level = 1, $id = -1)
+    {
+        if ($level === "") {
             $level = 1;
         }
-        if($id === "") { // welcome page
+        if ($id === "") { // welcome page
             $id = 0;
         }
-        if ( $id < 0 ){
+        if ($id < 0) {
             $_SESSION['flash'] = 'Page not found, sorry...';
             //$this->showMainSubMenu(0);
             $this->redirect('');
             return;
         }
-        if ( $level == 0) {
+        if ($level == 0) {
             $this->showMainSubMenu(0);
-        }
-        else if ( $level == 1 ){
+        } elseif ($level == 1) {
             $this->showMainMenu($id);
-        }
-        else if ($level == 2){
+        } elseif ($level == 2) {
             $this->showMainSubMenu($id);
-        }
-        else{
+        } else {
             $this->redirect("corehome");
         }
     }
-    
-    public function showMainMenu($id){
+
+    public function showMainMenu($id)
+    {
         $modelMenu = new CoreMainMenu();
-        
-        if ($id < 0){
+
+        if ($id < 0) {
             $id = $modelMenu->getFirstIdx();
         }
         // get default sub menu
         $id_sub = 0;
-        if($id > 0) {
+        if ($id > 0) {
             $id_sub = $modelMenu->getFirstSubMenu($id);
         }
-        
+
         $this->showMainSubMenu($id_sub);
     }
-    
-    public function showMainSubMenu($id){
-        
+
+    public function showMainSubMenu($id)
+    {
         $modelSubMenu = new CoreMainSubMenu();
-        
-        if ($id < 0){
+
+        if ($id < 0) {
             $id = $modelSubMenu->getFirstIdx();
         }
 
@@ -102,22 +101,22 @@ class CoretilesController extends CorecookiesecureController {
         if ($id == 0) {
             $starModel = new CoreStar();
             $spaceModel = new CoreSpace();
-            
+
             $spaces = [];
             $logged = false;
-            if(isset($_SESSION["id_user"])) {
-                if($_SESSION["id_user"] > 0) {
+            if (isset($_SESSION["id_user"])) {
+                if ($_SESSION["id_user"] > 0) {
                     $logged = true;
                 }
                 $starSpaces = $starModel->stars($_SESSION["id_user"]);
-                foreach($starSpaces as $starSpace) {
+                foreach ($starSpaces as $starSpace) {
                     $spaces[] = $spaceModel->getSpace($starSpace["id_space"]);
                 }
             }
             $lang = $this->getLanguage();
             $content_files = ['data/welcome_'.$lang.'.md', 'data/welcome_'.$lang.'.html', 'data/welcome.md', 'data/welcome.html'];
             $content = '';
-            foreach($content_files as $content_file) {
+            foreach ($content_files as $content_file) {
                 if (file_exists($content_file)) {
                     $content = file_get_contents($content_file);
                     if (str_ends_with($content_file, '.md')) {
@@ -133,23 +132,23 @@ class CoretilesController extends CorecookiesecureController {
 
             $allSpaces = $spaceModel->getSpaces('id');
             $spaceMap = [];
-            $userSpacesOnly = $this->request->getParameterNoException('mine') === '1' ? true: false;
-            if($userSpacesOnly) {
+            $userSpacesOnly = $this->request->getParameterNoException('mine') === '1' ? true : false;
+            if ($userSpacesOnly) {
                 $spaces= [];
             }
             $userSpacesList = [];
 
-            foreach($allSpaces as $space) {
-                if($logged && isset($_SESSION['login']) && $userSpacesOnly) {
+            foreach ($allSpaces as $space) {
+                if ($logged && isset($_SESSION['login']) && $userSpacesOnly) {
                     $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
-                    if($isMemberOfSpace) {
+                    if ($isMemberOfSpace) {
                         $userSpacesList[] = $space;
                     }
                 }
                 if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
                     if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
                         $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
-                        if(!$isMemberOfSpace) {
+                        if (!$isMemberOfSpace) {
                             $space['join'] = CoreTranslator::RequestJoin($isMemberOfSpace, $lang);
                         }
                     } else {
@@ -162,18 +161,18 @@ class CoretilesController extends CorecookiesecureController {
             $catalog = $catalogModel->list();  // title, short_desc, full_desc
             $resourceModel = new ResourceInfo();
             $resources = $resourceModel->getAll(); // name, description, long_description
-            
+
             $modelMainMenus = new CoreMainMenu();
             $mainMenus = $modelMainMenus->getAll();
-            usort($mainMenus, function($item1, $item2){
+            usort($mainMenus, function ($item1, $item2) {
                 return $item1['name'] <=> $item2['name'];
             });
 
             $menuItemsModel = new CoreMainMenuItem();
             $itemsMenusList = $menuItemsModel->getMainMenus();
             $itemsMenus = [];
-            foreach($itemsMenusList as $item) {
-                $itemsMenus[$item['id']] = $item['name']; 
+            foreach ($itemsMenusList as $item) {
+                $itemsMenus[$item['id']] = $item['name'];
             }
 
             return $this->render(array(
@@ -191,19 +190,18 @@ class CoretilesController extends CorecookiesecureController {
                 'showSubBar' => false
                 ), "welcomeAction");
         }
-        
+
         $mainSubMenus = [];
         $showSubBar = false;
 
         $modelMainMenuItem = new CoreMainMenuItem();
         $mainSubMenus = $modelSubMenu->getForMenu($modelSubMenu->getMainMenu($id));
 
-        if ( $modelMainMenuItem->haveAllSingleItem($mainSubMenus) ){
+        if ($modelMainMenuItem->haveAllSingleItem($mainSubMenus)) {
             $items = $modelMainMenuItem->getSpacesFromSingleItemList($mainSubMenus);
             $title = $modelSubMenu->getMainMenuName($id);
-        }
-        else {
-            if (count($mainSubMenus) > 1){
+        } else {
+            if (count($mainSubMenus) > 1) {
                 $showSubBar = true;
             }
             $items = $modelMainMenuItem->getSpacesFromSubMenu($id);
@@ -220,11 +218,11 @@ class CoretilesController extends CorecookiesecureController {
 
         $starModel = new CoreStar();
         $starList = [];
-        if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
+        if (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) {
             $starList = $starModel->stars($_SESSION["id_user"]);
         }
         $stars = [];
-        foreach($starList as $star) {
+        foreach ($starList as $star) {
             $stars[$star["id_space"]] = true;
         }
 
@@ -242,21 +240,23 @@ class CoretilesController extends CorecookiesecureController {
             'spacesUserIsAdminOf' => $userSpaces['spacesUserIsAdminOf']
         ), "indexAction");
     }
-    
-    public function docAction(){
-        
+
+    public function docAction()
+    {
         return $this->render(array(
             "lang" => $this->getLanguage()
         ));
     }
 
-    public function corestarAction($level, $id, $id_space) {
+    public function corestarAction($level, $id, $id_space)
+    {
         $starModel = new CoreStar();
         $starModel->star($_SESSION["id_user"], $id_space);
         $this->redirect("coretiles/$level/$id");
     }
 
-    public function coreunstarAction($level, $id, $id_space) {
+    public function coreunstarAction($level, $id, $id_space)
+    {
         $starModel = new CoreStar();
         $starModel->delete($_SESSION["id_user"], $id_space);
         $this->redirect("coretiles/$level/$id");
@@ -268,11 +268,12 @@ class CoretilesController extends CorecookiesecureController {
      * - of which user is member
      * - in which user has a pending request to join
      * - of which user is admin
-     * 
+     *
      * @return array of arrays: [userSpaceIds, userPendingSpaceIds, SpacesUserIsAdminOf]
      */
-    public function getUserSpaces() {
-        if(!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
+    public function getUserSpaces()
+    {
+        if (!isset($_SESSION["id_user"]) || $_SESSION["id_user"] <= 0) {
             return array(
                 "userSpaceIds" => [],
                 "userPendingSpaceIds" => [],
@@ -311,17 +312,18 @@ class CoretilesController extends CorecookiesecureController {
     }
 
     /**
-     * 
+     *
      * Manage actions resulting from user request to join or leave a space
      * If user is a member of space, then leaves, else join
      *
      * @param int $id_space
      * @param bool $isMemberOfSpace
      */
-    public function selfJoinSpaceAction($id_space) {
+    public function selfJoinSpaceAction($id_space)
+    {
         $modelSpaceUser = new CoreSpaceUser();
         $id_user = $_SESSION["id_user"];
-        if(!$id_user || $id_user<=0){
+        if (!$id_user || $id_user<=0) {
             throw new PfmAuthException('need to be logged', 401);
         }
         $isMemberOfSpace = $modelSpaceUser->exists($id_user, $id_space);
@@ -344,26 +346,26 @@ class CoretilesController extends CorecookiesecureController {
                 $spaceName = $spaceModel->getSpaceName($id_space);
 
                 $comment = '';
-                if($this->role < CoreSpace::$MANAGER) {
+                if ($this->role < CoreSpace::$MANAGER) {
                     $comment = $this->request->getParameterNoException('comment');
                     $agree = $this->request->getParameterNoException('agree');
                     $formid = $this->request->getParameterNoException('formid');
-                    if($formid == 'coretilesselfjoinspace') {
-                        if($this->currentSpace['termsofuse'] && !$agree) {
+                    if ($formid == 'coretilesselfjoinspace') {
+                        if ($this->currentSpace['termsofuse'] && !$agree) {
                             $_SESSION['flash'] = 'You must agree with the usage policy!!';
                             return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                         }
-                        if(!$comment) {
-                                $_SESSION['flash'] = 'Comment needed!!';
+                        if (!$comment) {
+                            $_SESSION['flash'] = 'Comment needed!!';
                             return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                         }
-                    } else if(!$comment || ($this->currentSpace['termsofuse'] && !$agree)){
+                    } elseif (!$comment || ($this->currentSpace['termsofuse'] && !$agree)) {
                         return $this->render(['lang' => $lang, 'id_space' => $id_space, 'space' => $spaceName]);
                     }
                 }
 
                 if ($modelSpacePending->exists($id_space, $id_user)) {
-                    // This user is already associated to this space in core_pending_account 
+                    // This user is already associated to this space in core_pending_account
                     $pendingId = $modelSpacePending->getBySpaceIdAndUserId($id_space, $id_user)["id"];
                     $pendingObject = $modelSpacePending->get($pendingId);
 
@@ -398,8 +400,7 @@ class CoretilesController extends CorecookiesecureController {
                 $email = new Email();
                 $email->notifyAdminsByEmail($mailParams, "new_join_request", $lang);
             }
-        } 
+        }
         $this->redirect("coretiles");
     }
-
 }

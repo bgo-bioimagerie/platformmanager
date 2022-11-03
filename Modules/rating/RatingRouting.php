@@ -2,9 +2,10 @@
 
 require_once 'Framework/Routing.php';
 
-class RatingRouting extends Routing{
-
-    public function routes($router) {
+class RatingRouting extends Routing
+{
+    public function routes($router)
+    {
         $router->map('GET', '/rating/[i:id_space]', 'rating/rating/campaigns', 'rating_campaign_index');
         $router->map('GET|POST', '/ratingconfig/[i:id_space]', 'rating/ratingconfig/index', 'rating_config');
 
@@ -14,11 +15,11 @@ class RatingRouting extends Routing{
 
         $router->map('POST', '/rating/[i:id_space]/campaign/[i:id_campaign]/rate', 'rating/rating/rate', 'rating_rate');
     }
-    
+
     /**
      * Empty function to implement interface
      */
-    public function listRoutes(){
+    public function listRoutes()
+    {
     }
 }
-?>

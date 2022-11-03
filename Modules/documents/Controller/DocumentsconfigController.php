@@ -11,29 +11,30 @@ require_once 'Modules/documents/Model/DocumentsTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class DocumentsconfigController extends CoresecureController {
-
+class DocumentsconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        
+
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -46,7 +47,7 @@ class DocumentsconfigController extends CoresecureController {
 
         $modelCoreConfig = new CoreConfig();
         $formEdit = new Form($this->request, "documentsEditForm");
-        if($formEdit->check()) {
+        if ($formEdit->check()) {
             $modelCoreConfig->setParam('documentsEdit', $this->request->getParameter('documentsEdit'), $id_space);
             $documentsEdit = $this->request->getParameter('documentsEdit');
         } else {
@@ -60,8 +61,7 @@ class DocumentsconfigController extends CoresecureController {
 
 
         $forms = array($formMenusactivation->getHtml($lang), $formEdit->getHtml($lang));
-        
+
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
-
 }

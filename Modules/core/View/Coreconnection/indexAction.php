@@ -65,7 +65,7 @@
 
             </div>
         </div>
-        <?php if(Configuration::get('allow_registration', false)) { ?>
+        <?php if (Configuration::get('allow_registration', false)) { ?>
             <div class="col-12 col-md-4">
                 <a class="btn btn-lg btn-primary btn-block" href="corecreateaccount"> <?php echo CoreTranslator::CreateAccount($language) ?> </a>
             </div>
@@ -79,13 +79,17 @@
             <p><small>You must have link provider with your account before in account settings.</small></p>
         <?php
         foreach ($providers as $provider) {
-        ?>
+            ?>
             <a href="<?php echo $provider['login']; ?>?client_id=<?php echo $provider['client_id']; ?>&response_type=code&scope=openid&redirect_uri=<?php echo $provider['callback']; ?>&nonce=<?php echo $provider['nonce']; ?>">
-                <button type="button" class="btn btn-primary"><?php if ($provider['icon']){echo '<img style="width:200px" src="'.$provider['icon'].'"/>';} else{echo $provider['name'];} ?></button>
+                <button type="button" class="btn btn-primary"><?php if ($provider['icon']) {
+                    echo '<img style="width:200px" src="'.$provider['icon'].'"/>';
+                } else {
+                    echo $provider['name'];
+                } ?></button>
             </a>
         <?php
         }
-        ?>
+            ?>
         </div>
         <?php } ?>
     </div>

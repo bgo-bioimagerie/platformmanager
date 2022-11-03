@@ -17,20 +17,19 @@
                         <div class="col-12 col-md-2">
                         <?php
                         $imageFile = $entry["image"];
-                        if (!file_exists($imageFile) || is_dir($imageFile)) {
-                        ?>
+        if (!file_exists($imageFile) || is_dir($imageFile)) {
+            ?>
                             
                             <?php
-                        }
-                        else{
-                            list($width, $height, $type, $attr) = getimagesize($imageFile);
-                            ?>
+        } else {
+            list($width, $height, $type, $attr) = getimagesize($imageFile);
+            ?>
                             <a href="<?php echo $imageFile ?>">
                                 <img alt="resource photo" src="<?php echo $imageFile ?>" width="100%" />
                             </a>
-                        <?php 
-                        }
-                        ?>
+                        <?php
+        }
+        ?>
                         </div>
                         <div class="col-12 col-md-4">
                             <div> <?php echo $entry["description"] ?></div>

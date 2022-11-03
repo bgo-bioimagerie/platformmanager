@@ -11,13 +11,14 @@ require_once 'Modules/com/Model/ComNews.php';
 require_once 'Modules/com/Controller/ComController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ComnewsController extends ComController {
-
-    public function indexAction($id_space) {
+class ComnewsController extends ComController
+{
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -31,7 +32,7 @@ class ComnewsController extends ComController {
             "date" => ComTranslator::Date($lang),
             "expires" => ComTranslator::Expire($lang)
         );
-        if($this->role >= CoreSpace::$ADMIN) {
+        if ($this->role >= CoreSpace::$ADMIN) {
             $table->addLineEditButton("comnewsedit/".$id_space, "id");
             $table->addDeleteButton("comnewsdelete/".$id_space, "id", "title");
         }
@@ -44,17 +45,18 @@ class ComnewsController extends ComController {
         ));
     }
 
-    public function notifsAction($id_space) {
+    public function notifsAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("helpdesk", $id_space, $_SESSION["id_user"]);
         $modelComNews = new ComNews();
         $news = $modelComNews->getByDate($id_space, 50);
         return $this->render(['data' => ['notifs' => count($news)]]);
     }
 
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
-        if($this->role < CoreSpace::$ADMIN) {
+        if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('admins only access');
         }
         $lang = $this->getLanguage();
@@ -105,9 +107,10 @@ class ComnewsController extends ComController {
         ));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("com", $id_space, $_SESSION["id_user"]);
-        if($this->role < CoreSpace::$ADMIN) {
+        if ($this->role < CoreSpace::$ADMIN) {
             throw new PfmAuthException('admins only access');
         }
         $model = new ComNews();
@@ -115,5 +118,4 @@ class ComnewsController extends ComController {
 
         return $this->redirect("comnews/" . $id_space);
     }
-
 }

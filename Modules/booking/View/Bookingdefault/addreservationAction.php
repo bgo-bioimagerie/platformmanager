@@ -24,18 +24,20 @@
 
             <?php
             $checked = "";
-            if ($packageChecked) {
-                $checked = "checked";
-            }
-            ?>
+if ($packageChecked) {
+    $checked = "checked";
+}
+?>
 
             <?php if ($use_packages) { ?>
                 <div class="row mb-3">
                     <div class="checkbox col-8 mb-3">
                         <label>
-                            <input id="use_package" <?php if($forcePackages) { echo "disabled";}  ?> class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
+                            <input id="use_package" <?php if ($forcePackages) {
+                                echo "disabled";
+                            }  ?> class="form-checkbox" type="checkbox" name="use_package" value="yes" <?php echo $checked ?> > <?php echo BookingTranslator::Use_Package($lang) ?>
                         </label>
-                        <?php if($forcePackages) { ?>
+                        <?php if ($forcePackages) { ?>
                             <input type="hidden" name="use_package" value="yes">
                         <?php } ?>
                     </div>
@@ -60,13 +62,19 @@
                     </label>
                     <div class="col-6">
                         <div class="form-check mb-1">
-                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="1" <?php if($periodInfo['choice'] == 1){echo 'checked="checked"';} ?>><?php echo BookingTranslator::None($lang) ?></label>
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="1" <?php if ($periodInfo['choice'] == 1) {
+                                echo 'checked="checked"';
+                            } ?>><?php echo BookingTranslator::None($lang) ?></label>
                         </div>
                         <div class="form-check mb-1">
-                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="2" <?php if($periodInfo['choice'] == 2){echo 'checked="checked"';} ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="2" <?php if ($periodInfo['choice'] == 2) {
+                                echo 'checked="checked"';
+                            } ?>><?php echo BookingTranslator::EveryDay($lang) ?></label>
                         </div>
                         <div class="form-check mb-1">
-                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="3" <?php if($periodInfo['choice'] == 3){echo 'checked="checked"';} ?>></label>
+                            <label class="form-check-label"><input class="form-check-input" type="radio" name="periodic_radio" value="3" <?php if ($periodInfo['choice'] == 3) {
+                                echo 'checked="checked"';
+                            } ?>></label>
                             <select class="form-control" name="periodic_week">
                                 <option value="1"><?php echo BookingTranslator::EveryWeek($lang) ?></option>
                                 <option value="2"><?php echo BookingTranslator::Every2Week($lang) ?></option>
@@ -110,29 +118,29 @@
 
         <div class="col-12">
             <div id="buttons" class="col-4 offset-8">
-                <?php if ($userCanEdit) { ?>	
+                <?php if ($userCanEdit) { ?>    
                     <input type="submit" class="btn btn-primary" value="Save" />
                     <?php if ($id_reservation > 0) { ?>
                         <button onclick="showDelete()" id="deletebookingbutton" type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button>
                     <?php
-                        if ($id_period > 0){
+                        if ($id_period > 0) {
                             ?>
                             <button onclick="showDeletePeriod()" id="deletebookingperiodbutton" type="button" class="btn btn-danger"><?php echo BookingTranslator::DeletePeriod($lang) ?></button>
-                        <?php 
+                        <?php
                         }
                     }
                 }
-                ?>
+?>
                 <?php
-                $q = '?';
-                $redirPage = '';
-                if($from) {
-                    $redirInfo = explode(':', $from);
-                    $redirPage = $redirInfo[0];
-                    $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
-                }
-                $url = "booking$redirPage/$id_space?$q"
-                ?>
+$q = '?';
+$redirPage = '';
+if ($from) {
+    $redirInfo = explode(':', $from);
+    $redirPage = $redirInfo[0];
+    $q = "bk_curentDate=$redirInfo[1]&bk_id_resource=$redirInfo[2]&bk_id_area=$redirInfo[3]&id_user=$redirInfo[4]&view=$redirInfo[5]";
+}
+$url = "booking$redirPage/$id_space?$q"
+?>
                 <button type="button" class="btn btn-outline-dark" onclick="location.href = '<?php echo $url ?>'"><?php echo CoreTranslator::Cancel($lang) ?></button>
             </div>
 
@@ -140,7 +148,7 @@
         </div>
     </div>
 
-    <?php if($details['steps']) { ?>
+    <?php if ($details['steps']) { ?>
     <div class="row">
         <div class="col-xs-12">
             <table aria-label="details of reservation" class="table">
@@ -148,31 +156,31 @@
                 <tbody>
                 <?php foreach ($details['steps'] as $step) { ?>
                     <tr>
-                        <td><?php 
-                        switch ($step['kind']) {
-                            case 'day':
-                                $color = 'yellow';
-                                $txtcolor = 'black';
-                                break;
-                            case 'night':
-                                $color = 'black';
-                                $txtcolor = 'white';
-                                break;
-                            case 'we':
-                                $color = 'orange';
-                                $txtcolor = 'black';
-                                break;
-                            case 'closed':
-                                $color = 'red';
-                                $txtcolor = 'black';
-                                break;
-                            default:
-                                $color = 'blue';
-                                $txtcolor = 'white';
-                                break;
-                        }
-                        echo '<span class="label" style="background-color: '.$color.';color: '.$txtcolor.'">'.$step['kind'].'</label>';
-                        ?></td>
+                        <td><?php
+        switch ($step['kind']) {
+            case 'day':
+                $color = 'yellow';
+                $txtcolor = 'black';
+                break;
+            case 'night':
+                $color = 'black';
+                $txtcolor = 'white';
+                break;
+            case 'we':
+                $color = 'orange';
+                $txtcolor = 'black';
+                break;
+            case 'closed':
+                $color = 'red';
+                $txtcolor = 'black';
+                break;
+            default:
+                $color = 'blue';
+                $txtcolor = 'white';
+                break;
+        }
+        echo '<span class="label" style="background-color: '.$color.';color: '.$txtcolor.'">'.$step['kind'].'</label>';
+                    ?></td>
                         <td><?php echo date('Y-m-d H:i', $step['start']).' => '.date('Y-m-d H:i', $step['end']) ?></td>
                         <td><?php echo $step['duration']/3600 ?>h</td>
                     </tr>

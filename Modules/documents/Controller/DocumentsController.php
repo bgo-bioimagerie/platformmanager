@@ -7,13 +7,14 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
  * Manage the units (each user belongs to an unit)
- * 
+ *
  * @author sprigent
  *
  */
-class DocumentsController extends CoresecureController {
-
-    public function navbar($id_space){
+class DocumentsController extends CoresecureController
+{
+    public function navbar($id_space)
+    {
         return file_get_contents('Modules/documents/View/Documents/navbar.php');
     }
 }

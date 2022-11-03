@@ -12,23 +12,23 @@ require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingnightweController extends BookingsettingsController {
-
-    public function indexAction($id_space){
-        
+class BookingnightweController extends BookingsettingsController
+{
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
-        
+
         // get the core belongings
         $modelBelonging = new ClPricing();
         $belongings = $modelBelonging->getAll($id_space);
-        
-        
+
+
         // get the pricing
         $modelPricing = new BkNightWE();
         $modelPricing->addBelongingIfNotExists($id_space, $belongings);
@@ -56,12 +56,12 @@ class BookingnightweController extends BookingsettingsController {
             }
 
             // If pricing does not exists anymore, remove related element from list
-            if($pricingArray[$i]["name"] !== null) {
+            if ($pricingArray[$i]["name"] !== null) {
                 $pricings[] = $pricingArray[$i];
             }
         }
 
-        $table = new TableView ();
+        $table = new TableView();
 
         $table->setTitle(BookingTranslator::Nightwe($lang), 3);
         $table->addLineEditButton("bookingnightweedit/".$id_space, "id_belonging");
@@ -75,15 +75,15 @@ class BookingnightweController extends BookingsettingsController {
             "tarif_we" => BookingTranslator::Price_weekend($lang)
         );
         $tableHtml = $table->view($pricings, $tableContent);
-        
+
         $this->render(array("id_space" => $id_space, "lang" => $lang, 'tableHtml' => $tableHtml, 'data' => ['pricings' => $pricingArray]));
     }
-    
-    public function editAction($id_space, $id){
-        
+
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         $modelPricing = new BkNightWE();
         $pricing = $modelPricing->getPricing($id, $id_space);
 
@@ -100,8 +100,8 @@ class BookingnightweController extends BookingsettingsController {
     /**
      * Query to edit a pricing
      */
-    public function editqueryAction($id_space) {
-
+    public function editqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
         // get form variables
@@ -163,5 +163,4 @@ class BookingnightweController extends BookingsettingsController {
 
         $this->redirect("bookingnightwe/".$id_space);
     }
-
 }

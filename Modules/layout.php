@@ -1,13 +1,19 @@
 <?php require_once 'Framework/ti.php' ?>
 
 <!DOCTYPE html>
-<html lang="<?php if(isset($lang)) {echo $lang;} else {echo "en";} ?>">
+<html lang="<?php if (isset($lang)) {
+    echo $lang;
+} else {
+    echo "en";
+} ?>">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <?php
-            if (isset($metadesc)) {echo "<meta name=\"description\" content=\"$metadesc\"/>\n";}
-        ?>
+            if (isset($metadesc)) {
+                echo "<meta name=\"description\" content=\"$metadesc\"/>\n";
+            }
+?>
         <meta name="mode" description="<?php echo $context['dev'] ? 'dev' : 'prod' ?>">
         <?php startblock('meta') ?>
 
@@ -19,14 +25,14 @@
             <?php endblock() ?>
         </title>
         <?php
-        if($context['dev']) {
-            echo '<script src="externals/vuejs/vue3.js"></script>';
-            echo $context['_debugbarRenderer']->renderHead();
-        } else {
-            echo '<script src="externals/vuejs/vue3.js"></script>';
-        }
-        ?>
-        <?php if(isset($context['theme']) && $context['theme'] == 'dark') { ?>
+if ($context['dev']) {
+    echo '<script src="externals/vuejs/vue3.js"></script>';
+    echo $context['_debugbarRenderer']->renderHead();
+} else {
+    echo '<script src="externals/vuejs/vue3.js"></script>';
+}
+?>
+        <?php if (isset($context['theme']) && $context['theme'] == 'dark') { ?>
             <link rel="stylesheet" href="externals/pfm/dark-mode/bootstrap-night.css">
         <?php } else { ?>
             <link rel="stylesheet" href="externals/node_modules/bootstrap/dist/css/bootstrap.min.css">
@@ -46,9 +52,9 @@
 
         <?php startblock('navbar') ?>
             <?php
-            $nav = new Navbar($context['lang']);
-            echo $nav->get();
-            ?>
+    $nav = new Navbar($context['lang']);
+echo $nav->get();
+?>
         <?php endblock() ?>
 
         <div id="mainmenu" style="margin-top: 5px; margin-bottom: 2px;">
@@ -56,12 +62,12 @@
         if ($context['mainMenu']) {
             echo $context['mainMenu'];
         }
-        ?>
+?>
         </div>
 
         <div class="container-fluid">
                 <div class="row" id="app" >
-                    <?php if(isset($context['maintenance']) && $context['maintenance']) { ?>
+                    <?php if (isset($context['maintenance']) && $context['maintenance']) { ?>
                         <div class="container">
                             <div class="alert alert-warning alert-dismissible  show" role="alert">
                                 <?php echo $context['maintenance']; ?>
@@ -80,22 +86,22 @@
                     
                         <?php startblock('spacemenu') ?>
                         <?php
-                        if ($context['spaceMenu']) {
-                        ?>
+                if ($context['spaceMenu']) {
+                    ?>
                         <div class="col-12">
                         <?php
-                            echo $context['spaceMenu'];
-                        ?>
+                        echo $context['spaceMenu'];
+                    ?>
                         </div>
                         <?php } ?>
                         <?php endblock() ?>
                     <?php
                     if ($context['sideMenu']) {
-                    ?>
+                        ?>
                     <div class="col-12 col-md-2" id="sidemenu">
                     <?php
-                        echo $context['sideMenu'];
-                    ?>
+                            echo $context['sideMenu'];
+                        ?>
                     </div>
                     <div class="col-12 col-md-10" id="content">
                     <?php } else { ?>
@@ -121,10 +127,10 @@
         <?php endblock() ?>
 
         <?php
-        if($context['dev']) {
-           echo $context['_debugbarRenderer']->render();
+        if ($context['dev']) {
+            echo $context['_debugbarRenderer']->render();
         }
-        ?>
+?>
 
     <script src="externals/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     </body>

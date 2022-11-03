@@ -10,15 +10,15 @@ require_once 'Modules/invoices/Model/InVisa.php';
  *
  * @author Sylvain Prigent
  */
-class InvoicesInstall extends Model {
-
+class InvoicesInstall extends Model
+{
     /**
      * Create the core database
      *
      * @return boolean True if the base is created successfully
      */
-    public function createDatabase() {
-
+    public function createDatabase()
+    {
         $modelInvoice = new InInvoice();
         $modelInvoice->createTable();
 
@@ -32,5 +32,4 @@ class InvoicesInstall extends Model {
             mkdir('data/invoices/', 0755, true);
         }
     }
-
 }

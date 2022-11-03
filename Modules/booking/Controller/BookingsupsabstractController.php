@@ -10,12 +10,12 @@ require_once 'Modules/core/Model/CoreVirtual.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-abstract class BookingsupsabstractController extends BookingsettingsController {
-    
+abstract class BookingsupsabstractController extends BookingsettingsController
+{
     protected $modelSups;
     protected string $formUrl;
     protected string $supsType;
@@ -23,13 +23,15 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
     protected bool $invoicable;
     protected bool $mandatoryFields;
     protected bool $hasDuration;
-    
-    protected function getSupForm($id_space, $formTitle) {
+
+    protected function getSupForm($id_space, $formTitle)
+    {
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getForSpace($id_space);
-        $choicesR = array(); $choicesRid = array();
-        foreach($resources as $res){
+        $choicesR = array();
+        $choicesRid = array();
+        foreach ($resources as $res) {
             $choicesR[] = $res["name"];
             $choicesRid[] = $res["id"];
         }
@@ -41,7 +43,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         $supsMandatories = array();
         $supIsInvoicingUnit = array();
         $supsDuration = array();
-        foreach($sups as $sup){
+        foreach ($sups as $sup) {
             $supsIds[] = $sup["id_" . $this->supsType];
             $supsIdsRes[] = $sup["id_resource"];
             $supsNames[] = $sup["name"];
@@ -71,17 +73,18 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
             $formAdd->addSelect("mandatory", BookingTranslator::Is_mandatory($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supsMandatories);
         }
         if ($this->invoicable) {
-            $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang) , array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supIsInvoicingUnit);
+            $formAdd->addSelect("is_invoicing_unit", BookingTranslator::Is_invoicing_unit($lang), array(CoreTranslator::no($lang), CoreTranslator::yes($lang)), array(0,1), $supIsInvoicingUnit);
         }
 
         $formAdd->setButtonsNames(CoreTranslator::Add(), CoreTranslator::Delete($lang));
-        $form->setFormAdd($formAdd);  
+        $form->setFormAdd($formAdd);
         $form->setValidationButton(CoreTranslator::Save($lang), $this->formUrl . "/".$id_space);
 
         return $form;
     }
 
-    protected function supsFormCheck($id_space) {
+    protected function supsFormCheck($id_space)
+    {
         $lang = $this->getLanguage();
         $modelResource = new ResourceInfo();
         $supID = $this->request->getParameterNoException("id_sups");
@@ -106,16 +109,16 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         $id_sups = [];
         $coupleSupResourceExists = false;
         for ($i = 0; $i < count($supID); $i++) {
-            if($supName[$i] == "") {
+            if ($supName[$i] == "") {
                 continue;
-            } else if ($supID[$i]) {
+            } elseif ($supID[$i]) {
                 $supacks[$supName[$i]] = $supID[$i];
             }
             if (!$supID[$i]) {
                 // If sup id not set, use from known sups
-                if(isset($supacks[$supName[$i]])) {
+                if (isset($supacks[$supName[$i]])) {
                     $supID[$i] = $supacks[$supName[$i]];
-                    if ($this->coupleSupResourceExists($supID[$i],$supResources[$i], $id_space)) {
+                    if ($this->coupleSupResourceExists($supID[$i], $supResources[$i], $id_space)) {
                         $coupleSupResourceExists = [
                             "resource" => $modelResource->get($id_space, $supResources[$i])['name'],
                             "sup" => $supName[$i]
@@ -133,14 +136,15 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
             $this->modelSups->setSupplementary($id_space, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i] ?? 0, $supIsInvoicingUnit[$i] ?? 0, $supDuration[$i] ?? 0);
             array_push($id_sups, $this->modelSups->getBySupID($id_space, $supID[$i], $supResources[$i])['id']);
         }
-        
+
         // If package in db is not listed in provided package list, delete them
         $this->modelSups->removeUnlisted($id_space, $id_sups, false);
         $this->handleMessages($coupleSupResourceExists, $lang);
         return ['bksupids' => $id_sups];
     }
 
-    protected function coupleSupResourceExists($id_sup, $id_resource, $id_space) {
+    protected function coupleSupResourceExists($id_sup, $id_resource, $id_space)
+    {
         $dbSups = $this->modelSups->getByResource($id_space, $id_resource);
         foreach ($dbSups as $dbSup) {
             if ($dbSup['id_' . $this->supsType] == $id_sup) {
@@ -150,7 +154,8 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         return false;
     }
 
-    protected function hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $id_space, $lang) {
+    protected function hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $id_space, $lang)
+    {
         $result = false;
         $invoicingUnitsResources = [];
         foreach ($supResources as $index => $resource) {
@@ -168,7 +173,8 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
         return $result;
     }
 
-    protected function handleMessages($coupleSupResourceExists, $lang) {
+    protected function handleMessages($coupleSupResourceExists, $lang)
+    {
         if ($coupleSupResourceExists) {
             $_SESSION["flash"] = BookingTranslator::Sup_resource_exists(
                 $coupleSupResourceExists["sup"],
@@ -181,6 +187,4 @@ abstract class BookingsupsabstractController extends BookingsettingsController {
             $_SESSION["flashClass"] = "success";
         }
     }
-
-    
 }

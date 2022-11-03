@@ -7,20 +7,21 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ClientsController extends CoresecureController {
-
-    public function sideMenu() {
+class ClientsController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
         $modelConfig = new CoreConfig();
         $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
-        if($title == ""){
+        if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }
         $dataView = [
@@ -37,8 +38,8 @@ class ClientsController extends CoresecureController {
         return $this->twig->render("Modules/clients/View/Clients/navbar.twig", $dataView);
     }
 
-    public function navbar($id_space){
-        
+    public function navbar($id_space)
+    {
         $lang = $this->getLanguage();
 
         $html = file_get_contents('Modules/clients/View/Clients/navbar.php');
@@ -48,16 +49,16 @@ class ClientsController extends CoresecureController {
         $html = str_replace('{{CompanyInfo}}', ClientsTranslator::CompanyInfo($lang), $html);
 
         $html = str_replace('{{id_space}}', $id_space, $html);
-        
+
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
-        
+
         $modelConfig = new CoreConfig();
         $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
-        if($title == ""){
+        if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }
-        
+
         $html = str_replace('{{bgcolor}}', $menuInfo['color'], $html);
         $html = str_replace('{{glyphicon}}', $menuInfo['icon'], $html);
         $html = str_replace('{{title}}', $title, $html);

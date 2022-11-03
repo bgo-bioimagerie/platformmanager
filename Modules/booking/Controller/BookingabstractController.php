@@ -19,22 +19,22 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingabstractController extends CoresecureController {
-
-    public function spaceExtraMenus(){
+class BookingabstractController extends CoresecureController
+{
+    public function spaceExtraMenus()
+    {
         $lang = $this->getLanguage();
         $menu = [
             ['name' => BookingTranslator::booking($lang), 'url' => 'bookingdayarea/'.$this->currentSpace['id'].'/'],
             ['name' => BookingTranslator::journal($lang), 'url' => 'booking/'.$this->currentSpace['id'].'/journal']
         ];
         $plan = new CorePlan($this->currentSpace['plan'], $this->currentSpace['plan_expire']);
-        if($plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
+        if ($plan->hasFlag(CorePlan::FLAGS_CALDAV)) {
             $menu[] = ['name' => 'CalDAV: '.Configuration::get('public_url').'/caldav/'.$this->currentSpace['id'].'/0/', 'url' => ''];
-
         }
         return $menu;
     }
@@ -46,8 +46,8 @@ class BookingabstractController extends CoresecureController {
      * @param date $curentDate Curent date
      * @return array: booking menu content
      */
-    public function calendarMenuData($curentSiteId, $curentAreaId, $curentResourceId, $curentDate) {
-
+    public function calendarMenuData($curentSiteId, $curentAreaId, $curentResourceId, $curentDate)
+    {
         if ($curentDate == "") {
             $curentDate = date("Y-m-d", time());
         }
@@ -56,15 +56,14 @@ class BookingabstractController extends CoresecureController {
         $areas = array();
         $modelUserSpace = new CoreSpace();
         $status = $modelUserSpace->getUserSpaceRole($curentSiteId, $_SESSION["id_user"]);
-       
+
         if ($status <= 2) {
             $areas = $modelArea->getUnrestrictedAreasIDNameForSite($curentSiteId);
-            
         } else {
             $areas = $modelArea->getAreasIDNameForSite($curentSiteId);
         }
-        
-        
+
+
 
         $foundArea = false;
         foreach ($areas as $area) {
@@ -95,7 +94,7 @@ class BookingabstractController extends CoresecureController {
             'curentDate' => $curentDate,
         );
     }
-    
+
     /**
      * Check if a given user is allowed to book a ressource
      * @param number $id_resourcecategory ID of the resource category
@@ -104,13 +103,13 @@ class BookingabstractController extends CoresecureController {
      * @param number $curentDateUnix resa date in unix format, skip check if 0
      * @return boolean
      */
-    protected function hasAuthorization($id_resourcecategory, $resourceAccess, $id_space, $id_user, $curentDateUnix) {
-
+    protected function hasAuthorization($id_resourcecategory, $resourceAccess, $id_space, $id_user, $curentDateUnix)
+    {
         $modelSpace = new CoreSpace();
         $userSpaceRole = $modelSpace->getUserSpaceRole($id_space, $id_user);
 
 
-        if($userSpaceRole > CoreSpace::$MANAGER){
+        if ($userSpaceRole > CoreSpace::$MANAGER) {
             return true;
         }
 
@@ -125,8 +124,7 @@ class BookingabstractController extends CoresecureController {
             if ($userSpaceRole > CoreSpace::$VISITOR) {
                 $isUserAuthorizedToBook = true;
             }
-        }
-        else if ($resourceAccess == 2) {
+        } elseif ($resourceAccess == 2) {
             //echo "pass 1 </Br>";
             if ($userSpaceRole > CoreSpace::$USER) {
                 $isUserAuthorizedToBook = true;
@@ -138,19 +136,15 @@ class BookingabstractController extends CoresecureController {
                 $isUserAuthorizedToBook = $modelAuth->hasAuthorization($id_space, $id_resourcecategory, $id_user);
                 //echo "authorized user = " . $isUserAuthorizedToBook . "";
             }
-        }
-        else if ($resourceAccess == 3) {
+        } elseif ($resourceAccess == 3) {
             if ($userSpaceRole >= CoreSpace::$MANAGER) {
                 $isUserAuthorizedToBook = true;
             }
-        }
-        else if ($resourceAccess == 4) {
+        } elseif ($resourceAccess == 4) {
             if ($userSpaceRole >= CoreSpace::$ADMIN) {
                 $isUserAuthorizedToBook = true;
             }
         }
         return $isUserAuthorizedToBook;
     }
-
- 
 }

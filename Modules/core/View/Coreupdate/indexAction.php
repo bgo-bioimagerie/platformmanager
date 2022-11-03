@@ -6,7 +6,7 @@
 <?php startblock('content') ?>
 
 <?php
-    if ( $updateInfo["status"] == "error") {
+    if ($updateInfo["status"] == "error") {
         ?>
         <div class="alert alert-danger">
             <?php echo $updateInfo["message"] ?>

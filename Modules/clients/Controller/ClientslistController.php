@@ -13,12 +13,12 @@ require_once 'Modules/clients/Form/AddressForm.php';
 require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientslistController extends ClientsController {
-
+class ClientslistController extends ClientsController
+{
     /**
      * User model object
      */
@@ -29,9 +29,10 @@ class ClientslistController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        $this->clientModel = new ClClient ();
+        $this->clientModel = new ClClient();
         $this->clientEditUrl = "clclientedit/";
         $this->clientsListUrl = "clclients/";
     }
@@ -39,11 +40,11 @@ class ClientslistController extends ClientsController {
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
@@ -76,7 +77,8 @@ class ClientslistController extends ClientsController {
     /**
      * Edit a provider form
      */
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         //lang
@@ -87,7 +89,7 @@ class ClientslistController extends ClientsController {
         $formClient = $this->generateClientInfosForm($id_space, $client);
         $formInvoice = $this->generateInvoiceAddressForm($id_space, $client);
         $formInstitution = $this->generateInstitutionForm($id_space, $client);
-        
+
         // Check if a form has been validated
         if ($formClient->check()) {
             return $this->validateClientForm($id_space, $id, $formClient);
@@ -103,7 +105,7 @@ class ClientslistController extends ClientsController {
         $forms['client'] = $formClient->getHtml($lang);
         $forms['invoice'] = $formInvoice->getHtml($lang);
         $forms['institution'] = $formInstitution->getHtml($lang);
-        
+
         // Set form to display
         $origin = $this->request->getParameterNoException('origin');
         $defaultForm = ($origin && $origin != "") ? $origin : 'client';
@@ -123,15 +125,16 @@ class ClientslistController extends ClientsController {
         ));
     }
 
-    protected function validateClientForm($id_space, $id, $formClient) {
+    protected function validateClientForm($id_space, $id, $formClient)
+    {
         $lang = $this->getLanguage();
         // run the database query
         $idNew = $this->clientModel->set(
             $id,
             $id_space,
             $formClient->getParameter("name"),
-            $formClient->getParameter("contact_name"), 
-            $formClient->getParameter("phone"), 
+            $formClient->getParameter("contact_name"),
+            $formClient->getParameter("phone"),
             $formClient->getParameter("email"),
             $formClient->getParameter("pricing"),
             $formClient->getParameter("invoice_send_preference")
@@ -141,7 +144,8 @@ class ClientslistController extends ClientsController {
         return $this->redirect($this->clientEditUrl . $id_space . "/" . $idNew, ['origin' => 'client'], ['client' => ['id' => $idNew]]);
     }
 
-    protected function validateClientInvoiceForm($id_space, $id, $formClientInvoice) {
+    protected function validateClientInvoiceForm($id_space, $id, $formClientInvoice)
+    {
         $lang = $this->getLanguage();
         $id_adress = $formClientInvoice->save();
         $this->clientModel->setAddressInvoice($id_space, $id, $id_adress);
@@ -150,7 +154,8 @@ class ClientslistController extends ClientsController {
         return $this->redirect($this->clientEditUrl . $id_space . "/" . $id, ['origin' => 'invoice'], ['client' => ['id' => $id]]);
     }
 
-    protected function validateClientInstitutionForm($id_space, $id, $formClientInstitution) {
+    protected function validateClientInstitutionForm($id_space, $id, $formClientInstitution)
+    {
         $lang = $this->getlanguage();
         $id_adress = $formClientInstitution->save();
         $this->clientModel->setAddressDelivery($id_space, $id, $id_adress);
@@ -159,7 +164,8 @@ class ClientslistController extends ClientsController {
         return $this->redirect($this->clientEditUrl . $id_space . "/" . $id, ['origin' => 'institution'], ['client' => ['id' => $id]]);
     }
 
-    protected function generateClientInfosForm($id_space, $client) {
+    protected function generateClientInfosForm($id_space, $client)
+    {
         $lang = $this->getLanguage();
 
         // pricings
@@ -170,7 +176,7 @@ class ClientslistController extends ClientsController {
             $_SESSION['flash'] = ClientsTranslator::Pricing_needed($lang);
             $_SESSION["flashClass"] = 'warning';
         }
-        
+
         // preferences
         $preferences = array(
             "ids" => array(1,2),
@@ -187,18 +193,19 @@ class ClientslistController extends ClientsController {
 
         $form->addSelectMandatory("pricing", ClientsTranslator::Pricing($lang), $pricings["names"], $pricings["ids"], $client["pricing"]);
         $form->addSelect("invoice_send_preference", ClientsTranslator::invoice_send_preference($lang), $preferences["names"], $preferences["ids"], $client["invoice_send_preference"]);
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), $this->clientEditUrl . $id_space . "/" . $client['id']);
         $form->setColumnsWidth(3, 9);
         $form->setCancelButton(CoreTranslator::Cancel($lang), $this->clientsListUrl . $id_space);
         return $form;
     }
 
-    protected function generateInvoiceAddressForm($id_space, $client): AddressForm {
+    protected function generateInvoiceAddressForm($id_space, $client): AddressForm
+    {
         $lang = $this->getLanguage();
         $modelAdress = new ClAddress();
         $addressInvoice = $modelAdress->get($id_space, $client["address_invoice"]);
-        
+
         // Address invoice
         $formAddressInvoice = new AddressForm($this->request, "formAddressInvoice", $this->clientEditUrl . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
         $formAddressInvoice->setLang($lang);
@@ -209,11 +216,12 @@ class ClientslistController extends ClientsController {
         return $formAddressInvoice;
     }
 
-    protected function generateInstitutionForm($id_space, $client): AddressForm {
+    protected function generateInstitutionForm($id_space, $client): AddressForm
+    {
         $lang = $this->getLanguage();
         $modelAdress = new ClAddress();
         $addressDelivery = $modelAdress->get($id_space, $client["address_delivery"]);
-        
+
         // Address delivery
         $formAddressDelivery = new AddressForm($this->request, "formAddressDelivery", $this->clientEditUrl . $id_space . "/" . $client['id'], $this->clientsListUrl . $id_space);
         $formAddressDelivery->setLang($lang);
@@ -227,17 +235,19 @@ class ClientslistController extends ClientsController {
     /**
      * Returns client's address
      */
-    public function getAddressAction($id_space, $id_client) {
+    public function getAddressAction($id_space, $id_client)
+    {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClient = new ClClient();
         $address = $modelClient->getAddressInvoice($id_space, $id_client) ?: "";
         $this->render(['data' => ['elements' => $address]]);
     }
-            
+
     /**
      * Remove a provider
      */
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
@@ -251,5 +261,4 @@ class ClientslistController extends ClientsController {
         // after the provider is deleted we redirect to the providers list page
         $this->redirect($this->clientsListUrl . $id_space);
     }
-
 }

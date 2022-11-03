@@ -9,8 +9,8 @@ require_once 'Modules/core/Model/CoreUserSpaceSettings.php';
 
 require_once 'Modules/helpdesk/Model/HelpdeskTranslator.php';
 
-class Helpdesk extends Model {
-
+class Helpdesk extends Model
+{
     public static $TYPE_EMAIL = 0;
     public static $TYPE_NOTE = 1;
 
@@ -20,16 +20,18 @@ class Helpdesk extends Model {
     public static $STATUS_CLOSED = 3;
     public static $STATUS_SPAM = 4;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->tableName = "hp_tickets";
     }
 
     /**
      * Create the stats_buckets table
-     * 
+     *
      * @return PDOStatement
      */
-    public function createTable() {
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `hp_tickets` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `id_space` int(11) NOT NULL,
@@ -74,7 +76,7 @@ class Helpdesk extends Model {
 
     /**
      * Creates a new ticket
-     * 
+     *
      * @param string $id_space space identifier
      * @param string $from mail or name of creator
      * @param string $to mail of destination
@@ -83,13 +85,14 @@ class Helpdesk extends Model {
      * @param array $files  list of CoreFiles
      * @return int id of ticket
      */
-    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0, $attachments=[]) {
+    public function createTicket($id_space, $from, $to, $subject, $body, $id_user=0, $attachments=[])
+    {
         // create ticket
         // create message
         // create attachements
         $is_new = false;
         $id_ticket = $this->ticketFromSubject($subject);
-        if($id_ticket == 0) {
+        if ($id_ticket == 0) {
             $is_new = true;
             $sql = 'INSERT INTO `hp_tickets` (`id_space`, `status`, `subject`,  `created_by`, `created_by_user`, `created_at`, `unread`)  VALUES (?,?,?, ?,?, NOW(), ?)';
             $this->runRequest($sql, array($id_space, self::$STATUS_NEW, $subject, $from, $id_user, 1));
@@ -99,11 +102,11 @@ class Helpdesk extends Model {
         $sql = 'INSERT INTO `hp_ticket_message` (`id_ticket`, `from`, `to`, `subject`, `body`, `type`, `created_at`)  VALUES (?,?,?,?,?,?, NOW())';
         $this->runRequest($sql, array($id_ticket, $from, $to, $subject, $body, self::$TYPE_EMAIL));
         $id_message = $this->getDatabase()->lastInsertId();
-        if(!$is_new) {
+        if (!$is_new) {
             $this->markUnread($id_ticket);
         }
 
-        if(!empty($attachments)) {
+        if (!empty($attachments)) {
             $this->attach($id_ticket, $id_message, $attachments);
         }
         return ['ticket' => $id_ticket, 'message' => $id_message, 'is_new' => $is_new];
@@ -112,9 +115,10 @@ class Helpdesk extends Model {
     /**
      * Add a file to a ticket message
      */
-    public function attach($id_ticket, $id_message, $files=[]) {
+    public function attach($id_ticket, $id_message, $files=[])
+    {
         $attachments = [];
-        foreach($files as $attachment) {
+        foreach ($files as $attachment) {
             $sql = 'INSERT INTO `hp_ticket_attachment` (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?, ?)';
             $this->runRequest($sql, array($id_ticket, $id_message, $attachment['id'], $attachment['name']));
             $attachments[] = $this->getDatabase()->lastInsertId();
@@ -122,28 +126,30 @@ class Helpdesk extends Model {
         return ['ticket_attachements' => $attachments];
     }
 
-    public function addEmail($id_ticket, $body, $from, $files=[]) {
+    public function addEmail($id_ticket, $body, $from, $files=[])
+    {
         // create message
         $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_EMAIL, ''));
         $id = $this->getDatabase()->lastInsertId();
 
-        foreach($files as $attachment) {
+        foreach ($files as $attachment) {
             $sql = 'INSERT INTO hp_ticket_attachment (id_ticket, id_message, id_file, name_file)  VALUES (?,?,?,?)';
             $this->runRequest($sql, array($id_ticket, $id, $attachment['id'], $attachment['name']));
         }
         return $id;
     }
 
-    public function addNote($id_ticket, $body, $from) {
+    public function addNote($id_ticket, $body, $from)
+    {
         // create message
         $sql = 'INSERT INTO hp_ticket_message (`id_ticket`, `from`, `body`, `type`, created_at, subject)  VALUES (?,?,?,?, NOW(),?)';
         $this->runRequest($sql, array($id_ticket, $from, $body, self::$TYPE_NOTE, ''));
         return $this->getDatabase()->lastInsertId();
-
     }
 
-    public function notify($id_space, $id_ticket, $lang="en", $isNew=true) {
+    public function notify($id_space, $id_ticket, $lang="en", $isNew=true)
+    {
         $cussm = new CoreUserSpaceSettings();
         $ticket = $this->get($id_ticket);
 
@@ -151,7 +157,7 @@ class Helpdesk extends Model {
         $msg = "";
         $sent = array();
 
-        if($isNew) {
+        if ($isNew) {
             $subject = "[Ticket #$id_ticket] new ticket";
             $msg = HelpdeskTranslator::newTicket($lang);
             $users = $cussm->getUsersForSetting($id_space, "hp_notifyNew", 1);
@@ -162,11 +168,11 @@ class Helpdesk extends Model {
             //hp_notifyAssignedUpdate and assigned or hp_notifyAllUpdate
             $subject = "[Ticket #$id_ticket] updated ticket";
             $msg = HelpdeskTranslator::updatedTicket($lang);
-            if($ticket["assigned"]) {
+            if ($ticket["assigned"]) {
                 $userSettings = $cussm->getUserSetting($id_space, $ticket["assigned"], "hp_notifyAssignedUpdate");
-                if($userSettings) {
-                    foreach($userSettings as $user) {
-                        if($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
+                if ($userSettings) {
+                    foreach ($userSettings as $user) {
+                        if ($ticket["assigned"] == $user["user_id"] && !in_array($user["user_id"], $sent)) {
                             $sent[] = $ticket["assigned"];
                         }
                     }
@@ -175,7 +181,7 @@ class Helpdesk extends Model {
 
             $users = $cussm->getUsersForSetting($id_space, "hp_notifyAllUpdate", 1);
             foreach ($users as $user) {
-                if(!in_array($user["user_id"], $sent)) {
+                if (!in_array($user["user_id"], $sent)) {
                     $sent[] = $user["user_id"];
                 }
             }
@@ -187,41 +193,43 @@ class Helpdesk extends Model {
             $fromName = "Platform-Manager";
             $cum = new CoreUser();
             $toAddress = $cum->getEmail($userToSend);
-            if($toAddress) {
+            if ($toAddress) {
                 $email->sendEmail($from, $fromName, $toAddress, $subject, $msg);
             }
         }
-
     }
 
     /**
      * Check subject to see if related to an existing ticket
-     * 
+     *
      * @param string $subject
      * @return int id of ticket, else 0
      */
-    public function ticketFromSubject($subject) {
+    public function ticketFromSubject($subject)
+    {
         preg_match('/\[Ticket #(\d+)\]/', $subject, $matches, PREG_OFFSET_CAPTURE);
         Configuration::getLogger()->debug('[helpdesk] check if linked to other ticket', ['subject' => $subject, 'matches' => $matches]);
-        if(!$matches) {
+        if (!$matches) {
             return 0;
         }
         $res = $this->get($matches[1][0]);
-        if($res) {
+        if ($res) {
             return $res['id'];
         }
         return 0;
     }
 
-    public function assign($id_ticket, $id_user) {
+    public function assign($id_ticket, $id_user)
+    {
         $um = new CoreUser();
         $login = $um->getUserLogin($id_user);
         $sql = "UPDATE hp_tickets set assigned=?, assigned_name=? WHERE id=?";
         $this->runRequest($sql, array($id_user, $login, $id_ticket));
     }
 
-    public function setStatus($id_ticket, $status, $reminder_date=null) {
-        if($status === self::$STATUS_REMINDER) {
+    public function setStatus($id_ticket, $status, $reminder_date=null)
+    {
+        if ($status === self::$STATUS_REMINDER) {
             $sql = "UPDATE hp_tickets set `status`=?, reminder=?, reminder_set=0 WHERE id=?";
             $this->runRequest($sql, array($status, $reminder_date, $id_ticket));
         }
@@ -229,9 +237,10 @@ class Helpdesk extends Model {
         $this->runRequest($sql, array($status, $id_ticket));
     }
 
-    public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50) {
+    public function list($id_space, $status=0, $id_user=0, $offset=0, $limit=50)
+    {
         $sql = "SELECT * FROM hp_tickets WHERE `status`=? AND id_space=?";
-        if($id_user) {
+        if ($id_user) {
             $sql .= " AND (assigned=? OR created_by_user=?) ORDER BY id DESC LIMIT ".intval($limit)." OFFSET ".intval($offset);
             return $this->runRequest($sql, array($status, $id_space, $id_user, $id_user))->fetchAll();
         }
@@ -239,28 +248,33 @@ class Helpdesk extends Model {
         return $this->runRequest($sql, array($status, $id_space))->fetchAll();
     }
 
-    public function get($id_ticket) {
+    public function get($id_ticket)
+    {
         $sql = "SELECT * FROM hp_tickets WHERE id=?";
         return $this->runRequest($sql, array($id_ticket))->fetch();
     }
 
-    public function getMessages($id_ticket) {
+    public function getMessages($id_ticket)
+    {
         $sql = "SELECT * FROM hp_ticket_message WHERE id_ticket=?";
         return $this->runRequest($sql, array($id_ticket))->fetchAll();
     }
 
-    public function getMessage($id) {
+    public function getMessage($id)
+    {
         $sql = "SELECT * FROM hp_ticket_message WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getAttachement($id) {
+    public function getAttachement($id)
+    {
         $sql = "SELECT * FROM hp_ticket_attachment WHERE id=?";
         return $this->runRequest($sql, array($id))->fetch();
     }
 
-    public function getAttachments($id_ticket, $id_message=0) {
-        if($id_message) {
+    public function getAttachments($id_ticket, $id_message=0)
+    {
+        if ($id_message) {
             $sql = "SELECT * FROM hp_ticket_attachment WHERE id_ticket=? AND id_message=?";
             return $this->runRequest($sql, array($id_ticket, $id_message))->fetchAll();
         }
@@ -268,26 +282,29 @@ class Helpdesk extends Model {
         return $this->runRequest($sql, array($id_ticket))->fetchAll();
     }
 
-    public function move($id_ticket, $queue) {
+    public function move($id_ticket, $queue)
+    {
         $sql = "UPDATE hp_tickets SET `queue`=? WHERE id=?";
         $this->runRequest($sql, array($queue, $id_ticket));
     }
 
     // Delete all tickets in spam status for more than 1 day
-    public function trashSpam() {
+    public function trashSpam()
+    {
         $sql = "SELECT * FROM hp_tickets WHERE status=? AND updated_at > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY)";
         $spams = $this->runRequest($sql, array(self::$STATUS_SPAM))->fetchAll();
-        foreach($spams as $spam) {
+        foreach ($spams as $spam) {
             $this->trash($spam['id']);
         }
     }
 
-    public function trash($id_ticket) {
+    public function trash($id_ticket)
+    {
         // TODO delete files too....
         $sql = "SELECT * FROM hp_ticket_attachment WHERE id_ticket=?";
         $files = $this->runRequest($sql, array($id_ticket))->fetchAll();
         $cfm = new CoreFiles();
-        if($files) {
+        if ($files) {
             foreach ($files as $attachment) {
                 $cfm->delete($attachment['id_file']);
             }
@@ -303,46 +320,53 @@ class Helpdesk extends Model {
 
     /**
      * Get helpdesk email for space
-     * 
+     *
      * @param CoreSpace $space current space object
      * @return string email for space helpdesk
      */
-    public function fromAddress($space) {
+    public function fromAddress($space)
+    {
         $from = Configuration::get('helpdesk_email', null);
-        if(!$from) {
+        if (!$from) {
             return null;
         }
         $fromInfo = explode('@', $from);
         return $fromInfo[0]. '+' . $space['shortname'] . '@' . $fromInfo[1];
     }
 
-    public function markRead($id_ticket) {
+    public function markRead($id_ticket)
+    {
         $sql = "UPDATE hp_tickets SET unread=0 WHERE id=?";
         $this->runRequest($sql, array($id_ticket));
     }
 
-    public function markUnread($id_ticket) {
+    public function markUnread($id_ticket)
+    {
         $sql = "UPDATE hp_tickets SET unread=1 WHERE id=?";
         $this->runRequest($sql, array($id_ticket));
     }
 
     // count unread messages
-    public function unread($id_space) {
+    public function unread($id_space)
+    {
         $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE unread=1 AND id_space=? GROUP BY status";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function remind($lang="en") {
+    public function remind($lang="en")
+    {
         $sql = "SELECT * FROM hp_tickets WHERE reminder<NOW() and reminder_sent=0";
         $toRemind = $this->runRequest($sql)->fetchAll();
         foreach ($toRemind as $ticket) {
-            if(!$ticket["assigned"]) { continue; }
+            if (!$ticket["assigned"]) {
+                continue;
+            }
             $email = new Email();
             $from = Configuration::get('smtp_from');
             $fromName = "Platform-Manager";
             $cum = new CoreUser();
             $toAddress = $cum->getEmail($ticket["assigned"]);
-            if($toAddress) {
+            if ($toAddress) {
                 $subject = "[Ticket #".$ticket["id"]."] reminder reached";
                 $msg = HelpdeskTranslator::reminderReachedTicket($lang);
                 $email->sendEmail($from, $fromName, $toAddress, $subject, $msg);
@@ -355,11 +379,9 @@ class Helpdesk extends Model {
     /**
      * count number of tickets per status per space
      */
-    public function count($id_space) {
+    public function count($id_space)
+    {
         $sql = "SELECT count(*) as total, status FROM hp_tickets WHERE id_space=? GROUP BY status";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
-
 }
-
-?>

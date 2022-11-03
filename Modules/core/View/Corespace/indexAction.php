@@ -1,1 +1,1 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include 'Modules/core/View/spacelayout.php';

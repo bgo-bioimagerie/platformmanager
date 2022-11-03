@@ -1,13 +1,14 @@
 <?php
+
 require_once 'Modules/core/Controller/CoresecureController.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 
-class ResourcesBaseController extends CoresecureController {
-
-
-    public function sideMenu() {
+class ResourcesBaseController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
@@ -32,9 +33,5 @@ class ResourcesBaseController extends CoresecureController {
 
         ];
         return $this->twig->render("Modules/resources/View/Resources/navbar.twig", $dataView);
-
     }
-
 }
-
-?>

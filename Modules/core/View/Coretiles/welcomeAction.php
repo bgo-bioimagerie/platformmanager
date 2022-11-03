@@ -26,11 +26,11 @@
             <div><h3><?php echo CoreTranslator::Menus($lang); ?></h3></div>
             <div class="btn-group-vertical btn-group-justified" role=group">
                     <a class="m-1 btn btn-primary" href="coretiles?mine=1"><?php echo CoreTranslator::MySpaces($lang); ?></a>
-                <?php 
+                <?php
             foreach ($mainMenus as $menu) {
                 echo sprintf('<a class="m-1 btn btn-primary" href="coretiles/1/%s">%s</a>', $menu['id'], $menu['name']);
             }
-            ?>
+?>
             </div>
         </div>
 
@@ -70,23 +70,32 @@
                 </div>
             </div>
             <div class="row" id="user_stars">
-                <?php foreach($spaces as $item) { ?>
+                <?php foreach ($spaces as $item) { ?>
                 <div class="col-12 col-md-6 m-2">
                 <div class="card text-dark bg-light">
                     <div class="card-header">
-                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
-                        <?php if(isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
+                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : '';
+                        echo "[$menu]" ?></a>
+                        <?php if (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0) { ?>
                                 <a aria-label="remove from favorites" href="<?php echo "coretiles/1/0/unstar/".$item["id"] ?>"><span aria-hidden="true" class="bi-star-fill"></span></a>
                         <?php } ?>
-                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
+                        <?php if ($item["status"] == 0) {
+                            echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>';
+                        } ?>
                     </div>
                     <div class="card-body">
-                        <?php if(isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%; max-width:200px"><?php } ?>
-                        <?php if(strlen($item['description']) > 50) { echo '<p>'.substr($item["description"], 0, 50).'...</p>'; } else { echo '<p>'.$item['description'].'</p>'; } ?>
+                        <?php if (isset($item['image'])) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="width:100%; max-width:200px"><?php } ?>
+                        <?php if (strlen($item['description']) > 50) {
+                            echo '<p>'.substr($item["description"], 0, 50).'...</p>';
+                        } else {
+                            echo '<p>'.$item['description'].'</p>';
+                        } ?>
                         </div>
                     <div class="card-footer">
                         <small>
-                        <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
+                        <?php if ($item["support"]) {
+                            echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>';
+                        } ?>
                         </small>
                     </div>
                 </div>
@@ -96,20 +105,25 @@
 
 
             <div class="row" id="user_spaces">
-                <?php foreach($userSpaces as $item) { ?>
+                <?php foreach ($userSpaces as $item) { ?>
                 <div class="col-6 col-md-4 m-2">    
                 <div class="card text-dark bg-light">
-                    <?php if(isset($icon)) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
+                    <?php if (isset($icon)) {?><img class="card-img-top" aria-label="space logo" onerror="this.style.display='none'" src="<?php echo $item["image"] ?>" alt="logo" style="margin-left: -15px;width:218px;height:150px"><?php } ?>
                     <div class="card-header">
-                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : ''; echo "[$menu]" ?></a>
-                        <?php if($item["status"] == 0) { echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>'; } ?>
+                        <a href="<?php echo "corespace/" . $item["id"] ?>"> <?php echo $item["name"] ?> <?php $menu = array_key_exists($item['id'], $itemsMenus) ? $itemsMenus[$item['id']] : '';
+                        echo "[$menu]" ?></a>
+                        <?php if ($item["status"] == 0) {
+                            echo '<span class="bi-lock-fill" aria-hidden="true" aria-label="private"></span>';
+                        } ?>
                     </div>
                     <div class="card-body">
                         <?php echo $item["description"] ?>
                     </div>
                     <div class="card-footer">
                         <small>
-                        <?php if($item["support"]) {  echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>'; } ?>
+                        <?php if ($item["support"]) {
+                            echo 'support: <a href="mailto:'.$item["support"].'">'.$item["support"].'</a>';
+                        } ?>
                         </small>
                     </div>
                 </div>
@@ -118,14 +132,16 @@
             </div>
 
 
-            <?php if(!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
+            <?php if (!isset($_SESSION['id_user']) || $_SESSION['id_user'] <= 0) { ?>
             <div class="row">
                 <div class="col-12 text-dark bg-light text-center m-3" id ="welcome" style="min-height: 400px">
-                    <?php if($content) { echo $content; } else {?>
+                    <?php if ($content) {
+                        echo $content;
+                    } else {?>
                         <h3 style="margin: 20px"><?php echo CoreTranslator::welcome($lang) ?></h3>
                     <?php } ?>
                     <a href="coreconnection"><button class="btn btn-primary"><?php echo CoreTranslator::login($lang) ?></button></a>
-                    <?php if(Configuration::get('allow_registration', 0)) { ?>
+                    <?php if (Configuration::get('allow_registration', 0)) { ?>
                         OR
                         <a href="corecreateaccount"><button class="btn btn-primary"><?php echo CoreTranslator::CreateAccount($lang) ?></button></a>
                     <?php } ?>
@@ -135,7 +151,7 @@
             <?php } ?>
         </div>
         <div class="col-12 col-md-4" id="user_home">
-            <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
+            <?php if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { ?>
                 <div v-if="bookings && bookings.length > 0" id="future_bookings">
                     <div class="card text-dark bg-light">
                         <div class="card-header">Bookings</div>
@@ -173,7 +189,11 @@ let catalog = <?php echo json_encode($catalog); ?>;
 Vue.createApp({
     data () {
         return {
-            logged: <?php if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) { echo "true"; } else { echo "false";} ?>,
+            logged: <?php if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+                echo "true";
+            } else {
+                echo "false";
+            } ?>,
             spaces: <?php echo json_encode($spaceMap); ?> ,
             catalog: <?php echo json_encode($resources); ?>,
             resources: <?php echo json_encode($catalog); ?>,

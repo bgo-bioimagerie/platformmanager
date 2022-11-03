@@ -11,12 +11,12 @@ require_once 'Modules/clients/Controller/ClientsController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientsusersController extends ClientsController {
-
+class ClientsusersController extends ClientsController
+{
     /**
      * User model object
      */
@@ -25,20 +25,20 @@ class ClientsusersController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        $this->pricingModel = new ClPricing ();
-
+        $this->pricingModel = new ClPricing();
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space, $id_client) {
-
+    public function indexAction($id_space, $id_client)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
@@ -57,9 +57,8 @@ class ClientsusersController extends ClientsController {
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"]);
         $form->setValidationButton(CoreTranslator::Add($lang), "clclientusers/" . $id_space . "/" . $id_client);
 
-        
-        if ($form->check()) {
 
+        if ($form->check()) {
             $modelClientUser->set($id_space, $id_client, $form->getParameter("id_user"));
 
             $_SESSION["flash"] = ClientsTranslator::UserHasBeenAddedToClient($lang);
@@ -90,7 +89,8 @@ class ClientsusersController extends ClientsController {
     /**
      * Remove a provider
      */
-    public function deleteAction($id_space, $id_client, $id_user) {
+    public function deleteAction($id_space, $id_client, $id_user)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
@@ -102,16 +102,17 @@ class ClientsusersController extends ClientsController {
         $this->redirect("clclientusers/" . $id_space . "/" . $id_client);
     }
 
-    public function getUserClientsAction($id_space, $id_user) {
+    public function getUserClientsAction($id_space, $id_user)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelClientUser = new ClClientUser();
         $this->render(['data' => ['elements' => $modelClientUser->getUserClientAccounts($id_user, $id_space)]]);
     }
 
-    public function getClientUsersAction($id_space, $id_client) {
+    public function getClientUsersAction($id_space, $id_client)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $modelClientUser = new ClClientUser();
         $this->render(['data' => ['elements' => $modelClientUser->getClientUsersAccounts($id_client, $id_space)]]);
     }
-
 }

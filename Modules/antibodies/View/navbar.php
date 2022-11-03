@@ -55,7 +55,7 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="anticorps/<?php echo $id_space ?>">Anticorps</a>
             <a href="anticorpsedit/<?php echo $id_space ?>/0">+</a> 
-        </div>	
+        </div>    
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="protocols/<?php echo $id_space ?>/id">Protocoles</a>
             <a href="protocolsedit/<?php echo $id_space ?>/0">+</a>
@@ -68,7 +68,7 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="sources/<?php echo $id_space ?>">Sources</a>
             <a href="sourcesedit/<?php echo $id_space ?>/0">+</a> 
-        </div>	
+        </div>    
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="isotypes/<?php echo $id_space ?>">Isotypes</a>
             <a href="isotypesedit/<?php echo $id_space ?>/0">+</a>
@@ -81,7 +81,7 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="especes/<?php echo $id_space ?>">Espèces</a>
             <a href="especesedit/<?php echo $id_space ?>/0">+</a> 
-        </div>	
+        </div>    
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="organes/<?php echo $id_space ?>">Organes</a>
             <a href="organesedit/<?php echo $id_space ?>/0">+</a>
@@ -102,12 +102,12 @@ if ($ecmenucolortxt == "") {
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="kit/<?php echo $id_space ?>">KIT</a>
             <a href="kitedit/<?php echo $id_space ?>/0">+</a> 
-        </div>	
+        </div>    
         
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="proto/<?php echo $id_space ?>">Proto</a>
             <a href="protoedit/<?php echo $id_space ?>/0">+</a> 
-        </div>	
+        </div>    
         
         <div  class="btn-block" id="menu-button-div">
             <a id="menu-button" href="fixative/<?php echo $id_space ?>">Fixative</a>
@@ -160,4 +160,4 @@ if ($ecmenucolortxt == "") {
         </div>
     </div>
     
-</div>		
+</div>        

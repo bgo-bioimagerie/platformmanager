@@ -8,8 +8,8 @@ require_once 'Framework/Errors.php';
  *
  * @author Sylvain Prigent
  */
-class Request {
-
+class Request
+{
     /**
      * Table containg the request parameters
      */
@@ -24,24 +24,28 @@ class Request {
      * Constructor
      *
      * @param array $parameters
-     *        	Parameters of the request
+     *            Parameters of the request
      */
-    public function __construct($parameters, $createSession = true) {
+    public function __construct($parameters, $createSession = true)
+    {
         $this->parameters = $parameters;
-        if($createSession){
-            $this->session = new Session ();
+        if ($createSession) {
+            $this->session = new Session();
         }
     }
 
-    public function setParams(array $params) {
+    public function setParams(array $params)
+    {
         $this->parameters = $params;
     }
 
-    public function setParam($param, $value) {
+    public function setParam($param, $value)
+    {
         $this->parameters[$param] = $value;
     }
 
-    public function params() {
+    public function params()
+    {
         return $this->parameters;
     }
 
@@ -50,7 +54,8 @@ class Request {
      *
      * @return Session Session Objet
      */
-    public function getSession() {
+    public function getSession()
+    {
         return $this->session;
     }
 
@@ -58,10 +63,11 @@ class Request {
      * Return true if a parameter exists in the request and is not empty
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return bool True if the parameter exists and is not empty
      */
-    public function isParameterNotEmpty($name) {
+    public function isParameterNotEmpty($name)
+    {
         return (isset($this->parameters[$name]) && $this->parameters[$name] != "");
     }
 
@@ -69,27 +75,28 @@ class Request {
      * Return true if a parameter exists in the request
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return bool True if the parameter exists and is not empty
      */
-    public function isParameter($name) {
-        return (isset($this->parameters[$name]) );
+    public function isParameter($name)
+    {
+        return (isset($this->parameters[$name]));
     }
 
     /**
      * Return the value of a parameter
      *
      * @param string $name
-     *        	Name of the parameter
+     *            Name of the parameter
      * @return array|string Value of the parameter
      * @throws Exception If the parameter does not exist in the request
      */
-    public function getParameter($name, $clean = true) {
+    public function getParameter($name, $clean = true)
+    {
         if ($this->isParameter($name)) {
-            if($clean){
+            if ($clean) {
                 return $this->clean($this->parameters[$name]);
-            }
-            else{
+            } else {
                 return $this->parameters[$name];
             }
         } else {
@@ -105,24 +112,24 @@ class Request {
      * @param mixed $default default value if not in parameters
      * @return mixed Value of the parameter, or default parameter if the parameter is not set (empty string by default)
      */
-    public function getParameterNoException($name, $clean = true, $default='') {
+    public function getParameterNoException($name, $clean = true, $default='')
+    {
         if ($this->isParameter($name)) {
-            if($clean){
+            if ($clean) {
                 return $this->clean($this->parameters[$name]);
-            }
-            else{
+            } else {
                 return $this->parameters[$name];
             }
         } else {
             return $default;
         }
     }
-    
-    public function clean($value){
-        if(is_array($value)){
+
+    public function clean($value)
+    {
+        if (is_array($value)) {
             return $value;
         }
         return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
     }
-
 }

@@ -76,4 +76,3 @@ Vue.createApp({
 </script>
 
 <?php endblock();
-

@@ -10,18 +10,18 @@ require_once 'Modules/bulletjournal/Model/BjEvent.php';
 require_once 'Modules/bulletjournal/Model/BjTaskHistory.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BjmigrationsApi extends CoresecureController {
-
+class BjmigrationsApi extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request) {
+    public function __construct(Request $request)
+    {
         parent::__construct($request);
         //$this->checkAuthorizationMenu("bulletjournal");
     }
-
 }

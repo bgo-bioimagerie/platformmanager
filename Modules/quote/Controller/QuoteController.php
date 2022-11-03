@@ -7,18 +7,19 @@ require_once 'Modules/quote/Model/QuoteTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class QuoteController extends CoresecureController {
-
-    public function sideMenu() {
+class QuoteController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("quote", $id_space);
-        
+
         $dataView = [
             'id_space' => $id_space,
             'title' =>  QuoteTranslator::Quote($lang),
@@ -32,7 +33,8 @@ class QuoteController extends CoresecureController {
         return $this->twig->render("Modules/quote/View/Quote/navbar.twig", $dataView);
     }
 
-    public function navbar($id_space) {
+    public function navbar($id_space)
+    {
         $html = file_get_contents('Modules/quote/View/Quote/navbar.php');
 
         $lang = $this->getLanguage();
@@ -53,11 +55,11 @@ class QuoteController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("quote", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
         $this->render(array("id_space" => $id_space, "lang" => $lang));
     }
-
 }

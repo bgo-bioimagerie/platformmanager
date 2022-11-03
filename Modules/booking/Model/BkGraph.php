@@ -8,13 +8,14 @@ require_once 'Modules/booking/Model/BkNightWE.php';
  *
  * @author Sylvain Prigent
  */
-class BkGraph extends Model {
-
-    public function getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode) {
-        if($dateBegin == "") {
+class BkGraph extends Model
+{
+    public function getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode)
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
         $dateBeginArray = explode("-", $dateBegin);
@@ -68,8 +69,8 @@ class BkGraph extends Model {
         return $data;
     }
 
-    public function getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $exclude_color) {
-
+    public function getStatReservationPerMonth($month_start, $year_start, $month_end, $year_end, $id_space, $exclude_color)
+    {
         $in_color = "";
         $pass = 0;
         foreach ($exclude_color as $col) {
@@ -94,7 +95,6 @@ class BkGraph extends Model {
                 $stop_month = $month_end;
             }
             for ($m = $start_month; $m <= $stop_month; $m++) {
-
                 $dstart = mktime(0, 0, 0, $m, 1, $y); // Le premier jour du mois en cours
                 $dend = mktime(0, 0, 0, $m + 1, 1, $y); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
 
@@ -117,11 +117,12 @@ class BkGraph extends Model {
         return array('count' => $countResa, 'time' => $timeResa, 'dates' => $dates);
     }
 
-    public function getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $idResource, $idColorCode) {
-        if($dateBegin == "") {
+    public function getReservationPerResourceColor($id_space, $dateBegin, $dateEnd, $idResource, $idColorCode)
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
 
@@ -142,8 +143,8 @@ class BkGraph extends Model {
         return $timeResa;
     }
 
-    public function getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode) {
-
+    public function getStatReservationPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode)
+    {
         $in_color = "";
         $pass = 0;
         foreach ($excludeColorCode as $col) {
@@ -166,10 +167,10 @@ class BkGraph extends Model {
         $resourcesIdsOut = array();
 
 
-        if($dateBegin == "") {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
 
@@ -179,7 +180,6 @@ class BkGraph extends Model {
         $dend = mktime(0, 0, 0, $dateEndArray[1], $dateEndArray[2], $dateEndArray[0]); // Le 0eme jour du mois suivant == le dernier jour du mois en cour
 
         foreach ($resourcesIds as $res) {
-
             $sql = 'SELECT * FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND resource_id=? AND start_time >=' . $dstart . ' AND end_time <=' . $dend;
             if ($in_color != "") {
                 $sql .= ' AND color_type_id NOT IN (' . $in_color . ')';
@@ -217,8 +217,8 @@ class BkGraph extends Model {
      * @param unknown $year
      * @return multitype:multitype:unknown  number
      */
-    public function getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end) {
-
+    public function getYearNumResGraph($id_space, $month_start, $year_start, $month_end, $year_end)
+    {
         $num = 0;
         $numTotal = 0;
         $graph = array();
@@ -273,8 +273,8 @@ class BkGraph extends Model {
      * @param unknown $year
      * @return multitype:number multitype:number
      */
-    public function getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end) {
-
+    public function getYearNumHoursResGraph($id_space, $month_start, $year_start, $month_end, $year_end)
+    {
         $timeResa = 0.0;
         $timeTotal = 0.0;
         $graph = array();
@@ -338,7 +338,8 @@ class BkGraph extends Model {
      * @param number $year
      * @return unknown
      */
-    public function getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end) {
+    public function getCamembertArray($id_space, $month_start, $year_start, $month_end, $year_end)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -366,8 +367,8 @@ class BkGraph extends Model {
         return $numMachinesFormes;
     }
 
-    private function calculateReservationTime($searchDate_start, $searchDate_end, $night_start, $night_end, $we_array) {
-
+    private function calculateReservationTime($searchDate_start, $searchDate_end, $night_start, $night_end, $we_array)
+    {
         $gap = 60;
         $timeStep = $searchDate_start;
         $nb_hours_day = 0;
@@ -395,7 +396,8 @@ class BkGraph extends Model {
         return $resaDayNightWe;
     }
 
-    private function getFirstPricing($id_space) {
+    private function getFirstPricing($id_space)
+    {
         $pricingModel = new BkNightWE();
         $pricingsInfo = $pricingModel->getSpacePrices($id_space);
         return $pricingsInfo[0];
@@ -406,7 +408,8 @@ class BkGraph extends Model {
      * @param unknown $year
      * @return unknown
      */
-    public function getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end) {
+    public function getCamembertTimeArray($id_space, $month_start, $year_start, $month_end, $year_end)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -415,7 +418,6 @@ class BkGraph extends Model {
 
         $i = -1;
         foreach ($machinesFormesListe as $mFL) {
-
             // get the night and we periods
             $pricingInfo = $this->getFirstPricing($id_space);
             $night_start = $pricingInfo['night_start'];
@@ -468,7 +470,8 @@ class BkGraph extends Model {
      * @param unknown $numTotal
      * @return string
      */
-    public function getCamembertContent($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
+    public function getCamembertContent($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -505,9 +508,7 @@ class BkGraph extends Model {
             }
 
             if ($nomMachine != "-") {
-
                 if ($curentAngle > pi()) {
-
                     $angle += $curentAngle / 2;
 
                     $arriveeX = 300 + 250 * cos($angle);
@@ -551,7 +552,8 @@ class BkGraph extends Model {
      * @param float $numTotal
      * @return string
      */
-    public function getCamembertContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
+    public function getCamembertContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -583,11 +585,9 @@ class BkGraph extends Model {
         );
 
         for ($i = 0; $i < count($resourceTypeList); $i++) {
-
             $resTypID = $resourceTypeList[$i]["id"];
             $count = 0;
             foreach ($machinesFormesListe as $mFL) {
-
                 if ($mFL["category_id"] == $resTypID) {
                     $sql = 'SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 1, $year_end) . ' AND resource_id ="' . $mFL[0] . '"';
                     $req = $this->runRequest($sql, array($id_space));
@@ -599,7 +599,6 @@ class BkGraph extends Model {
             $curentAngle = 2 * pi() * $resourceTypeList[$i]["number_resa"] / $numTotal;
 
             if ($curentAngle > pi()) {
-
                 $angle += $curentAngle / 2;
 
                 $arriveeX = 300 + 250 * cos($angle);
@@ -641,8 +640,8 @@ class BkGraph extends Model {
      * @param float $numTotal
      * @return string
      */
-    public function getCamembertTimeContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
-
+    public function getCamembertTimeContentResourceType($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -688,14 +687,11 @@ class BkGraph extends Model {
         $resourceType = 1; // forced to count night and we prices (to be modified if needed)
 
         for ($i = 0; $i < count($resourceTypeList); $i++) {
-
-
             $resTypID = $resourceTypeList[$i]["id"];
             $timeResa = 0;
             $timeResaNight = 0;
             $timeResaWe = 0;
             foreach ($machinesFormesListe as $mFL) {
-
                 if ($mFL["category_id"] == $resTypID) {
                     $sql = 'SELECT * FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 1, $year_end) . ' AND resource_id ="' . $mFL[0] . '"';
                     $req = $this->runRequest($sql, array($id_space));
@@ -718,7 +714,6 @@ class BkGraph extends Model {
             $curentAngle = 2 * pi() * ($timeResa + $timeResaNight + $timeResaWe) / $numTotal;
 
             if ($curentAngle > pi()) {
-
                 $angle += $curentAngle / 2;
 
                 $arriveeX = 300 + 250 * cos($angle);
@@ -768,7 +763,8 @@ class BkGraph extends Model {
      * @param unknown $numTotal
      * @return string
      */
-    public function getCamembertTimeContent($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal) {
+    public function getCamembertTimeContent($id_space, $month_start, $year_start, $month_end, $year_end, $numTotal)
+    {
         $sql = 'SELECT DISTINCT resource_id FROM bk_calendar_entry WHERE id_space=? AND deleted=0 AND start_time >=' . mktime(0, 0, 0, $month_start, 1, $year_start) . ' AND end_time <=' . mktime(0, 0, 0, $month_end + 1, 0, $year_end) . ' ORDER by resource_id';
         $req = $this->runRequest($sql, array($id_space));
         $numMachinesFormesTotal = $req->rowCount();
@@ -801,7 +797,6 @@ class BkGraph extends Model {
         );
 
         foreach ($machinesFormesListe as $mFL) {
-
             $sql = 'SELECT name FROM re_info WHERE id_space=? AND deleted=0 AND id =?';
             $req = $this->runRequest($sql, array($id_space, $mFL[0]));
             $res = $req->fetchAll();
@@ -835,7 +830,6 @@ class BkGraph extends Model {
                 $curentAngle = 2 * pi() * ($numMachinesFormes[$i][1] + $numMachinesFormes[$i][2] + $numMachinesFormes[$i][3]) / $numMachinesFormesTotal;
 
                 if ($curentAngle > pi()) {
-
                     $angle += $curentAngle / 2;
 
                     $arriveeX = 300 + 250 * cos($angle);
@@ -874,5 +868,4 @@ class BkGraph extends Model {
         $test .= '</g>';
         return $test;
     }
-
 }

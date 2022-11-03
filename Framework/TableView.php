@@ -5,12 +5,12 @@ require_once 'Framework/Constants.php';
 require_once 'Modules/core/Model/CoreUserSettings.php';
 
 /**
- * Class allowing to generate and check a form html view. 
- * 
+ * Class allowing to generate and check a form html view.
+ *
  * @author Sylvain Prigent
  */
-class TableView {
-
+class TableView
+{
     private $title;
     private $titleLevel;
     private $editURL;
@@ -36,7 +36,8 @@ class TableView {
     /**
      * Constructor
      */
-    public function __construct($tableID = "dataTable") {
+    public function __construct($tableID = "dataTable")
+    {
         $this->title = "";
         $this->useSearchVal = true;
         $this->isprint = false;
@@ -58,117 +59,130 @@ class TableView {
     /**
      * Set the table title
      */
-    public function setTitle($title, $level = 3) {
+    public function setTitle($title, $level = 3)
+    {
         $this->title = $title;
         $this->titleLevel = $level;
     }
 
     /**
-     * 
+     *
      * @param type $num
      */
-    public function setFixedColumnsNum($num) {
+    public function setFixedColumnsNum($num)
+    {
         $this->numFixedCol = $num;
     }
 
     /**
-     * 
+     *
      * @param int $value
      */
-    public function setTextMaxLength($value) {
+    public function setTextMaxLength($value)
+    {
         $this->textMaxLength = $value;
     }
 
     /**
-     * 
+     *
      * @param type $editURL
      * @param type $editIndex
      */
-    public function addLineEditButton($editURL, $editIndex = "id", $editJS = false) {
+    public function addLineEditButton($editURL, $editIndex = "id", $editJS = false)
+    {
         $this->editURL = $editURL;
         $this->editIndex = $editIndex;
         $this->editJS = $editJS;
     }
 
     /**
-     * 
+     *
      * @param type $urlIndex
      */
-    public function addDownloadButton($urlIndex) {
+    public function addDownloadButton($urlIndex)
+    {
         $this->downloadButton = $urlIndex;
     }
 
     /**
-     * 
+     *
      * @param type $deleteURL
      * @param type $deleteIndex
      * @param type $deleteNameIndex
      */
-    public function addDeleteButton($deleteURL, $deleteIndex = "id", $deleteNameIndex = "name") {
+    public function addDeleteButton($deleteURL, $deleteIndex = "id", $deleteNameIndex = "name")
+    {
         $this->deleteURL = $deleteURL;
         $this->deleteIndex = $deleteIndex;
         $this->deleteNameIndex = $deleteNameIndex;
     }
 
     /**
-     * 
+     *
      * @param type $action
      * @param type $actionIndex
      * @param type $buttonTitle
      */
-    public function addLineButton($action, $actionIndex = "id", $buttonTitle = "edit") {
+    public function addLineButton($action, $actionIndex = "id", $buttonTitle = "edit")
+    {
         $this->linesButtonActions[] = $action;
         $this->linesButtonActionsIndex[] = $actionIndex;
         $this->linesButtonName[] = $buttonTitle;
     }
 
     /**
-     * 
+     *
      * @param type $key
      * @param type $value
      */
-    public function ignoreEntry($key, $value) {
+    public function ignoreEntry($key, $value)
+    {
         $this->ignoredEntryKey = $key;
         $this->ignoredEntryValue = $value;
     }
 
     /**
-     * 
+     *
      * @param type $value
      */
-    public function useSearch($value) {
+    public function useSearch($value)
+    {
         $this->useSearchVal = $value;
     }
 
     /**
-     * 
+     *
      * @param type $action
      */
-    public function addPrintButton($action) {
+    public function addPrintButton($action)
+    {
         $this->printAction = $action;
     }
 
     /**
-     * 
+     *
      * @param type $action
      */
-    public function addExportButton($action) {
+    public function addExportButton($action)
+    {
         $this->exportAction = $action;
     }
 
     /**
-     * 
+     *
      * @param type $indexesArray
      */
-    public function setColorIndexes($indexesArray) {
+    public function setColorIndexes($indexesArray)
+    {
         $this->colorIndexes = $indexesArray;
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
-    public function isPrint() {
+    public function isPrint()
+    {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         if (strstr($actual_link, 'print=1')) {
             $this->isprint = true;
@@ -178,10 +192,11 @@ class TableView {
     }
 
     /**
-     * 
+     *
      * @return boolean
      */
-    public function isExport() {
+    public function isExport()
+    {
         $actual_link = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         if (strstr($actual_link, 'csv=1')) {
             $this->iscsv = true;
@@ -189,16 +204,17 @@ class TableView {
         }
         return false;
     }
-    
-    protected function isButtons(){
+
+    protected function isButtons()
+    {
         $count = 0;
-        if (count($this->linesButtonActions) > 0){
+        if (count($this->linesButtonActions) > 0) {
             $count += count($this->linesButtonActions);
         }
-        if ($this->editURL != ""){
+        if ($this->editURL != "") {
             $count ++;
         }
-        if ($this->deleteURL != ""){
+        if ($this->deleteURL != "") {
             $count++;
         }
         return $count;
@@ -210,8 +226,8 @@ class TableView {
      * @param array $headers table headers ( 'key' => 'headername' )
      * @param bool $small display bootstrap small table
      */
-    public function view($data, $headers, $small=false) {
-
+    public function view($data, $headers, $small=false)
+    {
         $html = "";
         if ($this->isPrint()) {
             $rootWeb = Configuration::get("rootWeb", "/");
@@ -220,9 +236,7 @@ class TableView {
             $html .= "<base href=\"" . $rootWeb . "\">";
             $html .= "<link rel=\"stylesheet\" href=\"/externals/node_modules/bootstrap/dist/css/bootstrap.min.css\">";
             $html .= "</head>";
-
-        }
-        else{
+        } else {
             $html .= $this->addHeader();
         }
 
@@ -251,9 +265,9 @@ class TableView {
         }
 
         $is_small = '';
-       if($small) {
+        if ($small) {
             $is_small = ' table-sm ';
-       }
+        }
         $html .= "<div class=\"table-responsive\"><table id=\"".$this->tableID."\" class=\"table $is_small table-bordered table-striped\" cellspacing=\"0\" width=\"100%\">";
 
         $isButtons = $this->isButtons();
@@ -261,19 +275,18 @@ class TableView {
         $html .= "<thead>";
         $html .= "<tr>";
 
-        for ($b = 0 ; $b < $isButtons ; $b++){
+        for ($b = 0 ; $b < $isButtons ; $b++) {
             $html .= "<th class=\"no-sort\"></th>";
-        }        
-        
+        }
+
         if ($this->downloadButton != "") {
             $html .= "<th aria-label=\"download\"></th>";
         }
         foreach ($headers as $key => $value) {
             $title = "";
-            if(is_array($value)){
+            if (is_array($value)) {
                 $title = $value["title"];
-            }
-            else{
+            } else {
                 $title = $value;
             }
             $html .= "<th>" . $title . "</th>";
@@ -281,11 +294,11 @@ class TableView {
         $html .= "</tr>";
         $html .= "</thead>";
 
-        // table body			
+        // table body
         $html .= "<tbody>";
 
         $addDelete = false;
-        
+
         foreach ($data as $dat) {
             if ($this->printIt($dat)) {
                 $html .= "<tr>";
@@ -304,16 +317,15 @@ class TableView {
                         $idxVal = $dat[$this->editIndex];
                     }
                     $html .= '<td style="'.$style.'">';
-                    if($this->editJS){
+                    if ($this->editJS) {
                         $html .= "<button onclick=\"editentry('".$this->editURL . "_" . $idxVal."')\" id=\"".$this->editURL . "_" . $idxVal."\" type='button' class=\"btn btn-sm btn-primary\">Edit</button><span> </span>" ;
-                    }
-                    else{
+                    } else {
                         $edit_url = $this->editURL . "/" . $idxVal;
-                        if($this->editIndex != "" && str_contains($this->editURL, '{{'.$this->editIndex.'}}')) {
+                        if ($this->editIndex != "" && str_contains($this->editURL, '{{'.$this->editIndex.'}}')) {
                             $edit_url = str_replace('{{'.$this->editIndex.'}}', $idxVal, $this->editURL);
                         }
                         $html .= "<button type='button' onclick=\"location.href='" . $edit_url . "'\" class=\"btn btn-sm btn-primary\">Edit</button><span> </span>";
-                    }  
+                    }
                     $html .= "</td>";
                 }
                 if ($this->deleteURL != "" && !$this->isprint) {
@@ -327,44 +339,38 @@ class TableView {
                     $html .= $this->addDownloadButtonHtml($dat[$this->downloadButton]);
                 }
                 foreach ($headers as $key => $value) {
-
                     $ccolor = '';
-                    if (isset($this->colorIndexes[$key])){  
+                    if (isset($this->colorIndexes[$key])) {
                         $ccolor = $dat[$this->colorIndexes[$key]];
-                    }
-                    else{
-                        if (isset($this->colorIndexes["all"])){
+                    } else {
+                        if (isset($this->colorIndexes["all"])) {
                             $ccolor = $dat[$this->colorIndexes["all"]];
-	    		        }
+                        }
                     }
                     $tcolor = '';
-                    if(isset($this->colorIndexes["all_text"])) {
+                    if (isset($this->colorIndexes["all_text"])) {
                         $tcolor = $dat[$this->colorIndexes["all_text"]];
                     }
-                    
+
                     $val = $dat[$key];
-                    if(is_array($value)){
-                        if($value["type"] == "image"){
-                            if($val != ""){
+                    if (is_array($value)) {
+                        if ($value["type"] == "image") {
+                            if ($val != "") {
                                 $url = $value["base_url"] . $val;
                                 $html .= '<td style="background-color:"' .$ccolor.';">  <img src="'.$url.'" alt="img" height="42" width="42"></td>';
+                            } else {
+                                $html .= '<td style="background-color:"' .$ccolor.';"> </td>';
                             }
-                            else{
-                                   $html .= '<td style="background-color:"' .$ccolor.';"> </td>';
-                            }
-                        }
-                        else if($value["type"] == "glyphicon"){
+                        } elseif ($value["type"] == "glyphicon") {
                             $html .= '<td><span class="'.$val.'" aria-hidden="true" style="color:'.$value["color"].'"></span></td>';
-                        }
-                        else if ($value["type"] == "download"){
+                        } elseif ($value["type"] == "download") {
                             $html .= '<td>';
-                            if ( $val != "" ){
+                            if ($val != "") {
                                 $html .= sprintf('<a target="_blank" rel="noreferrer,noopener"  href="%s"><button type="btn btn-outline-dark">%s</button></a>', $val, $value["text"]);
                             }
                             $html .= '</td>';
                         }
-                    }
-                    else{
+                    } else {
                         if (strlen($dat[$key]) && $this->textMaxLength > 0) {
                             $val = substr($dat[$key], 0, $this->textMaxLength);
                         }
@@ -376,7 +382,7 @@ class TableView {
         }
         $html .= "</tbody>";
         $html .= "</table></div>";
-        if($addDelete) {
+        if ($addDelete) {
             $html .= $this->addDeleteScript();
         }
 
@@ -384,11 +390,12 @@ class TableView {
     }
 
     /**
-     * 
+     *
      * @param type $dat
      * @return boolean
      */
-    private function printIt($dat) {
+    private function printIt($dat)
+    {
         if ($this->ignoredEntryKey != "") {
             if ($dat[$this->ignoredEntryKey] == $this->ignoredEntryValue) {
                 return false;
@@ -398,11 +405,12 @@ class TableView {
         return true;
     }
 
-    private function addHeader(){
+    private function addHeader()
+    {
         $userSettingsModel = new CoreUserSettings();
         $user_id = isset($_SESSION['id_user']) ? $_SESSION['id_user'] : 0;
         $arrayDefaultDisplay = 10;
-        if($user_id) {
+        if ($user_id) {
             $arrayDefaultDisplay = $userSettingsModel->getUserSetting($user_id, "arrayDefaultDisplay", "10");
         }
 
@@ -412,34 +420,35 @@ class TableView {
         if ($this->downloadButton != "") {
             $col++;
         }
-        if(count($this->linesButtonActions) > 0 && !$this->isprint) {
+        if (count($this->linesButtonActions) > 0 && !$this->isprint) {
             $col+=count($this->linesButtonActions);
         }
         $str1 = str_replace('let defaultCol = 0;', 'let defaultCol = '.$col.';', $str1);
         $str1 = str_replace('let defaultLen = 10;', 'let defaultLen = '.$arrayDefaultDisplay.';', $str1);
         return str_replace("tableID", $this->tableID, $str1);
     }
-    
+
     /**
      * @deprecated
      * @param type $html
      * @param int $headerscount
      * @return string
      */
-    private function addSearchHeader($html, $headerscount) {
-
+    private function addSearchHeader($html, $headerscount)
+    {
         $js = file_get_contents("Framework/TableScript.php");
         $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
         return str_replace("tableID", $this->tableID, $str1);
     }
 
     /**
-     * 
+     *
      * @param type $url
      * @return string
      */
-    private function addDownloadButtonHtml($url) {
-        if(!$url) {
+    private function addDownloadButtonHtml($url)
+    {
+        if (!$url) {
             return '<td></td>';
         }
         $html = "<td>" . "<button type='button' onclick=\"location.href='" . $url . "'\" class=\"btn btn-sm btn-outilne-dark\"> <span class=\"bi-download\" aria-hidden=\"true\"></span> </button>" . "</td>";
@@ -448,28 +457,30 @@ class TableView {
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @param type $name
      * @return string
      */
-    private function addDeleteButtonHtml($id, $name) {
+    private function addDeleteButtonHtml($id, $name)
+    {
         return "<input class=\"btn btn-sm btn-danger\" type=\"button\" onclick=\"Confirm".$this->tableID."Delete('$id', '$name')\" value=\"Delete\">";
     }
 
     /**
-     * 
+     *
      * @param type $id
      * @param type $name
      * @return string
      */
-    private function addDeleteScript() {
+    private function addDeleteScript()
+    {
         $html = "<script type=\"text/javascript\">";
         $html .= "function Confirm".$this->tableID."Delete(id, name)";
         $html .= "{";
-        $html .= '	if (confirm(`Delete ${name} ?`))';
-        $html .= '		location.href=`'.$this->deleteURL . '/${id}`;';
-        $html .= "	}";
+        $html .= '    if (confirm(`Delete ${name} ?`))';
+        $html .= '        location.href=`'.$this->deleteURL . '/${id}`;';
+        $html .= "    }";
         $html .= "</script>";
         return $html;
     }
@@ -478,12 +489,12 @@ class TableView {
      * Generate a basic table view
      *
      * @param array $data
-     *        	table data ( 'key' => value)
+     *            table data ( 'key' => value)
      * @param array $headers
-     *        	table headers ( 'key' => 'headername' )
+     *            table headers ( 'key' => 'headername' )
      */
-    public function exportCsv($data, $headers) {
-
+    public function exportCsv($data, $headers)
+    {
         $csv = "";
 
         // table header
@@ -505,5 +516,4 @@ class TableView {
         header("Content-disposition: filename=export.csv");
         echo $csv;
     }
-
 }
