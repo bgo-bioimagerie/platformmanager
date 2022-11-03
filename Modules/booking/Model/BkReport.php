@@ -16,10 +16,10 @@ class BkReport extends Model
      * @param array $champ
      * @param array $type_recherche
      * @param array $text
-     * @param array $contition_et_ou
+     * @param array $condition_et_ou
      * @return multitype:
      */
-    public function reportstats($id_space, $datebegin, $dateend, $champ, $type_recherche, $text, $contition_et_ou)
+    public function reportstats($id_space, $datebegin, $dateend, $champ, $type_recherche, $text, $condition_et_ou)
     {
         $sql = "SELECT distinct e.id, e.start_time, e.end_time, e.short_description, e.full_description, "
                 . "e.color_type_id, e.recipient_id, "
@@ -44,7 +44,7 @@ class BkReport extends Model
             for ($i = 0 ; $i < count($champ) ; $i++) {
                 if ($text[$i] != "") {
                     if (!$first) {
-                        $sql .= " " . $contition_et_ou . " ";
+                        $sql .= " " . $condition_et_ou . " ";
                     }
                     if ($first) {
                         $first = false;
