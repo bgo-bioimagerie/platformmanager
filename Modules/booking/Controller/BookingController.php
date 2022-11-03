@@ -82,22 +82,9 @@ class BookingController extends BookingabstractController
     {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
 
-
         $id_area = $this->request->getParameterNoException("id_area");
         $id_resource = $this->request->getParameterNoException("id_resource");
         $curentDate = $this->request->getParameterNoException("curentDate");
-
-        /*
-        if ($id_area == "" && isset($_SESSION['bk_id_area'])) {
-            $id_area = $_SESSION['bk_id_area'];
-        }
-        if ($id_resource == "" && isset($_SESSION['bk_id_resource'])) {
-            $id_resource = $_SESSION['bk_id_resource'];
-        }
-        if ($id_resource == "" && isset($_SESSION['bk_curentDate'])) {
-            $curentDate = $_SESSION['bk_curentDate'];
-        }
-        */
 
         $this->bookingAction($id_space, $id_area, $id_resource, $curentDate);
     }
@@ -115,8 +102,6 @@ class BookingController extends BookingabstractController
         if ($this->request->getParameterNoException("curentDate") != "") {
             $curentDate = CoreTranslator::dateToEn($this->request->getParameterNoException("curentDate"), $lang);
         }
-
-        // $menuData = $this->calendarMenuData($id_space, $id_area, $id_resource, $curentDate);
 
         $modelResource = new ResourceInfo();
         $userSettingsModel = new CoreUserSettings();
@@ -178,7 +163,7 @@ class BookingController extends BookingabstractController
 
 
     /**
-     * @deprecated, unused?
+     * @deprecated, used by tests only?
      */
     public function book($id_space)
     {
@@ -1072,7 +1057,9 @@ class BookingController extends BookingabstractController
             //$modelDefault->setArgs(['id_space' => $id_space, 'param' => $param]);
             return $modelDefault->editreservationdefault($id_space, $param);
         } else {
-            /// todo run plugin
+            Configuration::getLogger()->warning("[booking][plugin=$editResaFunction] booking plugins will be deprecated");
+            // run plugin
+            // deprecated and uses only old routing way
             $modelCache = new FCache();
             $pathInfo = $modelCache->getURLInfos($editResaFunction);
             $path = $this->request->getParameter('path');
@@ -1110,7 +1097,6 @@ class BookingController extends BookingabstractController
                 $argsValues[$args[$i]["name"]] = "";
             }
         }
-
 
         return $argsValues;
     }

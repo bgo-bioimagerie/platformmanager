@@ -230,6 +230,9 @@ class Router
         }
     }
 
+    /**
+     * Calls runAction on input controller
+     */
     protected function runAction($controller, $urlInfo, $action, $args)
     {
         if ($urlInfo["pathInfo"]["isapi"]) {
@@ -298,7 +301,7 @@ class Router
      *
      * @param Request $request
      *            Input Request
-     * @return Instance of a controller
+     * @return Controller of a controller
      * @throws Exception If the controller cannot be instanciate
      */
     private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[])
@@ -334,6 +337,7 @@ class Router
         } else {
             $rooterController = Configuration::get("routercontroller");
             if ($rooterController != "") {
+                Configuration::getLogger()->warning('[router] controller not found, using routercontroller', ['router' => $rooterController, 'module' => $module, 'controller' => $classController]);
                 $rooterControllerArray = explode("::", "$rooterController");
                 if (count($rooterControllerArray) == 3) {
                     $classController = $rooterControllerArray[2];
