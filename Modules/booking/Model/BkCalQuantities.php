@@ -21,14 +21,14 @@ class BkCalQuantities extends Model {
     public function createTable() {
 
         $sql = "CREATE TABLE IF NOT EXISTS `bk_calquantities` (
-		`id` int(11) NOT NULL AUTO_INCREMENT,
+        `id` int(11) NOT NULL AUTO_INCREMENT,
         `id_quantity` int(11) NOT NULL,
         `id_resource` int(11) NOT NULL,
         `name` varchar(30) NOT NULL DEFAULT '',
-		`mandatory` int(1) NOT NULL,
+        `mandatory` int(1) NOT NULL,
         `is_invoicing_unit` int(1) NOT NULL DEFAULT 0,
-		PRIMARY KEY (`id`)
-		);";
+        PRIMARY KEY (`id`)
+        );";
 
         return $this->runRequest($sql);
     }
@@ -207,7 +207,7 @@ class BkCalQuantities extends Model {
 
         $sql = "UPDATE bk_calendar_entry
                 SET supplementary=?
-				WHERE id=? AND deleted=0 AND id_space=?";
+                WHERE id=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($supData, $reservation_id, $id_space));
     }
 
