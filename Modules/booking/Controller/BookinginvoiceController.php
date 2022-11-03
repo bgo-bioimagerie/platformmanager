@@ -252,7 +252,7 @@ class BookinginvoiceController extends InvoiceAbstractController
         $form->setFormAdd($formAdd);
 
         $discount = $modelInvoice->getDiscount($id_space, $id_invoice);
-        $form->addText("discount", BookinginvoiceTranslator::Discount($lang), false, $discount);
+        $form->addText("discount", InvoicesTranslator::Discount($lang), false, $discount);
 
 
         $total = (1 - floatval($discount) / 100) * $total;
