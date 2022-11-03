@@ -68,10 +68,10 @@ class Navbar
         if (!isset($_SESSION["user_status"])) {
             return null;
         }
-        $user_status_id = $_SESSION["user_status"];
+        $userStatusId = $_SESSION["user_status"];
 
         $toolAdmin = null;
-        if ($user_status_id >= CoreStatus::$ADMIN) {
+        if ($userStatusId >= CoreStatus::$ADMIN) {
             $modulesModel = new CoreAdminMenu();
             $toolAdmin = $modulesModel->getAdminMenus();
         }
@@ -115,7 +115,7 @@ abstract class Controller
     protected $module;
     protected $args;
 
-    /** recieved request */
+    /** received request */
     protected $request;
 
     protected $twig;
@@ -138,14 +138,15 @@ abstract class Controller
     {
         $this->request = $request;
         $loader = new \Twig\Loader\FilesystemLoader(__DIR__.'/..');
-        if (!is_dir('/tmp/pfm')) {
-            mkdir('/tmp/pfm');
+        $baseTmpDir = sys_get_temp_dir() . DIRECTORY_SEPARATOR. 'pfm';
+        if (!is_dir($baseTmpDir)) {
+            mkdir($baseTmpDir, 0750, true);
         }
         if (getenv('PFM_MODE')=='dev') {
             $this->twig = new \Twig\Environment($loader, []);
         } else {
             $this->twig = new \Twig\Environment($loader, [
-                'cache' => '/tmp/pfm'
+                'cache' => $baseTmpDir
             ]);
         }
 
@@ -191,8 +192,6 @@ abstract class Controller
      */
     public function mainMenu()
     {
-        //$m = new CoreSpace();
-        //$space = $m->getSpace($id_space);
         $space = $this->currentSpace;
         if ($space === null) {
             return '';
@@ -271,9 +270,7 @@ abstract class Controller
         $actionName = $action . "Action";
         if (method_exists($this, $actionName)) {
             $this->action = $action;
-            //print_r($args);
             return call_user_func_array(array($this, $actionName), $args);
-        //$this->{$this->action}();
         } else {
             $classController = get_class($this);
             throw new PfmException("Action '$action'Action not defined in the class '$classController'", 500);
@@ -290,18 +287,13 @@ abstract class Controller
             ob_start();
             try {
                 echo json_encode($data);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
             }
             ob_end_flush();
             flush();
         }
     }
-
-    /**
-     * Define the default action
-     */
-    //public abstract function indexAction();
 
     /**
      * Generate the vue associated to the curent controller
@@ -335,7 +327,7 @@ abstract class Controller
                 ob_start();
                 try {
                     echo json_encode($dataView['data']);
-                } catch(Exception $e) {
+                } catch (Exception $e) {
                     Configuration::getLogger()->error('[api] json error', ['error', $e->getMessage()]);
                 }
                 ob_end_flush();
@@ -392,7 +384,7 @@ abstract class Controller
                     try {
                         ob_start();
                         echo $this->twig->render("Modules/".$this->module."/View/$controllerView/$actionView.twig", $dataView);
-                    } catch(Throwable $e) {
+                    } catch (Throwable $e) {
                         Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
                         $view = new View($actionView, $controllerView, $this->module);
                         $view->generate($dataView);
@@ -415,7 +407,7 @@ abstract class Controller
             try {
                 ob_start();
                 echo $this->twig->render("Modules/".$this->module."/View/$controllerView/$actionView.twig", $dataView);
-            } catch(Throwable $e) {
+            } catch (Throwable $e) {
                 Configuration::getLogger()->debug('[view] twig error, using php view', ['err' => $e->getMessage()]);
                 $view = new View($actionView, $controllerView, $this->module);
                 $view->generate($dataView);
@@ -432,7 +424,7 @@ abstract class Controller
      * Redirect to a controller and a specific action
      *
      * @param string $path Path to the controller adn action
-     * @param type $args Get arguments
+     * @param array $args Get arguments
      */
     protected function redirect($path, $args = array(), $data = array())
     {
@@ -454,7 +446,6 @@ abstract class Controller
             $pathElements = [];
             foreach ($args as $key => $val) {
                 $pathElements[] = $key . "=" . $val;
-                //$path .= "&" . $key . "=" . $val;
             }
             $path .= implode('&', $pathElements);
         }
@@ -477,6 +468,5 @@ abstract class Controller
         $newUrl = $rootWeb . $path;
         $newUrl = str_replace('//', '/', $newUrl);
         header("Location:" . $newUrl);
-        // header("Location:" . $rootWeb . $path);
     }
 }
