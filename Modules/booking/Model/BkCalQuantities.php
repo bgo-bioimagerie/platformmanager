@@ -1,13 +1,14 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/booking/Model/BkBookingAbstractSups.php';
 
 /**
  * Model for calendar suplementary informations
  *
  * @author Sylvain Prigent
  */
-class BkCalQuantities extends Model
+class BkCalQuantities extends BkBookingAbstractSups
 {
     public function __construct()
     {
@@ -46,18 +47,6 @@ class BkCalQuantities extends Model
         return $data->fetchAll();
     }
 
-    public function getByResource($id_space, $id_resource, $include_deleted=false, $sort=false)
-    {
-        $sql = "SELECT * from bk_calquantities WHERE id_resource=? AND id_space=?";
-        if (!$include_deleted) {
-            $sql .= " AND deleted=0";
-        }
-        if ($sort) {
-            $sql .= " ORDER BY deleted ASC, id DESC";
-        }
-        return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
-    }
-
     public function getById($id_space, $id_qte)
     {
         $sql = "SELECT * FROM bk_calquantities WHERE id=? AND id_space=?";
@@ -77,13 +66,6 @@ class BkCalQuantities extends Model
     public function getAll($id_space)
     {
         $sql = "select * from bk_calquantities WHERE deleted=0 AND id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
-    }
-
-    public function getForSpace($id_space, $sort)
-    {
-        //$sql = "select * from bk_calquantities WHERE id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY " . $sort . " ASC;";
-        $sql = "SELECT * FROM bk_calquantities WHERE deleted=0 AND id_space=?";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 

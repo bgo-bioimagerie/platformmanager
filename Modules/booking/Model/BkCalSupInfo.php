@@ -1,13 +1,14 @@
 <?php
 
 require_once 'Framework/Model.php';
+require_once 'Modules/booking/Model/BkBookingAbstractSups.php';
 
 /**
  * Model for calendar suplementary informations
  *
  * @author Sylvain Prigent
  */
-class BkCalSupInfo extends Model
+class BkCalSupInfo extends BkBookingAbstractSups
 {
     public function __construct()
     {
@@ -45,25 +46,9 @@ class BkCalSupInfo extends Model
         return $data->fetchAll();
     }
 
-    public function getByResource($id_space, $id_resource, $include_deleted = false)
-    {
-        $sql = "SELECT * FROM bk_calsupinfo WHERE id_resource=? AND id_space=?";
-        if (!$include_deleted) {
-            $sql .= " AND deleted=0";
-        }
-        return $this->runRequest($sql, array($id_resource, $id_space))->fetchAll();
-    }
-
     public function getAll($id_space)
     {
         $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=?";
-        return $this->runRequest($sql, array($id_space))->fetchAll();
-    }
-
-    public function getForSpace($id_space, $sort)
-    {
-        $sql = "SELECT * FROM bk_calsupinfo WHERE deleted=0 AND id_space=? ORDER BY $sort ASC";
-        //$sql = "select * from bk_calsupinfo WHERE deleted=0 AND id_space=? AND id_resource IN (SELECT id FROM re_info WHERE id_space=?) ORDER BY ".$sort." ASC;";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
