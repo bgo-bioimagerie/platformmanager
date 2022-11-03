@@ -26,7 +26,7 @@ class BkPackage extends Model
         `id_package` int(11) NOT NULL,
         `id_resource` int(11) NOT NULL,
         `duration` decimal(10,2) NOT NULL,
-        `name` varchar(100) NOT NULL,            
+        `name` varchar(100) NOT NULL,
         PRIMARY KEY (`id`)
         );";
         $this->runRequest($sql);
