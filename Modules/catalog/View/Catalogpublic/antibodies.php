@@ -1,4 +1,4 @@
-<?php include 'Modules/catalog/View/publiclayout.php' ?>
+<?php include_once 'Modules/catalog/View/publiclayout.php' ?>
 
 <?php startblock('stylesheet') ?>
 <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">

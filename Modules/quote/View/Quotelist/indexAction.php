@@ -1,4 +1,4 @@
-<?php include 'Modules/quote/View/layout.php' ?>
+<?php include_once 'Modules/quote/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

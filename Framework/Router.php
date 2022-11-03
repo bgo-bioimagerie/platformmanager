@@ -62,17 +62,17 @@ class Router
         } else {
             unset($_SESSION['id_space']);
         }
-        $route_info = explode("/", $target);
-        $module = $route_info[0];
-        $controller_name = $route_info[1];
+        $routeInfo = explode("/", $target);
+        $module = $routeInfo[0];
+        $controllerName = $routeInfo[1];
         $controller = null;
-        $action = $route_info[2];
+        $action = $routeInfo[2];
         try {
-            $controller = $this->createControllerImp($module, $controller_name, false, $request, $args);
+            $controller = $this->createControllerImp($module, $controllerName, false, $request, $args);
         } catch (PfmRoutingException $e) {
             $this->logger->warning('no controller found, redirect to homepage', [
                 'url' => $request->getParameter('path'),
-                'controller' => $controller_name,
+                'controller' => $controllerName,
                 'module' => $module
             ]);
             $controller = $this->createControllerImp('core', 'coretiles', false, $request, $args);
@@ -81,7 +81,7 @@ class Router
 
         $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
         $controller->runAction($module, $action, $args);
-        return $module."_".$controller_name."_".$action;
+        return $module."_".$controllerName."_".$action;
     }
 
     private function route($request)
@@ -225,7 +225,7 @@ class Router
             $counter->incBy(1, [$reqRoute, http_response_code()]);
             $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
         }
     }
@@ -250,17 +250,6 @@ class Router
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
             }
         }
-    }
-
-    /**
-     * Install request
-     * @param Request $request
-     * @return boolean
-     * @throws Exception
-     */
-    private function install($request)
-    {
-        throw new PfmDbException("Install not supported anymore", 403);
     }
 
     /**
@@ -435,7 +424,7 @@ class Router
                 'type' => $type,
                 'message' => $exception->getMessage()
             ));
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
             echo '<br>'.$exception->getMessage();
         }

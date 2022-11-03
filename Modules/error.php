@@ -1,4 +1,4 @@
-<?php include 'Modules/layout.php' ?>
+<?php include_once 'Modules/layout.php' ?>
 
 <!-- header -->
 <?php startblock('title') ?>

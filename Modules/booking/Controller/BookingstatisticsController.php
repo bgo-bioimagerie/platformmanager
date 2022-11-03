@@ -298,7 +298,7 @@ class BookingstatisticsController extends StatisticsController
         }
 
         // build the form
-        $form = new Form($this->request, "sygrrifstats/statbookingusers");
+        $form = new Form($this->request, "statbookingusers");
         $form->setTitle(BookingTranslator::bookingusersstats($lang));
         $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $date_begin);
         $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $date_end);
@@ -388,11 +388,11 @@ class BookingstatisticsController extends StatisticsController
             $champ = $this->request->getParameterNoException('champ');
             $type_recherche = $this->request->getParameterNoException('type_recherche');
             $text = $this->request->getParameterNoException('text');
-            $contition_et_ou = $this->request->getParameterNoException('condition_et_ou');
+            $condition_et_ou = $this->request->getParameterNoException('condition_et_ou');
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
             $reportModel = new BkReport();
-            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
+            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $condition_et_ou);
 
             $outputType = $this->request->getParameterNoException('output');
 
