@@ -1,4 +1,4 @@
-<?php include 'Modules/mailer/View/layout.php' ?>
+<?php include_once 'Modules/mailer/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

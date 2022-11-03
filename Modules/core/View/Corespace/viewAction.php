@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -7,7 +7,7 @@
     if ($showCom) {
         ?>
 
-<?php include 'Modules/com/View/Comhome/comhomeScript.php';  ?>
+<?php include_once 'Modules/com/View/Comhome/comhomeScript.php';  ?>
 
 <?php
     }

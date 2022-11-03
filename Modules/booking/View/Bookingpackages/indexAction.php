@@ -1,4 +1,4 @@
-<?php include 'Modules/booking/View/layoutsettings.php' ?>
+<?php include_once 'Modules/booking/View/layoutsettings.php' ?>
 
     
 <?php startblock('content') ?>

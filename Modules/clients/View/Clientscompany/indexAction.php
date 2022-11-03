@@ -1,4 +1,4 @@
-<?php include 'Modules/clients/View/layout.php' ?>
+<?php include_once 'Modules/clients/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

@@ -1,4 +1,4 @@
-<?php include 'Modules/antibodies/View/layout.php' ?>
+<?php include_once 'Modules/antibodies/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

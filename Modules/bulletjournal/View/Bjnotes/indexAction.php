@@ -1,17 +1,17 @@
-<?php include 'Modules/bulletjournal/View/layout.php' ?>
+<?php include_once 'Modules/bulletjournal/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
 <div class="row">
 <div class="col-10" id="pm-content">
     
-    <?php include "Modules/bulletjournal/View/Bjnotes/indexHeader.php" ?>
+    <?php include_once "Modules/bulletjournal/View/Bjnotes/indexHeader.php" ?>
     
     <div class="col-6 col-12" id="pm-form" style="margin-right:5px;">
-        <?php include "Modules/bulletjournal/View/Bjnotes/indexDays.php" ?>
+        <?php include_once "Modules/bulletjournal/View/Bjnotes/indexDays.php" ?>
     </div>
     <div class="col-5 col-12" id="pm-form" style="margin-left:0px;">
-        <?php include "Modules/bulletjournal/View/Bjnotes/indexMonth.php" ?>
+        <?php include_once "Modules/bulletjournal/View/Bjnotes/indexMonth.php" ?>
     </div>
 </div>
 </div>
@@ -66,6 +66,6 @@
 <!--  ************  -->
 <!--   Javascript   -->
 <!--  ************  -->
-<?php include "Modules/bulletjournal/View/Bjnotes/indexJS.php"; ?>
+<?php include_once "Modules/bulletjournal/View/Bjnotes/indexJS.php"; ?>
 
 <?php endblock(); ?>

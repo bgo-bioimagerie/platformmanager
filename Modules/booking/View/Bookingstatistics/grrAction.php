@@ -1,4 +1,4 @@
-<?php include 'Modules/statistics/View/layout.php' ?>
+<?php include_once 'Modules/statistics/View/layout.php' ?>
 
     
 <?php startblock('content') ?>

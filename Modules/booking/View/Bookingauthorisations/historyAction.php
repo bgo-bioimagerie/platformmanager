@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/Corespaceaccess/layout.php' ?>
+<?php include_once 'Modules/core/View/Corespaceaccess/layout.php' ?>
 
     
 <?php startblock('content') ?>

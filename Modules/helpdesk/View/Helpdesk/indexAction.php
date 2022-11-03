@@ -1,5 +1,5 @@
 <!doctype html>
-<?php include 'Modules/layout.php' ?>
+<?php include_once 'Modules/layout.php' ?>
 
 <?php startblock('meta') ?>
     <meta name="robots" content="noindex" />

@@ -1,4 +1,4 @@
-<?php include 'Modules/booking/View/layout.php' ?>
+<?php include_once 'Modules/booking/View/layout.php' ?>
 
 <?php startblock('meta') ?>
     <meta name="robots" content="noindex" />

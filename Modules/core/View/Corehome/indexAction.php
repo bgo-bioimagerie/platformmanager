@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include_once 'Modules/core/View/layout.php' ?>
 
 <?php startblock('stylesheet') ?>
 <link rel='stylesheet' type='text/css' href='Modules/core/Theme/space.css' />

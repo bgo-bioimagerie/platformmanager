@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 <?php
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
