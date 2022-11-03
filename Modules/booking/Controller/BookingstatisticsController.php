@@ -298,7 +298,7 @@ class BookingstatisticsController extends StatisticsController
         }
 
         // build the form
-        $form = new Form($this->request, "sygrrifstats/statbookingusers");
+        $form = new Form($this->request, "statbookingusers");
         $form->setTitle(BookingTranslator::bookingusersstats($lang));
         $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $date_begin);
         $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $date_end);

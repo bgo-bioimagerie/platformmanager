@@ -26,7 +26,6 @@ class RevisasController extends ResourcesBaseController
     {
         parent::__construct($request, $space);
         $this->model = new ReArea();
-        //$this->checkAuthorizationMenu("resources");
     }
 
     /**
@@ -45,10 +44,8 @@ class RevisasController extends ResourcesBaseController
         $table = new TableView();
 
         $table->setTitle(ResourcesTranslator::Visa($lang), 3);
-        //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("resourceseditvisa/" . $id_space);
         $table->addDeleteButton("resourcesdeletevisa/" . $id_space, "id", "id");
-        //$table->addPrintButton("sygrrifauthorisations/visa/");
 
         $modelResourceCategory = new ReCategory();
         $modelUser = new CoreUser();

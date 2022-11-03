@@ -4,7 +4,7 @@ require_once 'Framework/Model.php';
 require_once 'Modules/booking/Model/BkNightWE.php';
 
 /**
- * Class defining the Sygrrif graph model
+ * Class defining the graph model
  *
  * @author Sylvain Prigent
  */

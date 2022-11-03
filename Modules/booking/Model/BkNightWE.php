@@ -3,7 +3,7 @@
 require_once 'Framework/Model.php';
 
 /**
- * Class defining the Sygrrif pricing model
+ * Class defining the pricing model
  *
  * @author Sylvain Prigent
  */
