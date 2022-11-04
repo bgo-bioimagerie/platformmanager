@@ -1,8 +1,8 @@
 <!doctype html>
-<?php include 'Modules/layout.php' ?>
+<?php include_once 'Modules/layout.php' ?>
 
 <?php startblock('meta') ?>
-	<meta name="robots" content="noindex" />
+    <meta name="robots" content="noindex" />
 <?php endblock() ?>
 
 
@@ -51,11 +51,11 @@ blockquote {
             <div v-bind:class="filter==4 ? 'selection':''" @click="setFilter(4)">Spam</div>
             <?php
             if ($role > CoreSpace::$MANAGER) {
-            ?>
+                ?>
             <div @click="getSettings()">Settings</div>
             <?php
             }
-            ?>
+?>
         </div>
         <div v-if="settings" class="col-10">
             <div class="form">
@@ -235,7 +235,7 @@ Vue.createApp({
             unread: {}
         }
     },
-    created () { this.fetchTickets(); <?php if($ticket) {
+    created () { this.fetchTickets(); <?php if ($ticket) {
         echo "this.fetchTicket(".$ticket['id'].")";
     } ?> },
     methods: {

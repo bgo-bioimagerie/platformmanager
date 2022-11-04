@@ -20,20 +20,21 @@ require_once 'Modules/core/Model/CoreMainMenuItem.php';
  * @author sprigent
  * Controller for the home page
  */
-class CoremainmenuController extends CoresecureController {
-
+class CoremainmenuController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         if (!$this->isUserAuthorized(CoreStatus::$ADMIN)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
     }
 
-    public function indexAction() {
-
+    public function indexAction()
+    {
         $lang = $this->getLanguage();
 
         $modelMenu = new CoreMainMenu();
@@ -61,13 +62,13 @@ class CoremainmenuController extends CoresecureController {
      *
      * @param int $id
      */
-    public function editAction($id) {
-
+    public function editAction($id)
+    {
         $lang = $this->getLanguage();
 
         $modelMenu = new CoreMainMenu();
         $value = $modelMenu->get($id);
-        if(!$value) {
+        if (!$value) {
             $value = ["name" => "", "display_order" => "0"];
         }
 
@@ -79,7 +80,6 @@ class CoremainmenuController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuedit/" . $id);
 
         if ($form->check()) {
-
             $menuid = $modelMenu->set($id, $form->getParameter("name"), $form->getParameter("display_order"));
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
@@ -96,15 +96,16 @@ class CoremainmenuController extends CoresecureController {
      *
      * @param int $id
      */
-    public function deleteAction($id) {
+    public function deleteAction($id)
+    {
         $model = new CoreMainMenu();
         $model->delete($id);
 
         $this->redirect("coremainmenus");
     }
 
-    public function submenusAction() {
-
+    public function submenusAction()
+    {
         $lang = $this->getLanguage();
 
         $modelMenu = new CoreMainSubMenu();
@@ -129,12 +130,13 @@ class CoremainmenuController extends CoresecureController {
         ));
     }
 
-    public function submenueditAction($id) {
+    public function submenueditAction($id)
+    {
         $lang = $this->getLanguage();
 
         $modelMenu = new CoreMainSubMenu();
         $value = $modelMenu->get($id);
-        if(!$value) {
+        if (!$value) {
             $value = ["name" => "", "display_order" => "0", "id_main_menu" => "0"];
         }
 
@@ -150,12 +152,12 @@ class CoremainmenuController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coremainsubmenuedit/" . $id);
 
         if ($form->check()) {
-
             $menuid = $modelMenu->set(
-                    $id,
-                    $form->getParameter("name"),
-                    $form->getParameter("id_main_menu"),
-                    $form->getParameter("display_order"));
+                $id,
+                $form->getParameter("name"),
+                $form->getParameter("id_main_menu"),
+                $form->getParameter("display_order")
+            );
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
             $this->redirect("coremainsubmenus", array(), ['menu' => ['id' => $menuid, 'name' => $form->getParameter("name"), 'id_main_menu' => $form->getParameter("id_main_menu")]]);
@@ -169,14 +171,16 @@ class CoremainmenuController extends CoresecureController {
         ));
     }
 
-    public function submenudeleteAction($id){
+    public function submenudeleteAction($id)
+    {
         $model = new CoreMainSubMenu();
         $model->delete($id);
 
         $this->redirect("coremainsubmenus");
     }
 
-    public function itemsAction(){
+    public function itemsAction()
+    {
         $lang = $this->getLanguage();
 
 
@@ -202,10 +206,10 @@ class CoremainmenuController extends CoresecureController {
             "tableHtml" => $tableHtml,
             "data" => ["menus" => $items]
         ));
-
     }
 
-    public function itemeditAction($id){
+    public function itemeditAction($id)
+    {
         $lang = $this->getLanguage();
 
         $modelItem = new CoreMainMenuItem();
@@ -214,14 +218,14 @@ class CoremainmenuController extends CoresecureController {
         $modelSpace = new CoreSpace();
         $spaceList = $modelSpace->getForList();
 
-        if(!$item) {
+        if (!$item) {
             $item = [
                 "name" => "",
                 "display_order" => "0",
                 "id_sub_menu" => "0",
                 "id_space" => "0"
             ];
-            if($spaceList && count($spaceList['ids']) > 1) {
+            if ($spaceList && count($spaceList['ids']) > 1) {
                 $item['id_space'] = $spaceList['ids'][1];
             }
         }
@@ -239,15 +243,15 @@ class CoremainmenuController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "coremainmenuitemedit/".$id);
 
         if ($form->check()) {
-            if(!$form->getParameter("id_space")) {
+            if (!$form->getParameter("id_space")) {
                 throw new PfmParamException("Invalid space parameter");
             }
             $itemid = $modelItem->set(
-                    $id,
-                    $form->getParameter("name"),
-                    $form->getParameter("id_sub_menu"),
-                    $form->getParameter("id_space"),
-                    $form->getParameter("display_order")
+                $id,
+                $form->getParameter("name"),
+                $form->getParameter("id_sub_menu"),
+                $form->getParameter("id_space"),
+                $form->getParameter("display_order")
             );
             $_SESSION['flash'] = CoreTranslator::MenuSaved($lang);
             $_SESSION["flashClass"] = 'success';
@@ -264,11 +268,11 @@ class CoremainmenuController extends CoresecureController {
      *
      * @param int $id
      */
-    public function itemdeleteAction($id) {
+    public function itemdeleteAction($id)
+    {
         $model = new CoreMainMenuItem();
         $model->delete($id);
 
         $this->redirect("coremainmenuitems");
     }
-
 }

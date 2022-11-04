@@ -1,11 +1,11 @@
-<?php include 'Modules/resources/View/layout.php' ?>
+<?php include_once 'Modules/resources/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
 
 <div class="pm-table">
 
-    <?php include "Modules/resources/View/Resourcesinfo/edittabs.php" ?>
+    <?php include_once "Modules/resources/View/Resourcesinfo/edittabs.php" ?>
     <div class="col-2" style="margin-top: 20px;">
         <button type="button" onclick="location.href = 'resourceeditevent/<?php echo $id_space . "/" . $id_resource ?>/0'" class="btn btn-primary"><?php echo ResourcesTranslator::Add_event($lang) ?></button>
     </div> 

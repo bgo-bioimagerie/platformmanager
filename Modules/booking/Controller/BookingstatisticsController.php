@@ -29,26 +29,27 @@ require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 require_once 'Modules/statistics/Controller/StatisticsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingstatisticsController extends StatisticsController {
-
+class BookingstatisticsController extends StatisticsController
+{
     /**
      * @bug sends back stats as print_r, not a report
      */
-    public function statquantitiesAction($id_space){
+    public function statquantitiesAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         $form = new Form($this->request, "bookingStatQuantities");
         $form->setTitle(BookingTranslator::statQuantities($lang));
         $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
         $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "statquantities/" .$id_space);
-        
-        if ($form->check()){
+
+        if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
             $role = $cs->getSpaceMenusRole($id_space, 'statistics');
@@ -61,36 +62,34 @@ class BookingstatisticsController extends StatisticsController {
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_QUANTITIES,
                 "dateBegin" => $dateBegin,
-                "dateEnd" => $dateEnd, 
+                "dateEnd" => $dateEnd,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
-            
+
             return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
-        
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
         ));
-        
-        
     }
 
-    public function statreservationrespAction($id_space){
-        
+    public function statreservationrespAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
-        
+
         $form = new Form($this->request, "bookingStatTimeResp");
         $form->setTitle(BookingTranslator::statResp($lang));
         $form->addDate("datebegin", BookingTranslator::Date_Begin($lang), true);
         $form->addDate("dateend", BookingTranslator::Date_End($lang), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "bookingstatreservationresp/" .$id_space);
-        
-        if ($form->check()){
+
+        if ($form->check()) {
             $c = new CoreFiles();
             $cs = new CoreSpace();
             $role = $cs->getSpaceMenusRole($id_space, 'statistics');
@@ -103,27 +102,27 @@ class BookingstatisticsController extends StatisticsController {
                 "action" => Events::ACTION_STATISTICS_REQUEST,
                 "stat" => BkStats::STATS_BK_TIME,
                 "dateBegin" => $dateBegin,
-                "dateEnd" => $dateEnd, 
+                "dateEnd" => $dateEnd,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
             ]);
-            
+
             return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
-        
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
             "formHtml" => $form->getHtml($lang)
         ));
     }
-    
+
     /**
      * Statistics form pages
      */
-    public function statreservationsAction($id_space) {
-
+    public function statreservationsAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -187,7 +186,7 @@ class BookingstatisticsController extends StatisticsController {
                 "dateBegin" => $dateBegin,
                 "dateEnd" => $dateEnd,
                 "excludeColorCode" => $excludeColorCode,
-                "generateclientstats" => $generateclientstats, 
+                "generateclientstats" => $generateclientstats,
                 "user" => ["id" => $_SESSION['id_user']],
                 "file" => ["id" => $fid],
                 "space" => ["id" => $id_space]
@@ -205,7 +204,8 @@ class BookingstatisticsController extends StatisticsController {
     /**
      * @deprecated
      */
-    public function statreservationsqueryAction($id_space) {
+    public function statreservationsqueryAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $month_start = $this->request->getParameter("month_start");
@@ -254,17 +254,16 @@ class BookingstatisticsController extends StatisticsController {
             $content .= $g[0] . " ; " . $g[1] . "\r\n";
         }
 
-        if(getenv('PFM_MODE') == 'test') {
+        if (getenv('PFM_MODE') == 'test') {
             return ['data' => ['stats' => $content]];
         }
         header("Content-Type: application/csv-tab-delimited-table");
         header("Content-disposition: filename=booking_stats.csv");
         echo $content;
-        
     }
 
-    public function statbookingusersAction($id_space) {
-
+    public function statbookingusersAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -299,7 +298,7 @@ class BookingstatisticsController extends StatisticsController {
         }
 
         // build the form
-        $form = new Form($this->request, "sygrrifstats/statbookingusers");
+        $form = new Form($this->request, "statbookingusers");
         $form->setTitle(BookingTranslator::bookingusersstats($lang));
         $form->addDate('startdate', BookingTranslator::Date_Begin($lang), true, $date_begin);
         $form->addDate('enddate', BookingTranslator::Date_End($lang), true, $date_end);
@@ -337,14 +336,14 @@ class BookingstatisticsController extends StatisticsController {
         }
     }
 
-    public function grrAction($id_space) {
+    public function grrAction($id_space)
+    {
         // table not file, do not async
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $isrequest = $this->request->getParameterNoException('is_request');
         if ($isrequest == "y") {
-
             // get the form parameters
             $searchDate_start = $this->request->getParameterNoException('searchDate_start');
             $searchDate_end = $this->request->getParameterNoException('searchDate_end');
@@ -389,11 +388,11 @@ class BookingstatisticsController extends StatisticsController {
             $champ = $this->request->getParameterNoException('champ');
             $type_recherche = $this->request->getParameterNoException('type_recherche');
             $text = $this->request->getParameterNoException('text');
-            $contition_et_ou = $this->request->getParameterNoException('condition_et_ou');
+            $condition_et_ou = $this->request->getParameterNoException('condition_et_ou');
             $entrySummary = $this->request->getParameterNoException('summary_rq');
 
             $reportModel = new BkReport();
-            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $contition_et_ou);
+            $table = $reportModel->reportstats($id_space, $searchDate_s, $searchDate_e, $champ, $type_recherche, $text, $condition_et_ou);
 
             $outputType = $this->request->getParameterNoException('output');
 
@@ -413,7 +412,7 @@ class BookingstatisticsController extends StatisticsController {
                     'table' => $table
                 ));
                 return;
-            } else if ($outputType == 2) { // only summary
+            } elseif ($outputType == 2) { // only summary
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
                 $this->render(array(
                     'lang' => $lang,
@@ -428,7 +427,7 @@ class BookingstatisticsController extends StatisticsController {
                     'summaryTable' => $summaryTable
                 ));
                 return;
-            } else if ($outputType == 3) { // details and summary
+            } elseif ($outputType == 3) { // details and summary
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
                 $this->render(array(
                     'lang' => $lang,
@@ -444,9 +443,9 @@ class BookingstatisticsController extends StatisticsController {
                     'summaryTable' => $summaryTable
                 ));
                 return;
-            } else if ($outputType == 4) { // details csv
+            } elseif ($outputType == 4) { // details csv
                 return $this->exportDetailsCSV($table, $lang);
-            } else if ($outputType == 5) { // summary csv
+            } elseif ($outputType == 5) { // summary csv
                 $summaryTable = $reportModel->summaryseReportStats($table, $entrySummary);
                 return $this->exportSummaryCSV($summaryTable);
             }
@@ -463,8 +462,8 @@ class BookingstatisticsController extends StatisticsController {
      * @param array $table
      * @param string $lang
      */
-    private function exportDetailsCSV($table, $lang) {
-
+    private function exportDetailsCSV($table, $lang)
+    {
         $content = "";
         $content.= ResourcesTranslator::Area($lang) . " ; "
                 . ResourcesTranslator::resource($lang) . " ; "
@@ -490,7 +489,7 @@ class BookingstatisticsController extends StatisticsController {
             $content.= "\r\n";
         }
 
-        if(getenv('PFM_MODE') == 'test') {
+        if (getenv('PFM_MODE') == 'test') {
             return $content;
         }
 
@@ -503,8 +502,8 @@ class BookingstatisticsController extends StatisticsController {
      * Internal method for GRR stats
      * @param array $table
      */
-    private function exportSummaryCSV($summaryTable) {
-
+    private function exportSummaryCSV($summaryTable)
+    {
         $countTable = $summaryTable['countTable'];
         $timeTable = $summaryTable['timeTable'];
         $resourcesNames = $summaryTable['resources'];
@@ -519,7 +518,7 @@ class BookingstatisticsController extends StatisticsController {
         }
         $content .= "Total \r\n";
 
-        // body   
+        // body
         $i = -1;
         $totalCG = 0;
         $totalHG = 0;
@@ -541,7 +540,7 @@ class BookingstatisticsController extends StatisticsController {
             $totalHG += $totalH;
         }
 
-        // total line   
+        // total line
         $content .= "Total ; ";
         for ($i = 0; $i < count($resourcesNames); $i++) {
             // calcualte the sum
@@ -556,7 +555,7 @@ class BookingstatisticsController extends StatisticsController {
         $content .= "(" . $totalCG . ")" . $totalHG / 3600;
         $content .= " \r\n ";
 
-        if(getenv('PFM_MODE') == 'test') {
+        if (getenv('PFM_MODE') == 'test') {
             return $content;
         }
 
@@ -564,6 +563,4 @@ class BookingstatisticsController extends StatisticsController {
         header("Content-disposition: filename=rapport.csv");
         echo $content;
     }
-
-
 }

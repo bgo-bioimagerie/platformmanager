@@ -4,9 +4,10 @@ require_once 'Framework/Model.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 
-class Quote extends Model {
-
-    public function __construct() {
+class Quote extends Model
+{
+    public function __construct()
+    {
         $this->tableName = "qo_quotes";
         $this->setColumnsInfo("id", "int(11)", "");
         $this->setColumnsInfo("id_space", "int(11)", 0);
@@ -21,13 +22,15 @@ class Quote extends Model {
         $this->primaryKey = "id";
     }
 
-    public function getAll($id_space) {
+    public function getAll($id_space)
+    {
         $sql = "SELECT * FROM qo_quotes WHERE id_space=? AND deleted=0";
         return $this->runRequest($sql, array($id_space))->fetchAll();
     }
 
-    public function get($id_space, $id) {
-        if(!$id) {
+    public function get($id_space, $id)
+    {
+        if (!$id) {
             return [
                 "id" => 0,
                 "recipient" => "",
@@ -47,13 +50,14 @@ class Quote extends Model {
     /**
      * Get all infos relative to a quote.
      * Behaviour depends on how quote has been created (w/wo client_id, belonging_id or user_id)
-     * 
+     *
      * @param int|string $id_space
      * @param int|string $id id of the quote
-     * 
+     *
      * @return array(string) quote infos
      */
-    public function getAllInfo($id_space, $id) {
+    public function getAllInfo($id_space, $id)
+    {
         $sql = "SELECT * FROM qo_quotes WHERE id=? AND id_space=? AND deleted=0";
         $data = $this->runRequest($sql, array($id, $id_space))->fetch();
 
@@ -80,21 +84,21 @@ class Quote extends Model {
             }
         }
         $data['client'] = $client;
-        
+
         if ($data['id_user'] != 0) {
             $data["recipient"] = $modelUser->getUserFUllName($data["id_user"]);
-            
         }
-        
+
         return $data;
     }
 
-    public function set($id, $id_space, $recipient, $recipient_email, $address, $id_belonging, $id_user, $id_client, $date_open) {
-        if($date_open == "") {
+    public function set($id, $id_space, $recipient, $recipient_email, $address, $id_belonging, $id_user, $id_client, $date_open)
+    {
+        if ($date_open == "") {
             $date_open = null;
         }
         $date_last_modified = date('Y-m-d');
-        if($id_client == "") {
+        if ($id_client == "") {
             $id_client = 0;
         }
         if (!$id) {
@@ -113,7 +117,8 @@ class Quote extends Model {
         return $id;
     }
 
-    public function delete($id_space, $id) {
+    public function delete($id_space, $id)
+    {
         $sql = "UPDATE qo_quotes SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
         Events::send([
@@ -122,5 +127,4 @@ class Quote extends Model {
             "quote" => ["id" => $id]
         ]);
     }
-
 }

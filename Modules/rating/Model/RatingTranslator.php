@@ -2,104 +2,118 @@
 
 /**
  * Class to translate the rating views
- * 
+ *
  * @author sprigent
  *
  */
-class RatingTranslator {
-
-    public static function configuration($lang = "") {
+class RatingTranslator
+{
+    public static function configuration($lang = "")
+    {
         if ($lang == "fr") {
             return "Configuration de satisfaction client";
         }
         return "Customer satisfaction configuration";
     }
 
-    public static function ratingConfigAbstract($lang) {
+    public static function ratingConfigAbstract($lang)
+    {
         if ($lang == "fr") {
             return "Le module Rating permet de noter la satisfaction client";
         }
         return "The Rating module allows to record customer satisfaction";
     }
 
-    public static function rating($lang){
+    public static function rating($lang)
+    {
         if ($lang == "fr") {
             return "Satisfaction";
         }
         return "Satisfaction";
     }
 
-    public static function Campaigns($lang){
+    public static function Campaigns($lang)
+    {
         if ($lang == "fr") {
             return "Campagnes";
         }
         return "Campaigns";
     }
 
-    public static function Campaign($lang){
+    public static function Campaign($lang)
+    {
         if ($lang == "fr") {
             return "Campagne";
         }
         return "Campaign";
     }
 
-    public static function From($lang){
+    public static function From($lang)
+    {
         if ($lang == "fr") {
             return "De";
         }
         return "From";
     }
 
-    public static function To($lang){
+    public static function To($lang)
+    {
         if ($lang == "fr") {
             return "à";
         }
         return "To";
     }
 
-    public static function Deadline($lang){
+    public static function Deadline($lang)
+    {
         if ($lang == "fr") {
             return "Date butoir";
         }
         return "Deadline";
     }
 
-    public static function CampaignSaved($lang){
+    public static function CampaignSaved($lang)
+    {
         if ($lang == "fr") {
             return "Campagne mise à jour";
         }
         return "Campaign updated";
     }
 
-    public static function CampaignStarted($lang){
+    public static function CampaignStarted($lang)
+    {
         if ($lang == "fr") {
             return "Campagne démarrée";
         }
         return "Campaign started";
     }
 
-    public static function Subject($lang){
+    public static function Subject($lang)
+    {
         if ($lang == "fr") {
             return "Titre de la campagne";
         }
         return "Campaign subject";
     }
 
-    public static function Survey($lang){
+    public static function Survey($lang)
+    {
         if ($lang == "fr") {
             return "Questionnaire de satisfaction";
         }
         return "Satisfation survey";
     }
 
-    public static function Responses($lang){
+    public static function Responses($lang)
+    {
         if ($lang == "fr") {
             return "Réponses";
         }
         return "Responses";
     }
 
-    public static function NewCampaign($lang) {
+    public static function NewCampaign($lang)
+    {
         if ($lang == 'fr') {
             return "Vous êtes sollicités pour répondre à une enquete de satisfaction. Merci de prendre le temps de répondre à cette enquête";
         } else {
@@ -107,15 +121,17 @@ class RatingTranslator {
         }
     }
 
-    public static function WarningCampaign($lang) {
+    public static function WarningCampaign($lang)
+    {
         if ($lang == 'fr') {
             return "Attention, la campagne démarrera immédiatement avec l'envoi de mails aux utilisateurs concernés";
         } else {
             return "Warning, campaign will start immediatly, sending email to concerned users";
         }
     }
-    
-    public static function Mails($lang) {
+
+    public static function Mails($lang)
+    {
         if ($lang == 'fr') {
             return "Mails envoyés";
         } else {
@@ -123,7 +139,8 @@ class RatingTranslator {
         }
     }
 
-    public static function Answers($lang) {
+    public static function Answers($lang)
+    {
         if ($lang == 'fr') {
             return "Réponses";
         } else {
@@ -131,5 +148,3 @@ class RatingTranslator {
         }
     }
 }
-
-?>

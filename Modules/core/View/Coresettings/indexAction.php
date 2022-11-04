@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include_once 'Modules/core/View/layout.php' ?>
 
 <?php startblock('content') ?>
 <div class="container">
@@ -8,8 +8,8 @@
                 <?php echo CoreTranslator::User_Settings($lang) ?>
             </h3>
     </div>
-<?php foreach($modulesControllers as $controller) {
-?>
+<?php foreach ($modulesControllers as $controller) {
+    ?>
     <div class="col-12 col-md-4">
         <div class="card">
             <div class="card-header"><?php echo $this->clean($controller["module"]) ?></div>

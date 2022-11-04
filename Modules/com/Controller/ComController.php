@@ -8,18 +8,19 @@ require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ComController extends CoresecureController {
-
-    public function sideMenu() {
+class ComController extends CoresecureController
+{
+    public function sideMenu()
+    {
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("com", $id_space);
-        
+
         $dataView = [
             'id_space' => $id_space,
             'title' =>  ComTranslator::Com($lang),
@@ -33,14 +34,16 @@ class ComController extends CoresecureController {
         return $this->twig->render("Modules/com/View/Com/navbar.twig", $dataView);
     }
 
-    public function indexAction($id_space) {
-        if($this->role  && $this->role == CoreSpace::$ADMIN) {
+    public function indexAction($id_space)
+    {
+        if ($this->role  && $this->role == CoreSpace::$ADMIN) {
             return $this->redirect('comtileedit/' . $id_space);
         }
         return $this->redirect('comnews/'.$id_space);
     }
 
-    public function navbar($id_space) {
+    public function navbar($id_space)
+    {
         $html = file_get_contents('Modules/com/View/Com/navbar.php');
 
         $lang = $this->getLanguage();
@@ -56,5 +59,4 @@ class ComController extends CoresecureController {
 
         return $html;
     }
-
 }

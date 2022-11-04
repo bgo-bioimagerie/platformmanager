@@ -4,19 +4,20 @@ require_once 'Configuration.php';
 require_once 'Errors.php';
 
 use DebugBar\DataCollector\PDO\TraceablePDO;
+
 /**
  * Abstract class Model
  * A model define an access to the database
  *
  * @author Sylvain Prigent
  */
-abstract class Model {
-
-    /** PDO object of the database 
+abstract class Model
+{
+    /** PDO object of the database
      */
     private static $bdd;
 
-    /** PDO object of the database 
+    /** PDO object of the database
      */
     protected $tableName;
     private $columnsNames;
@@ -24,7 +25,7 @@ abstract class Model {
     private $columnsDefaultValue;
     protected $primaryKey;
 
-    static $reconnectErrors = [
+    public static $reconnectErrors = [
         1317 // interrupted
         ,2002 // refused
         ,2006 // gone away
@@ -32,20 +33,20 @@ abstract class Model {
 
     /**
      * Check if table already contains a value for column
-     * 
+     *
      * @param string $columnName name of the column
      * @param mixed  $value value to search
      * @throws PfmDbException
      */
-    protected function alreadyExists($columnName, $value) {
-        if(!isset($this->tableName) || empty($this->tableName)) {
+    protected function alreadyExists($columnName, $value)
+    {
+        if (!isset($this->tableName) || empty($this->tableName)) {
             throw new PfmDbException("Table name not defined", 500);
-            
         }
         $table = $this->tableName;
         $sql = "SELECT $columnName FROM $table WHERE $columnName=?";
         $req = $this->runRequest($sql, array($value));
-        if ($req->rowCount() > 0){
+        if ($req->rowCount() > 0) {
             return true;
         }
         return false;
@@ -53,17 +54,18 @@ abstract class Model {
 
     /**
      * Run a SQL request
-     * 
+     *
      * @param string $sql SQL request
      * @param array $params Request parameters
      * @return PDOStatement Result of the request
      */
-    protected function runRequest($sql, $params = null) {
+    protected function runRequest($sql, $params = null)
+    {
         $result = null;
         if (Configuration::get('debug_sql', false)) {
             Configuration::getLogger()->debug('[sql] query', ['sql' => $sql, 'params' => $params]);
         }
-        
+
         try {
             if ($params == null) {
                 $result = self::getDatabase()->query($sql);   // direct query
@@ -71,16 +73,15 @@ abstract class Model {
                 $result = self::getDatabase()->prepare($sql); // prepared request
                 $result->execute($params);
             }
-
         } catch (Exception $e) {
             $msg = $e->getMessage();
             Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
-            if(Configuration::get('sentry_dsn', '')) {
+            if (Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
-            if(isset($e->errorInfo) && in_array($e->errorInfo[1], self::$reconnectErrors)){
+            if (isset($e->errorInfo) && in_array($e->errorInfo[1], self::$reconnectErrors)) {
                 // conn error, try to disconnect/reconnect and re-execute
-                try{
+                try {
                     self::resetDatabase();
                     if ($params == null) {
                         $result = self::getDatabase()->query($sql);   // direct query
@@ -88,15 +89,14 @@ abstract class Model {
                         $result = self::getDatabase()->prepare($sql); // prepared request
                         $result->execute($params);
                     }
-                }catch(Exception $e2){
+                } catch(Exception $e2) {
                     Configuration::getLogger()->error('[sql] connection reset failed', ['error' => $e2]);
                     Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
-                    if(Configuration::get('sentry_dsn', '')) {
+                    if (Configuration::get('sentry_dsn', '')) {
                         \Sentry\captureException($e);
                     }
                 }
             }
-
         }
         if ($result === false) {
             Configuration::getLogger()->debug('[sql] error', ['sql' => $sql, 'params' => $params]);
@@ -104,16 +104,18 @@ abstract class Model {
         return $result;
     }
 
-    static function resetDatabase() {
+    public static function resetDatabase()
+    {
         self::$bdd = null;
     }
 
     /**
      * Return an object that connect the database and initialize the connection if needed
-     * 
+     *
      * @return PDO Objet PDO of the database connections
      */
-    static function getDatabase() {
+    public static function getDatabase()
+    {
         if (self::$bdd === null) {
             // load the database informations
             $dsn = Configuration::get("dsn");
@@ -130,13 +132,13 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param string $dsn
      * @param string $login
      * @param string $pwd
      */
-    public function setDatabase($dsn, $login, $pwd) {
-
+    public function setDatabase($dsn, $login, $pwd)
+    {
         //echo "dsn = " . $dsn . "<br/>";
         //echo "login = " . $login . "<br/>";
         //echo "pwd = " . $pwd . "<br/>";
@@ -145,7 +147,8 @@ abstract class Model {
         self::$bdd->exec("SET CHARACTER SET utf8");
     }
 
-    public function checkColumn($tableName, $columnName) {
+    public function checkColumn($tableName, $columnName)
+    {
         $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
         $pdo = $this->runRequest($sql, array($columnName));
         $isColumn = $pdo->fetch();
@@ -156,14 +159,14 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param string $tableName
      * @param string $columnName
      * @param string $columnType
      * @param mixed $defaultValue
      */
-    public function addColumn($tableName, $columnName, $columnType, $defaultValue) {
-
+    public function addColumn($tableName, $columnName, $columnType, $defaultValue)
+    {
         //$sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
         //$pdo = $this->runRequest($sql);
         $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
@@ -172,11 +175,11 @@ abstract class Model {
         if ($isColumn === false) {
             Configuration::getLogger()->debug('[db] add column', ['table' => $tableName, 'col' => $columnName]);
             $sql = "ALTER TABLE `" . $tableName . "` ADD `" . $columnName . "` " . $columnType;
-            if($defaultValue != "") {
-                if(is_string($defaultValue)) {
-                    if($defaultValue == 'INSERT_TIMESTAMP') {
+            if ($defaultValue != "") {
+                if (is_string($defaultValue)) {
+                    if ($defaultValue == 'INSERT_TIMESTAMP') {
                         $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP";
-                    } else if($defaultValue == 'UPDATE_TIMESTAMP') {
+                    } elseif ($defaultValue == 'UPDATE_TIMESTAMP') {
                         $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
                     } else {
                         $sql .= " NOT NULL DEFAULT '" . $defaultValue . "'";
@@ -192,12 +195,12 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param string $table
      * @return boolean
      */
-    public function isTable($table) {
-
+    public function isTable($table)
+    {
         $dsn = Configuration::get("dsn");
         $dsnArray = explode(";", $dsn);
         $dbname = "";
@@ -217,31 +220,33 @@ abstract class Model {
         return false;
     }
 
-    public function createTableInNotExists($tableName){
+    public function createTableInNotExists($tableName)
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `" . $tableName . "`"
                 . " (id INT(11) UNSIGNED AUTO_INCREMENT PRIMARY KEY)";
         $this->runRequest($sql);
     }
-    
-    public function addPrimary($tableName, $primary){
-        $sql = "ALTER TABLE ".$tableName." ADD PRIMARY KEY (".$primary.");";
-        $this->runRequest($sql);   
-    }
-    
-    /**
-     * 
-     */
-    public function createTable() {
 
+    public function addPrimary($tableName, $primary)
+    {
+        $sql = "ALTER TABLE ".$tableName." ADD PRIMARY KEY (".$primary.");";
+        $this->runRequest($sql);
+    }
+
+    /**
+     *
+     */
+    public function createTable()
+    {
         // create database if not exists
         $sql = "CREATE TABLE IF NOT EXISTS `" . $this->tableName . "` (";
         for ($i = 0; $i < count($this->columnsNames); $i++) {
             $sql .= "`" . $this->columnsNames[$i] . "` " . $this->columnsTypes[$i];
             if ($this->columnsDefaultValue[$i] != "") {
-                if(is_string($this->columnsDefaultValue[$i])) {
-                    if($this->columnsDefaultValue[$i] == 'INSERT_TIMESTAMP') {
+                if (is_string($this->columnsDefaultValue[$i])) {
+                    if ($this->columnsDefaultValue[$i] == 'INSERT_TIMESTAMP') {
                         $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP";
-                    } else if($this->columnsDefaultValue[$i] == 'UPDATE_TIMESTAMP') {
+                    } elseif ($this->columnsDefaultValue[$i] == 'UPDATE_TIMESTAMP') {
                         $sql .= " NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
                     } else {
                         $sql .= " NOT NULL DEFAULT '" . $this->columnsDefaultValue[$i] . "' ";
@@ -274,22 +279,24 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param string $name
      * @param string $type
      * @param mixed $value
      */
-    public function setColumnsInfo($name, $type, $value) {
+    public function setColumnsInfo($name, $type, $value)
+    {
         $this->columnsNames[] = $name;
         $this->columnsTypes[] = $type;
         $this->columnsDefaultValue[] = $value;
     }
 
     /**
-     * 
+     *
      * @param type $data
      */
-    public function insert($data) {
+    public function insert($data)
+    {
         $sql = "INSERT INTO " . $this->tableName;
         $keyString = "";
         $valuesString = "";
@@ -304,11 +311,12 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param type $conditions
      * @param type $data
      */
-    public function update($conditions, $data) {
+    public function update($conditions, $data)
+    {
         $sql = "UPDATE " . $this->tableName . " SET ";
         $condStr = "";
         foreach ($conditions as $k => $v) {
@@ -323,11 +331,12 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param type $sortEntry
      * @return type
      */
-    public function selectAll($sortEntry = "") {
+    public function selectAll($sortEntry = "")
+    {
         $sql = "SELECT * FROM " . $this->tableName;
         if ($sortEntry != "") {
             $sql .= " ORDER BY " . $sortEntry . " ASC;";
@@ -336,12 +345,13 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param type $conditions
      * @param type $columnsToSelect
      * @return type
      */
-    public function select($conditions, $columnsToSelect = array()) {
+    public function select($conditions, $columnsToSelect = array())
+    {
         $sql = "SELECT ";
         if (count($columnsToSelect) < 1) {
             $sql .= " * ";
@@ -362,12 +372,13 @@ abstract class Model {
     }
 
     /**
-     * 
+     *
      * @param type $key
      * @param type $value
      * @return boolean
      */
-    public function isEntry($key, $value) {
+    public function isEntry($key, $value)
+    {
         $sql = "SELECT " . $key . " FROM " . $this->tableName . " WHERE " . $key . "=" . $value;
         $req = $this->runRequest($sql);
         if ($req->rowCount() == 1) {
@@ -379,22 +390,25 @@ abstract class Model {
     /**
      *  Delete all the data from a table
      */
-    public function deleteAll() {
+    public function deleteAll()
+    {
         $sql = "DELETE FROM " . $this->tableName;
         $this->runRequest($sql);
     }
 
-    public function admGetBy($key, $value, $id_space=0) {
+    public function admGetBy($key, $value, $id_space=0)
+    {
         $sql = "SELECT * from $this->tableName WHERE $key=?";
         $params = array($value);
         if ($id_space) {
             $sql .= " AND id_space=?";
             $params[] = $id_space;
         }
-        return $this->runRequest($sql,$params)->fetch();
+        return $this->runRequest($sql, $params)->fetch();
     }
 
-    public function admGetAll($id_space=0) {
+    public function admGetAll($id_space=0)
+    {
         $sql = "SELECT * from $this->tableName";
         $params = array();
         if ($id_space) {
@@ -404,7 +418,8 @@ abstract class Model {
         return $this->runRequest($sql, $params)->fetchAll();
     }
 
-    public function admCount($id_space=0) {
+    public function admCount($id_space=0)
+    {
         $sql = "SELECT count(*) as total from $this->tableName where deleted=0";
         $params = array();
         if ($id_space) {
@@ -417,9 +432,10 @@ abstract class Model {
     /**
      * @param $space space object
      */
-    public function createDbAndViews($space){
+    public function createDbAndViews($space)
+    {
         $dsn = Configuration::get("dsn", null);
-        if(!$dsn) {
+        if (!$dsn) {
             $dsn = Configuration::get("dsn", 'mysql:host='.Configuration::get('mysql_host', 'mysql').';dbname='.Configuration::get('mysql_dbname', 'platform_manager').';charset=utf8');
         }
         $login = Configuration::get("mysql_admin_login", "root");
@@ -442,8 +458,8 @@ abstract class Model {
         foreach ($tables as $tb) {
             $table = $tb[0];
             try {
-            $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
-            $pdo->query($sql);
+                $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
+                $pdo->query($sql);
             } catch(Exception $e) {
                 Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);
             }
@@ -462,9 +478,10 @@ abstract class Model {
     /**
      * Get an object instance from an array
      */
-    public function loadFrom(array $data) {
-        foreach(get_object_vars($this) as $attrName => $attrValue) {
-            if(array_key_exists($attrName, $data)) {
+    public function loadFrom(array $data)
+    {
+        foreach (get_object_vars($this) as $attrName => $attrValue) {
+            if (array_key_exists($attrName, $data)) {
                 $this->{$attrName} = $data[$attrName];
             }
         }
@@ -472,21 +489,22 @@ abstract class Model {
 
     /**
      * Load an object from db based on its id, returns false if not found
-     * 
+     *
      * @param int $id_space optional control on id_space
      */
-    public function from(int $id_space=0): int {
-        if(!$this->tableName) {
+    public function from(int $id_space=0): int
+    {
+        if (!$this->tableName) {
             throw new PfmDbException('No table name defined');
         }
         $sql = "SELECT * FROM ".$this->tableName." WHERE id=?";
         $params = array($this->id);
-        if($id_space) {
+        if ($id_space) {
             $sql .= " AND id_space=?";
             $params[] = $id_space;
         }
         $res = $this->runRequest($sql, $params);
-        if($res->rowCount() == 0) {
+        if ($res->rowCount() == 0) {
             return false;
         }
         $this->loadFrom($res->fetch());
@@ -496,7 +514,8 @@ abstract class Model {
     /**
      * Get a list of object from an array of array
      */
-    public function loadArray(array $data) {
+    public function loadArray(array $data)
+    {
         $list = [];
         foreach ($data as $elt) {
             $e = new (get_class($this))();
@@ -508,22 +527,23 @@ abstract class Model {
 
     /**
      * Create/update object in db
-     * 
+     *
      * @param int $id_space optional control on id_space
      */
-    public function save(int $id_space=0) {
-        if(!$this->tableName) {
+    public function save(int $id_space=0)
+    {
+        if (!$this->tableName) {
             throw new PfmDbException('No table name defined');
         }
         $protectedColumns = ['tableName', 'columnsNames', 'columnsTypes', 'columnsDefaultValue', 'primaryKey'];
         $columns = [];
         $params = [];
         $values = [];
-        foreach(get_object_vars($this) as $attrName => $attrValue) {
-            if($attrName == 'id') {
+        foreach (get_object_vars($this) as $attrName => $attrValue) {
+            if ($attrName == 'id') {
                 continue;
             }
-            if(in_array($attrName, $protectedColumns)) {
+            if (in_array($attrName, $protectedColumns)) {
                 continue;
             }
             $columns[] = $attrName;
@@ -532,14 +552,14 @@ abstract class Model {
         }
 
         $id = $this->id;
-        if($this->id) {
+        if ($this->id) {
             $update = [];
-            for($i=0;$i<count($columns);$i++){
+            for ($i=0;$i<count($columns);$i++) {
                 $update[] = $columns[$i]. " = ?";
             }
             $sql = "UPDATE ".$this->tableName." SET ".implode(',', $update)." WHERE id=?";
             $values[] = $this->id;
-            if($id_space) {
+            if ($id_space) {
                 $sql .= " AND id_space=?";
                 $values[] = $id_space;
             }
@@ -552,5 +572,4 @@ abstract class Model {
         }
         return $id;
     }
-
 }

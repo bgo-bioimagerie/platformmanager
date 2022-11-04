@@ -13,27 +13,26 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class RevisasController extends ResourcesBaseController {
-
+class RevisasController extends ResourcesBaseController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->model = new ReArea();
-        //$this->checkAuthorizationMenu("resources");
-
     }
 
     /**
      * List of Visa
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -42,18 +41,15 @@ class RevisasController extends ResourcesBaseController {
         $visaTable = $visaModel->getVisasBySpace($id_space);
         $revisas = $visaTable;
 
-        $table = new TableView ();
+        $table = new TableView();
 
         $table->setTitle(ResourcesTranslator::Visa($lang), 3);
-        //$table->ignoreEntry("id", 1);
         $table->addLineEditButton("resourceseditvisa/" . $id_space);
         $table->addDeleteButton("resourcesdeletevisa/" . $id_space, "id", "id");
-        //$table->addPrintButton("sygrrifauthorisations/visa/");
 
         $modelResourceCategory = new ReCategory();
         $modelUser = new CoreUser();
         for ($i = 0; $i < count($visaTable); $i++) {
-
             $visaTable[$i]["id_resource_category"] = $modelResourceCategory->getName($id_space, $visaTable[$i]["id_resource_category"]);
             $visaTable[$i]["id_instructor"] = $modelUser->getUserFUllName($visaTable[$i]["id_instructor"]);
             if ($visaTable[$i]["instructor_status"] == 1) {
@@ -82,8 +78,8 @@ class RevisasController extends ResourcesBaseController {
     /**
      * Form to add a visa
      */
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -164,7 +160,8 @@ class RevisasController extends ResourcesBaseController {
     /**
      * Export the visas in an xls file
      */
-    public function exportAction($id_space) {
+    public function exportAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -198,7 +195,6 @@ class RevisasController extends ResourcesBaseController {
                 $found = 0;
                 foreach ($visas as $visa) {
                     if ($visa["id_resource_category"] == $resource["id"] && $visa["id_instructor"] == $instructor["id_instructor"]) {
-
                         $instructorStatus = ResourcesTranslator::Instructor($lang);
                         if ($visa["instructor_status"] == 2) {
                             $instructorStatus = CoreTranslator::Responsible($lang);
@@ -218,15 +214,17 @@ class RevisasController extends ResourcesBaseController {
         echo $content;
     }
 
-    public function deleteAction($id_space, $id){
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelVisa = new ReVisa();
         $modelVisa->delete($id_space, $id);
-        
+
         $this->redirect("resourcesvisa/" . $id_space);
     }
 
-    public function getCategoryvisasAction($id_space, $id_category) {
+    public function getCategoryvisasAction($id_space, $id_category)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
         $modelReVisa = new ReVisa();
         $visas = $modelReVisa->getForListByCategory($id_space, $id_category);

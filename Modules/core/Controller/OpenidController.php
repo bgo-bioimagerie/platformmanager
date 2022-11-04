@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Configuration.php';
 
 require_once 'Framework/Controller.php';
@@ -10,17 +11,19 @@ require_once 'Modules/core/Model/CoreUser.php';
 
 
 use GuzzleHttp\Client;
+
 /**
- * 
+ *
  * @author osallou
  * Controller for openid connections
  */
-class OpenidController extends CorecookiesecureController {
-
-/**
-     * Check ORCID code for user authentication
-     */
-    private function google($code) {
+class OpenidController extends CorecookiesecureController
+{
+    /**
+         * Check ORCID code for user authentication
+         */
+    private function google($code)
+    {
         Configuration::getLogger()->debug('[openid][google] check');
         $client = new Client([
             // Base URI is used with relative requests
@@ -35,14 +38,15 @@ class OpenidController extends CorecookiesecureController {
             'code' => $code,
             'redirect_uri' => Configuration::get("public_url")."/ooc/google/authorized",
         ];
-        $response = $client->request('POST',
+        $response = $client->request(
+            'POST',
             '/token',
             [
                 'headers' => ['Accept' => 'application/json'],
                 'form_params' => $req
             ]
         );
-        
+
         $status = $response->getStatusCode();
         if ($status != 200) {
             Configuration::getLogger()->error('[oid][google] error', ['code' => $status, 'error' => $response->getMessage()]);
@@ -60,7 +64,8 @@ class OpenidController extends CorecookiesecureController {
             'timeout'  => 2.0,
         ]);
 
-        $response = $client->request('GET',
+        $response = $client->request(
+            'GET',
             '/v1/userinfo',
             [
                 'headers' => [
@@ -84,7 +89,7 @@ class OpenidController extends CorecookiesecureController {
 
         $login = "";
         // if authenticated add or update link
-        if( $_SESSION["redirect"] == "usersmyaccount") {
+        if ($_SESSION["redirect"] == "usersmyaccount") {
             Configuration::getLogger()->debug('[oid][google] session', ['session' => $_SESSION]);
             $login = $_SESSION['login'];
             Configuration::getLogger()->debug('[oid][google] add oid link for user', ['oid' => $oid]);
@@ -97,17 +102,16 @@ class OpenidController extends CorecookiesecureController {
                 $oidUser = $openidModel->getByOid('google', $oid);
                 $userModel = new CoreUser();
                 $relUser = $userModel->getInfo($oidUser['user']);
-                if($relUser) {
+                if ($relUser) {
                     $login = $relUser['login'];
                 }
                 Configuration::getLogger()->debug('[oid][google] load oid', ['oid' => $oidUser, 'user' => $relUser]);
-
             } catch(Exception $e) {
                 Configuration::getLogger()->error('[oid][google] no link found', ['oid' => $oid]);
             }
         }
 
-        if($login != "") {
+        if ($login != "") {
             $user = $this->initSession($login);
             Configuration::getLogger()->debug('[oid][google] open session for user', ['oid' => $oid, 'user' => $user, 'login' => $login]);
             $this->request->getSession()->setAttribut("oid", $oid);
@@ -120,7 +124,8 @@ class OpenidController extends CorecookiesecureController {
     /**
      * Check ORCID code for user authentication
      */
-    private function orcid($code) {
+    private function orcid($code)
+    {
         Configuration::getLogger()->debug('[openid][orcid] check');
         $client = new Client([
             // Base URI is used with relative requests
@@ -135,14 +140,15 @@ class OpenidController extends CorecookiesecureController {
             'code' => $code,
             'redirect_uri' => Configuration::get("public_url")."/ooc/orcid/authorized",
         ];
-        $response = $client->request('POST',
+        $response = $client->request(
+            'POST',
             '/oauth/token',
             [
                 'headers' => ['Accept' => 'application/json'],
                 'form_params' => $req
             ]
         );
-        
+
         $status = $response->getStatusCode();
         if ($status != 200) {
             Configuration::getLogger()->error('[oid][orcid] error', ['code' => $status, 'error' => $response->getMessage()]);
@@ -155,7 +161,7 @@ class OpenidController extends CorecookiesecureController {
 
         $login = "";
         // if authenticated add or update link
-        if( $_SESSION["redirect"] == "usersmyaccount") {
+        if ($_SESSION["redirect"] == "usersmyaccount") {
             Configuration::getLogger()->debug('[oid][orcid] session', ['session' => $_SESSION]);
             $login = $_SESSION['login'];
             Configuration::getLogger()->debug('[oid][orcid] add oid link for user', ['oid' => $oid]);
@@ -168,17 +174,16 @@ class OpenidController extends CorecookiesecureController {
                 $oidUser = $openidModel->getByOid('orcid', $oid);
                 $userModel = new CoreUser();
                 $relUser = $userModel->getInfo($oidUser['user']);
-                if($relUser) {
+                if ($relUser) {
                     $login = $relUser['login'];
                 }
                 Configuration::getLogger()->debug('[oid][orcid] load oid', ['oid' => $oidUser, 'user' => $relUser]);
-
             } catch(Exception $e) {
                 Configuration::getLogger()->error('[oid][orcid] no link found', ['oid' => $oid]);
             }
         }
 
-        if($login != "") {
+        if ($login != "") {
             $user = $this->initSession($login);
             Configuration::getLogger()->debug('[oid][orcid] open session for user', ['oid' => $oid, 'user' => $user, 'login' => $login]);
             $this->request->getSession()->setAttribut("oid", $oid);
@@ -190,9 +195,10 @@ class OpenidController extends CorecookiesecureController {
     /**
      * Check code for external auth providers
      */
-    public function connectAction($provider) {
+    public function connectAction($provider)
+    {
         // Check openid connection
-        if(!isset($_GET['code'])) {
+        if (!isset($_GET['code'])) {
             $_SESSION['flash'] = "Authentication failed";
             Configuration::getLogger()->debug('[openid][code] no code provided');
             $this->redirect("coreconnection");
@@ -200,7 +206,7 @@ class OpenidController extends CorecookiesecureController {
         }
         Configuration::getLogger()->debug('[openid][code]', ['code' => $_GET['code']]);
         $redirect = '';
-        if(isset($_SESSION['redirect'])) {
+        if (isset($_SESSION['redirect'])) {
             $redirect = $_SESSION['redirect'];
         }
         $user = '';
@@ -215,19 +221,15 @@ class OpenidController extends CorecookiesecureController {
                 $_SESSION['flash'] = "unknown provider";
                 break;
         }
-        if($user == '') {
+        if ($user == '') {
             $_SESSION['flash'] = "$provider connection failed or no link set for this provider in your account settings";
         }
-        if($redirect) {
+        if ($redirect) {
             unset($_SESSION['redirect']);
             Configuration::getLogger()->debug('[openid][code] redirect', ['controller' => $redirect]);
             $this->redirect($redirect);
             return;
-
         }
         $this->redirect("coreconnection");
     }
-
 }
-
-?>

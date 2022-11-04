@@ -12,9 +12,10 @@ use PHPMailer\PHPMailer\PHPMailer;
  *
  * @author Sylvain Prigent
  */
-class MailerSend extends Model {
-
-    public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true) {
+class MailerSend extends Model
+{
+    public function sendEmailSimulate($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = true)
+    {
         echo "send email from " .$fromName. "(" . $from . ") to ";
         print_r($toAdress);
         echo " subject = " . $subject . " content = " . $content. "<br/>";
@@ -23,8 +24,8 @@ class MailerSend extends Model {
         }
     }
 
-    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false ){
-
+    public function sendEmail($from, $fromName, $toAdress, $subject, $content, $sentCopyToFrom = false)
+    {
         // send the email
         $mail = new PHPMailer();
         $mail->IsHTML(true);
@@ -75,5 +76,4 @@ class MailerSend extends Model {
             return MailerTranslator::Message_Send($lang);
         }
     }
-
 }

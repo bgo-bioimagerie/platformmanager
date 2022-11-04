@@ -19,28 +19,30 @@ require_once 'Modules/antibodies/Form/TissusForm.php';
 require_once 'Modules/antibodies/Form/OwnerForm.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class AntibodiesController extends CoresecureController {
-
+class AntibodiesController extends CoresecureController
+{
     private $antibody;
     protected $noSideMenu = false;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->antibody = new Anticorps();
     }
 
-    public function dropdownMenu($id_space) {
+    public function dropdownMenu($id_space)
+    {
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
-       
+
         $dataView = [
             'id_space' => $id_space,
             'title' => AntibodiesTranslator::antibodies($lang),
@@ -51,15 +53,16 @@ class AntibodiesController extends CoresecureController {
         return $this->twig->render("Modules/antibodies/View/navbar.twig", $dataView);
     }
 
-    public function sideMenu() {
-        if($this->noSideMenu) {
+    public function sideMenu()
+    {
+        if ($this->noSideMenu) {
             return null;
         }
         $id_space = $this->args['id_space'];
         $lang = $this->getLanguage();
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("antibodies", $id_space);
-       
+
         $dataView = [
             'id_space' => $id_space,
             'title' => AntibodiesTranslator::antibodies($lang),
@@ -68,12 +71,12 @@ class AntibodiesController extends CoresecureController {
             'color' => $menuInfo['txtcolor'] ?? ''
         ];
         return $this->twig->render("Modules/antibodies/View/Antibodies/navbar.twig", $dataView);
-        
     }
 
-    public function navbar($id_space) {
+    public function navbar($id_space)
+    {
         $lang = $this->getLanguage();
-        
+
         $html = file_get_contents('Modules/antibodies/View/Antibodies/navbar.php');
         $html = str_replace('{{id_space}}', $id_space, $html);
 

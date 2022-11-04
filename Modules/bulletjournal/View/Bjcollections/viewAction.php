@@ -1,4 +1,4 @@
-<?php include 'Modules/bulletjournal/View/layout.php' ?>
+<?php include_once 'Modules/bulletjournal/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -43,58 +43,58 @@
 
                             <?php
                             $priorityVal = "";
-                            $cssStatus = "";
-                            if ($dnote["type"] == 2) {
-                                $priorityVal = $dnote["priority"];
-                                $cssStatus = "background-color:#FF8800;";
-                                if ($dnote["status"] == 2 || $dnote["status"] == 3) {
-                                    $cssStatus = "background-color:#008000;";
-                                }
+                        $cssStatus = "";
+                        if ($dnote["type"] == 2) {
+                            $priorityVal = $dnote["priority"];
+                            $cssStatus = "background-color:#FF8800;";
+                            if ($dnote["status"] == 2 || $dnote["status"] == 3) {
+                                $cssStatus = "background-color:#008000;";
                             }
-                            if ($dnote["type"] == 2) {
-                                ?>
+                        }
+                        if ($dnote["type"] == 2) {
+                            ?>
                                 <td id="task_status_<?php echo $dnote["id"] ?>" style="<?php echo $cssStatus ?>"><span></span></td>
                                 <?php
-                            } else {
-                                ?>
+                        } else {
+                            ?>
                                 <td><span></span></td>
                                 <?php
-                            }
-                            ?>
+                        }
+                        ?>
 
                             <td><?php echo $priorityVal ?></td>
                             <td><span class="<?php echo $typeicon ?>"></span></td>
                             <?php
-                            $openlink = "opennote";
-                            if ($dnote["type"] == 2) {
-                                $openlink = "opentask";
-                            } elseif ($dnote["type"] == 3) {
-                                $openlink = "openevent";
-                            }
-                            ?>
+                        $openlink = "opennote";
+                        if ($dnote["type"] == 2) {
+                            $openlink = "opentask";
+                        } elseif ($dnote["type"] == 3) {
+                            $openlink = "openevent";
+                        }
+                        ?>
 
                             <td><a style="color:#666; cursor:pointer;" id="<?php echo $openlink ?>_<?php echo $dnote["id"] ?>"> <?php echo $dnote["name"] ?></a></td>
                             <?php
-                            if ($dnote["type"] == 2) {
-                                $editTxt = BulletjournalTranslator::MarkAsDone($lang);
-                                if ($dnote["status"] == 2) {
-                                    $editTxt = BulletjournalTranslator::ReOpen($lang);
-                                }
-                                $cancelTxt = BulletjournalTranslator::Cancel($lang);
-                                if ($dnote["status"] == 3) {
-                                    $cancelTxt = BulletjournalTranslator::ReOpen($lang);
-                                }
-                                ?>
+                        if ($dnote["type"] == 2) {
+                            $editTxt = BulletjournalTranslator::MarkAsDone($lang);
+                            if ($dnote["status"] == 2) {
+                                $editTxt = BulletjournalTranslator::ReOpen($lang);
+                            }
+                            $cancelTxt = BulletjournalTranslator::Cancel($lang);
+                            if ($dnote["status"] == 3) {
+                                $cancelTxt = BulletjournalTranslator::ReOpen($lang);
+                            }
+                            ?>
                                 <td><button id="closetask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-primary"><?php echo $editTxt ?></button></td>
                                 <td><button id="canceltask_<?php echo $dnote["id"] ?>" class="btn btn-sm btn-outline-dark"><?php echo $cancelTxt ?></button></td>
                                 <?php
-                            } else {
-                                ?>
+                        } else {
+                            ?>
                                 <td></td>
                                 <td></td>
                                 <?php
-                            }
-                            ?>
+                        }
+                        ?>
                         </tr>
 
                         <?php
@@ -104,7 +104,7 @@
                     <?php
                 }
             }
-            ?>
+?>
         </tbody>
     </table>
 </div>

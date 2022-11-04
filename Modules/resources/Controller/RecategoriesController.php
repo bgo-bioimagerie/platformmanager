@@ -10,61 +10,61 @@ require_once 'Modules/resources/Model/ReCategory.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class RecategoriesController extends ResourcesBaseController {
-
+class RecategoriesController extends ResourcesBaseController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->categoryModel = new ReCategory();
         //$this->checkAuthorizationMenu("resources");
-
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
-       
+
         $table = new TableView();
         $table->setTitle(ResourcesTranslator::Categories($lang), 3);
-        
+
         $table->addLineEditButton("recategoriesedit/".$id_space);
         $table->addDeleteButton("recategoriesdelete/".$id_space);
-        
+
         $headers = array(
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
-        
+
         $categories = $this->categoryModel->getBySpace($id_space);
         $tableHtml = $table->view($categories, $headers);
         return $this->render(array("data" => ["recategories" => $categories], "id_space" => $id_space, "lang" => $lang, "tableHtml" => $tableHtml));
     }
-    
+
       /**
      * Edit form
      */
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         // get belonging info
         $data = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
             $data = $this->categoryModel->get($id_space, $id);
         }
-        
+
         // lang
         $lang = $this->getLanguage();
 
@@ -80,7 +80,7 @@ class RecategoriesController extends ResourcesBaseController {
         if ($todo) {
             $validationUrl .= "?redirect=todo";
         }
-        
+
         $form->setValidationButton(CoreTranslator::Ok($lang), $validationUrl);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "recategories/".$id_space);
 
@@ -109,8 +109,9 @@ class RecategoriesController extends ResourcesBaseController {
             ));
         }
     }
-    
-    public function deleteAction($id_space, $id) {
+
+    public function deleteAction($id_space, $id)
+    {
         $lang = $this->getLanguage();
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 

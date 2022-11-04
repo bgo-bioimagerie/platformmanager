@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -8,20 +9,22 @@ require_once 'Modules/catalog/Model/CaCategory.php';
 require_once 'Modules/catalog/Model/CaEntry.php';
 require_once 'Modules/catalog/Controller/CatalogController.php';
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class CatalogadminController extends CatalogController {
-
-    public function indexAction($id_space){
+class CatalogadminController extends CatalogController
+{
+    public function indexAction($id_space)
+    {
         $this->redirect("catalogcategories/".$id_space);
     }
     /**
      * (non-PHPdoc)
      * @see Controller::categoriesAction()
      */
-    public function categoriesAction($id_space) {
+    public function categoriesAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
@@ -37,7 +40,8 @@ class CatalogadminController extends CatalogController {
             'tableHtml' => $tableHtml
         ));
     }
-    public function categoryeditAction($id_space, $id) {
+    public function categoryeditAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get name
@@ -46,7 +50,7 @@ class CatalogadminController extends CatalogController {
         $modelCategory = new CaCategory();
         if ($id > 0) {
             $name = $modelCategory->getName($id_space, $id);
-            $display_order = $modelCategory->getDisplayOrder($id_space ,$id);
+            $display_order = $modelCategory->getDisplayOrder($id_space, $id);
         }
         // build the form
         $form = new Form($this->request, "formcategories");
@@ -76,14 +80,16 @@ class CatalogadminController extends CatalogController {
     /**
      * Remove a category from the database
      */
-    public function categorydeleteAction($id_space, $id) {
+    public function categorydeleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaCategory();
         $modelCategory->delete($id_space, $id);
         // generate view
         $this->redirect("catalogcategories/".$id_space);
     }
-    public function prestationsAction($id_space) {
+    public function prestationsAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get the user list
@@ -106,7 +112,8 @@ class CatalogadminController extends CatalogController {
             'tableHtml' => $tableHtml
         ));
     }
-    public function prestationeditAction($id_space, $id) {
+    public function prestationeditAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // get info
@@ -161,12 +168,13 @@ class CatalogadminController extends CatalogController {
             ));
         }
     }
-    protected function uploadIllustration() {
+    protected function uploadIllustration()
+    {
         $target_dir = "data/catalog/";
         $target_file = $target_dir . $_FILES["illustration"]["name"];
 
         $fileNameOK = preg_match("/^[0-9a-zA-Z\-_\.]+$/", $_FILES["illustration"]["name"], $matches);
-        if(! $fileNameOK) {
+        if (! $fileNameOK) {
             throw new PfmParamException("invalid file name, must be alphanumeric:  [0-9a-zA-Z\-_\.]+", 403);
         }
 
@@ -174,7 +182,7 @@ class CatalogadminController extends CatalogController {
         if ($_FILES["illustration"]["size"] > 500000000) {
             return "Error: your file is too large.";
         }
-        
+
         if (move_uploaded_file($_FILES["illustration"]["tmp_name"], $target_file)) {
             return "The file logo file" . basename($_FILES["illustration"]["name"]) . " has been uploaded.";
         } else {
@@ -182,10 +190,11 @@ class CatalogadminController extends CatalogController {
         }
     }
 
-    public function prestationdeleteAction($id_space, $id) {
+    public function prestationdeleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("catalogsettings", $id_space, $_SESSION["id_user"]);
         $modelCategory = new CaEntry();
-        $modelCategory->delete($id_space ,$id);
+        $modelCategory->delete($id_space, $id);
         // generate view
         $this->redirect("catalogprestations/".$id_space);
     }

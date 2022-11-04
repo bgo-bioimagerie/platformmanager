@@ -11,16 +11,17 @@ require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ServicesconfigController extends CoresecureController {
-
+class ServicesconfigController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
@@ -32,8 +33,8 @@ class ServicesconfigController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $modelCoreConfig = new CoreConfig();
@@ -49,7 +50,7 @@ class ServicesconfigController extends CoresecureController {
         if ($formWarning->check()) {
             $modelConfig = new CoreConfig();
             $modelConfig->setParam("SeProjectDelayWarning", $this->request->getParameter("SeProjectDelayWarning"), $id_space);
-        
+
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
@@ -62,12 +63,12 @@ class ServicesconfigController extends CoresecureController {
                 $this->request->getParameter("seProjectCloseAtInvoice"),
                 $id_space
             );
-        
+
             $this->redirect("servicesconfig/".$id_space);
             return;
         }
-        
-        
+
+
         $formMenuName = $this->menuNameForm($id_space, 'services', $lang);
         if ($formMenuName->check()) {
             $this->setMenuName($id_space, 'services');
@@ -125,8 +126,8 @@ class ServicesconfigController extends CoresecureController {
         $this->render(array("id_space" => $id_space, "forms" => $forms, "lang" => $lang));
     }
 
-    public function warningForm($id_space, $lang) {
-
+    public function warningForm($id_space, $lang)
+    {
         $modelCoreConfig = new CoreConfig();
         $SeProjectDelayWarning = $modelCoreConfig->getParamSpace("SeProjectDelayWarning", $id_space);
 
@@ -134,13 +135,14 @@ class ServicesconfigController extends CoresecureController {
         $form->addSeparator(ServicesTranslator::DelayWarningInDays($lang));
 
         $form->addText("SeProjectDelayWarning", "", false, $SeProjectDelayWarning);
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
 
         return $form;
     }
 
-    public function closeAtInvoiceForm($id_space, $lang) {
+    public function closeAtInvoiceForm($id_space, $lang)
+    {
         $modelCoreConfig = new CoreConfig();
         $seProjectCloseAtInvoice = $modelCoreConfig->getParamSpace("seProjectCloseAtInvoice", $id_space, 0);
         $form = new Form($this->request, "seProjectCloseAtInvoice");
@@ -152,13 +154,14 @@ class ServicesconfigController extends CoresecureController {
             array(1, 0),
             $seProjectCloseAtInvoice
         );
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
 
         return $form;
     }
 
-    public function periodProjectForm($modelCoreConfig, $id_space, $lang) {
+    public function periodProjectForm($modelCoreConfig, $id_space, $lang)
+    {
         $projectperiodbegin = $modelCoreConfig->getParamSpace("projectperiodbegin", $id_space);
         $projectperiodend = $modelCoreConfig->getParamSpace("projectperiodend", $id_space);
 
@@ -173,13 +176,14 @@ class ServicesconfigController extends CoresecureController {
         return $form;
     }
 
-    public function projectCommandForm($modelCoreConfig, $id_space, $lang) {
+    public function projectCommandForm($modelCoreConfig, $id_space, $lang)
+    {
         $servicesuseproject = $modelCoreConfig->getParamSpace("servicesuseproject", $id_space);
-        if($servicesuseproject === "") {
+        if ($servicesuseproject === "") {
             $servicesuseproject = 0;
         }
         $servicesusecommand = $modelCoreConfig->getParamSpace("servicesusecommand", $id_space);
-        if($servicesusecommand === "") {
+        if ($servicesusecommand === "") {
             $servicesusecommand = 0;
         }
         $form = new Form($this->request, "periodCommandForm");
@@ -193,9 +197,10 @@ class ServicesconfigController extends CoresecureController {
         return $form;
     }
 
-    public function stockForm($modelCoreConfig, $id_space, $lang) {
+    public function stockForm($modelCoreConfig, $id_space, $lang)
+    {
         $servicesusestock = $modelCoreConfig->getParamSpace("servicesusestock", $id_space);
-        if($servicesusestock === "") {
+        if ($servicesusestock === "") {
             $servicesusestock = 0;
         }
         $form = new Form($this->request, "stockForm");
@@ -208,9 +213,10 @@ class ServicesconfigController extends CoresecureController {
         return $form;
     }
 
-    public function kanbanForm($modelCoreConfig, $id_space, $lang) {
+    public function kanbanForm($modelCoreConfig, $id_space, $lang)
+    {
         $servicesusekanban = $modelCoreConfig->getParamSpace("servicesusekanban", $id_space);
-        if($servicesusekanban === "") {
+        if ($servicesusekanban === "") {
             $servicesusekanban = 0;
         }
         $form = new Form($this->request, "kanbanForm");
@@ -219,5 +225,4 @@ class ServicesconfigController extends CoresecureController {
         $form->setValidationButton(CoreTranslator::Save($lang), "servicesconfig/" . $id_space);
         return $form;
     }
-
 }

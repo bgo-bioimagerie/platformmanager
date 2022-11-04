@@ -78,9 +78,9 @@ class StatisticsTest extends StatisticsBaseTest {
 
             $req = $this->request([
                 "path" => "bookingusersstats/".$space['id'],
-                "formid" => 'sygrrifstats/statbookingusers',
+                "formid" => 'statbookingusers',
                 "startdate" => $dateStart->format('Y-m-d'),
-                "enddate" => $dateEnd->format('Y-m-d') 
+                "enddate" => $dateEnd->format('Y-m-d')
             ]);
 
             $c = new BookingstatisticsController($req, $space);

@@ -1,4 +1,5 @@
 <?php
+
 require_once 'Framework/Utils.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
@@ -14,7 +15,8 @@ require_once 'Modules/booking/Model/BkCalendarEntry.php';
 
 require_once 'Modules/clients/Model/ClClient.php';
 
-class BkStats {
+class BkStats
+{
     public const STATS_AUTH_STAT = 'bk_auth_stats';
     public const STATS_AUTH_LIST = 'bk_auth_list';
     public const STATS_BK_USERS = 'bk_users';
@@ -23,8 +25,8 @@ class BkStats {
     public const STATS_QUANTITIES = 'bk_quantities';
     public const STATS_BK_TIME = 'bk_time';
 
-    public function generateStats($file, $id_space, $period_begin, $period_end) {
-
+    public function generateStats($file, $id_space, $period_begin, $period_end, $lang='en')
+    {
         $modelResource = new ReCategory();
         $resources = $modelResource->getBySpace($id_space);
         $modelVisa = new ReVisa();
@@ -40,7 +42,7 @@ class BkStats {
             }
         }
 
-        
+
         // by unit
         $modelClients = new ClClient();
         $units = $modelClients->getAll($id_space);
@@ -59,18 +61,18 @@ class BkStats {
         $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
         $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
 
-        $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
+        $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end, $lang);
     }
 
-    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end) {
-
+    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end, $lang='en')
+    {
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        
+
         // Set properties
         $spreadsheet->getProperties()->setCreator("Platform-Manager");
         $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
-        $spreadsheet->getProperties()->setTitle("Authorizations statistics");
-        $spreadsheet->getProperties()->setSubject("Authorizations statistics");
+        $spreadsheet->getProperties()->setTitle(BookingTranslator::Authorisations_statistics($lang));
+        $spreadsheet->getProperties()->setSubject(BookingTranslator::Authorisations_statistics($lang));
         $spreadsheet->getProperties()->setDescription("");
 
         $stylesheet = $this->getStylesheet();
@@ -80,9 +82,9 @@ class BkStats {
         $cells = 'A1:H1';
 
         // print by instructors
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations par formateur");
+        $spreadsheet->getActiveSheet()->setTitle(BookingTranslator::authorisationsByInstructor($lang));
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par formateur du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsByInstructor($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
 
         $curentLine = 3;
@@ -137,10 +139,10 @@ class BkStats {
 
         // by unit
         $objWorkSheet = $spreadsheet->createSheet(1);
-        $objWorkSheet->setTitle("Authorisations par unité");
+        $objWorkSheet->setTitle(BookingTranslator::authorisationsByClient($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par unité du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsByClient($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
         $curentLine = 2;
         $num = 1;
@@ -189,26 +191,26 @@ class BkStats {
 
         // print summary
         $objWorkSheet = $spreadsheet->createSheet(2);
-        $objWorkSheet->setTitle("Authorisations résumé");
+        $objWorkSheet->setTitle(BookingTranslator::authorisationsSummary($lang));
         $spreadsheet->setActiveSheetIndex(2);
 
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations résumé");
+        $spreadsheet->getActiveSheet()->setTitle(BookingTranslator::authorisationsSummary($lang));
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Résumé des autorisations du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsSummary($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A3', "Nombre de formations");
+        $spreadsheet->getActiveSheet()->SetCellValue('A3', BookingTranslator::numberOfTrainings($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B3', $summary["total"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
+        $spreadsheet->getActiveSheet()->SetCellValue('A4', BookingTranslator::numberOfUsers($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
+        $spreadsheet->getActiveSheet()->SetCellValue('A6', BookingTranslator::numberOfVisas($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A7', "Nombre de ressources");
+        $spreadsheet->getActiveSheet()->SetCellValue('A7', BookingTranslator::numberOfResources($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B7', $summary["distinctresource"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A8', "Nombre de nouveaux utilisateurs");
+        $spreadsheet->getActiveSheet()->SetCellValue('A8', BookingTranslator::numberOfNewUsers($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B8', $summary["newuser"]);
 
         // write excel file
@@ -216,7 +218,7 @@ class BkStats {
 
         // record modifications and download file
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($file);
@@ -227,8 +229,8 @@ class BkStats {
      * @param array $table
      * @param string $lang
      */
-    public function exportstatbookingusersCSV($file, $users) {
-
+    public function exportstatbookingusersCSV($file, $users)
+    {
         $content = "name ; email \r\n";
 
         foreach ($users as $user) {
@@ -237,27 +239,28 @@ class BkStats {
         }
 
         $dir = dirname($file);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($file, $content);
     }
 
 
-    public function getBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $lang='en') {
+    public function getBalanceReport($filepath, $id_space, $dateBegin, $dateEnd, $excludeColorCode, $generateclientstats, $lang='en')
+    {
         $spreadsheet = $this->getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, null, $lang);
         // write excel file
         $objWriter = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, "Xlsx");
         // record modifications and download file
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         $objWriter->save($filepath);
     }
 
-    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang='en') {
-
+    public function getBalance($dateBegin, $dateEnd, $id_space, $excludeColorCode, $generateclientstats, $spreadsheet, $lang='en')
+    {
         if (!$spreadsheet) {
             $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
@@ -277,11 +280,12 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
-        if($dateBegin == "") {
+    public function statsReservationsPerMonth($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
         $dateBeginArray = explode("-", $dateBegin);
@@ -325,19 +329,14 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
-        if($dateBegin == "") {
+    public function statsReservationsPerResource($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
+        if ($dateBegin == "") {
             throw new PfmParamException("invalid start date");
         }
-        if($dateEnd == "") {
+        if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
-        $dateBeginArray = explode("-", $dateBegin);
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-        $dateEndArray = explode("-", $dateEnd);
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
 
         // get data
         $modelGraph = new BkGraph();
@@ -417,7 +416,8 @@ class BkStats {
         return $spreadsheet;
     }
 
-    public function statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en') {
+    public function statsReservationsPerClient($dateBegin, $dateEnd, $id_space, $excludeColorCode, $spreadsheet, $lang='en')
+    {
         // get data
         $modelGraph = new BkGraph();
         $modelClient = new ClClient();
@@ -469,8 +469,8 @@ class BkStats {
         return $spreadsheet;
     }
 
-    protected function getStylesheet() {
-
+    protected function getStylesheet()
+    {
         $styleBorderedCell = array(
             'font' => array(
                 'name' => 'Times',
@@ -531,15 +531,16 @@ class BkStats {
             'styleBorderedCenteredCell' => $styleBorderedCenteredCell);
     }
 
-    public function getQuantitiesReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+    public function getQuantitiesReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en')
+    {
         $modelBooking = new BkCalendarEntry();
         $stats = $modelBooking->getStatsQuantities(
-                $id_space,
-                $dateBegin,
-                $dateEnd,
-                $lang
+            $id_space,
+            $dateBegin,
+            $dateEnd,
+            $lang
         );
-        if(empty($stats)) {
+        if (empty($stats)) {
             throw new PfmParamException('no data found for this period');
         }
         $data = '';
@@ -547,40 +548,37 @@ class BkStats {
             $data .= $stat['name'].';'.$stat['count']."\n";
         }
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($filepath, $data);
     }
 
-    public function getReservationsRespReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en') {
+    public function getReservationsRespReport($filepath, $id_space, $dateBegin, $dateEnd, $lang='en')
+    {
         $modelBooking = new BkCalendarEntry();
         $stats = $modelBooking->getStatTimeResps(
-                $id_space,
-                $dateBegin,
-                $dateEnd
+            $id_space,
+            $dateBegin,
+            $dateEnd
         );
         $csv = ",";
-        foreach ( $stats["resources"] as $resoure ){
+        foreach ($stats["resources"] as $resoure) {
             $csv .= $resoure["name"] . ",";
         }
         $csv .= "\n";
-        foreach ( $stats["count"] as $data ){
+        foreach ($stats["count"] as $data) {
             $csv .= $data["responsible"] . ",";
-            foreach( $data["count"] as $count ){
+            foreach ($data["count"] as $count) {
                 $csv .= $count["time"] . ",";
             }
             $csv .= "\n";
         }
-        
+
         $dir = dirname($filepath);
-        if(!file_exists($dir)) {
+        if (!file_exists($dir)) {
             mkdir($dir, 0755, true);
         }
         file_put_contents($filepath, $csv);
     }
-
-
 }
-
-?>

@@ -21,40 +21,41 @@ require_once 'Modules/resources/Model/ResourcesTranslator.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingpricesController extends BookingsettingsController {
-
+class BookingpricesController extends BookingsettingsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space){
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("booking", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $modelPricing = new ClPricing();
         $modelResource = new ResourceInfo();
         $resources = $modelResource->getBySpace($id_space);
-        
+
         // TODO: handle case where $belongings = null; Causes warnings in dev mode
         $belongings = $modelPricing->getAll($id_space);
         $table = new TableView();
-        
+
         $modelConfig = new CoreConfig();
         $bookingmenuname = $modelConfig->getParamSpace("bookingmenuname", $id_space);
-        
+
         $table->setTitle(BookingTranslator::Prices($lang) . " " . $bookingmenuname, 3);
-        
+
         $headers = array(
             "resource" => ResourcesTranslator::Resource($lang)
         );
-        for($i = 0 ; $i < count($belongings) ; $i++){
+        for ($i = 0 ; $i < count($belongings) ; $i++) {
             $headers[$belongings[$i]["id"]] = $belongings[$i]["name"];
         }
-        
+
         $prices = array();
         $modelPrice = new BkPrice();
         $modelPNightWe = new BkNightWE();
@@ -62,7 +63,6 @@ class BookingpricesController extends BookingsettingsController {
         $count = 0;
         $data = array();
         for ($i = 0; $i < count($resources); $i++) {
-            
             $count++;
             // day
             for ($b = 0; $b < count($belongings); $b++) {
@@ -109,20 +109,20 @@ class BookingpricesController extends BookingsettingsController {
                 $prices[] = $data;
             }
         }
-        
+
         $table->addLineEditButton('editentry', 'id_resource', true);
         $tableHtml = $table->view($prices, $headers);
-        
+
         $form = new Form($this->request, "resourcesPricesForm");
         $form->setTitle(BookingTranslator::Prices($lang), 3);
         $form->addHidden("resource_id");
         $form->addText("resource", ResourcesTranslator::resource($lang), false, "", false);
-        for($b = 0 ; $b < count($belongings) ; $b++){
+        for ($b = 0 ; $b < count($belongings) ; $b++) {
             $form->addText('bel_'.$belongings[$b]['id'], $belongings[$b]['name'], true, 0);
         }
-        
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingpriceseditquery/".$id_space);
-       
+
         return $this->render(array(
             "id_space" => $id_space,
             "lang" => $lang,
@@ -133,48 +133,47 @@ class BookingpricesController extends BookingsettingsController {
             'data' => ['prices' => $prices]
         ));
     }
-    
-    public function editqueryAction($id_space){
-        
+
+    public function editqueryAction($id_space)
+    {
         $modelBelonging = new ClPricing();
         $modelPrice = new BkPrice();
         $belongings = $modelBelonging->getAll($id_space);
-        
+
         $id_resource = $this->request->getParameter('resource_id');
-        
+
         $residArray = explode("-", $id_resource);
 
 
         $resourceModel = new ResourceInfo();
         $res = $resourceModel->get($id_space, $residArray[0]);
-        if(!$res) {
+        if (!$res) {
             Configuration::getLogger()->error('Unauthorized access to resource', ['resource' => $id_resource]);
             throw new PfmAuthException('access denied for this resource', 403);
         }
 
         if ($residArray[1] == "day") {
-            foreach($belongings as $bel){
+            foreach ($belongings as $bel) {
                 $price = $this->request->getParameter('bel_' . $bel['id']);
                 $modelPrice->setPriceDay($id_space, $residArray[0], $bel["id"], $price);
             }
-        } else if ($residArray[1] == "night") {
-            foreach($belongings as $bel){
+        } elseif ($residArray[1] == "night") {
+            foreach ($belongings as $bel) {
                 $price = $this->request->getParameter('bel_' . $bel['id']);
                 $modelPrice->setPriceNight($id_space, $residArray[0], $bel["id"], $price);
             }
-        } else if ($residArray[1] == "we") {
-            foreach($belongings as $bel){
+        } elseif ($residArray[1] == "we") {
+            foreach ($belongings as $bel) {
                 $price = $this->request->getParameter('bel_' . $bel['id']);
                 $modelPrice->setPriceWe($id_space, $residArray[0], $bel["id"], $price);
             }
-        } else if ($residArray[1] == "pk") {
-            foreach($belongings as $bel){
+        } elseif ($residArray[1] == "pk") {
+            foreach ($belongings as $bel) {
                 $price = $this->request->getParameter('bel_' . $bel['id']);
                 $modelPrice->setPricePackage($id_space, $residArray[0], $bel['id'], $residArray[2], $price);
             }
         }
-        
+
         $this->redirect('bookingprices/' . $id_space);
     }
-
 }

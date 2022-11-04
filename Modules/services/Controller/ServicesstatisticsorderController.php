@@ -22,24 +22,25 @@ require_once 'Modules/invoices/Model/InInvoice.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 
-class ServicesstatisticsorderController extends ServicesController {
-
+class ServicesstatisticsorderController extends ServicesController
+{
     private $serviceModel;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->serviceModel = new SeService();
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -60,7 +61,7 @@ class ServicesstatisticsorderController extends ServicesController {
             $dateBegin = $form->getParameter("begining_period");
             $dateEnd = $form->getParameter("end_period");
             $name = 'stats_'.SeStats::STATS_ORDERS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
-            
+
             $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
             $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
@@ -82,12 +83,10 @@ class ServicesstatisticsorderController extends ServicesController {
         $formHtml = $form->getHtml($lang);
         // view
         $this->render(array(
-            "id_space" => $id_space, 
+            "id_space" => $id_space,
             "lang" => $lang,
             'formHtml' => $formHtml,
             'stats' => $stats
         ));
-        
     }
-
 }

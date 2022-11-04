@@ -9,17 +9,18 @@ require_once 'Modules/booking/Model/BkAccess.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingaccessibilitiesController extends BookingsettingsController {
-
+class BookingaccessibilitiesController extends BookingsettingsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -63,7 +64,7 @@ class BookingaccessibilitiesController extends BookingsettingsController {
             $bkaccess = [];
             foreach ($resources as $resource) {
                 $id_access = $this->request->getParameterNoException("r_" . $resource["id"]);
-                $model->set($id_space ,$resource["id"], $id_access);
+                $model->set($id_space, $resource["id"], $id_access);
                 $bkaccess[] = ['resource' => $resource['id'], 'bkaccess' => $accessId];
             }
 
@@ -81,5 +82,4 @@ class BookingaccessibilitiesController extends BookingsettingsController {
         $formHtml = $form->getHtml($lang);
         return $this->render(array("data" => ["bkaccess" => $bkaccess],"id_space" => $id_space, "formHtml" => $formHtml, "lang" => $lang));
     }
-
 }

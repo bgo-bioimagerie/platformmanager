@@ -9,12 +9,12 @@ require_once 'Modules/clients/Model/ClCompany.php';
 require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientscompanyController extends ClientsController {
-
+class ClientscompanyController extends ClientsController
+{
     /**
      * User model object
      */
@@ -23,26 +23,27 @@ class ClientscompanyController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->companyModel = new ClCompany();
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
         $data = $this->companyModel->getForSpace($id_space);
         $formKeys = ["name", "address", "zipcode", "city", "county", "country", "tel", "fax", "email", "approval_number"];
         foreach ($formKeys as $key) {
-            $data[$key] = array_key_exists($key, $data) ? $data[$key]: "";
+            $data[$key] = array_key_exists($key, $data) ? $data[$key] : "";
         }
 
         $form = new Form($this->request, "pricing/edit");
@@ -70,7 +71,18 @@ class ClientscompanyController extends ClientsController {
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $this->companyModel->set($id_space, $form->getParameter("name"), $form->getParameter("address"), $form->getParameter("zipcode"), $form->getParameter("city"), $this->request->getParameterNoException("county"), $form->getParameter("country"), $form->getParameter("tel"), $this->request->getParameterNoException('fax'), $form->getParameter("email"), $form->getParameter("approval_number")
+            $this->companyModel->set(
+                $id_space,
+                $form->getParameter("name"),
+                $form->getParameter("address"),
+                $form->getParameter("zipcode"),
+                $form->getParameter("city"),
+                $this->request->getParameterNoException("county"),
+                $form->getParameter("country"),
+                $form->getParameter("tel"),
+                $this->request->getParameterNoException('fax'),
+                $form->getParameter("email"),
+                $form->getParameter("approval_number")
             );
 
             $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
@@ -82,7 +94,6 @@ class ClientscompanyController extends ClientsController {
                 // after the provider is saved we redirect to the providers list page
                 return $this->redirect("clcompany/" . $id_space);
             }
-            
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -94,5 +105,4 @@ class ClientscompanyController extends ClientsController {
             ));
         }
     }
-
 }

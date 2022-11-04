@@ -16,13 +16,14 @@ require_once 'Modules/core/Model/CoreOpenId.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of users module
  */
-class UseraccountController extends CoresecureController {
-    public function mainMenu() {
-
+class UseraccountController extends CoresecureController
+{
+    public function mainMenu()
+    {
         $lang = $this->getLanguage();
         $dataView = [
             'bgcolor' => Constants::COLOR_WHITE,
@@ -36,19 +37,19 @@ class UseraccountController extends CoresecureController {
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction() {
-        
+    public function indexAction()
+    {
         $lang = $this->getLanguage();
         $id_user =  $_SESSION["id_user"];
-        
+
 
         // Query to the database
         $modelUsersInfo = new UsersInfo();
         $userInfo = $modelUsersInfo->get($id_user);
-        
+
         $modelCoreUser = new CoreUser();
         $userCore = $modelCoreUser->getUser($id_user);
 
@@ -71,10 +72,10 @@ class UseraccountController extends CoresecureController {
         $formApi->setTitle('Api key');
         $formApi->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
         $formApi->setValidationButton('Reset', "usersmyaccount");
-        
+
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
-        if(!empty($openid_providers)) {
+        if (!empty($openid_providers)) {
             $nonce = uniqid("pfm");
             foreach ($openid_providers as $openid_provider) {
                 $provider = [
@@ -95,7 +96,7 @@ class UseraccountController extends CoresecureController {
         try {
             $openidModel = new CoreOpenId();
             $linked = $openidModel->list($_SESSION['id_user']);
-            if($linked == null) {
+            if ($linked == null) {
                 $linked = [];
             }
         } catch(Exception $e) {
@@ -109,7 +110,7 @@ class UseraccountController extends CoresecureController {
         ]);
 
         // get user linked providers and display them with unlink
-        if($formApi->check()) {
+        if ($formApi->check()) {
             $modelCoreUser->newApiKey($_SESSION['id_user']);
             $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
             $_SESSION["flashClass"] = 'success';
@@ -117,17 +118,17 @@ class UseraccountController extends CoresecureController {
             return;
         }
 
-        if ( $form->check() ){
-            
-            $modelCoreUser->editBaseInfo($id_user,
-                    $form->getParameter("name"),
-                    $form->getParameter("firstname"),
-                    $form->getParameter("email")
+        if ($form->check()) {
+            $modelCoreUser->editBaseInfo(
+                $id_user,
+                $form->getParameter("name"),
+                $form->getParameter("firstname"),
+                $form->getParameter("email")
             );
             $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
             $modelUsersInfo->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
             $modelUsersInfo->setBio($id_user, $form->getParameter("bio"));
-            
+
             // upload avatar
             $target_dir = "data/users/avatar/";
             if ($_FILES["avatar"]["name"] != "") {
@@ -138,14 +139,13 @@ class UseraccountController extends CoresecureController {
 
                 $modelUsersInfo->setAvatar($id_user, $target_dir . $url);
             }
-            
+
             $_SESSION['flash'] = UsersTranslator::UserInformationsHaveBeenSaved($lang);
             $_SESSION["flashClass"] = 'success';
             $this->redirect("usersmyaccount");
             return;
-            
         }
-        
+
         $_SESSION["redirect"] = "usersmyaccount";
 
         unset($userCore['password']);
@@ -159,5 +159,4 @@ class UseraccountController extends CoresecureController {
             'data' => ['user' => $userCore]
         ));
     }
-
 }

@@ -47,34 +47,37 @@ use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Sentry\Event;
 
-class EventModel extends Model {
-
-    public function runRequest($sql, $args=array()) {
+class EventModel extends Model
+{
+    public function runRequest($sql, $args=array())
+    {
         return parent::runRequest($sql, $args);
-    }   
-
+    }
 }
 
 /**
  * Private test class to simulate messages
  */
-class FakeMsg {
+class FakeMsg
+{
     public string $body = "";
 }
 
 /**
  * Handler to manage messages from RabbitMQ
  */
-class EventHandler {
-
+class EventHandler
+{
     private $logger;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->logger = Configuration::getLogger();
     }
 
-    private function prometheus($reqStart, $reqEnd, $action, $ok=true) {
-        if(!Configuration::get('redis_host')) {
+    private function prometheus($reqStart, $reqEnd, $action, $ok=true)
+    {
+        if (!Configuration::get('redis_host')) {
             return;
         }
         Configuration::getLogger()->debug('[prometheus] stat', ['action' => $action]);
@@ -95,12 +98,13 @@ class EventHandler {
             $counter->incBy(1, [$event, $ok ? 'success' : 'error']);
             $gauge = $registry->getOrRegisterHistogram('pfmevent', 'request_time', 'time', ['action'], [10, 20, 50, 100, 1000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$event]);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
         }
     }
 
-    public function ticketCount($msg) {
+    public function ticketCount($msg)
+    {
         $hm = new Helpdesk();
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
@@ -128,14 +132,15 @@ class EventHandler {
                     $tag = "unknown";
                     break;
             }
-            if($tag) {
+            if ($tag) {
                 $stat = ['name' => 'tickets', 'fields' => ['value' => intval($count['total'])], 'tags' =>['status' =>$tag], 'time' => $timestamp];
                 $statHandler->record($space['shortname'], $stat);
             }
         }
     }
 
-    public function spaceCount() {
+    public function spaceCount()
+    {
         $model = new CoreSpace();
         $nbSpaces = $model->countSpaces();
         $stat = ['name' => 'spaces', 'fields' => ['value' => $nbSpaces]];
@@ -143,7 +148,8 @@ class EventHandler {
         $statHandler->record(Configuration::get('influxdb_org', 'pfm'), $stat);
     }
 
-    public function spaceCreate($msg) {
+    public function spaceCreate($msg)
+    {
         $this->logger->debug('[spaceCreate]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
@@ -161,12 +167,14 @@ class EventHandler {
         $g->addUser($space['shortname'], $user['login'], $user['apikey']);
     }
 
-    public function spaceDelete($msg) {
+    public function spaceDelete($msg)
+    {
         $this->logger->debug('[spaceDelete]', ['space_id' => $msg['space']['id']]);
         $this->spaceCount();
     }
 
-    public function spaceUserCount($msg){
+    public function spaceUserCount($msg)
+    {
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $nbUsers = $model->countUsers($msg['space']['id']);
@@ -175,16 +183,18 @@ class EventHandler {
         $statHandler->record($space['shortname'], $stat);
     }
 
-    private function isSpaceOwner($id_space, $id_user) {
+    private function isSpaceOwner($id_space, $id_user)
+    {
         $sum = new CoreSpaceUser();
         $link = $sum->getUserSpaceInfo2($id_space, $id_user);
-        if($link && $link['status'] >= CoreSpace::$MANAGER) {
+        if ($link && $link['status'] >= CoreSpace::$MANAGER) {
             return true;
         }
         return false;
     }
 
-    public function spaceUserRoleUpdate($msg) {
+    public function spaceUserRoleUpdate($msg)
+    {
         $this->logger->debug('[spaceUserRoleUpdate]', ['space_id' => $msg['space']['id'], 'user' => $msg['user']['id'], 'role' => $msg['role']]);
         $role = $msg["role"];
         $u = new CoreUser();
@@ -193,13 +203,13 @@ class EventHandler {
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login role update [role=$role]");
 
-        // If owner, add to or remove from grafana 
+        // If owner, add to or remove from grafana
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        if($role >= CoreSpace::$MANAGER) {
+        if ($role >= CoreSpace::$MANAGER) {
             $plan = new CorePlan($space['plan'], $space['plan_expire']);
-            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            if ($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
                 $g->addUser($space['shortname'], $user['login'], $user['apikey']);
             } else {
                 Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
@@ -209,7 +219,8 @@ class EventHandler {
         }
     }
 
-    public function userApiKey($msg) {
+    public function userApiKey($msg)
+    {
         $this->logger->debug('[userApiKey]', ['user' => $msg['user']]);
         $gm = new Grafana();
         $u = new CoreUser();
@@ -219,13 +230,14 @@ class EventHandler {
     }
 
 
-    public function spaceResourceEdit($action, $msg) {
+    public function spaceResourceEdit($action, $msg)
+    {
         $this->logger->debug('[spaceResourceEdit]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelResource = new ResourceInfo();
         $nbResources = $modelResource->admCount($msg['space']['id']);
-        
+
         $stat = ['name' => 'resources', 'fields' => ['value' => $nbResources['total']]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
@@ -244,13 +256,14 @@ class EventHandler {
         }
     }
 
-    public function spaceServiceEdit($action, $msg) {
+    public function spaceServiceEdit($action, $msg)
+    {
         $this->logger->debug('[spaceServiceEdit]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
         $modelService = new SeService();
         $nbServices = $modelService->admCount($msg['space']['id']);
-        
+
         $stat = ['name' => 'services', 'fields' => ['value' => $nbServices['total']]];
         $statHandler = new Statistics();
         $statHandler->record($space['shortname'], $stat);
@@ -269,17 +282,18 @@ class EventHandler {
         }
     }
 
-    public function spaceQuoteEdit($action, $msg) {
+    public function spaceQuoteEdit($action, $msg)
+    {
         $this->logger->debug('[spaceQuoteEdit]', ['space_id' => $msg['space']['id']]);
         $modelQuote = new Quote();
-        
+
         if (array_key_exists('quote', $msg)) {
             $cname = $msg['quote']['id'];
             $hmsg = "Quote $cname deleted";
             if ($action == Events::ACTION_QUOTE_EDIT) {
                 $quote = $modelQuote->getAllInfo($msg['space']['id'], $msg['quote']['id']);
                 $user = "unknown";
-                if($quote) {
+                if ($quote) {
                     $user = $quote["recipient"];
                 }
                 $hmsg = "Quote $cname [$user] edited";
@@ -289,7 +303,8 @@ class EventHandler {
         }
     }
 
-    public function spaceCustomerEdit($action, $msg) {
+    public function spaceCustomerEdit($action, $msg)
+    {
         $this->logger->debug('[spaceCustomerEdit]', ['space_id' => $msg['space']['id']]);
         $model = new CoreSpace();
         $space = $model->getSpace($msg['space']['id']);
@@ -313,7 +328,8 @@ class EventHandler {
         }
     }
 
-    public function spaceUserJoin($msg) {
+    public function spaceUserJoin($msg)
+    {
         $this->logger->debug('[spaceUserJoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
         $u = new CoreUser();
@@ -326,10 +342,9 @@ class EventHandler {
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        if($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
-
+        if ($this->isSpaceOwner($msg['space']['id'], $msg['user']['id'])) {
             $plan = new CorePlan($space['plan'], $space['plan_expire']);
-            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            if ($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
                 $g->addUser($space['shortname'], $user['login'], $user['apikey']);
             } else {
                 Configuration::getLogger()->debug('[flags][disabled] ', ['space' => $space['name'] , 'flags' => [CorePlan::FLAGS_GRAFANA]]);
@@ -337,14 +352,15 @@ class EventHandler {
         }
     }
 
-    public function spaceUserUnjoin($msg) {
+    public function spaceUserUnjoin($msg)
+    {
         $this->logger->debug('[spaceUserUnjoin]', ['space_id' => $msg['space']['id']]);
         $this->spaceUserCount($msg);
         $u = new CoreUser();
         $user = $u->getInfo($msg['user']['id']);
         $login = $user['login'];
         $m = new CoreHistory();
-        $m->add( $msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
+        $m->add($msg['space']['id'], $msg['_user'] ?? null, "User $login left space");
 
         // If owner, remove from grafana
         $g = new Grafana();
@@ -352,7 +368,7 @@ class EventHandler {
         $space = $s->getSpace($msg['space']['id']);
         // User is already removed, check if role set in message
         // if user is at least manager, remove from grafana
-        if(isset($msg['role']) && $msg['role'] >= CoreSpace::$MANAGER ) {
+        if (isset($msg['role']) && $msg['role'] >= CoreSpace::$MANAGER) {
             $g->delUser($space['shortname'], $user['login']);
         }
 
@@ -366,16 +382,17 @@ class EventHandler {
         $email->sendEmail($from, $fromName, $user['email'], $subject, CoreTranslator::spaceUserUnjoinTxt($space['name'], $user_lang));
     }
 
-    public function spacePlanEdit($msg) {
+    public function spacePlanEdit($msg)
+    {
         // If owner, add to grafana
         $g = new Grafana();
         $s = new CoreSpace();
         $space = $s->getSpace($msg['space']['id']);
-        
+
 
         $plan = new CorePlan($msg['plan']['id'], 0);
         $oldplan = null;
-        if(!array_key_exists('old', $msg)) {
+        if (!array_key_exists('old', $msg)) {
             $msg['old'] = ['id' => 0];
         }
         $oldplan = new CorePlan($msg['old']['id'], 0);
@@ -383,20 +400,20 @@ class EventHandler {
         $csu = new CoreSpaceUser();
         $managers = $csu->managersOrAdmin($space['id']);
         $planInfo = $plan->plan();
-        if(!$planInfo) {
+        if (!$planInfo) {
             Configuration::getLogger()->error('invalid plan', $msg);
             return;
         }
         Configuration::getLogger()->debug('[plan] edit check flags', ['flags' => $plan->Flags()]);
-        if($plan->hasFlag(CorePlan::FLAGS_GRAFANA) !== $oldplan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
-            if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+        if ($plan->hasFlag(CorePlan::FLAGS_GRAFANA) !== $oldplan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+            if ($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
                 Configuration::getLogger()->debug('[plan] add grafana', ['plan' => $planInfo['name']]);
-                foreach($managers as $manager){
+                foreach ($managers as $manager) {
                     $g->addUser($space['shortname'], $manager['login'], $manager['apikey']);
                 }
             } else {
                 Configuration::getLogger()->debug('[plan] del grafana', ['plan' => $planInfo['name']]);
-                foreach($managers as $manager){
+                foreach ($managers as $manager) {
                     $g->delUser($space['shortname'], $manager['login']);
                 }
             }
@@ -405,10 +422,10 @@ class EventHandler {
         }
         $m = new CoreHistory();
         $m->add($msg['space']['id'], $msg['_user'] ?? null, "Space plan updated: ".$planInfo['name']);
-    
     }
 
-    public function customerImport() {
+    public function customerImport()
+    {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
@@ -416,7 +433,8 @@ class EventHandler {
         }
     }
 
-    public function resourceImport() {
+    public function resourceImport()
+    {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
@@ -424,7 +442,8 @@ class EventHandler {
         }
     }
 
-    public function quoteImport() {
+    public function quoteImport()
+    {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
@@ -432,7 +451,8 @@ class EventHandler {
         }
     }
 
-    public function serviceImport() {
+    public function serviceImport()
+    {
         $cp = new CoreSpace();
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
@@ -440,29 +460,33 @@ class EventHandler {
         }
     }
 
-    public function calentryImport() {
+    public function calentryImport()
+    {
         $em = new EventModel();
         $sql = "SELECT * FROM `bk_calendar_entry`;";
         $resdb = $em->runRequest($sql);
-        while($res = $resdb->fetch()) {
+        while ($res = $resdb->fetch()) {
             $this->calentryEdit(["action" => Events::ACTION_CAL_ENTRY_EDIT, "bk_calendar_entry_old" => null, "bk_calendar_entry" => ["id" => intval($res['id']), "id_space" => $res['id_space']]]);
         }
     }
 
-    public function calentryEdit($msg) {
+    public function calentryEdit($msg)
+    {
         $this->logger->debug('[calentryEdit][nothing to do]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
     }
 
-    public function calentryRemove($msg) {
+    public function calentryRemove($msg)
+    {
         $this->logger->debug('[calentryRemove][nothing to do]', ['calentry_id' => $msg['bk_calendar_entry']['id']]);
     }
 
-    public function invoiceImport() {
+    public function invoiceImport()
+    {
         $em = new EventModel();
         $sql = "SELECT * FROM `in_invoice`;";
         $resdb = $em->runRequest($sql);
         $i = 0;
-        while($res = $resdb->fetch()) {
+        while ($res = $resdb->fetch()) {
             $dt = DateTime::createFromFormat("Y-m-d H:i:s", $res["date_generated"]." 00:00:00");
             $timestamp = $dt->getTimestamp() + $i;
             $i++;
@@ -471,15 +495,18 @@ class EventHandler {
     }
 
 
-    public function invoiceEdit($msg) {
+    public function invoiceEdit($msg)
+    {
         $this->logger->debug('[invoiceEdit][nothing to do]', ['id_invoice' => $msg['invoice']['id']]);
     }
 
-    public function invoiceDelete($msg) {
+    public function invoiceDelete($msg)
+    {
         $this->logger->debug('[invoiceDelete][nothing to do', ['id_invoice' => $msg['invoice']['id']]);
     }
 
-    public function statRequest($msg) {
+    public function statRequest($msg)
+    {
         Configuration::getLogger()->debug('[statRequest] '.$msg['stat'].' statistics');
         $c = new CoreFiles();
         $f = $c->get($msg['file']['id']);
@@ -495,13 +522,13 @@ class EventHandler {
                     break;
                 case BkStats::STATS_AUTH_STAT:
                     $bs = new BkStats();
-                    $bs->generateStats($file, $msg['space']['id'],  $msg['dateBegin'], $msg['dateEnd']);
+                    $bs->generateStats($file, $msg['space']['id'], $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case BkStats::STATS_AUTH_LIST:
                     $statUserModel = new BkStatsUser();
                     $resource_id = $msg['resource_id'];
                     if ($msg['email'] != "") {
-                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $id_space);
+                        $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang, true);
                     } else {
                         $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
                     }
@@ -544,7 +571,7 @@ class EventHandler {
                     Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             Configuration::getLogger()->debug('[statRequest][error] '.$msg['stat'].' statistics', ['error' => $e->getMessage()]);
             $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
             throw $e;
@@ -554,16 +581,18 @@ class EventHandler {
     }
 
 
-    public function closeRequest($id_space, $rid, $found){
+    public function closeRequest($id_space, $rid, $found)
+    {
         $cv = new CoreVirtual();
-        if(!$found) {
+        if (!$found) {
             $cv->updateRequest($id_space, 'invoices', $rid, 'nothing to invoice');
         } else {
             $cv->deleteRequest($id_space, 'invoices', $rid);
         }
     }
 
-    public function campaignRequest($msg) {
+    public function campaignRequest($msg)
+    {
         Configuration::getLogger()->debug('[campaignRequest] ', ['campaign' => $msg['campaign']['id']]);
         $id_space = $msg['space']['id'];
         $c = new CoreSpace();
@@ -571,7 +600,7 @@ class EventHandler {
         $campaign_id = $msg['campaign']['id'];
         $cm = new RatingCampaign();
         $campaign = $cm->get($id_space, $campaign_id);
-        if(!$campaign) {
+        if (!$campaign) {
             Configuration::getLogger()->error('[campaignRequest] campaign not found', ['campaign' => $msg['campaign']]);
             return;
         }
@@ -580,7 +609,7 @@ class EventHandler {
         $p = new SeProject();
         $pemails = $p->getEmailsForClosedProjectsByPeriod($id_space, date('Y-m-d', $campaign['from_date']), date('Y-m-d', $campaign['to_date']));
         foreach ($pemails as $email) {
-            if(!in_array($email, $emails)) {
+            if (!in_array($email, $emails)) {
                 $emails[] = $email;
             }
         }
@@ -588,7 +617,7 @@ class EventHandler {
 
         $me = new Email();
         $from = Configuration::get('smtp_from');
-        if($c->getSpaceMenusRole($id_space, "helpdesk")) {
+        if ($c->getSpaceMenusRole($id_space, "helpdesk")) {
             $from = $me->getFromEmail($space['shortname']);
         }
         $fromName = "Platform-Manager";
@@ -598,13 +627,13 @@ class EventHandler {
         $from_date_str = '';
         $to_date_str = '';
         $limit_date_str = '';
-        if($campaign['from_date'] ?? '') {
+        if ($campaign['from_date'] ?? '') {
             $from_date_str = date('Y-m-d', $campaign['from_date']);
         }
-        if($campaign['to_date'] ?? '') {
+        if ($campaign['to_date'] ?? '') {
             $to_date_str = date('Y-m-d', $campaign['to_date']);
         }
-        if($campaign['limit_date'] ?? '') {
+        if ($campaign['limit_date'] ?? '') {
             $limit_date_str = date('Y-m-d', $campaign['limit_date']);
         }
 
@@ -614,7 +643,7 @@ class EventHandler {
             $message = RatingTranslator::NewCampaign($lang).'<br/>'.$campaign['message'];
             $link = Configuration::get('public_url').'/rating/'.$id_space.'/campaign/'.$campaign_id.'/rate';
             $message .= '<br/><a href="'.$link.'">'.$link.'</a>';
-            if($limit_date_str) {
+            if ($limit_date_str) {
                 $message .= '<br/><p>'.RatingTranslator::Deadline($lang).': '.$limit_date_str.'</p>';
             }
             $period = CoreTranslator::dateFromEn($from_date_str, $lang).' - '.CoreTranslator::dateFromEn($to_date_str, $lang);
@@ -623,7 +652,8 @@ class EventHandler {
         Configuration::getLogger()->debug('[campaignRequest] '.$msg['campaign']['id'].' done!');
     }
 
-    public function invoiceRequest($msg) {
+    public function invoiceRequest($msg)
+    {
         $id_space = $msg['space']['id'];
         $id_user = $msg['user']['id'];
         $cus = new CoreUserSettings();
@@ -637,7 +667,7 @@ class EventHandler {
             switch ($type) {
                 case GlobalInvoice::$INVOICES_GLOBAL_ALL:
                     $beginPeriod = $msg['period_begin'];
-                    $endPeriod = $msg['period_end']; 
+                    $endPeriod = $msg['period_end'];
                     $gi = new GlobalInvoice();
                     $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
                     $this->closeRequest($id_space, $rid, $found);
@@ -652,7 +682,7 @@ class EventHandler {
                     break;
                 case BookingInvoice::$INVOICES_BOOKING_ALL:
                     $beginPeriod = $msg['period_begin'];
-                    $endPeriod = $msg['period_end']; 
+                    $endPeriod = $msg['period_end'];
                     $gi = new BookingInvoice();
                     $found = $gi->invoiceAll($id_space, $beginPeriod, $endPeriod, $id_user, $lang);
                     $this->closeRequest($id_space, $rid, $found);
@@ -687,7 +717,7 @@ class EventHandler {
                     Configuration::getLogger()->error('[invoiceRequest] unknown request type', ['type' => $type]);
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             $cv = new CoreVirtual();
             $cv->updateRequest($id_space, 'invoices', $rid, 'error: '.$e->getMessage());
             throw $e;
@@ -696,17 +726,18 @@ class EventHandler {
 
     /**
      * Handle message from rabbitmq
-     * 
+     *
      * @param PhpAmqpLib\Message\AMQPMessage $msg message (content in $msg->body in text format)
      */
-    public function message($msg) {
+    public function message($msg)
+    {
         $this->logger->info('[message]', ['message' => $msg]);
         $reqStart = microtime(true);
         $ok = true;
         try {
             $data = json_decode($msg->body, true);
             $action = $data['action'] ?? -1;  // if action not in message, set to -1 and fail
-            if(!is_int($action)) {
+            if (!is_int($action)) {
                 $this->logger->error('[message] invalid action', ['action' => $action]);
                 $action = -1;
             }
@@ -777,20 +808,19 @@ class EventHandler {
                     $ok = false;
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             $ok = false;
             $this->logger->error('[message] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'stack' => $e->getTraceAsString()]);
         }
         $reqEnd = microtime(true);
         $this->prometheus($reqStart, $reqEnd, $action, $ok);
         $this->logger->info('[message] done!');
-
     }
 }
 
 
-class Events {
-
+class Events
+{
     public const ACTION_SPACE_CREATE = 0;
     public const ACTION_SPACE_DELETE = 1;
     public const ACTION_SPACE_USER_JOIN = 2;
@@ -830,8 +860,9 @@ class Events {
     /**
      * Initialize client
      */
-    public static function getChannel() {
-        if(self::$channel === null) {
+    public static function getChannel()
+    {
+        if (self::$channel === null) {
             $amqpHost = Configuration::get('amqp_host', '');
             if ($amqpHost == '') {
                 return null;
@@ -849,25 +880,26 @@ class Events {
     /**
      * Close connection
      */
-    public static function Close() {
-        if(self::$channel != null) {
+    public static function close()
+    {
+        if (self::$channel != null) {
             try {
                 self::$channel->close();
                 self::$connection->close();
-            } catch(Throwable $e) {
+            } catch (Throwable $e) {
                 Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
-            } 
+            }
         }
         self::$channel = null;
-
     }
 
     /**
      * Sends a message to rabbitmq
      * @param array $message message to send
      */
-    public static function send(array $message) {
-        if(getenv("PFM_MODE") == "test") {
+    public static function send(array $message)
+    {
+        if (getenv("PFM_MODE") == "test") {
             Configuration::getLogger()->info('[event] test mode, call method', ['message' => $message]);
             $m = new EventHandler();
             $msg = new FakeMsg();
@@ -878,7 +910,7 @@ class Events {
         }
         try {
             $channel = self::getChannel();
-            if($channel === null) {
+            if ($channel === null) {
                 return;
             }
             Configuration::getLogger()->debug('[event] send', ['message' => $message]);
@@ -891,5 +923,3 @@ class Events {
         }
     }
 }
-
-?>

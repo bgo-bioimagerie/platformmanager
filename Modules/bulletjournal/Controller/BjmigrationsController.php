@@ -12,13 +12,14 @@ require_once 'Modules/bulletjournal/Model/BjTask.php';
  * @author sprigent
  * Controller for the home page
  */
-class BjmigrationsController extends CoresecureController {
-
+class BjmigrationsController extends CoresecureController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space, $year, $month) {
+    public function indexAction($id_space, $year, $month)
+    {
         $this->checkAuthorizationMenuSpace("bulletjournal", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -28,7 +29,7 @@ class BjmigrationsController extends CoresecureController {
         if ($year == "" || $year == 0) {
             $year = date('Y', time());
         }
-        
+
         $modelTask = new BjTask();
         $notes = $modelTask->openedForMigration($id_space, $year, $month);
 
@@ -37,27 +38,27 @@ class BjmigrationsController extends CoresecureController {
                 ), "indexAction");
     }
 
-    public function monthbeforeAction($id_space, $year, $month){
-        if( $month == 1){
+    public function monthbeforeAction($id_space, $year, $month)
+    {
+        if ($month == 1) {
             $year = $year-1;
             $month = 12;
-        }
-        else{
+        } else {
             $month = $month -1;
         }
-        
+
         $this->indexAction($id_space, $year, $month);
     }
-    
-    public function monthafterAction($id_space, $year, $month){
-        if( $month == 12){
+
+    public function monthafterAction($id_space, $year, $month)
+    {
+        if ($month == 12) {
             $year = $year+1;
             $month = 1;
-        }
-        else{
+        } else {
             $month = $month + 1;
         }
-        
+
         $this->indexAction($id_space, $year, $month);
     }
 }

@@ -16,16 +16,15 @@ require_once 'Modules/statistics/Controller/StatisticsController.php';
 
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-
 /**
  *
  * @author sprigent
  * Controller for the home page
  */
-class StatisticsglobalController extends StatisticsController {
-
-    public function indexAction($id_space) {
-
+class StatisticsglobalController extends StatisticsController
+{
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -86,8 +85,7 @@ class StatisticsglobalController extends StatisticsController {
 
             if ($dateBegin != "" && $dateEnd != "" && $dateBegin > $dateEnd) {
                 $_SESSION["flash"] = ServicesTranslator::Dates_are_not_correct($lang);
-                $this->redirect('statisticsglobal/' . $id_space);
-                return;
+                return $this->redirect('statisticsglobal/' . $id_space);
             }
 
             $excludeColorCode = $this->request->getParameter("exclude_color");
@@ -96,7 +94,7 @@ class StatisticsglobalController extends StatisticsController {
             $cs = new CoreSpace();
             $role = $cs->getSpaceMenusRole($id_space, 'statistics');
             $name = 'stats_'.GlobalStats::STATS_GLOBAL.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
-            
+
             $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
             $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
@@ -116,7 +114,6 @@ class StatisticsglobalController extends StatisticsController {
             return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
         }
 
-        $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
+        return $this->render(array("id_space" => $id_space, 'formHtml' => $form->getHtml($lang)));
     }
-
 }

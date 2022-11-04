@@ -7,18 +7,18 @@ require_once 'Modules/statistics/Model/StatisticsTranslator.php';
 require_once 'Modules/statistics/Controller/StatisticsController.php';
 require_once 'Modules/core/Model/CoreFiles.php';
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class StatisticslistController extends StatisticsController {
-
+class StatisticslistController extends StatisticsController
+{
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $c = new CoreFiles();
@@ -27,8 +27,8 @@ class StatisticslistController extends StatisticsController {
         $statFiles = $c->getByModule($id_space, 'statistics', $role);
 
         $table = new TableView();
-        
-      
+
+
         $table->setTitle(StatisticsTranslator::statistics($lang), 3);
 
         $headers = array(
@@ -57,7 +57,7 @@ class StatisticslistController extends StatisticsController {
                     break;
             }
             $statFiles[$i]['url'] = '';
-            if($statFiles[$i]['status'] == 'done') {
+            if ($statFiles[$i]['status'] == 'done') {
                 $statFiles[$i]['url'] = "corefiles/$id_space/".$stat['id'];
             }
         }
@@ -67,5 +67,4 @@ class StatisticslistController extends StatisticsController {
 
         $this->render(array("id_space" => $id_space, "lang" => $lang, "stats" => $tableView));
     }
-
 }

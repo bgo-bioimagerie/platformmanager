@@ -24,30 +24,30 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 require_once 'Modules/services/Controller/ServicesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Used by statisticsglobal
  */
-class ServicesstatisticsprojectController extends ServicesController {
-
+class ServicesstatisticsprojectController extends ServicesController
+{
     private $serviceModel;
 
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         //$this->checkAuthorizationMenu("services");
         $this->serviceModel = new SeService();
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -78,7 +78,7 @@ class ServicesstatisticsprojectController extends ServicesController {
                 $date_end = date("Y", time()) . "-12-31";
             }
         }
-        
+
         // build the form
         $form = new Form($this->request, "formbalancesheet");
         $form->setTitle(ServicesTranslator::Projects_balance($lang), 3);
@@ -95,7 +95,7 @@ class ServicesstatisticsprojectController extends ServicesController {
             $dateBegin = $form->getParameter("begining_period");
             $dateEnd = $form->getParameter("end_period");
             $name = 'stats_'.SeStats::STATS_PROJECTS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.xlsx';
-            
+
             $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
             $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
@@ -124,8 +124,9 @@ class ServicesstatisticsprojectController extends ServicesController {
         ));
     }
 
-    
-    public function samplesreturnAction($id_space) {
+
+    public function samplesreturnAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -134,7 +135,7 @@ class ServicesstatisticsprojectController extends ServicesController {
         $role = $cs->getSpaceMenusRole($id_space, 'statistics');
         $date = date('Y-m-d');
         $name = 'stats_'.SeStats::STATS_PROJECT_SAMPLES.'_'.str_replace('/', '-', $date).'.xlsx';
-        
+
         $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
         $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
@@ -148,11 +149,10 @@ class ServicesstatisticsprojectController extends ServicesController {
         ]);
 
         return $this->redirect('statistics/'.$id_space, [], ['stats' => ['id' => $fid]]);
-
     }
 
-    public function mailrespsAction($id_space) {
-
+    public function mailrespsAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("statistics", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -185,14 +185,13 @@ class ServicesstatisticsprojectController extends ServicesController {
         $form->setValidationButton("Ok", "servicesstatisticsmailresps/" . $id_space);
 
         if ($form->check()) {
-
             $c = new CoreFiles();
             $cs = new CoreSpace();
             $role = $cs->getSpaceMenusRole($id_space, 'statistics');
             $dateBegin = $this->request->getParameter('begining_period');
             $dateEnd = $this->request->getParameter('end_period');
             $name = 'stats_'.SeStats::STATS_MAIL_RESPS.'_'.str_replace('/', '-', $dateBegin).'_'.str_replace('/', '-', $dateEnd).'.csv';
-            
+
             $fid = $c->set(0, $id_space, $name, $role, 'statistics', $_SESSION['id_user']);
             $c->status($id_space, $fid, CoreFiles::$PENDING, '');
 
@@ -212,5 +211,4 @@ class ServicesstatisticsprojectController extends ServicesController {
 
         $this->render(array("id_space" => $id_space, "formHtml" => $form->getHtml($lang)));
     }
-
 }

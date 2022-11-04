@@ -1,11 +1,11 @@
-<?php include 'Modules/resources/View/layout.php' ?>
+<?php include_once 'Modules/resources/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
     
 <div class="pm-content">
 
-    <?php include "Modules/resources/View/Resourcesinfo/edittabs.php" ?>
+    <?php include_once "Modules/resources/View/Resourcesinfo/edittabs.php" ?>
     <div class="col-12"><p></p></div>
     
     
@@ -13,7 +13,7 @@
         <?php echo $formEvent ?>
     </div>
     
-    <?php if ($id_event > 0){ ?>
+    <?php if ($id_event > 0) { ?>
     <div class="col-12">
         <div class="col-12 pm-form">
             <?php echo $formDownload ?>

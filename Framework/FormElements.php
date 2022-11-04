@@ -1,7 +1,7 @@
 <?php
 /**
  * Examples
- * 
+ *
  * <?php
 *  require_once 'Framework/FormElements.php';
 *
@@ -12,8 +12,8 @@
 *  echo $b->toHtml();
 *  ?>
  */
-abstract class FormElement {
-
+abstract class FormElement
+{
     protected string $type = 'text';
     protected ?string $id = '';
     protected ?string $name = '';
@@ -28,125 +28,151 @@ abstract class FormElement {
     protected string $labelSize = 'col-md-2'; // bootstrap col size
     protected string $inputSize = 'col-md-10'; // bootstrap col size
 
-    public function __construct(string $type) {
+    public function __construct(string $type)
+    {
         $this->type = $type;
     }
 
-    public function getType(): string {
+    public function getType(): string
+    {
         return $this->type;
     }
 
-    public  function setMandatory(bool $is_mandatory=true) {
+    public function setMandatory(bool $is_mandatory=true)
+    {
         $this->mandatory = $is_mandatory;
     }
 
-    public  function isMandatory():bool {
+    public function isMandatory(): bool
+    {
         return $this->mandatory;
     }
 
-    public  function setDisabled(bool $is_disabled=true) {
+    public function setDisabled(bool $is_disabled=true)
+    {
         $this->disabled = $is_disabled;
     }
 
-    public  function isDisabled():bool {
+    public function isDisabled(): bool
+    {
         return $this->disabled;
     }
 
-    public  function setPlaceholder(string $placeholder) {
+    public function setPlaceholder(string $placeholder)
+    {
         $this->placeholder = $placeholder;
     }
 
-    public  function getPlaceholder():string {
+    public function getPlaceholder(): string
+    {
         return $this->placeholder;
     }
 
-    public  function setValue($value) {
+    public function setValue($value)
+    {
         $this->value = $value;
     }
 
-    public  function getValue():mixed {
+    public function getValue(): mixed
+    {
         return $this->value;
     }
 
-    public  function setLabel(string $label) {
+    public function setLabel(string $label)
+    {
         $this->label = $label;
     }
 
-    public  function getLabel():string {
+    public function getLabel(): string
+    {
         return $this->label;
     }
 
-    public  function setName(string $name) {
+    public function setName(string $name)
+    {
         $this->name = $name;
     }
 
-    public  function getName():string {
+    public function getName(): string
+    {
         return $this->name;
     }
 
-    public  function setAbout(string $about) {
+    public function setAbout(string $about)
+    {
         $this->about = $about;
     }
 
-    public  function getAbout():string {
+    public function getAbout(): string
+    {
         return $this->about;
     }
 
-    public  function setError(string $error) {
+    public function setError(string $error)
+    {
         $this->errorText = $error;
     }
 
-    public  function clearError() {
+    public function clearError()
+    {
         $this->errorText = '';
     }
 
-    public  function getError():string {
+    public function getError(): string
+    {
         return $this->errorText;
     }
 
-    public function setColSize(string $labelSize, string $inputSize) {
+    public function setColSize(string $labelSize, string $inputSize)
+    {
         $this->labelSize = $labelSize ? 'col-md-'.$labelSize : '';
         $this->inputSize = $inputSize ? 'col-md-'.$inputSize : '';
     }
 
-    public function getLabelSize():string {
+    public function getLabelSize(): string
+    {
         return $this->labelSize;
     }
 
-    public function getInputSize():string {
+    public function getInputSize(): string
+    {
         return $this->inputSize;
     }
 
-    public function htmlContraints(): string {
+    public function htmlContraints(): string
+    {
         $html = '';
         if ($this->isMandatory()) {
             $html  .= ' required ';
         }
-        if($this->isDisabled()) {
+        if ($this->isDisabled()) {
             $html .= ' readonly ';
         }
-        if($this->getPlaceholder()) {
+        if ($this->getPlaceholder()) {
             $html .= ' placeholder="'.$this->getPlaceholder().'"';
         }
         return $html;
     }
 
-    protected function about(): string {
-        if(!$this->aboutText) {
+    protected function about(): string
+    {
+        if (!$this->aboutText) {
             return '';
         }
         return sprintf('<div class="col-12"><small>%s</small></div>', $this->aboutText);
     }
 
-    protected function error(): string {
-        if(!$this->errorText) {
+    protected function error(): string
+    {
+        if (!$this->errorText) {
             return '';
         }
         return sprintf('<div class="col-12 alert alert-danger">%s</div>', $this->errorText);
     }
 
-    protected function htmlLabel():string {
-        if($this->getLabelSize() == 'col-0') {
+    protected function htmlLabel(): string
+    {
+        if ($this->getLabelSize() == 'col-0') {
             return '';
         }
         $reqTxt = '';
@@ -156,49 +182,55 @@ abstract class FormElement {
         return <<<HTML
         <label class="{$this->getLabelSize()} col-form-label">{$this->label}{$reqTxt}</label>
         HTML;
-
     }
 
-    public abstract function toHtml(): string;
-
-
+    abstract public function toHtml(): string;
 }
 
-class FormColorElement extends FormInputElement {
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+class FormColorElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'color';
     }
 }
 
-class FormEmailElement extends FormInputElement {
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+class FormEmailElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'email';
     }
 }
 
-class FormPasswordElement extends FormInputElement {
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+class FormPasswordElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'password';
     }
 }
 
-class FormDateElement extends FormInputElement {
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+class FormDateElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'date';
     }
 }
 
-class FormIntegerElement extends FormInputElement {
-
+class FormIntegerElement extends FormInputElement
+{
     private $min = -1;
     private $max = -1;
     private string $step = "1";
 
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'number';
     }
@@ -208,17 +240,19 @@ class FormIntegerElement extends FormInputElement {
      * Set min/max time range
      * Set -1 if no contraints
      */
-    public function setRange(int $min, int $max) {
+    public function setRange(int $min, int $max)
+    {
         $this->min = $min;
         $this->max = $max;
     }
 
-    public function htmlContraints(): string {
+    public function htmlContraints(): string
+    {
         $html = parent::htmlContraints();
-        if($this->max > -1) {
+        if ($this->max > -1) {
             $html .= sprintf(' min="%s"" ', $this->max);
         }
-        if($this->min > -1) {
+        if ($this->min > -1) {
             $html .= sprintf(' min="%s"" ', $this->min);
         }
         $html .= sprintf(' step="%s" ', $this->step);
@@ -227,18 +261,21 @@ class FormIntegerElement extends FormInputElement {
 }
 
 
-class FormFloatElement extends FormIntegerElement {
-    public function setStep(string $step) {
+class FormFloatElement extends FormIntegerElement
+{
+    public function setStep(string $step)
+    {
         $this->step = $step;
     }
 }
 
-class FormTimeElement extends FormInputElement {
-
+class FormTimeElement extends FormInputElement
+{
     private string $min = '';
     private string $max = '';
 
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'time';
     }
@@ -248,31 +285,34 @@ class FormTimeElement extends FormInputElement {
      * Set min/max time range in string format 13:45
      * Set empty string if no contraints
      */
-    public function setRange(string $min, string $max) {
+    public function setRange(string $min, string $max)
+    {
         $this->min = $min;
         $this->max = $max;
     }
 
-    public function htmlContraints(): string {
+    public function htmlContraints(): string
+    {
         $html = parent::htmlContraints();
-        if($this->max) {
+        if ($this->max) {
             $html .= ' max="'.$this->max.'" ';
         }
-        if($this->min) {
+        if ($this->min) {
             $html .= ' min="'.$this->min.'" ';
         }
         return $html;
     }
 }
 
-class FormDateTimeElement extends FormInputElement {
-
+class FormDateTimeElement extends FormInputElement
+{
     private $date_name = '';
     private $date_value = '';
     private $time_name = '';
     private $time_value = '';
 
-    public function __construct(string $id, string $date_name, string $date_value, string $time_name, string $time_value, string $label='') {
+    public function __construct(string $id, string $date_name, string $date_value, string $time_name, string $time_value, string $label='')
+    {
         parent::__construct($id, '', '', $label);
         $this->type = 'datetime';
         $this->date_name = $date_name;
@@ -281,7 +321,8 @@ class FormDateTimeElement extends FormInputElement {
         $this->time_value = $time_value;
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -314,13 +355,16 @@ class FormDateTimeElement extends FormInputElement {
     }
 }
 
-class FormCommentElement extends FormElement {
-    public function __construct(string $label) {
+class FormCommentElement extends FormElement
+{
+    public function __construct(string $label)
+    {
         parent::__construct('text');
         $this->label = $label;
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -329,21 +373,25 @@ class FormCommentElement extends FormElement {
     }
 }
 
-class FormHiddenElement extends FormInputElement {
-    public function __construct(string $id, string $name, string $value) {
+class FormHiddenElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, string $value)
+    {
         parent::__construct($id, $name, $value, '');
         $this->type = 'hidden';
     }
 }
 
-class FormTextAreaElement extends FormInputElement {
-
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+class FormTextAreaElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'textarea';
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -363,11 +411,12 @@ class FormTextAreaElement extends FormInputElement {
     }
 }
 
-class FormInputElement extends FormElement {
-
+class FormInputElement extends FormElement
+{
     private bool $unique = false;
 
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct('text');
         $this->id = $id;
         $this->name = $name;
@@ -375,23 +424,27 @@ class FormInputElement extends FormElement {
         $this->value = $value;
     }
 
-    public function htmlContraints(): string {
+    public function htmlContraints(): string
+    {
         $html = parent::htmlContraints();
-        if($this->isUnique()) {
+        if ($this->isUnique()) {
             $html .= ' unique ';
         }
         return $html;
     }
 
-    public function setUnique(bool $unique=true) {
+    public function setUnique(bool $unique=true)
+    {
         $this->unique = $unique;
     }
 
-    public function isUnique():bool {
+    public function isUnique(): bool
+    {
         return $this->unique;
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -411,21 +464,24 @@ class FormInputElement extends FormElement {
     }
 }
 
-class FormUploadElement extends FormInputElement {
-
-    public function __construct(string $id, string $name, string $value, string $label='') {
+class FormUploadElement extends FormInputElement
+{
+    public function __construct(string $id, string $name, string $value, string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'file';
     }
 
-    function img(): string {
-        if(!$this->value) {
+    public function img(): string
+    {
+        if (!$this->value) {
             return '';
         }
         return '<img src="'.$this->value.'" width="100">';
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -445,9 +501,10 @@ class FormUploadElement extends FormInputElement {
     }
 }
 
-class FormDownloadElement extends FormElement {
-
-    public function toHtml(): string {
+class FormDownloadElement extends FormElement
+{
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -469,11 +526,12 @@ class FormDownloadElement extends FormElement {
 }
 
 
-class FormSelectElement extends FormInputElement {
-
+class FormSelectElement extends FormInputElement
+{
     private array $options = [];
 
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'select';
     }
@@ -481,15 +539,17 @@ class FormSelectElement extends FormInputElement {
     /**
      * Set options in format [['name' => 'value', ...]]
      */
-    public function setOptions(array $options) {
+    public function setOptions(array $options)
+    {
         $this->options = $options;
     }
 
-    public function getOptions():string {
+    public function getOptions(): string
+    {
         $html = '';
         foreach ($this->options as $key => $value) {
             $selected = '';
-            if($value == $this->value) {
+            if ($value == $this->value) {
                 $selected = ' selected="selected" ';
             }
             $html .= <<<HTML
@@ -500,7 +560,8 @@ class FormSelectElement extends FormInputElement {
     }
 
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -523,11 +584,12 @@ class FormSelectElement extends FormInputElement {
     }
 }
 
-class FormChoicesElement extends FormInputElement {
-
+class FormChoicesElement extends FormInputElement
+{
     private array $options = [];
 
-    public function __construct(string $id, string $name, mixed $value='', string $label='') {
+    public function __construct(string $id, string $name, mixed $value='', string $label='')
+    {
         parent::__construct($id, $name, $value, $label);
         $this->type = 'choices';
     }
@@ -535,15 +597,17 @@ class FormChoicesElement extends FormInputElement {
     /**
      * Set options in format [['id' => 'label', ...]]
      */
-    public function setOptions(array $options) {
+    public function setOptions(array $options)
+    {
         $this->options = $options;
     }
 
-    public function getOptions():string {
+    public function getOptions(): string
+    {
         $html = '';
         foreach ($this->options as $key => $value) {
             $selected = '';
-            if($value == $this->key) {
+            if ($value == $this->key) {
                 $selected = ' checked" ';
             }
             $html .= <<<HTML
@@ -554,7 +618,8 @@ class FormChoicesElement extends FormInputElement {
     }
 
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -568,11 +633,12 @@ class FormChoicesElement extends FormInputElement {
     }
 }
 
-class FormButtonsElement extends FormElement {
-
+class FormButtonsElement extends FormElement
+{
     private string $offset = '';
-    public function setOffset(string $offset) {
-        if(!$offset) {
+    public function setOffset(string $offset)
+    {
+        if (!$offset) {
             return;
         }
         $this->offset = 'offset-'.$offset;
@@ -583,11 +649,12 @@ class FormButtonsElement extends FormElement {
 
     /**
      * Set of buttons
-     * 
+     *
      * button define a name to display, url to go to and optional new to open in new tab and optional class type (bootstrap class, btn-primary, btn-danger, ..)
      * buttons =  ['save' => ['name' => 'go to'], 'cancel' => ['name' => 'cancel', 'url' => '/x/y'], ...]
      */
-    public function __construct(string $formId, $buttons=[],) {
+    public function __construct(string $formId, $buttons=[])
+    {
         parent::__construct('button');
         $this->formId = $formId;
         $this->buttons = $buttons;
@@ -598,11 +665,11 @@ class FormButtonsElement extends FormElement {
         $html = '<div class="mb-3 row">';
         $html .= '<div class="col-12 '. $this->getInputSize() . ' '. $this->offset . '">';
         foreach ($this->buttons as $name => $button) {
-            if($name == 'save') {
+            if ($name == 'save') {
                 $html .= '<input type="submit" id="' . $this->formId . 'submit" class="m-2 btn btn-primary" value="' . $button['name'] . '" />';
                 continue;
             }
-            if($name == 'delete') {
+            if ($name == 'delete') {
                 $html .= '<input type="submit" id="' . $this->formId . 'delete" class="m-2 btn btn-primary" value="' . $button['name'] . '" />';
                 continue;
             }
@@ -618,11 +685,12 @@ class FormButtonsElement extends FormElement {
     }
 }
 
-class FormSeparatorElement extends FormElement {
-
+class FormSeparatorElement extends FormElement
+{
     private int $level = 3;
 
-    public function __construct($label, $level=3) {
+    public function __construct($label, $level=3)
+    {
         $this->level = $level;
         $this->label = $label;
     }
@@ -637,18 +705,20 @@ class FormSeparatorElement extends FormElement {
     }
 }
 
-class FormTypeaheadElement extends FormInputElement {
-
+class FormTypeaheadElement extends FormInputElement
+{
     private array $options = [];
 
     /**
      * List of options to select ['id' => 'name', ...]
      */
-    public function setOptions(array $options) {
+    public function setOptions(array $options)
+    {
         $this->options = $options;
     }
 
-    private function getOptions(): string {
+    private function getOptions(): string
+    {
         $html = sprintf('<datalist id="%s_ta_list">', $this->id);
         foreach ($this->options as $id => $name) {
             $html .= sprintf('<option x-id="%s" value="%s"/>', $id, $name)."\n";
@@ -657,12 +727,13 @@ class FormTypeaheadElement extends FormInputElement {
         return $html;
     }
 
-    private function getHash(): string {
+    private function getHash(): string
+    {
         $html = 'let '.$this->id.' = ';
         $elts = [];
         foreach ($this->options as $id => $name) {
             $elts[$name] = $id;
-            if(!$id){
+            if (!$id) {
                 $elts[$name] = $name;
             }
         }
@@ -670,7 +741,8 @@ class FormTypeaheadElement extends FormInputElement {
         return $html;
     }
 
-    public function toHtml(): string {
+    public function toHtml(): string
+    {
         return <<<HTML
         <div id="form_blk_{$this->name}" class="mb-3 row">
             {$this->htmlLabel()}
@@ -707,5 +779,3 @@ class FormTypeaheadElement extends FormInputElement {
         HTML;
     }
 }
-
-?>

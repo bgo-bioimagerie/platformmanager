@@ -12,13 +12,13 @@ require_once 'Modules/clients/Model/ClAddress.php';
  *
  * @author Sylvain Prigent
  */
-class ClientsInstall extends Model {
-
+class ClientsInstall extends Model
+{
     /**
      * Create the Clients database
      */
-    public function createDatabase() {
-
+    public function createDatabase()
+    {
         // initialise the Provider table
         $model1 = new ClClient();
         $model1->createTable();
@@ -31,10 +31,8 @@ class ClientsInstall extends Model {
 
         $model5 = new ClClientUser();
         $model5->createTable();
-        
+
         $model6 = new ClAddress();
         $model6->createTable();
-        
     }
-
 }

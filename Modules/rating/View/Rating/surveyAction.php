@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 <?php
 require_once 'Modules/services/Model/ServicesTranslator.php';
 require_once 'Modules/booking/Model/BookingTranslator.php';
@@ -16,7 +16,9 @@ require_once 'Modules/rating/Model/RatingTranslator.php';
 <div class="mb-3"><h3><?php echo RatingTranslator::Campaign($lang).': '. CoreTranslator::dateFromEn(date('Y-m-d', $campaign['from_date']), $lang) . ' - ' . CoreTranslator::dateFromEn(date('Y-m-d', $campaign['to_date']), $lang) ?></h3></div>
 <form class="form">
     <div v-if="msg" class="label label-danger">{{msg}}</div>
-    <?php if($data['resources']) { echo '<h4>'.BookingTranslator::booking($lang).'</h4>'; } ?>
+    <?php if ($data['resources']) {
+        echo '<h4>'.BookingTranslator::booking($lang).'</h4>';
+    } ?>
     <div class="row">
         <div v-for="(resource, index) in resources" :key="resource.vid" class="mb-3 col-6">
             <input type="hidden" name="module" value="booking"/>
@@ -41,7 +43,9 @@ require_once 'Modules/rating/Model/RatingTranslator.php';
             </div>
         </div>
     </div>
-    <?php if($data['projects']) { echo '<h4>'.ServicesTranslator::Projects($lang).'</h4>'; } ?>
+    <?php if ($data['projects']) {
+        echo '<h4>'.ServicesTranslator::Projects($lang).'</h4>';
+    } ?>
     <div class="row">
         <div v-for="(resource, index) in projects" :key="resource.vid" class="mb-3 col-6">
             <input type="hidden" name="module" value="projects"/>

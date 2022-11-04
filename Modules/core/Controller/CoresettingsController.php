@@ -7,16 +7,17 @@ require_once 'Modules/core/Model/CoreStatus.php';
 
 /**
  * Edit the application settings
- * 
+ *
  * @author sprigent
  *
  */
-class CoresettingsController extends CoresecureController {
-
+class CoresettingsController extends CoresecureController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->checkAuthorization(CoreStatus::$USER);
     }
@@ -25,7 +26,8 @@ class CoresettingsController extends CoresecureController {
      * (non-PHPdoc)
      * @see Controller::index()
      */
-    public function indexAction() {
+    public function indexAction()
+    {
         // get the available modules settings
         $modules = Configuration::get("modules");
         $modules = is_array($modules) ? $modules : [$modules];

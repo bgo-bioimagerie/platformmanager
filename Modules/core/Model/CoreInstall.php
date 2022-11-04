@@ -42,19 +42,20 @@ define("DB_VERSION", 5);
 /**
  * Class defining the database version installed
  */
-class CoreDB extends Model {
-
+class CoreDB extends Model
+{
     /**
      * Drops all tables content
-     * 
+     *
      * @param bool $drop delete tables and not just content
      */
-    public function dropAll($drop=false) {
+    public function dropAll($drop=false)
+    {
         $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            if($drop) {
+            if ($drop) {
                 Configuration::getLogger()->warning('Drop table', ["table" => $table]);
                 $sql = "DROP TABLE ".$table;
                 $this->runRequest($sql);
@@ -66,11 +67,12 @@ class CoreDB extends Model {
         }
     }
 
-    public function isFreshInstall() {
+    public function isFreshInstall()
+    {
         $sql = "SHOW tables";
         $nbTables = $this->runRequest($sql)->rowCount();
         $freshInstall = true;
-        if($nbTables > 0) {
+        if ($nbTables > 0) {
             $freshInstall = false;
         }
         return $freshInstall;
@@ -79,7 +81,8 @@ class CoreDB extends Model {
     /**
      * For tests only
      */
-    public function repair0() {
+    public function repair0()
+    {
         Configuration::getLogger()->info("No bug 0, nothing to repair");
     }
 
@@ -87,16 +90,17 @@ class CoreDB extends Model {
      * Fix for bug #332 introduced by release 2.1
      * if you installed 2.1->2.1.2 this patch needs to be used to fix database
      * Not needed after 2.1.3
-     * 
+     *
      * How-to:
-     * 
+     *
      * require_once 'Framework/Configuration.php';
      * require_once 'Modules/core/Model/CoreInstall.php';
      * $cdb = new CoreDB();
      * $cdb->repair332();
      *
      */
-    public function repair332() {
+    public function repair332()
+    {
         Configuration::getLogger()->info("Run repair script for bug 332");
         $sql = "SELECT * FROM `re_category`;";
         $resdb = $this->runRequest($sql)->fetchAll();
@@ -107,15 +111,16 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Done!");
     }
 
-    public function repair337() {
+    public function repair337()
+    {
         Configuration::getLogger()->debug('set ac_anticorps counters');
         $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             $redis = new Redis();
             $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
             $res = $resdb->fetchAll();
-            foreach($res as $sp_anticorps) {
+            foreach ($res as $sp_anticorps) {
                 $sp = $sp_anticorps[1];
                 $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
             }
@@ -124,13 +129,15 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('set ac_anticorps counters, done!');
     }
 
-    public function repair371() {
+    public function repair371()
+    {
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
         $this->addColumn("users_info", "organization", "varchar(255)", "");
         Configuration::getLogger()->info("Run repair script 371 (PR #371)");
     }
 
-    public function repair499() {
+    public function repair499()
+    {
         Configuration::getLogger()->info("Run repair script 499 (PR #499)");
         $sql = "alter table se_order modify column date_open date NULL";
         $this->runRequest($sql);
@@ -143,8 +150,8 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("Run repair script 499 (PR #499)");
     }
 
-    public function upgrade_v0_v1() {
-
+    public function upgrade_v0_v1()
+    {
         Configuration::getLogger()->debug("[db] Old existing db patch");
         $modelMainMenuPatch = new CoreMainMenuPatch();
         $modelMainMenuPatch->patch();
@@ -160,7 +167,8 @@ class CoreDB extends Model {
         $modelSpaceUser->runRequest($sql);
     }
 
-    public function upgrade_v1_v2() {
+    public function upgrade_v1_v2()
+    {
         Configuration::getLogger()->debug("[db] Add core_spaces shortname, contact, support");
         $cp = new CoreSpace();
         $cp->addColumn('core_spaces', 'shortname', "varchar(30)", '');
@@ -168,7 +176,7 @@ class CoreDB extends Model {
         $cp->addColumn('core_spaces', 'support', "varchar(100)", '');
         $spaces = $cp->getSpaces('id');
         foreach ($spaces as $space) {
-            if(!$space['shortname']) {
+            if (!$space['shortname']) {
                 $shortname = $space['name'];
                 $shortname = strtolower($shortname);
                 $shortname = str_replace(" ", "", $shortname);
@@ -199,9 +207,9 @@ class CoreDB extends Model {
         $cu->addColumn("core_users", "apikey", "varchar(30)", "");
         $allUsers = $cu->getAll();
         foreach ($allUsers as $user) {
-            if($user['login'] == Configuration::get('admin_user') && $user['apikey'] != "") {
+            if ($user['login'] == Configuration::get('admin_user') && $user['apikey'] != "") {
                 continue;
-            }    
+            }
             $cu->newApiKey($user['id']);
         }
         Configuration::getLogger()->debug("[users] add apikey done!");
@@ -210,10 +218,10 @@ class CoreDB extends Model {
         $cam = new CoreAdminMenu();
         $cam->removeAdminMenu("Update");
         Configuration::getLogger()->debug("[adminmenu] remove update done!");
-
     }
 
-    public function upgrade_v2_v3() {
+    public function upgrade_v2_v3()
+    {
         Configuration::getLogger()->debug('[id_space] set space identifier on objects');
         $sql = "SELECT * FROM `re_info`;";
         $resdb = $this->runRequest($sql)->fetchAll();
@@ -249,8 +257,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `bk_packages`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE bk_j_packages_prices SET id_space=? WHERE id_package=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id_package']));
             }
@@ -258,9 +266,9 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `bk_calendar_entry`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
-                if($res['period_id']) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
+                if ($res['period_id']) {
                     $sql = "UPDATE bk_calendar_period SET id_space=? WHERE id=?";
                     $this->runRequest($sql, array($res['id_space'], $res['period_id']));
                 }
@@ -269,7 +277,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `re_area`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE bk_bookingcss SET id_space=? WHERE id_area=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -280,7 +288,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `bj_collections`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch) {
                 $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -289,8 +297,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `bj_notes`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE bj_events SET id_space=? WHERE id_note=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 $sql = "UPDATE bj_tasks SET id_space=? WHERE id_note=?";
@@ -302,7 +310,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `ca_categories`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE ca_entries SET id_space=? WHERE id_category=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -311,7 +319,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `cl_clients`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE cl_addresses SET id_space=? WHERE id=?";
                 $this->runRequest($sql, array($res['id_space'], $res['address_invoice']));
@@ -323,8 +331,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `in_invoice`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE in_invoice_item SET id_space=? WHERE id_invoice=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
@@ -332,8 +340,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `qo_quotes`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE qo_quoteitems SET id_space=? WHERE id_quote=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
@@ -341,8 +349,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `re_event`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE re_event_data SET id_space=? WHERE id_event=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
@@ -350,7 +358,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `re_category`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE re_visas SET id_space=? WHERE id_resource_category=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -359,7 +367,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `se_services`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE se_prices SET id_space=? WHERE id_service=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -379,7 +387,7 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `stock_cabinets`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             while ($res = $resdb->fetch()) {
                 $sql = "UPDATE stock_shelf SET id_space=? WHERE id_cabinet=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
@@ -388,8 +396,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `es_sales`;";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
@@ -403,8 +411,8 @@ class CoreDB extends Model {
 
         $sql = "SELECT * FROM `ac_anticorps`";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
-            while($res = $resdb->fetch()) {
+        if ($resdb!=null) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE ac_j_tissu_anticorps SET id_space=? WHERE id_anticorps=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
                 $sql = "UPDATE ac_j_user_anticorps SET id_space=? WHERE id_anticorps=?";
@@ -416,15 +424,15 @@ class CoreDB extends Model {
         // Check
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
-        foreach($tables as $t) {
+        foreach ($tables as $t) {
             $table = $t[0];
             $sql = "SELECT COUNT(*) as total FROM ".$table;
             $notEmpty = $this->runRequest($sql)->fetch();
-            if($notEmpty && intval($notEmpty['total']) > 0) {
+            if ($notEmpty && intval($notEmpty['total']) > 0) {
                 // if table not empty and has id_space=0
                 $sql = "SELECT COUNT(*) as total FROM ".$table." WHERE id_space=0";
                 $null_spaces = $this->runRequest($sql)->fetch();
-                if($null_spaces && intval($null_spaces['total']) > 0) {
+                if ($null_spaces && intval($null_spaces['total']) > 0) {
                     Configuration::getLogger()->warning('[id_space] found null space references', ['table' => $table, 'total' => $null_spaces]);
                 }
             }
@@ -436,32 +444,32 @@ class CoreDB extends Model {
         $counter = 0;
         $sql = "SELECT max(id_package) as counter FROM bk_owner_prices";
         $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && $resdb['counter']) {
+        if ($resdb && $resdb['counter']) {
             $counter = intval($resdb['counter']);
         }
         $sql = "SELECT max(id_package) as counter FROM bk_packages";
         $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && intval($resdb['counter']) > $counter) {
+        if ($resdb && intval($resdb['counter']) > $counter) {
             $counter = intval($resdb['counter']);
         }
         $sql = "SELECT max(id_package) as counter FROM bk_prices";
         $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && intval($resdb['counter']) > $counter) {
+        if ($resdb && intval($resdb['counter']) > $counter) {
             $counter = intval($resdb['counter']);
         }
         $sql = "SELECT max(id_supinfo) as counter FROM bk_calsupinfo";
         $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && intval($resdb['counter']) > $counter) {
+        if ($resdb && intval($resdb['counter']) > $counter) {
             $counter = intval($resdb['counter']);
         }
         $sql = "SELECT max(id_quantity) as counter FROM bk_calquantities";
         $resdb = $this->runRequest($sql)->fetch();
-        if($resdb && intval($resdb['counter']) > $counter) {
+        if ($resdb && intval($resdb['counter']) > $counter) {
             $counter = intval($resdb['counter']);
         }
 
         $i = 0;
-        while($i <= $counter) {
+        while ($i <= $counter) {
             $cvm = new CoreVirtual();
             $cvm->new('import');
             $i++;
@@ -472,11 +480,11 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug('set ac_anticorps counters');
         $sql = "SELECT max(no_h2p2) as counter, id_space FROM ac_anticorps GROUP BY id_space";
         $resdb = $this->runRequest($sql);
-        if($resdb!=null) {
+        if ($resdb!=null) {
             $redis = new Redis();
             $redis->pconnect(Configuration::get('redis_host', 'redis'), Configuration::get('redis_port', 6379));
             $res = $resdb->fetchAll();
-            foreach($res as $sp_anticorps) {
+            foreach ($res as $sp_anticorps) {
                 $sp = $sp_anticorps[1];
                 $redis->set("pfm:$sp:antibodies", $sp_anticorps[0]);
             }
@@ -484,7 +492,7 @@ class CoreDB extends Model {
         }
         Configuration::getLogger()->debug('set ac_anticorps counters, done!');
 
-        if(Statistics::enabled()) {
+        if (Statistics::enabled()) {
             Configuration::getLogger()->debug("[stats] import calentry stats");
             $eventHandler = new EventHandler();
             $eventHandler->calentryImport();
@@ -494,7 +502,7 @@ class CoreDB extends Model {
             $statHandler = new EventHandler();
             $statHandler->invoiceImport();
             Configuration::getLogger()->debug('[stats] import invoice stats, done!');
-	    }
+        }
 
         Configuration::getLogger()->debug('[core_users] fix column types');
         $sql = "alter table core_users modify phone varchar(255)";
@@ -611,8 +619,8 @@ class CoreDB extends Model {
         Configuration::getLogger()->debug("[users_info] add organization done!");
     }
 
-    public function upgrade_v3_v4() {
-
+    public function upgrade_v3_v4()
+    {
         Configuration::getLogger()->debug('[booking] fix bk_calsupinfo mandatory column name');
         try {
             $sql = 'ALTER TABLE bk_calsupinfo RENAME COLUMN `       mandatory` TO `mandatory`';
@@ -632,7 +640,7 @@ class CoreDB extends Model {
         $this->addColumn('core_spaces', 'plan_expire', "int", '0');
         Configuration::getLogger()->debug('[core] add space plan, done');
 
-        if(Statistics::enabled()) {
+        if (Statistics::enabled()) {
             $eventHandler = new EventHandler();
             $g = new Grafana();
             Configuration::getLogger()->debug('[grafana] create orgs');
@@ -649,13 +657,13 @@ class CoreDB extends Model {
             Configuration::getLogger()->debug('[grafana] import managers to grafana');
             $s = new CoreSpace();
             $spaces = $s->getSpaces('id');
-            foreach($spaces as $space) {
+            foreach ($spaces as $space) {
                 $csu = new CoreSpaceUser();
                 $managers = $csu->managersOrAdmin($space['id']);
                 $g = new Grafana();
                 $plan = new CorePlan($space['plan'], $space['plan_expire']);
-                if($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
-                    foreach($managers as $manager) {
+                if ($plan->hasFlag(CorePlan::FLAGS_GRAFANA)) {
+                    foreach ($managers as $manager) {
                         $u = new CoreUser();
                         $user = $u->getInfo($manager['id_user']);
                         Configuration::getLogger()->debug('[grafana] add user to org', ['org' => $space['shortname'], 'user' => $user['login']]);
@@ -668,7 +676,7 @@ class CoreDB extends Model {
             }
             Configuration::getLogger()->debug('[grafana] import managers to grafana, done!');
 
-            if(Statistics::enabled()) {
+            if (Statistics::enabled()) {
                 Configuration::getLogger()->debug('[stats] import clients');
                 $eventHandler = new EventHandler();
                 $eventHandler->customerImport();
@@ -686,12 +694,12 @@ class CoreDB extends Model {
         $this->runRequest($sql);
         Configuration::getLogger()->debug('[qo_quotes] add column recipient_email, done!');
 
-        if(Statistics::enabled()) {
+        if (Statistics::enabled()) {
             Configuration::getLogger()->debug('[db] update grafana dashboards and sql views');
             $s = new CoreSpace();
             $spaces = $s->getSpaces('id');
             $statHandler = new EventHandler();
-            foreach($spaces as $space) {
+            foreach ($spaces as $space) {
                 $statHandler->spaceCreate(['space' => ['id' => $space['id']]]);
             }
             Configuration::getLogger()->debug('[db] update grafana dashboards and sql views, done!');
@@ -717,11 +725,12 @@ class CoreDB extends Model {
     /**
      * Get current database version
      */
-    public function getRelease() {
+    public function getRelease()
+    {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
         $release = null;
-        if ($reqRelease && $reqRelease->rowCount() > 0){
+        if ($reqRelease && $reqRelease->rowCount() > 0) {
             $release = $reqRelease->fetch();
             return $release['version'];
         }
@@ -731,7 +740,8 @@ class CoreDB extends Model {
     /**
      * Get expected database version
      */
-    public function getVersion() {
+    public function getVersion()
+    {
         return DB_VERSION;
     }
 
@@ -740,36 +750,37 @@ class CoreDB extends Model {
      *
      * @return PDOStatement
      */
-    public function createTable() {
-
+    public function createTable()
+    {
         $sql = "CREATE TABLE IF NOT EXISTS `pfm_db` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
-		    `version` varchar(255) NOT NULL DEFAULT ".DB_VERSION.",
-		    PRIMARY KEY (`id`)
-		);";
+            `version` varchar(255) NOT NULL DEFAULT ".DB_VERSION.",
+            PRIMARY KEY (`id`)
+        );";
 
         $this->runRequest($sql);
     }
 
-    public function needUpgrade() : array {
+    public function needUpgrade(): array
+    {
         $need = [];
         $upgradeFiles = scandir('db/upgrade');
         sort($upgradeFiles);
 
         foreach ($upgradeFiles as $f) {
-            if(!str_ends_with($f, '.php')) {
+            if (!str_ends_with($f, '.php')) {
                 continue;
             }
             $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
             $record = str_replace('.php', '', $f);
             $res = $this->runRequest($sql, [$record]);
 
-            if(!$res) {
+            if (!$res) {
                 Configuration::getLogger()->error('request failed');
                 $need[] = $f;
                 continue;
             }
-            if($res->rowCount() > 0) {
+            if ($res->rowCount() > 0) {
                 Configuration::getLogger()->debug('[db][upgrade] already applied', ['file' => $f]);
                 continue;
             }
@@ -778,8 +789,9 @@ class CoreDB extends Model {
         return $need;
     }
 
-    public function scanUpgrades(int $from=-1) {
-        if(!file_exists('db/upgrade')) {
+    public function scanUpgrades(int $from=-1)
+    {
+        if (!file_exists('db/upgrade')) {
             return;
         }
         $sql = "CREATE TABLE IF NOT EXISTS `pfm_upgrade` (
@@ -790,7 +802,7 @@ class CoreDB extends Model {
         );";
         $this->runRequest($sql);
 
-        if($from == 0) {
+        if ($from == 0) {
             Configuration::getLogger()->info("Installing from $from, resetting upgrades to apply...");
             $sql = 'DELETE FROM pfm_upgrade';
             $this->runRequest($sql);
@@ -799,17 +811,17 @@ class CoreDB extends Model {
         $upgradeFiles = scandir('db/upgrade');
         sort($upgradeFiles);
         foreach ($upgradeFiles as $f) {
-            if(!str_ends_with($f, '.php')) {
+            if (!str_ends_with($f, '.php')) {
                 continue;
             }
             $sql = 'SELECT id FROM pfm_upgrade WHERE record=?';
             $record = str_replace('.php', '', $f);
             $res = $this->runRequest($sql, [$record]);
-            if(!$res) {
+            if (!$res) {
                 Configuration::getLogger()->error('request failed');
                 break;
             }
-            if($res->rowCount() > 0) {
+            if ($res->rowCount() > 0) {
                 Configuration::getLogger()->info('[db][upgrade] already applied', ['file' => $f]);
                 continue;
             }
@@ -828,11 +840,12 @@ class CoreDB extends Model {
     /**
      * Sets base columns
      */
-    public function base() {
+    public function base()
+    {
         Configuration::getLogger()->info("[db] set base columns if not present");
         $sql = "show tables";
         $tables = $this->runRequest($sql)->fetchAll();
-        foreach($tables as $t) {
+        foreach ($tables as $t) {
             $table = $t[0];
             $sql = "show index from `$table`";
             $indexes = $this->runRequest($sql)->fetchAll();
@@ -843,14 +856,14 @@ class CoreDB extends Model {
             $this->addColumn($table, "id_space", "int(11)", 0);
 
             $indexExists = false;
-            foreach($indexes as $index) {
-                if($index['Key_name'] == "idx_${table}_space") {
+            foreach ($indexes as $index) {
+                if ($index['Key_name'] == "idx_${table}_space") {
                     $indexExists = true;
                     Configuration::getLogger()->debug('[db] id_space index already exists');
                     break;
                 }
             }
-            if(!$indexExists) {
+            if (!$indexExists) {
                 Configuration::getLogger()->debug('[db] create id_space index');
                 $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
                 $this->runRequest($space_index);
@@ -859,7 +872,8 @@ class CoreDB extends Model {
         Configuration::getLogger()->info("[db] set base columns if not present, done!");
     }
 
-    public function upgrade($from=-1) {
+    public function upgrade($from=-1)
+    {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
 
@@ -867,9 +881,9 @@ class CoreDB extends Model {
         $isNewRelease = false;
         $oldRelease = 0;
         $release = null;
-        if ($reqRelease->rowCount() > 0){
+        if ($reqRelease->rowCount() > 0) {
             $release = $reqRelease->fetch();
-            if($release['version'] != DB_VERSION) {
+            if ($release['version'] != DB_VERSION) {
                 $isNewRelease = true;
                 $oldRelease = $release['version'];
             }
@@ -880,20 +894,20 @@ class CoreDB extends Model {
             $isNewRelease = true;
             $reqRelease = $this->runRequest($sqlRelease);
             $release = $reqRelease->fetch();
-            if($from == -1) {
+            if ($from == -1) {
                 Configuration::getLogger()->info("[db] fresh install, no migration needed");
                 return;
             }
         }
 
-        if($from >= 0) {
+        if ($from >= 0) {
             $oldRelease = $from;
             $isNewRelease = true;
         }
-        
+
 
         // old migration stuff, now using db/upgrade files, keep for backward compatiblity
-        if($isNewRelease) {
+        if ($isNewRelease) {
             Configuration::getLogger()->info("[db] Need to migrate", ["oldrelease" => $oldRelease, "release" => DB_VERSION]);
             $updateFromRelease = $oldRelease;
             $updateToRelease = $updateFromRelease + 1;
@@ -943,11 +957,10 @@ class CoreDB extends Model {
  *
  * @author Sylvain Prigent
  */
-class CoreInstall extends Model {
-
-
-    public function createDatabase(){
-
+class CoreInstall extends Model
+{
+    public function createDatabase()
+    {
         $modelCache = new FCache();
         $modelCache->freeTableURL();
         $modelCache->load();
@@ -956,9 +969,9 @@ class CoreInstall extends Model {
         $modelConfig->createTable();
 
         $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''));
-        $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");        
-    	$modelConfig->initParam("home_title", "Platform-Manager");
-    	$modelConfig->initParam("home_message", "Connection");
+        $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");
+        $modelConfig->initParam("home_title", "Platform-Manager");
+        $modelConfig->initParam("home_message", "Connection");
 
         $modelConfig->setParam("navbar_bg_color", "#404040");
         $modelConfig->setParam("navbar_bg_highlight", "#333333");
@@ -1017,7 +1030,7 @@ class CoreInstall extends Model {
         $modelStatistics = new BucketStatistics();
         $modelStatistics->createTable();
 
-        if(Statistics::enabled()) {
+        if (Statistics::enabled()) {
             Configuration::getLogger()->debug('[stats] create pfm influxdb bucket and add admin user');
             $statHandler = new Statistics();
             $pfmOrg = Configuration::get('influxdb_org', 'pfm');
@@ -1049,7 +1062,6 @@ class CoreInstall extends Model {
         if (!file_exists('data/conventions/')) {
             mkdir('data/conventions/', 0755, true);
         }
-
     }
     /**
      * Test if the database informations are correct
@@ -1060,8 +1072,8 @@ class CoreInstall extends Model {
      * @param string $db_name Name of the database
      * @return string error message
      */
-    public function testConnection($sql_host, $login, $password, $db_name) {
-
+    public function testConnection($sql_host, $login, $password, $db_name)
+    {
         try {
             $dsn = 'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8';
             $testdb = new PDO($dsn, $login, $password, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
@@ -1081,8 +1093,8 @@ class CoreInstall extends Model {
      * @param string $db_name Name of the database
      * @return boolean false if unable to write in the file
      */
-    public function writedbConfig($sql_host, $login, $password, $db_name) {
-
+    public function writedbConfig($sql_host, $login, $password, $db_name)
+    {
         $dsn = '\'mysql:host=' . $sql_host . ';dbname=' . $db_name . ';charset=utf8\'';
 
         $fileURL = Configuration::getConfigFile();
@@ -1104,30 +1116,29 @@ class CoreInstall extends Model {
      * @param string $password Password to connect to the database
      * @return boolean
      */
-    protected function editConfFile($fileURL, $dsn, $login, $password) {
-
+    protected function editConfFile($fileURL, $dsn, $login, $password)
+    {
         $handle = @fopen($fileURL, "r");
         $outContent = '';
         if ($handle) {
             while (($buffer = fgets($handle, 4096)) !== false) {
-
                 // replace dsn
                 $outbuffer1 = $this->replaceContent($buffer, 'dsn', $dsn);
-                if ($outbuffer1 != ""){
+                if ($outbuffer1 != "") {
                     $outContent = $outContent . $outbuffer1;
                     continue;
                 }
 
                 // replace login
                 $outbuffer2 = $this->replaceContent($buffer, 'login', $login);
-                if ($outbuffer2 != ""){
+                if ($outbuffer2 != "") {
                     $outContent = $outContent . $outbuffer2;
                     continue;
                 }
 
                 // replace pwd
                 $outbuffer3 = $this->replaceContent($buffer, 'pwd', $password);
-                if ($outbuffer3 != ""){
+                if ($outbuffer3 != "") {
                     $outContent = $outContent . $outbuffer3;
                     continue;
                 }
@@ -1149,7 +1160,8 @@ class CoreInstall extends Model {
         return true;
     }
 
-    private function replaceContent($buffer, $varName, $varContent) {
+    private function replaceContent($buffer, $varName, $varContent)
+    {
         $content = "";
         $pos = strpos($buffer, $varName);
         if ($pos === false) {

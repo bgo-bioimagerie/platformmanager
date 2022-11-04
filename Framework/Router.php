@@ -12,39 +12,41 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 /**
  * Class that routes the input requests
- * 
+ *
  * @author Sylvain Prigent
  */
-class Router {
-
+class Router
+{
     private $logger;
 
     protected $modelCache;
-    protected $useRouterController; 
+    protected $useRouterController;
     protected $router;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->modelCache = new FCache();
         $this->logger = Configuration::getLogger();
         $this->router = new AltoRouter();
     }
 
-    public function listRoutes() {
+    public function listRoutes()
+    {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
         $loaded = [];
         foreach ($modulesNames as $moduleName) {
-            if(isset($loaded[$moduleName])){
+            if (isset($loaded[$moduleName])) {
                 continue;
             }
             $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {
-                require_once ($routingClassUrl);
+                require_once($routingClassUrl);
                 $className = ucfirst($moduleName) . "Routing";
-                $routingClass = new $className ();
-                if(method_exists($routingClass, "routes")){
+                $routingClass = new $className();
+                if (method_exists($routingClass, "routes")) {
                     Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
                     $routingClass->routes($this->router);
                 }
@@ -53,23 +55,24 @@ class Router {
         return $this->router->getRoutes();
     }
 
-    private function call($target, $args, $request) {
-        if(isset($args['id_space'])){
+    private function call($target, $args, $request)
+    {
+        if (isset($args['id_space'])) {
             $_SESSION['id_space'] = $args['id_space'];
         } else {
             unset($_SESSION['id_space']);
         }
-        $route_info = explode("/", $target);
-        $module = $route_info[0];
-        $controller_name = $route_info[1];
+        $routeInfo = explode("/", $target);
+        $module = $routeInfo[0];
+        $controllerName = $routeInfo[1];
         $controller = null;
-        $action = $route_info[2];
+        $action = $routeInfo[2];
         try {
-            $controller = $this->createControllerImp($module, $controller_name, false, $request, $args);
+            $controller = $this->createControllerImp($module, $controllerName, false, $request, $args);
         } catch (PfmRoutingException $e) {
             $this->logger->warning('no controller found, redirect to homepage', [
                 'url' => $request->getParameter('path'),
-                'controller' => $controller_name,
+                'controller' => $controllerName,
                 'module' => $module
             ]);
             $controller = $this->createControllerImp('core', 'coretiles', false, $request, $args);
@@ -78,35 +81,36 @@ class Router {
 
         $this->logger->debug('[router] call', ["controller" => $controller, "action" => $action, "args" => $args]);
         $controller->runAction($module, $action, $args);
-        return $module."_".$controller_name."_".$action;
+        return $module."_".$controllerName."_".$action;
     }
 
-    private function route($request) {
+    private function route($request)
+    {
         $modulesNames = Configuration::get("modules");
         $modulesNames = is_array($modulesNames) ? $modulesNames : [$modulesNames];
         $loaded = [];
         foreach ($modulesNames as $moduleName) {
-            if(isset($loaded[$moduleName])){
+            if (isset($loaded[$moduleName])) {
                 continue;
             }
             $loaded[$moduleName] = true;
             // get the routing class
             $routingClassUrl = "Modules/" . $moduleName . "/" . ucfirst($moduleName) . "Routing.php";
             if (file_exists($routingClassUrl)) {
-                require_once ($routingClassUrl);
+                require_once($routingClassUrl);
                 $className = ucfirst($moduleName) . "Routing";
-                $routingClass = new $className ();
-                if(method_exists($routingClass, "routes")){
+                $routingClass = new $className();
+                if (method_exists($routingClass, "routes")) {
                     Configuration::getLogger()->debug('[router] load routes from '.$routingClassUrl);
                     $routingClass->routes($this->router);
                 }
             }
         }
 
-        $this->router->map( 'GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc' );
+        $this->router->map('GET', '/ooc/[a:provider]/authorized', 'core/openid/connect', 'ooc');
         // Configuration::getLogger()->debug('Routes', ['routes' => $this->router->getRoutes()]);
         $match = $this->router->match();
-        if(!$match) {
+        if (!$match) {
             Configuration::getLogger()->debug('No route match, check old way');
             return null;
         }
@@ -118,8 +122,9 @@ class Router {
      * Main method called by the frontal controller
      * Examine a request and run the dedicated action
      */
-    public function routerRequest() {
-        if(Configuration::get('redis_host') && $_SERVER['REQUEST_URI'] == '/metrics') {
+    public function routerRequest()
+    {
+        if (Configuration::get('redis_host') && $_SERVER['REQUEST_URI'] == '/metrics') {
             \Prometheus\Storage\Redis::setDefaultOptions(
                 [
                     'host' => Configuration::get('redis_host'),
@@ -144,9 +149,9 @@ class Router {
         try {
             // Merge parameters GET and POST
             $params = array();
-            if(isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] == 'application/json')  {
+            if (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] == 'application/json') {
                 $json = file_get_contents('php://input');
-                if(!empty($json)) {
+                if (!empty($json)) {
                     $params = json_decode($json, true);
                 }
                 $params['path'] = $_GET['path'];
@@ -154,7 +159,7 @@ class Router {
                 $params = array_merge($_GET, $_POST);
             }
             $request = new Request($params);
-            
+
             $reqRoute = $this->route($request);
             if ($reqRoute) {
                 $reqEnd = microtime(true);
@@ -163,8 +168,8 @@ class Router {
             }
 
             $urlInfo = $this->getUrlData($request);
-            if(!$urlInfo['pathInfo']) {
-                if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+            if (!$urlInfo['pathInfo']) {
+                if (isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json') {
                     http_response_code(404);
                     return;
                 }
@@ -179,7 +184,7 @@ class Router {
             $controller = $this->createController($urlInfo, $request, $args);
             $action = $urlInfo["pathInfo"]["action"];
             $reqRoute = $urlInfo["pathInfo"]["module"]."_".$urlInfo["pathInfo"]["controller"]."_".$action;
-            if(isset($args['id_space'])){
+            if (isset($args['id_space'])) {
                 $_SESSION['id_space'] = $args['id_space'];
             }
 
@@ -187,7 +192,7 @@ class Router {
             $this->runAction($controller, $urlInfo, $action, $args);
             $reqEnd = microtime(true);
         } catch (Throwable $e) {
-            if ($e instanceOf PfmException && !$e->sendReports) {
+            if ($e instanceof PfmException && !$e->sendReports) {
                 Configuration::getLogger()->debug('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
             } else {
                 Configuration::getLogger()->error('[router] something went wrong', ['error' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
@@ -196,11 +201,11 @@ class Router {
             $this->manageError($e);
         }
         $this->prometheus($reqStart, $reqEnd, $reqRoute);
-
     }
 
-    private function prometheus($reqStart, $reqEnd, $reqRoute) {
-        if(!Configuration::get('redis_host')) {
+    private function prometheus($reqStart, $reqEnd, $reqRoute)
+    {
+        if (!Configuration::get('redis_host')) {
             return;
         }
         Configuration::getLogger()->debug('[prometheus] stat', ['route' => $reqRoute]);
@@ -220,17 +225,20 @@ class Router {
             $counter->incBy(1, [$reqRoute, http_response_code()]);
             $gauge = $registry->getOrRegisterHistogram('pfm', 'request_time', 'time', ['type', 'url', 'code'], [20, 50, 100, 1000, 5000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$_SERVER['REQUEST_METHOD'], $reqRoute, http_response_code()]);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
         }
     }
 
-    protected function runAction($controller, $urlInfo, $action, $args) {
+    /**
+     * Calls runAction on input controller
+     */
+    protected function runAction($controller, $urlInfo, $action, $args)
+    {
         if ($urlInfo["pathInfo"]["isapi"]) {
             try {
                 $controller->runAction($urlInfo["pathInfo"]["module"], $action, $args);
-            } 
-            catch (Throwable $ex) {
+            } catch (Throwable $ex) {
                 echo json_encode(array(
                     'error' => array(
                         'msg' => $ex->getMessage(),
@@ -248,22 +256,12 @@ class Router {
     }
 
     /**
-     * Install request 
-     * @param Request $request
-     * @return boolean
-     * @throws Exception
-     */
-    private function install($request) {
-        throw new PfmDbException("Install not supported anymore", 403);
-    }
-
-    /**
-     * 
+     *
      * @param Request $request
      * @return array
      */
-    private function getUrlData(Request $request) {
-
+    private function getUrlData(Request $request)
+    {
         // get controller name
         $path = "";
         if ($request->isParameterNotEmpty('path')) {
@@ -278,12 +276,12 @@ class Router {
     }
 
     /**
-     * 
+     *
      * @param type $urlInfo
      * @return array
      */
-    private function getArgs($urlInfo) {
-
+    private function getArgs($urlInfo)
+    {
         $args = $urlInfo["pathInfo"]["gets"];
         $argsValues = array();
 
@@ -302,19 +300,19 @@ class Router {
      * Instantiate the controller dedicated to the request
      *
      * @param Request $request
-     *        	Input Request
-     * @return Instance of a controller
+     *            Input Request
+     * @return Controller of a controller
      * @throws Exception If the controller cannot be instanciate
      */
-    private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[]) {
-
+    private function createControllerImp($moduleName, $controllerName, $isApi, Request $request, ?array $args=[])
+    {
         $id_space = isset($args['id_space']) ? intval($args['id_space']) : null;
 
         $space = null;
         if ($id_space) {
             $m = new CoreSpace();
             $space = $m->getSpace($id_space);
-            if(!$space) {
+            if (!$space) {
                 throw new PfmUserException('space not found', 404);
             }
         }
@@ -332,42 +330,41 @@ class Router {
 
         if (file_exists($fileController)) {
             // Instantiate controler
-            require_once ($fileController);
-            $controller = new $classController ($request, $space);
+            require_once($fileController);
+            $controller = new $classController($request, $space);
             $this->useRouterController = false;
             return $controller;
         } else {
             $rooterController = Configuration::get("routercontroller");
-            if($rooterController != ""){
+            if ($rooterController != "") {
+                Configuration::getLogger()->warning('[router] controller not found, using routercontroller', ['router' => $rooterController, 'module' => $module, 'controller' => $classController]);
                 $rooterControllerArray = explode("::", "$rooterController");
-                if(count($rooterControllerArray) == 3){
+                if (count($rooterControllerArray) == 3) {
                     $classController = $rooterControllerArray[2];
                     $fileController = 'Modules/' . strtolower($rooterControllerArray[0]) . "/Controller/" . $rooterControllerArray[2] . ".php";
-                    if(file_exists($fileController)){
-                        
-                        require ($fileController);
-                        $controller = new $classController ($request, $space);
+                    if (file_exists($fileController)) {
+                        require($fileController);
+                        $controller = new $classController($request, $space);
                         $this->useRouterController = true;
                         return $controller;
                     }
-                }
-                else{
+                } else {
                     throw new PfmRoutingException("routercontroller config is not correct. The parameter must be ModuleName::Controller::ControllerName", 500);
                 }
-            }
-            else{
+            } else {
                 throw new PfmRoutingException("Unable to find the controller file '$fileController' ", 500);
             }
         }
     }
 
     /**
-     * 
+     *
      * @param type $urlInfo
      * @param Request $request
      * @return type
      */
-    private function createController($urlInfo, Request $request, ?array $args=[]) {
+    private function createController($urlInfo, Request $request, ?array $args=[])
+    {
         return $this->createControllerImp($urlInfo["pathInfo"]["module"], $urlInfo["pathInfo"]["controller"], $urlInfo["pathInfo"]["isapi"], $request, $args);
     }
 
@@ -375,28 +372,29 @@ class Router {
      * Manage error (exception)
      *
      * @param Exception $exception
-     *        	Thrown exception
+     *            Thrown exception
      */
-    private function manageError(Throwable $exception, $type = '') {
+    private function manageError(Throwable $exception, $type = '')
+    {
         $sendReport = true;
-        
-        if ($exception instanceOf PfmException && !$exception->sendReports) {
+
+        if ($exception instanceof PfmException && !$exception->sendReports) {
             $sendReport = false;
         }
 
-        if($sendReport && Configuration::get('sentry_dsn', '')) {
+        if ($sendReport && Configuration::get('sentry_dsn', '')) {
             \Sentry\captureException($exception);
         }
 
         $errCode = 500;
-        if($exception instanceof PfmException) {
+        if ($exception instanceof PfmException) {
             $errCode = $exception->getCode();
-            if($errCode == 0) {
+            if ($errCode == 0) {
                 $errCode = 500;
             }
 
-            
-            if($exception instanceof PfmAuthException && $errCode == 401) {
+
+            if ($exception instanceof PfmAuthException && $errCode == 401) {
                 header("Location:" . '/coreconnection?redirect_url='.urlencode($_SERVER['REQUEST_URI']));
                 return;
             }
@@ -404,7 +402,7 @@ class Router {
 
         http_response_code($errCode);
 
-        if(isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json')  {
+        if (isset($_SERVER['HTTP_ACCEPT']) && $_SERVER['HTTP_ACCEPT'] == 'application/json') {
             echo json_encode(array(
                 'type' => $type,
                 'message' => $exception->getMessage()
@@ -430,10 +428,9 @@ class Router {
                 'type' => $type,
                 'message' => $exception->getMessage()
             ));
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             echo '<strong>Something went wrong</strong><br>'.$e->getMessage();
             echo '<br>'.$exception->getMessage();
         }
     }
-
 }

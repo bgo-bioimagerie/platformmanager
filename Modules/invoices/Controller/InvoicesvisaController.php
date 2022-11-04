@@ -11,18 +11,19 @@ require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/invoices/Controller/InvoicesController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class InvoicesvisaController extends InvoicesController {
-
+class InvoicesvisaController extends InvoicesController
+{
     private $visaModel;
-    
+
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
 
         $this->visaModel = new InVisa();
@@ -33,14 +34,14 @@ class InvoicesvisaController extends InvoicesController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
         $table = new TableView();
         $table->setTitle(InvoicesTranslator::Visa($lang), 3);
-        
+
         $table->addLineEditButton("invoicesvisaedit/" . $id_space);
         $table->addDeleteButton("invoicesvisadelete/" . $id_space, "id", "id");
 
@@ -53,7 +54,7 @@ class InvoicesvisaController extends InvoicesController {
         $entriesArray = $modelVisa->getAll($id_space);
         $tableHtml = $table->view($entriesArray, $headersArray);
 
-        // 
+        //
         $this->render(array(
             'lang' => $lang,
             'id_space' => $id_space,
@@ -61,7 +62,8 @@ class InvoicesvisaController extends InvoicesController {
                 ), "indexAction");
     }
 
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
 
@@ -76,9 +78,9 @@ class InvoicesvisaController extends InvoicesController {
 
         $modelUser = new CoreUser();
         $users = $modelUser->getSpaceActiveUsersForSelect($id_space, "name");
-        
+
         $form->addSelect("id_user", CoreTranslator::User($lang), $users["names"], $users["ids"], $value["id_user"]);
-       
+
         $form->setValidationButton(CoreTranslator::Save($lang), "invoicesvisaedit/" . $id_space . "/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "invoicesvisas/" . $id_space);
 
@@ -86,8 +88,9 @@ class InvoicesvisaController extends InvoicesController {
             $this->visaModel->set(
                 $id,
                 $this->request->getParameter("id_user"),
-                $id_space);
-            
+                $id_space
+            );
+
             $this->redirect("invoicesvisas/" . $id_space);
             return;
         }
@@ -95,7 +98,8 @@ class InvoicesvisaController extends InvoicesController {
         $this->render(array("id_space" => $id_space, "lang" => $lang, "formHtml" => $form->getHtml($lang)));
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("invoices", $id_space, $_SESSION["id_user"]);
 
         $this->visaModel->delete($id_space, $id);

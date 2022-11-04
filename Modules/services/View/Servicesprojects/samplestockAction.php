@@ -1,4 +1,4 @@
-<?php include 'Modules/services/View/layout.php' ?>
+<?php include_once 'Modules/services/View/layout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -10,7 +10,7 @@
     </div>
 
     <div class="col-12">
-        <?php include 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
+        <?php include_once 'Modules/services/View/Servicesprojects/projecttabs.php'; ?>
     </div>
 
     <?php echo $formHtml ?>

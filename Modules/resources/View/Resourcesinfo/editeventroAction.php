@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/spacelayout.php' ?>
+<?php include_once 'Modules/core/View/spacelayout.php' ?>
 
     
 <?php startblock('content') ?>
@@ -12,7 +12,7 @@
         <?php echo $formEvent ?>
     </div>
     
-    <?php if ($id_event > 0){ ?>
+    <?php if ($id_event > 0) { ?>
     <div class="col-10 col-md-5">
         <div id="pm-table">
             <?php echo $filesTable ?>

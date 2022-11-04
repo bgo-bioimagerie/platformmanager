@@ -11,28 +11,28 @@ require_once 'Modules/core/Model/CoreStatus.php';
 require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class RestatesController extends ResourcesBaseController {
-
+class RestatesController extends ResourcesBaseController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->model = new ReState();
         //$this->checkAuthorizationMenu("resources");
-
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $lang = $this->getLanguage();
@@ -50,7 +50,7 @@ class RestatesController extends ResourcesBaseController {
         );
 
         $data = $this->model->getForSpace($id_space);
-        
+
         $tableHtml = $table->view($data, $headers);
 
         $this->render(array(
@@ -64,7 +64,8 @@ class RestatesController extends ResourcesBaseController {
     /**
      * Edit form
      */
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         // get belonging info
@@ -104,12 +105,11 @@ class RestatesController extends ResourcesBaseController {
         }
     }
 
-    public function deleteAction($id_space, $id) {
-
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
 
         $this->model->delete($id_space, $id);
         $this->redirect("restates/" . $id_space);
     }
-
 }

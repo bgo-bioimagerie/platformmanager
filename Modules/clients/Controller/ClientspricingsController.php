@@ -10,12 +10,12 @@ require_once 'Modules/clients/Model/ClPricing.php';
 require_once 'Modules/clients/Controller/ClientsController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the provider example of breeding module
  */
-class ClientspricingsController extends ClientsController {
-    
+class ClientspricingsController extends ClientsController
+{
     /**
      * User model object
      */
@@ -24,19 +24,20 @@ class ClientspricingsController extends ClientsController {
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
-        $this->pricingModel = new ClPricing ();
+        $this->pricingModel = new ClPricing();
     }
 
     /**
      * (non-PHPdoc)
      * @see Controller::index()
-     * 
+     *
      * Page showing a table containing all the providers in the database
      */
-    public function indexAction($id_space) {
-        
+    public function indexAction($id_space)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         // lang
@@ -64,7 +65,8 @@ class ClientspricingsController extends ClientsController {
             "txtcolor" => CoreTranslator::text_color($lang),
             "type" => CoreTranslator::type($lang),
             "id" => "ID"
-        ));
+        )
+        );
 
         // render the View
         return $this->render(array(
@@ -78,7 +80,8 @@ class ClientspricingsController extends ClientsController {
     /**
      * Edit a provider form
      */
-    public function editAction($id_space, $id) {
+    public function editAction($id_space, $id)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         //lang
@@ -97,8 +100,8 @@ class ClientspricingsController extends ClientsController {
         } else {
             $pricing = $this->pricingModel->get($id_space, $id);
         }
-        
-        
+
+
 
         // form
         // build the form
@@ -113,7 +116,7 @@ class ClientspricingsController extends ClientsController {
         $choices = array(CoreTranslator::Academic($lang), CoreTranslator::Company($lang));
         $choicesid = array(1, 2);
         $form->addSelect("type", CoreTranslator::type($lang), $choices, $choicesid, $pricing["type"]);
-        
+
         $todo = $this->request->getParameterNoException('redirect');
         $validationUrl = "clpricingedit/".$id_space."/".$id;
         if ($todo) {
@@ -127,14 +130,15 @@ class ClientspricingsController extends ClientsController {
         // Check if the form has been validated
         if ($form->check()) {
             // run the database query
-            $newId = $this->pricingModel->set($form->getParameter("id"), 
-                    $id_space, 
-                    $form->getParameter("name"),
-                    $form->getParameter("color"),
-                    $form->getParameter("type"),
-                    $form->getParameter("display_order"),
-                    $form->getParameter("txtcolor"),
-                );
+            $newId = $this->pricingModel->set(
+                $form->getParameter("id"),
+                $id_space,
+                $form->getParameter("name"),
+                $form->getParameter("color"),
+                $form->getParameter("type"),
+                $form->getParameter("display_order"),
+                $form->getParameter("txtcolor"),
+            );
 
             $_SESSION["flash"] = ClientsTranslator::Data_has_been_saved($lang);
             $_SESSION["flashClass"] = "success";
@@ -145,8 +149,6 @@ class ClientspricingsController extends ClientsController {
                 // after the provider is saved we redirect to the providers list page
                 return $this->redirect("clpricingedit/" . $id_space . "/" . $newId, [], ['pricing' => ['id' => $newId]]);
             }
-            
-            
         } else {
             // set the view
             $formHtml = $form->getHtml($lang);
@@ -163,26 +165,27 @@ class ClientspricingsController extends ClientsController {
     /**
      * Remove a provider
      */
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         // security
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
 
-        if($this->pricingModel->hasClients($id_space, $id)) {
+        if ($this->pricingModel->hasClients($id_space, $id)) {
             throw new PfmParamException("Pricing used by clients");
         }
-        
+
         // query to delete the provider
         $this->pricingModel->delete($id_space, $id);
-        
+
         // after the provider is deleted we redirect to the providers list page
         $this->redirect("clpricings/" . $id_space);
     }
 
-    public function getClientPricingAction($id_space, $id_client) {
+    public function getClientPricingAction($id_space, $id_client)
+    {
         $this->checkAuthorizationMenuSpace("clients", $id_space, $_SESSION["id_user"]);
         $modelClientPricing = new ClPricing();
         $pricingName = $modelClientPricing->getPricingByClient($id_space, $id_client)[0]['name'];
         return $this->render(['data' => ['elements' => $pricingName]]);
     }
-
 }

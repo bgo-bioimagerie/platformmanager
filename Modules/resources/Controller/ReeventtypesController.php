@@ -10,16 +10,17 @@ require_once 'Modules/resources/Controller/ResourcesBaseController.php';
 
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class ReeventtypesController extends ResourcesBaseController {
-
+class ReeventtypesController extends ResourcesBaseController
+{
     /**
      * Constructor
      */
-    public function __construct(Request $request, ?array $space=null) {
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->model = new ReEventType();
 
@@ -30,10 +31,10 @@ class ReeventtypesController extends ResourcesBaseController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
-
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         $lang = $this->getLanguage();
 
         $table = new TableView();
@@ -45,7 +46,7 @@ class ReeventtypesController extends ResourcesBaseController {
             "id" => "ID",
             "name" => CoreTranslator::Name($lang)
         );
-        
+
         $categories = $this->model->getForSpace($id_space);
 
         $tableHtml = $table->view($categories, $headers);
@@ -61,10 +62,10 @@ class ReeventtypesController extends ResourcesBaseController {
     /**
      * Edit form
      */
-    public function editAction($id_space, $id) {
-
+    public function editAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
+
         // get belonging info
         $site = array("id" => 0, "name" => "", "id_space" => $id_space);
         if ($id > 0) {
@@ -73,14 +74,14 @@ class ReeventtypesController extends ResourcesBaseController {
 
         // lang
         $lang = $this->getLanguage();
-        
+
         // form
         // build the form
         $form = new Form($this->request, "reeventtypesedit");
         $form->setTitle(ResourcesTranslator::Edit_Event_Type($lang), 3);
         $form->addHidden("id", $site["id"]);
         $form->addText("name", CoreTranslator::Name($lang), true, $site["name"]);
-        
+
         $form->setValidationButton(CoreTranslator::Ok($lang), "reeventtypesedit/".$id_space ."/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "reeventtypes/".$id_space);
 
@@ -101,11 +102,11 @@ class ReeventtypesController extends ResourcesBaseController {
         }
     }
 
-    public function deleteAction($id_space, $id) {
+    public function deleteAction($id_space, $id)
+    {
         $this->checkAuthorizationMenuSpace("resources", $id_space, $_SESSION["id_user"]);
-        
-        $this->model->delete($id_space ,$id);
+
+        $this->model->delete($id_space, $id);
         $this->redirect("reeventtypes/".$id_space);
     }
-
 }

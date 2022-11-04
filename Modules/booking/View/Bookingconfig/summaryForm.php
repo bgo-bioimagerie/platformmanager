@@ -7,7 +7,7 @@
 
     <?php
     if (isset($bookingSettings) && $bookingSettings != "") {
-        if(empty($bookingSettings)) {
+        if (empty($bookingSettings)) {
             $modelBkSettings = new BkBookingSettings();
             $bookingSettings = $modelBkSettings->getDefaultBkSettings();
         }
@@ -20,14 +20,14 @@
 
             <?php
                 $setSelected = "selected=\"selected\"";
-                foreach ($bookingSettings as $bkSetting) {
-                    $tag_visible = $this->clean($bkSetting['is_visible'] ?? 1);
-                    $tag_title_visible = $this->clean($bkSetting['is_tag_visible'] ?? 1);
-                    $tag_position = $this->clean($bkSetting['display_order'] ?? 1);
-                    $tag_font = $this->clean($bkSetting['font'] ?? 'normal');
-                    $optTag = $bkSetting['tag_name'];
-                    $trimOptTag = str_replace(' ', '', $optTag);
-                    ?>
+        foreach ($bookingSettings as $bkSetting) {
+            $tag_visible = $this->clean($bkSetting['is_visible'] ?? 1);
+            $tag_title_visible = $this->clean($bkSetting['is_tag_visible'] ?? 1);
+            $tag_position = $this->clean($bkSetting['display_order'] ?? 1);
+            $tag_font = $this->clean($bkSetting['font'] ?? 'normal');
+            $optTag = $bkSetting['tag_name'];
+            $trimOptTag = str_replace(' ', '', $optTag);
+            ?>
 
                 <div class="row">
                     <div class="col-3">
@@ -69,13 +69,13 @@
                                 if ($tag_position == $j + 1) {
                                     $selected = $setSelected;
                                 }
-                            ?>
+                                ?>
                                 <option
                                     value="<?php echo $j + 1 ?>" <?php echo $selected ?>> position <?php echo $j + 1 ?>
                                 </option>
                             <?php
                             }
-                            ?>
+            ?>
                         </select>
                     </div>
 
@@ -85,24 +85,24 @@
                                 echo $setSelected;
                             } ?>> normal </option>
                             <option value="bold" <?php if ($tag_font == "bold") {
-                                    echo $setSelected;
-                                } ?>> bold </option>
+                                echo $setSelected;
+                            } ?>> bold </option>
                             <option value="italic" <?php if ($tag_font == "italic") {
-                                    echo $setSelected;
-                                } ?>> italic </option>
+                                echo $setSelected;
+                            } ?>> italic </option>
                         </select>
                     </div>
                 </div>
 
             <?php
-                }
-            ?>
+        }
+        ?>
                 <br></br>
                 <div class="col-2 offset-1" id="button-div">
                     <input type="submit" class="btn btn-primary" value="save" />
                 </div>
             </form>
     <?php
-        }
-    ?>
+    }
+            ?>
 </div>

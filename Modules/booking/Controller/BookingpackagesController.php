@@ -11,13 +11,14 @@ require_once 'Modules/booking/Controller/BookingsettingsController.php';
 require_once 'Modules/booking/Controller/BookingsupsabstractController.php';
 
 /**
- * 
+ *
  * @author sprigent
  * Controller for the home page
  */
-class BookingpackagesController extends BookingsupsabstractController {
-
-    public function __construct(Request $request, ?array $space=null) {
+class BookingpackagesController extends BookingsupsabstractController
+{
+    public function __construct(Request $request, ?array $space=null)
+    {
         parent::__construct($request, $space);
         $this->modelSups = new BkPackage();
         $this->supsType = "package";
@@ -32,7 +33,8 @@ class BookingpackagesController extends BookingsupsabstractController {
      * (non-PHPdoc)
      * @see Controller::indexAction()
      */
-    public function indexAction($id_space) {
+    public function indexAction($id_space)
+    {
         $this->checkAuthorizationMenuSpace("bookingsettings", $id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         $form = $this->getSupForm($id_space, BookingTranslator::packages($lang));
@@ -50,5 +52,4 @@ class BookingpackagesController extends BookingsupsabstractController {
             'formHtml' => $formHtml
         ));
     }
-
 }

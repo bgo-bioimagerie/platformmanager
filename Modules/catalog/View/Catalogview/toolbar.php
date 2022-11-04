@@ -53,12 +53,12 @@
         <h2> <?php echo CatalogTranslator::Catalog($lang) ?></h2>
     </div>
     <br/>
-    <?php foreach($categories as $cat) {
+    <?php foreach ($categories as $cat) {
         $selectedStyle = "";
         if ($cat["id"] == $activeCategory) {
             $selectedStyle = "background-color: #337ab7; color: #ffffff";
         }
-    ?>
+        ?>
         <div class="col-4 col-md-2">
             <div class="card" style="text-align: center; <?php echo $selectedStyle; ?>">
                 <div class="card-header"></div>

@@ -1,4 +1,4 @@
-<?php include 'Modules/core/View/layout.php' ?>
+<?php include_once 'Modules/core/View/layout.php' ?>
 
 <?php startblock('stylesheet') ?>
 <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
@@ -62,46 +62,46 @@
                     <td headers="tissues species"  class="text-left" style="background-color: #eeffee;">
                         <?php
                         $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-                            $val = $val . "<p>" . $tissus[$i]['espece']
-                                    . "</p>";
-                        }
-                        echo $val;
-                        ?>
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $val = $val . "<p>" . $tissus[$i]['espece']
+                            . "</p>";
+                }
+                echo $val;
+                ?>
                     </td>
 
                     <td headers="tissues sample"  class="text-left" style="background-color: #eeffee;"><?php
-                        $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-                            $val = $val . "<p>"
-                                    . $tissus[$i]['prelevement']
-                                    . "</p>";
-                        }
-                        echo $val;
-                        ?>
+                $tissus = $entry ['tissus'];
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $val = $val . "<p>"
+                            . $tissus[$i]['prelevement']
+                            . "</p>";
+                }
+                echo $val;
+                ?>
                     </td >
                     <td headers="tissues image"  class="text-left" style="background-color: #eeffee;">
                         <?php
-                        $tissus = $entry ['tissus'];
-                        $val = "";
-                        for ($i = 0; $i < count($tissus); ++$i) {
-                            $imageFile = "data/antibodies/" . $tissus[$i]["image_url"];
-                            if (!file_exists($imageFile) || is_dir($imageFile)) {
-                                ?>
+                $tissus = $entry ['tissus'];
+                $val = "";
+                for ($i = 0; $i < count($tissus); ++$i) {
+                    $imageFile = "data/antibodies/" . $tissus[$i]["image_url"];
+                    if (!file_exists($imageFile) || is_dir($imageFile)) {
+                        ?>
                                 <div style="height:25px;"></div>
                                 <?php
-                            } else {
-                                list($width, $height, $type, $attr) = getimagesize($imageFile);
-                                ?>
+                    } else {
+                        list($width, $height, $type, $attr) = getimagesize($imageFile);
+                        ?>
                                 <a href="<?php echo $imageFile ?>" itemprop="contentUrl" data-size="<?php echo $width ?>x<?php echo $height ?>">
                                     <img src="<?php echo $imageFile ?>" itemprop="thumbnail" alt="photo" width="25" height="25"/>
                                 </a>
                                 <?php
-                            }
-                        }
-                        ?>
+                    }
+                }
+                ?>
                     </td>
 
 
