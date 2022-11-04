@@ -2152,4 +2152,20 @@ class BookingTranslator
         }
         return $result;
     }
+
+    public static function resourceRequiresAuthorization($lang)
+    {
+        if ($lang == "fr") {
+            return "L'utilisation de cet équipement nécessite un accord et/ou une formation par le personnel de la plateforme";
+        }
+        return "Use of this resource requires an agreement or training by the facility agents";
+    }
+
+    public static function resourceReservation($lang)
+    {
+        if ($lang == "fr") {
+            return "La réservation de cet équipement, par les utilisateurs formés, est possible via l'agenda";
+        }
+        return "Resource booking, by authorized users only, is possible via the booking agenda";
+    }
 }

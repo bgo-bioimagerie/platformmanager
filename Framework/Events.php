@@ -528,7 +528,7 @@ class EventHandler
                     $statUserModel = new BkStatsUser();
                     $resource_id = $msg['resource_id'];
                     if ($msg['email'] != "") {
-                        $f = $statUserModel->authorizedUsersMail($file, $resource_id, $id_space);
+                        $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang, true);
                     } else {
                         $f = $statUserModel->authorizedUsers($file, $resource_id, $id_space, $lang);
                     }
