@@ -10,7 +10,6 @@
 <?php echo $form ?>
 </div>
 <?php if ($data['campaign'] && $data['campaign']['id']) { ?>
-<!-- TODO show ratings -->
 <div id="ratings" class="mt-3 row">
     <div class="col-12 mb-3"><div class="row"><h4 class="col-4"><?php echo BookingTranslator::booking($lang); ?> [{{total.booking ? total.booking.count : 0}}]</h4><div class="col" v-if="total.booking"><rating v-model:rating="total.booking.rate" :star-size="20" :read-only="false"></rating></div>   </div></div>
     <div class="col-4 mb-3">
