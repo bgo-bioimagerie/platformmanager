@@ -3,6 +3,7 @@
 ## 2.9.5
 
 * code cleanup
+* [statistics] fix translation in booking stats
 
 ## 2.9.4
 

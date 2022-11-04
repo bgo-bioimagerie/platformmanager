@@ -98,7 +98,7 @@ class EventHandler
             $counter->incBy(1, [$event, $ok ? 'success' : 'error']);
             $gauge = $registry->getOrRegisterHistogram('pfmevent', 'request_time', 'time', ['action'], [10, 20, 50, 100, 1000]);
             $gauge->observe(($reqEnd - $reqStart)*1000, [$event]);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->error('[prometheus] error', ['error' => $e]);
         }
     }
@@ -522,7 +522,7 @@ class EventHandler
                     break;
                 case BkStats::STATS_AUTH_STAT:
                     $bs = new BkStats();
-                    $bs->generateStats($file, $msg['space']['id'], $msg['dateBegin'], $msg['dateEnd']);
+                    $bs->generateStats($file, $msg['space']['id'], $msg['dateBegin'], $msg['dateEnd'], $lang);
                     break;
                 case BkStats::STATS_AUTH_LIST:
                     $statUserModel = new BkStatsUser();
@@ -571,7 +571,7 @@ class EventHandler
                     Configuration::getLogger()->error('[statRequest] unknown request', ['stat' => $msg['stat']]);
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             Configuration::getLogger()->debug('[statRequest][error] '.$msg['stat'].' statistics', ['error' => $e->getMessage()]);
             $c->status($msg['space']['id'], $msg['file']['id'], CoreFiles::$ERROR, $e->getMessage());
             throw $e;
@@ -717,7 +717,7 @@ class EventHandler
                     Configuration::getLogger()->error('[invoiceRequest] unknown request type', ['type' => $type]);
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             $cv = new CoreVirtual();
             $cv->updateRequest($id_space, 'invoices', $rid, 'error: '.$e->getMessage());
             throw $e;
@@ -808,7 +808,7 @@ class EventHandler
                     $ok = false;
                     break;
             }
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             $ok = false;
             $this->logger->error('[message] error', ['message' => $e->getMessage(), 'line' => $e->getLine(), 'stack' => $e->getTraceAsString()]);
         }
@@ -880,13 +880,13 @@ class Events
     /**
      * Close connection
      */
-    public static function Close()
+    public static function close()
     {
         if (self::$channel != null) {
             try {
                 self::$channel->close();
                 self::$connection->close();
-            } catch(Throwable $e) {
+            } catch (Throwable $e) {
                 Configuration::getLogger()->error('[event] failed to close connection', ['error' => $e->getMessage()]);
             }
         }

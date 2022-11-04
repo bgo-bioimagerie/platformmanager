@@ -2168,4 +2168,95 @@ class BookingTranslator
         }
         return "Resource booking, by authorized users only, is possible via the booking agenda";
     }
+
+    public static function authorisationsByInstructor($lang, $begin=null, $end=null)
+    {
+        if ($lang == 'fr') {
+            $msg = 'Autorisations par formateur';
+            if ($begin && $end) {
+                $msg .= " du $begin au $end";
+            }
+        } else {
+            $msg = 'Authorisations by instructor';
+            if ($begin && $end) {
+                $msg .= " from $begin to $end";
+            }
+        }
+
+        return $msg;
+    }
+
+    public static function authorisationsByClient($lang, $begin=null, $end=null)
+    {
+        if ($lang == 'fr') {
+            $msg = 'Autorisations par client';
+            if ($begin && $end) {
+                $msg .= " du $begin au $end";
+            }
+        } else {
+            $msg = 'Authorisations by client';
+            if ($begin && $end) {
+                $msg .= " from $begin to $end";
+            }
+        }
+
+        return $msg;
+    }
+
+    public static function authorisationsSummary($lang, $begin=null, $end=null)
+    {
+        if ($lang == 'fr') {
+            $msg = 'Résumé des autorisations';
+            if ($begin && $end) {
+                $msg .= " du $begin au $end";
+            }
+        } else {
+            $msg = 'Authorisations summary';
+            if ($begin && $end) {
+                $msg .= " from $begin to $end";
+            }
+        }
+
+        return $msg;
+    }
+
+    public static function numberOfTrainings($lang)
+    {
+        if ($lang == "fr") {
+            return "Nombre de formations";
+        }
+        return "Training quantity";
+    }
+
+    public static function numberOfUsers($lang)
+    {
+        if ($lang == "fr") {
+            return "Nombre d'utilisateurs";
+        }
+        return "User quantity";
+    }
+
+    public static function numberOfVisas($lang)
+    {
+        if ($lang == "fr") {
+            return "Nombre de visa";
+        }
+        return "Visa quantity";
+    }
+
+    public static function numberOfResources($lang)
+    {
+        if ($lang == "fr") {
+            return "Nombre de resources";
+        }
+        return "Resource quantity";
+    }
+
+    public static function numberOfNewUsers($lang)
+    {
+        if ($lang == "fr") {
+            return "Nombre de nouveaux utilisateurs";
+        }
+        return "New user quantity";
+    }
 }

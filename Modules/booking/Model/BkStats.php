@@ -25,7 +25,7 @@ class BkStats
     public const STATS_QUANTITIES = 'bk_quantities';
     public const STATS_BK_TIME = 'bk_time';
 
-    public function generateStats($file, $id_space, $period_begin, $period_end)
+    public function generateStats($file, $id_space, $period_begin, $period_end, $lang='en')
     {
         $modelResource = new ReCategory();
         $resources = $modelResource->getBySpace($id_space);
@@ -61,18 +61,18 @@ class BkStats
         $summary["distinctresource"] = $modelAuthorizations->getDistinctResourceForPeriod($id_space, $period_begin, $period_end);
         $summary["newuser"] = $modelAuthorizations->getNewPeopleForPeriod($id_space, $period_begin, $period_end);
 
-        $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end);
+        $this->generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end, $lang);
     }
 
-    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end)
+    protected function generateXls($file, $resources, $instructors, $units, $countResourcesInstructor, $countResourcesUnit, $summary, $period_begin, $period_end, $lang='en')
     {
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
 
         // Set properties
         $spreadsheet->getProperties()->setCreator("Platform-Manager");
         $spreadsheet->getProperties()->setLastModifiedBy("Platform-Manager");
-        $spreadsheet->getProperties()->setTitle("Authorizations statistics");
-        $spreadsheet->getProperties()->setSubject("Authorizations statistics");
+        $spreadsheet->getProperties()->setTitle(BookingTranslator::Authorisations_statistics($lang));
+        $spreadsheet->getProperties()->setSubject(BookingTranslator::Authorisations_statistics($lang));
         $spreadsheet->getProperties()->setDescription("");
 
         $stylesheet = $this->getStylesheet();
@@ -82,9 +82,9 @@ class BkStats
         $cells = 'A1:H1';
 
         // print by instructors
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations par formateur");
+        $spreadsheet->getActiveSheet()->setTitle(BookingTranslator::authorisationsByInstructor($lang));
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par formateur du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsByInstructor($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
 
         $curentLine = 3;
@@ -139,10 +139,10 @@ class BkStats
 
         // by unit
         $objWorkSheet = $spreadsheet->createSheet(1);
-        $objWorkSheet->setTitle("Authorisations par unité");
+        $objWorkSheet->setTitle(BookingTranslator::authorisationsByClient($lang));
         $spreadsheet->setActiveSheetIndex(1);
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Autorisations par unité du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsByClient($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
         $curentLine = 2;
         $num = 1;
@@ -191,26 +191,26 @@ class BkStats
 
         // print summary
         $objWorkSheet = $spreadsheet->createSheet(2);
-        $objWorkSheet->setTitle("Authorisations résumé");
+        $objWorkSheet->setTitle(BookingTranslator::authorisationsSummary($lang));
         $spreadsheet->setActiveSheetIndex(2);
 
-        $spreadsheet->getActiveSheet()->setTitle("Autorisations résumé");
+        $spreadsheet->getActiveSheet()->setTitle(BookingTranslator::authorisationsSummary($lang));
         $spreadsheet->getActiveSheet()->mergeCells($cells);
-        $spreadsheet->getActiveSheet()->SetCellValue('A1', "Résumé des autorisations du " . CoreTranslator::dateFromEn($period_begin, "fr") . " au " . CoreTranslator::dateFromEn($period_end, "fr"));
+        $spreadsheet->getActiveSheet()->SetCellValue('A1', BookingTranslator::authorisationsSummary($lang, CoreTranslator::dateFromEn($period_begin, $lang), CoreTranslator::dateFromEn($period_end, $lang)));
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A3', "Nombre de formations");
+        $spreadsheet->getActiveSheet()->SetCellValue('A3', BookingTranslator::numberOfTrainings($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B3', $summary["total"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A4', "Nombre d'utilisateurs");
+        $spreadsheet->getActiveSheet()->SetCellValue('A4', BookingTranslator::numberOfUsers($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B4', $summary["distinctuser"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A6', "Nombre de Visas");
+        $spreadsheet->getActiveSheet()->SetCellValue('A6', BookingTranslator::numberOfVisas($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B6', $summary["distinctvisa"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A7', "Nombre de ressources");
+        $spreadsheet->getActiveSheet()->SetCellValue('A7', BookingTranslator::numberOfResources($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B7', $summary["distinctresource"]);
 
-        $spreadsheet->getActiveSheet()->SetCellValue('A8', "Nombre de nouveaux utilisateurs");
+        $spreadsheet->getActiveSheet()->SetCellValue('A8', BookingTranslator::numberOfNewUsers($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('B8', $summary["newuser"]);
 
         // write excel file
@@ -337,12 +337,6 @@ class BkStats
         if ($dateEnd == "") {
             throw new PfmParamException("invalid end date");
         }
-        $dateBeginArray = explode("-", $dateBegin);
-        $month_start = $dateBeginArray[1];
-        $year_start = $dateBeginArray[0];
-        $dateEndArray = explode("-", $dateEnd);
-        $month_end = $dateEndArray[1];
-        $year_end = $dateEndArray[0];
 
         // get data
         $modelGraph = new BkGraph();
