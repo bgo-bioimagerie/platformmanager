@@ -12,7 +12,7 @@
   * fix service project quantities in case of non numeric value force conversion to float
   * in case of invalid invoice item info, skip and log
 * [helpdesk]
-  * add some controls on imap 
+  * add some controls on imap
 
 ## 2.9.3
 

@@ -52,4 +52,16 @@ class View
         }
         include($this->file);
     }
+
+    /**
+     * Clean values inseted into HTML page for security
+     *
+     * @param string $value Value to clean
+     * @return string Value cleaned
+     */
+    private function clean($value)
+    {
+        // Convert special char to HTML
+        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
+    }
 }

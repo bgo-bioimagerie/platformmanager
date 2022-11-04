@@ -135,7 +135,7 @@ class BkStatsUser extends Model
         $reqIcon = $this->runRequest($sqlIcon, array($id_space))->fetch();
         if ($reqIcon && $reqIcon['image']) {
             $objDrawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
-            $objDrawing->setName('PHPExcel logo');
+            $objDrawing->setName('space logo');
             $objDrawing->setPath($reqIcon[0]);
             $objDrawing->setHeight(60);
             $spreadsheet->getActiveSheet()->getHeaderFooter()->addImage($objDrawing, \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooter::IMAGE_HEADER_LEFT);
