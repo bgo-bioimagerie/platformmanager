@@ -52,40 +52,4 @@ class View
         }
         include($this->file);
     }
-
-    /**
-     * Generate a view file and return it's content
-     *
-     * @deprecated
-     * @param string $file URL of the view file vue to generate
-     * @param array $data Needed data to generate the view
-     * @return string Generated view
-     * @throws Exception If the view file is not found
-     */
-    private function generatefile($file, $data)
-    {
-        if (file_exists($file)) {
-            // sent the $data table elements accessibles in the view
-            extract($data);
-            ob_start();
-
-            require $file;
-
-            return ob_get_clean();
-        } else {
-            throw new PfmException("unable to find the file in view: '$file' ", 500);
-        }
-    }
-
-    /**
-     * Clean values inseted into HTML page for security
-     *
-     * @param string $value Value to clean
-     * @return string Value cleaned
-     */
-    private function clean($value)
-    {
-        // Convert special char to HTML
-        return htmlspecialchars($value, ENT_QUOTES, 'UTF-8', false);
-    }
 }

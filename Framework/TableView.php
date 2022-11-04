@@ -429,19 +429,6 @@ class TableView
     }
 
     /**
-     * @deprecated
-     * @param type $html
-     * @param int $headerscount
-     * @return string
-     */
-    private function addSearchHeader($html, $headerscount)
-    {
-        $js = file_get_contents("Framework/TableScript.php");
-        $str1 = str_replace("numFixedCol", $this->numFixedCol, $js);
-        return str_replace("tableID", $this->tableID, $str1);
-    }
-
-    /**
      *
      * @param type $url
      * @return string
