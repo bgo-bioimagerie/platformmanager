@@ -4,6 +4,8 @@
 
 * code cleanup
 * [statistics] fix translation in booking stats
+* [mailer] after message, display number of destinations and
+  unsubscribed user count
 
 ## 2.9.4
 
