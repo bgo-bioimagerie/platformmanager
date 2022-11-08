@@ -41,9 +41,9 @@
                 <label for="to" class="control-label col-12 col-md-2"><?php echo MailerTranslator::To($lang) ?></label>
                 <div class="col-12 col-md-10">
                     <select class="form-control" id="to" name="to">
-                        <OPTION value="all" > all </OPTION>
+                        <OPTION value="all" > <?php echo CoreTranslator::Users($lang) ?> </OPTION>
                         <OPTION value="managers" > <?php echo CoreTranslator::Managers($lang) ?> </OPTION>
-                        <?php if($superAdmin) { ?><OPTION value="admins" > <?php echo CoreTranslator::Admins($lang) ?> </OPTION><?php } ?>
+                        <?php if ($superAdmin) { ?><OPTION value="admins" > <?php echo CoreTranslator::Admins($lang) ?> </OPTION><?php } ?>
                         <?php foreach ($areasList as $area): ?>
                             <?php
                             $areaname = $this->clean($area['name']);
