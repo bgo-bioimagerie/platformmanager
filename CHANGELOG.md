@@ -6,6 +6,7 @@
 * [statistics] fix translation in booking stats
 * [mailer] after message, display number of destinations and
   unsubscribed user count
+* [statistics] fix error handling for invoice items 
 
 ## 2.9.4
 

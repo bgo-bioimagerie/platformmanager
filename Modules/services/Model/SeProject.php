@@ -631,10 +631,7 @@ class SeProject extends Model
         $details = explode(";", $invoiceItem["details"]);
         if (count($details) < 2) {
             Configuration::getLogger()->warning('[services][getInfoFromInvoice] Invalid invoice item', ['item' => $invoiceItem]);
-            $info = array();
-            $info['closed_by'] = "";
-            $info['closed_by_in'] = "";
-            return $info;
+            return null;
         }
         $proj = explode("=", $details[count($details) - 2]);
         $projUrl = explode("/", $proj[1]);
@@ -644,9 +641,7 @@ class SeProject extends Model
         if ($req->rowCount() > 0) {
             $info = $req->fetch();
         } else {
-            $info = array();
-            $info['closed_by'] = "";
-            $info['closed_by_in'] = "";
+            return null;
         }
 
         if ($info['closed_by']) {
