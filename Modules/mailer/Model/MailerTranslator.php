@@ -140,12 +140,17 @@ class MailerTranslator
         return "Send email";
     }
 
-    public static function Message_Send($lang)
+    public static function Message_Send($lang, $info=null)
     {
+        $msg = '';
         if ($lang == "fr") {
-            return "Le message a bien été envoyé. Vous devriez en recevoir une copie par email.";
+            if ($info != null) {
+                $msg =  'utilisateurs: '.$info['to'].', désinscrits: '.$info['skip'].')';
+            }
+            return "Le message a bien été envoyé$msg. Vous devriez en recevoir une copie par email.";
         }
-        return "Message has been sent. You should receive a copy of this email in your email box";
+        $msg = ' (users: '.$info['to'].', unsubscribed: '.$info['skip'].')';
+        return "Message has been sent$msg. You should receive a copy of this email in your email box";
     }
 
     public static function Message_Not_Send($lang)

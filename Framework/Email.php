@@ -69,6 +69,8 @@ class Email extends Model
         // filter email if user unsubscribed
         $cm = new CoreMail();
         $cu = new CoreUser();
+        $nbDest = 0;
+        $nbUnsubscribed = 0;
         if (is_array($toAddress)) {
             foreach ($toAddress as $address) {
                 if ($mailing) {
@@ -79,6 +81,7 @@ class Email extends Model
                     }
                     if ($user && $cm->unsubscribed($user["id"], $mailingInfo[1], $mailingInfo[0])) {
                         Configuration::getLogger()->debug('[mail] user unsubscribed', ["mail" => $mailing, "user" => $address]);
+                        $nbUnsubscribed++;
                         continue;
                     }
                 }
@@ -87,7 +90,9 @@ class Email extends Model
                 } else {
                     $mail->addAddress($address);
                 }
+                $nbDest++;
             }
+            Configuration::getLogger()->info("[mail][mailing=$mailing] $subject", ['users' => $nbDest, 'unsubscribed' => $nbUnsubscribed,]);
         } elseif ($toAddress != "") {
             if ($bcc) {
                 $mail->addBCC($toAddress);
@@ -105,7 +110,7 @@ class Email extends Model
                     $filePath = $fm->path($file);
                     $mail->AddAttachment($filePath, basename($file['name']));
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 Configuration::getLogger()->error('[mail] failed to attach file', ['file' => $file]);
             }
         }
@@ -120,9 +125,9 @@ class Email extends Model
             if (!$mail->Send()) {
                 return MailerTranslator::Message_Not_Send($lang) . $mail->ErrorInfo;
             } else {
-                return MailerTranslator::Message_Send($lang);
+                return MailerTranslator::Message_Send($lang, ['to' => $nbDest, 'skip' => $nbUnsubscribed]);
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->error('[mail] failed to send email', ['error' => $mail->ErrorInfo, 'exception' => $e->getMessage()]);
             return MailerTranslator::Message_Not_Send($lang) . $mail->ErrorInfo;
         }
