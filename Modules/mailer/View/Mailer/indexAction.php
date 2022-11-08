@@ -116,7 +116,7 @@
                 <td><?php echo substr(trim($mail['message']), 0, 15); ?>...</td>
                 <?php if($role >= $editRole) { ?>
                 <td><?php echo MailerTranslator::dest($mail['type'], $lang); ?></td>
-                <td><a href="mailer/<?php echo $id_space; ?>/delete/<?php echo $mail['id']; ?>"><button type="button" class="btn"><?php echo CoreTranslator::Delete($lang) ?></button></a>
+                <td><a href="mailer/<?php echo $id_space; ?>/delete/<?php echo $mail['id']; ?>"><button type="button" class="btn btn-danger"><?php echo CoreTranslator::Delete($lang) ?></button></a>
                 <?php } ?>
             </tr>
         <?php } ?>
