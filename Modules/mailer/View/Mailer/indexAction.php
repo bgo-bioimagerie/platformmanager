@@ -76,8 +76,7 @@
             <div class="form-group row">
                 <label for="content" class="control-label col-12 col-md-2"><?php echo MailerTranslator::Content($lang) ?></label>
                 <div class="col-12 col-md-10">
-                    <textarea class="form-control" id="content" name="content">
-                    </textarea>
+                    <textarea rows="8" class="form-control" id="content" name="content"></textarea>
                 </div>
             </div>
             <br><br/>
