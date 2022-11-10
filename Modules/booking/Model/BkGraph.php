@@ -220,7 +220,28 @@ class BkGraph extends Model
             $timeSecCancelled = 0;
             $countResaOK = 0;
             $countResaCancelled= 0;
+            $supData = array();
             foreach ($data as $resa) {
+                $bksup = $resa['supplementaries'];
+                $sups = explode(";", $bksup);
+                // removes last element (systematically empty)
+                array_pop($sups);
+                foreach ($sups as $sup) {
+                    $sup2 = explode("=", $sup);
+                    if (count($sup2) == 2) {
+                        $sql = "SELECT name FROM bk_calsupinfo WHERE id=? AND id_space=?";
+                        $name = $this->runRequest($sql, array($sup2[0], $id_space))->fetch();
+                        $supSelect = explode(':', $name[0]);
+                        if (count($supSelect) > 1) {
+                            if (!isset($supData[$supSelect[0].'='.$sup2[1]])) {
+                                $supData[$supSelect[0].'='.$sup2[1]] = 0;
+                            }
+                            $supData[$supSelect[0].'='.$sup2[1]] += 1;
+                        }
+                    }
+                }
+
+
                 if ($resa['deleted'] == 0) {
                     $timeSec += $resa['end_time'] - $resa['start_time'];
                     $countResaOK += 1;
@@ -235,9 +256,10 @@ class BkGraph extends Model
             $timeCancelled[] = round($timeSecCancelled / 3600);
             $resourcesNames[] = $res['name'];
             $resourcesIdsOut[] = $res['id'];
+            $supDatas[] = $supData;
         }
         return array('count' => $countResa, 'time' => $timeResa, 'resource' => $resourcesNames,
-            'resourcesids' => $resourcesIdsOut, 'countCancelled' => $countCancelled, 'timeCancelled' => $timeCancelled);
+            'resourcesids' => $resourcesIdsOut, 'countCancelled' => $countCancelled, 'timeCancelled' => $timeCancelled, 'supDatas' => $supDatas);
     }
 
     /**

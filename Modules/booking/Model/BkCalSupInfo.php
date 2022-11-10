@@ -212,7 +212,7 @@ class BkCalSupInfo extends BkBookingAbstractSups
         foreach ($supData as $key => $value) {
             if ($value !== '') {
                 $supSelect = explode(':', $key);
-                if(count($supSelect) > 1) {
+                if (count($supSelect) > 1) {
                     $key = $supSelect[0];
                 }
                 $text .= "<strong>" . $key . ": </strong>" . $value . '<br/>';
