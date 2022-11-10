@@ -36,6 +36,10 @@ A reservation is defined by its:
 
 For information on reservation. Can be set as mandatory.
 
+To limit supplementaries to specific choices, set name as:
+
+    name:value1:value2:value3
+
 #### Packages
 
 A resource can be shared out in packages. So, when making a reservation for a specific resource, users can choose one of its packages.
