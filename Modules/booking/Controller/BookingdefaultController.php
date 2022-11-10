@@ -840,13 +840,26 @@ END:VCALENDAR
         }
         foreach ($supInfos as $sup) {
             $key = array_search($sup["id"], $supDataId);
+            $supChoices = explode(':', $sup['name']);
             $value = "";
+            $selectChoices = null;
+            if (count($supChoices) > 1) {
+                $sup['name'] = array_shift($supChoices);
+                $selectChoices = $supChoices;
+            }
             // if deleted, add a [!] warning
             $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
+
             if ($key !== false) {
                 $value = $supDataValue[$key];
             }
-            $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
+
+            if ($selectChoices) {
+                $form->addSelect("sup" . $sup["id"], $supName, $selectChoices, $selectChoices, $value);
+                // $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
+            } else {
+                $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
+            }
         }
 
         $modelColors = new BkColorCode();

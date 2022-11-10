@@ -211,6 +211,10 @@ class BkCalSupInfo extends BkBookingAbstractSups
         $supData = $this->getSupInfoData($id_space, $entryID);
         foreach ($supData as $key => $value) {
             if ($value !== '') {
+                $supSelect = explode(':', $key);
+                if(count($supSelect) > 1) {
+                    $key = $supSelect[0];
+                }
                 $text .= "<strong>" . $key . ": </strong>" . $value . '<br/>';
             }
         }
