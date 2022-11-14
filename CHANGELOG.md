@@ -10,6 +10,7 @@
 * [booking] allow supplementaries info and quantities to limit choices,
   setting choices as val1,val2,val3 to limit name
   to [val1,val2,val3]
+* [core] set minimal level for module access #511
 
 ## 2.9.4
 

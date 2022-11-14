@@ -48,7 +48,7 @@ class InvoicesconfigController extends PfmTemplateController
         $modelCoreConfig = new CoreConfig();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'invoices', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'invoices', 'currency-euro');
             return $this->redirect("invoicesconfig/" . $id_space);
