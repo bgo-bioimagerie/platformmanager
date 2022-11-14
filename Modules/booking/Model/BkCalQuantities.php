@@ -27,6 +27,7 @@ class BkCalQuantities extends BkBookingAbstractSups
         `id_quantity` int(11) NOT NULL,
         `id_resource` int(11) NOT NULL,
         `name` varchar(30) NOT NULL DEFAULT '',
+        `choices` varchar(255) NOT NULL DEFAULT '',
         `mandatory` int(1) NOT NULL,
         `is_invoicing_unit` int(1) NOT NULL DEFAULT 0,
         PRIMARY KEY (`id`)
@@ -35,8 +36,10 @@ class BkCalQuantities extends BkBookingAbstractSups
         return $this->runRequest($sql);
     }
 
-    public function setOptions($id_space, $id_supinfo, $id_resource, $choices) {
-        throw new PfmException('unsupported method');
+    public function setOptions($id_space, $id_supinfo, $id_resource, $choices)
+    {
+        $sql = "UPDATE bk_calquantities SET choices= ? WHERE id_quantity=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $this->runRequest($sql, array($choices, $id_supinfo, $id_resource, $id_space));
     }
 
     /**

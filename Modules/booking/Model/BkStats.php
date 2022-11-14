@@ -389,7 +389,7 @@ class BkStats
                 $letter = Utils::get_col_letter($num);
                 $objWorkSheet->SetCellValue($letter . $curentLine, $key);
                 $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
-                $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true); 
+                $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
             }
 
         }

@@ -316,6 +316,10 @@ class BookingdefaultController extends BookingabstractController
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
             if (!empty($qt)) {
+                if (!is_numeric($qt)) {
+                    Configuration::getLogger()->debug('Invalid quantity numeric value ', ['q' => $q, 'qt' => $qt]);
+                    throw new PfmParamException('Invalid numeric value: '.$qt);
+                }
                 $quantities .= $q["id"] . "=" . $qt . ";";
             }
         }
@@ -887,10 +891,27 @@ END:VCALENDAR
             }
         }
         foreach ($quantitiesInfo as $q) {
+            $selectChoices = null;
+            if (isset($q['choices']) && $q['choices']) {
+                $selectChoices = explode(',', $q['choices']);
+            }
+
+
             $qName = $q["deleted"] == 1 ? '[!] ' . $q["name"] : $q["name"];
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
-            $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
+
+
+            if ($selectChoices) {
+                if ($q['mandatory']) {
+                    $form->addSelectMandatory("q" . $q["id"], $qName, $selectChoices, $selectChoices, $value);
+                } else {
+                    $selectChoices[] = '';
+                    $form->addSelect("q" . $q["id"], $qName, $selectChoices, $selectChoices, $value);
+                }
+            } else {
+                $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
+            }
         }
 
         // booking nav bar

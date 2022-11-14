@@ -170,7 +170,8 @@ class BkCalSupInfo extends BkBookingAbstractSups
         $this->runRequest($sql, array($name, $mandatory, $id_supinfo, $id_resource, $id_space));
     }
 
-    public function setOptions($id_space, $id_supinfo, $id_resource, $choices) {
+    public function setOptions($id_space, $id_supinfo, $id_resource, $choices)
+    {
         $sql = "UPDATE bk_calsupinfo SET choices= ? WHERE id_supinfo=? AND id_resource=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($choices, $id_supinfo, $id_resource, $id_space));
     }
