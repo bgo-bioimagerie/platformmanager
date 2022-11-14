@@ -2259,4 +2259,28 @@ class BookingTranslator
         }
         return "New user quantity";
     }
+
+    public static function maxDuration($lang)
+    {
+        if ($lang == "fr") {
+            return "Durée maximale";
+        }
+        return "Max duration";
+    }
+
+    public static function maxFullDays($lang)
+    {
+        if ($lang == "fr") {
+            return "Limite sur journées complètes";
+        }
+        return "Limit on full days";
+    }
+
+    public static function disableOverClosed($lang)
+    {
+        if ($lang == "fr") {
+            return "Interdire pendant fermetures";
+        }
+        return "Forbid over closed hours";
+    }
 }

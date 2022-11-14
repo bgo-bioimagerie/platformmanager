@@ -12,6 +12,7 @@ require_once 'Modules/booking/Model/BkRestrictions.php';
 require_once 'Modules/resources/Model/ResourceInfo.php';
 require_once 'Modules/booking/Controller/BookingsettingsController.php';
 
+use Khill\Duration\Duration;
 
 /**
  *
@@ -35,16 +36,25 @@ class BookingrestrictionsController extends BookingsettingsController
         $data = $model->getForSpace($id_space);
         for ($i = 0 ; $i < count($data); $i++) {
             $data[$i]["resource"] = $modelResource->getName($id_space, $data[$i]["id_resource"]);
-        }
+            if ($data[$i]['maxduration']) {
+                $duration = new Duration($data[$i]['maxduration']);
+                $ts = $duration->toSeconds();
+                $data[$i]['maxduration'] .= ' ('.$ts.'s)';
+            }
+            $data[$i]['maxfulldays'] = $data[$i]['maxfulldays'] ? CoreTranslator::yes($lang) : CoreTranslator::no($lang);
+            $data[$i]['disableoverclosed'] = $data[$i]['disableoverclosed'] ? CoreTranslator::yes($lang) : CoreTranslator::no($lang);
 
-        //print_r($data);
+        }
 
         $table = new TableView();
         $table->setTitle(BookingTranslator::BookingRestriction($lang));
         $headers = array(
             "resource" => BookingTranslator::Resource(),
             "maxbookingperday" => BookingTranslator::Maxbookingperday($lang),
-            "bookingdelayusercanedit" => BookingTranslator::BookingDelayUserCanEdit($lang)
+            "bookingdelayusercanedit" => BookingTranslator::BookingDelayUserCanEdit($lang),
+            'maxduration' => BookingTranslator::maxDuration($lang),
+            'maxfulldays' => BookingTranslator::maxFullDays($lang),
+            'disableoverclosed' => BookingTranslator::disableOverClosed($lang)
         );
 
         $table->addLineEditButton("bookingrestrictionedit/".$id_space);
@@ -72,12 +82,33 @@ class BookingrestrictionsController extends BookingsettingsController
 
         $form->addText("maxbookingperday", BookingTranslator::Maxbookingperday($lang), false, $data["maxbookingperday"]);
         $form->addText("bookingdelayusercanedit", BookingTranslator::BookingDelayUserCanEdit($lang), false, $data["bookingdelayusercanedit"]);
+        $form->addText("maxduration", BookingTranslator::maxDuration($lang), false, $data["maxduration"]);
+        $form->addSelect("maxfulldays", BookingTranslator::maxFullDays($lang), [CoreTranslator::yes($lang), CoreTranslator::no($lang)], [1, 0], $data['maxfulldays']);
+        $form->addSelect("disableoverclosed", BookingTranslator::disableOverClosed($lang), [CoreTranslator::no($lang), CoreTranslator::yes($lang)], [0, 1], $data['disableoverclosed']);
+
         $form->setValidationButton(CoreTranslator::Save($lang), "bookingrestrictionedit/".$id_space."/".$id);
 
         if ($form->check()) {
-            $maxbookingperday = $form->getParameter("maxbookingperday");
-            $bookingdelayusercanedit = $form->getParameter("bookingdelayusercanedit");
-            $model->set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit);
+            $maxbookingperday = $this->request->getParameter("maxbookingperday");
+            $bookingdelayusercanedit = $this->request->getParameter("bookingdelayusercanedit");
+            $maxduration = $this->request->getParameterNoException("maxduration", '');
+
+            if($maxduration) {
+                try {
+                    $duration = new Duration($maxduration);
+                    $ts = $duration->toSeconds();
+                    if($ts == 0) {
+                        throw new PfmParamException('Invalid duration: '.$maxduration);
+                    }
+                    Configuration::getLogger()->error('????????', ['d' => $ts]);
+                } catch(Throwable $e) {
+                    throw new PfmParamException('Invalid duration: '.$maxduration);
+                }
+            }
+
+            $maxfulldays = $this->request->getParameterNoException("maxfulldays", 0);
+            $disableoverclosed = $this->request->getParameterNoException("disableoverclosed", 0);
+            $model->set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed);
 
             $this->redirect("bookingrestrictions/".$id_space);
             return;
