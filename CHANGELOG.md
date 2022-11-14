@@ -7,8 +7,8 @@
 * [mailer] after message, display number of destinations and
   unsubscribed user count
 * [statistics] fix error handling for invoice items 
-* [booking] allow supplementaries info to limit choices,
-  setting supp name as name:val1:val2:val3 to limit name
+* [booking] allow supplementaries info and quantities to limit choices,
+  setting choices as val1,val2,val3 to limit name
   to [val1,val2,val3]
 
 ## 2.9.4
