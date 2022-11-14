@@ -24,7 +24,7 @@ class BookingsettingsController extends CoresecureController
 
         $dataView = [
             'id_space' => $id_space,
-            'title' => BookingTranslator::Booking($lang),
+            'title' => BookingTranslator::bookingsettings($lang),
             'glyphicon' => $menuInfo['icon'],
             'bgcolor' => $menuInfo['color'],
             'color' => $menuInfo['txtcolor'] ?? '',

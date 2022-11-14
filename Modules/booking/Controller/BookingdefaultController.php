@@ -847,7 +847,11 @@ END:VCALENDAR
             $value = "";
             $selectChoices = null;
             if (isset($sup['choices']) && $sup['choices']) {
-                $selectChoices = explode(',', $sup['choices']);
+                $selectChoices = [];
+                $supChoices = explode(',', $sup['choices']);
+                foreach ($supChoices as $supChoice) {
+                    $selectChoices[] = trim($supChoice);
+                }
             }
             // if deleted, add a [!] warning
             $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
@@ -893,7 +897,11 @@ END:VCALENDAR
         foreach ($quantitiesInfo as $q) {
             $selectChoices = null;
             if (isset($q['choices']) && $q['choices']) {
-                $selectChoices = explode(',', $q['choices']);
+                $selectChoices = [];
+                $supChoices = explode(',', $q['choices']);
+                foreach ($supChoices as $supChoice) {
+                    $selectChoices[] = trim($supChoice);
+                }
             }
 
 

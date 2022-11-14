@@ -72,7 +72,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $formAdd->addText("names", CoreTranslator::Name($lang), $supsNames);
 
         if ($this->hasChoices) {
-            $formAdd->addText("choices", CoreTranslator::Choice($lang), $supsChoices);
+            $formAdd->addText("choices", BookingTranslator::supplementariesChoices($lang), $supsChoices);
         }
 
         if ($this->hasDuration) {
