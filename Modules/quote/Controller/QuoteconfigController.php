@@ -45,7 +45,7 @@ class QuoteconfigController extends PfmTemplateController
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'quote', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'quote', 'book');
             return $this->redirect("quoteconfig/".$id_space);

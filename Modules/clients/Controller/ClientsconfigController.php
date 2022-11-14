@@ -43,7 +43,7 @@ class ClientsconfigController extends CoresecureController
 
         // maintenance form
         //$formMenusactivation = $this->menusactivationForm($lang, $id_space);
-        $formMenusactivation = $this->menusactivationForm($id_space, 'clients', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'clients', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'clients', 'credit-card');
             $modelAccess = new CoreSpaceAccessOptions();
