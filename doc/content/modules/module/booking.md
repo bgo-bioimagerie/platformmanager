@@ -36,9 +36,11 @@ A reservation is defined by its:
 
 For information on reservation. Can be set as mandatory.
 
-To limit supplementaries to specific choices, set name as:
+To limit supplementaries to specific choices, set choices as:
 
-    name:value1:value2:value3
+    value1:value2:value3
+
+Leave choices empty for free text
 
 #### Packages
 

@@ -49,6 +49,10 @@ class BkPackage extends BkBookingAbstractSups
         $this->runRequest($sql4);
     }
 
+    public function setOptions($id_space, $id_supinfo, $id_resource, $choices) {
+        throw new PfmException('unsupported method');
+    }
+
 
     /**
      * check if a package is deleted

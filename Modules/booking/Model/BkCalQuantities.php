@@ -35,6 +35,10 @@ class BkCalQuantities extends BkBookingAbstractSups
         return $this->runRequest($sql);
     }
 
+    public function setOptions($id_space, $id_supinfo, $id_resource, $choices) {
+        throw new PfmException('unsupported method');
+    }
+
     /**
      * get the supplementaries infos
      * @param unknown $sortEntry

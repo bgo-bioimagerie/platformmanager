@@ -229,14 +229,14 @@ class BkGraph extends Model
                 foreach ($sups as $sup) {
                     $sup2 = explode("=", $sup);
                     if (count($sup2) == 2) {
-                        $sql = "SELECT name FROM bk_calsupinfo WHERE id=? AND id_space=?";
-                        $name = $this->runRequest($sql, array($sup2[0], $id_space))->fetch();
-                        $supSelect = explode(':', $name[0]);
-                        if (count($supSelect) > 1) {
-                            if (!isset($supData[$supSelect[0].'='.$sup2[1]])) {
-                                $supData[$supSelect[0].'='.$sup2[1]] = 0;
+                        $sql = "SELECT name, choices FROM bk_calsupinfo WHERE id=? AND id_space=?";
+                        $elt = $this->runRequest($sql, array($sup2[0], $id_space))->fetch();
+                        $name = $elt['name'];
+                        if ($elt['choices']) {
+                            if (!isset($supData[$name.'='.$sup2[1]])) {
+                                $supData[$name.'='.$sup2[1]] = 0;
                             }
-                            $supData[$supSelect[0].'='.$sup2[1]] += 1;
+                            $supData[$name.'='.$sup2[1]] += 1;
                         }
                     }
                 }
