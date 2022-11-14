@@ -7,6 +7,7 @@
 * [mailer] after message, display number of destinations and
   unsubscribed user count
 * [statistics] fix error handling for invoice items 
+* [core] set minimal level for module access #511
 
 ## 2.9.4
 
