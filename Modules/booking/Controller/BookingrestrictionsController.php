@@ -43,7 +43,7 @@ class BookingrestrictionsController extends BookingsettingsController
                 $ts = $duration->toSeconds();
                 $displaydataElt['maxduration'] .= ' ('.$ts.'s)';
             }
-            $displaydataElt['maxfulldays'] = $displaydataElt['maxfulldays'] ? CoreTranslator::yes($lang) : CoreTranslator::no($lang);
+            $displaydataElt['maxfullduration'] = $displaydataElt['maxfullduration'] ? CoreTranslator::yes($lang) : CoreTranslator::no($lang);
             $displaydataElt['disableoverclosed'] = $displaydataElt['disableoverclosed'] ? CoreTranslator::yes($lang) : CoreTranslator::no($lang);
             $displaydata[] = $displaydataElt;
         }
@@ -55,7 +55,7 @@ class BookingrestrictionsController extends BookingsettingsController
             "maxbookingperday" => BookingTranslator::Maxbookingperday($lang),
             "bookingdelayusercanedit" => BookingTranslator::BookingDelayUserCanEdit($lang),
             'maxduration' => BookingTranslator::maxDuration($lang),
-            'maxfulldays' => BookingTranslator::maxFullDays($lang),
+            'maxfullduration' => BookingTranslator::maxfullduration($lang),
             'disableoverclosed' => BookingTranslator::disableOverClosed($lang)
         );
 
@@ -96,7 +96,7 @@ class BookingrestrictionsController extends BookingsettingsController
         $form->addText("maxbookingperday", BookingTranslator::Maxbookingperday($lang), false, $data["maxbookingperday"]);
         $form->addText("bookingdelayusercanedit", BookingTranslator::BookingDelayUserCanEdit($lang), false, $data["bookingdelayusercanedit"]);
         $form->addText("maxduration", BookingTranslator::maxDuration($lang), false, $data["maxduration"]);
-        $form->addSelect("maxfulldays", BookingTranslator::maxFullDays($lang), [CoreTranslator::yes($lang), CoreTranslator::no($lang)], [1, 0], $data['maxfulldays']);
+        $form->addSelect("maxfullduration", BookingTranslator::maxfullduration($lang), [CoreTranslator::yes($lang), CoreTranslator::no($lang)], [1, 0], $data['maxfullduration']);
         $form->addSelect("disableoverclosed", BookingTranslator::disableOverClosed($lang), [CoreTranslator::no($lang), CoreTranslator::yes($lang)], [0, 1], $data['disableoverclosed']);
         $modelSpace = new CoreSpace();
         $roles = $modelSpace->roles($lang, 0);
@@ -123,9 +123,9 @@ class BookingrestrictionsController extends BookingsettingsController
             }
 
             $appliesTo = $this->request->getParameterNoException('applies_to', true, CoreSpace::$USER);
-            $maxfulldays = $this->request->getParameterNoException("maxfulldays", 0);
+            $maxfullduration = $this->request->getParameterNoException("maxfullduration", 0);
             $disableoverclosed = $this->request->getParameterNoException("disableoverclosed", 0);
-            $id = $model->set($id_space, $id, $this->request->getParameter('id_resource'), $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo);
+            $id = $model->set($id_space, $id, $this->request->getParameter('id_resource'), $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo);
 
             return $this->redirect("bookingrestrictions/".$id_space, [], ['bkrestriction' => ['id' => $id]]);
         }

@@ -2268,12 +2268,12 @@ class BookingTranslator
         return "Max duration";
     }
 
-    public static function maxFullDays($lang)
+    public static function maxfullduration($lang)
     {
         if ($lang == "fr") {
-            return "Limite sur journées complètes";
+            return "Limite sur réservation complète (vs heures d'ouverture)";
         }
-        return "Limit on full days";
+        return "Limit on full booking time (vs open time only)";
     }
 
     public static function disableOverClosed($lang)

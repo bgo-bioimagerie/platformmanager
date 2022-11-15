@@ -12,7 +12,7 @@ class BkRestrictions extends Model
         $this->setColumnsInfo("maxbookingperday", "int(11)", 0);
         $this->setColumnsInfo("bookingdelayusercanedit", "int(11)", 0);
         $this->setColumnsInfo("maxduration", "varchar(50)", "");  // maximum booking time 5d, 10h
-        $this->setColumnsInfo("maxfulldays", "tinyint", 0);  // max real booking time (no closed hours) or count everything (duration between start and end time)
+        $this->setColumnsInfo("maxfullduration", "tinyint", 0);  // max real booking time (no closed hours) or count everything (duration between start and end time)
         $this->setColumnsInfo("disableoverclosed", "tinyint", 0); // (dis)allow booking on multiple ranges with closed hours between
         $this->setColumnsInfo("applies_to", "int", CoreSpace::$USER); // max role restrictions applies to
 
@@ -38,7 +38,7 @@ class BkRestrictions extends Model
             'maxbookingperday' => 0,
             'bookingdelayusercanedit' => 0,
             'maxduration' => 0,
-            'maxfulldays' => 0,
+            'maxfullduration' => 0,
             'disableoverclosed' => 0,
             'applies_to' => CoreSpace::$USER
         ];
@@ -77,24 +77,24 @@ class BkRestrictions extends Model
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo)
+    public function add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo)
     {
         $id = $this->exists($id_space, $id_resource);
         if (!$id) {
-            $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit, id_space, maxduration, maxfulldays, disableoverclosed, applies_to) VALUES (?,?,?,?, ?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $id_space, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo));
+            $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit, id_space, maxduration, maxfullduration, disableoverclosed, applies_to) VALUES (?,?,?,?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $id_space, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo));
             $id = $this->getDatabase()->lastInsertId();
         }
         return $id;
     }
 
-    public function set($id_space, $id, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo)
+    public function set($id_space, $id, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo)
     {
         if ($id) {
-            $sql = "UPDATE bk_restrictions SET id_resource=?, maxbookingperday=?, bookingdelayusercanedit=?, maxduration=?, maxfulldays=?, disableoverclosed=?, applies_to=? WHERE id=? AND deleted=0 AND id_space=?";
-            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo, $id, $id_space));
+            $sql = "UPDATE bk_restrictions SET id_resource=?, maxbookingperday=?, bookingdelayusercanedit=?, maxduration=?, maxfullduration=?, disableoverclosed=?, applies_to=? WHERE id=? AND deleted=0 AND id_space=?";
+            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo, $id, $id_space));
         } else {
-            $id = $this->add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo);
+            $id = $this->add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfullduration, $disableoverclosed, $appliesTo);
         }
         return $id;
     }

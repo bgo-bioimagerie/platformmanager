@@ -424,7 +424,7 @@ class BookingdefaultController extends BookingabstractController
             if ($resourceRestrictions['maxduration']) {
                 $maxDuration = new Duration($resourceRestrictions['maxduration']);
                 $maxDurationInSeconds = $maxDuration->toSeconds();
-                if ($resourceRestrictions['maxfulldays']) {
+                if ($resourceRestrictions['maxfullduration']) {
                     if (($end_time - $start_time) > $maxDurationInSeconds) {
                         throw new PfmParamException('Duration exceeds max booking duration: '.$resourceRestrictions['maxduration']);
                     }

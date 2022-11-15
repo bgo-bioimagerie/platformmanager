@@ -168,7 +168,7 @@ $form = [
     "maxbookingperday" => 8,
     "bookingdelayusercanedit" => 0,
     "maxduration" => "1d",
-    "maxfulldays" => "1",
+    "maxfullduration" => "1",
     "disableoverclosed" => "0",
     "applies_to" => CoreSpace::$USER
 ];
