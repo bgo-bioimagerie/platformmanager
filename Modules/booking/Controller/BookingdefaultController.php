@@ -31,6 +31,9 @@ require_once 'Modules/core/Model/CoreUserSettings.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 
+use Khill\Duration\Duration;
+
+
 /**
  *
  * @author sprigent
@@ -294,7 +297,6 @@ class BookingdefaultController extends BookingabstractController
             throw new PfmParamException("end hour not in schedule [".$schedule["day_begin"].":".$schedule["day_end"]."]");
         }
 
-
         $modelSupInfo = new BkCalSupInfo();
         $supInfos = $modelSupInfo->getByResource($id_space, $id_resource);
         $supplementaries = "";
@@ -391,6 +393,53 @@ class BookingdefaultController extends BookingabstractController
         $error = null;
 
         $oldEntry = null;
+
+
+        // Check restrictions
+        $modelRestrictions = new BkRestrictions();
+        $resourceRestrictions = $modelRestrictions->getForResource($id_space, $id_resource);
+        if ($resourceRestrictions && $this->role <= $resourceRestrictions['applies_to']) {
+            $tmpResaInfo = array(
+                "id" => $id,
+                "start_time" => $start_time,
+                "end_time" => $end_time,
+                "resource_id" => $id_resource,
+                "booked_by_id" => $booked_by_id,
+                "recipient_id" => $recipient_id,
+                "last_update" => date("Y-m-d H:m:i", time()),
+                "color_type_id" => $color_type_id,
+                "short_description" => $short_description,
+                "full_description" => $full_description,
+                "quantities" => $quantities,
+                "supplementaries" => $supplementaries,
+                "package_id" => $package_id,
+                "responsible_id" => 0,
+                "reason" => $reason
+            );
+            $details = $modelCalEntry->computeDuration($id_space, $tmpResaInfo);
+            Configuration::getLogger()->debug('[booking][restrictions]', ['r' => $resourceRestrictions, 'details' => $details,' start' => $start_time, 'end' => $end_time]);
+            if ($resourceRestrictions['disableoverclosed'] && $details['hours']['nb_hours_closed']) {
+               throw new PfmParamException('Booking over a closed period');
+            }
+            if ($resourceRestrictions['maxduration']) {
+                $maxDuration = new Duration($resourceRestrictions['maxduration']);
+                $maxDurationInSeconds = $maxDuration->toSeconds();
+                if ($resourceRestrictions['maxfulldays']) {
+                    if (($end_time - $start_time) > $maxDurationInSeconds) {
+                        throw new PfmParamException('Duration exceeds max booking duration: '.$resourceRestrictions['maxduration']);
+                    }
+                } else {
+                    if ($details['total'] > ($maxDurationInSeconds / 3600)) {
+                        throw new PfmParamException('Duration exceeds max booking duration: '.$resourceRestrictions['maxduration']);
+                    }
+                }
+            }
+        } else {
+            Configuration::getLogger()->debug('[booking] no restriction found for resource', ['resource' => $id_resource]);
+        }
+
+
+
         if ($id > 0) {
             $oldEntry = $modelCalEntry->getEntry($id_space, $id);
         }

@@ -2283,4 +2283,12 @@ class BookingTranslator
         }
         return "Forbid over closed hours";
     }
+
+    public static function appliesTo($lang)
+    {
+        if ($lang == 'fr') {
+            return "Restrictions s'appliquent à";
+        }
+        return "Restrictions apply to";
+    }
 }

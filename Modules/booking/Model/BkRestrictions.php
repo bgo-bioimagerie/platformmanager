@@ -14,6 +14,7 @@ class BkRestrictions extends Model
         $this->setColumnsInfo("maxduration", "varchar(50)", "");  // maximum booking time 5d, 10h
         $this->setColumnsInfo("maxfulldays", "tinyint", 0);  // max real booking time (no closed hours) or count everything (duration between start and end time)
         $this->setColumnsInfo("disableoverclosed", "tinyint", 0); // (dis)allow booking on multiple ranges with closed hours between
+        $this->setColumnsInfo("applies_to", "int", CoreSpace::$USER); // max role restrictions applies to
 
         $this->primaryKey = "id";
     }
@@ -24,7 +25,7 @@ class BkRestrictions extends Model
         $resources = $this->runRequest($sql, array($id_space))->fetchAll();
 
         foreach ($resources as $r) {
-            $this->add($id_space, $r["id"], 0, 0, '', 0, 0);
+            $this->add($id_space, $r["id"], 0, 0, '', 0, 0, CoreSpace::$USER);
         }
     }
 
@@ -38,7 +39,8 @@ class BkRestrictions extends Model
             'bookingdelayusercanedit' => 0,
             'maxduration' => 0,
             'maxfulldays' => 0,
-            'disableoverclosed' => 0
+            'disableoverclosed' => 0,
+            'applies_to' => CoreSpace::$USER
         ];
     }
 
@@ -75,19 +77,26 @@ class BkRestrictions extends Model
         return $this->runRequest($sql, array($id, $id_space))->fetch();
     }
 
-    public function add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed)
+    public function add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo)
     {
         $id = $this->exists($id_space, $id_resource);
         if (!$id) {
-            $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit, id_space, maxduration, maxfulldays, disableoverclosed) VALUES (?,?,?,?, ?, ?, ?)";
-            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $id_space, $maxduration, $maxfulldays, $disableoverclosed));
+            $sql = "INSERT INTO bk_restrictions (id_resource, maxbookingperday, bookingdelayusercanedit, id_space, maxduration, maxfulldays, disableoverclosed, applies_to) VALUES (?,?,?,?, ?, ?, ?, ?)";
+            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $id_space, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo));
+            $id = $this->getDatabase()->lastInsertId();
         }
+        return $id;
     }
 
-    public function set($id_space, $id, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed)
+    public function set($id_space, $id, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo)
     {
-        $sql = "UPDATE bk_restrictions SET maxbookingperday=?, bookingdelayusercanedit=?, maxduration=?, maxfulldays=?, disableoverclosed=? WHERE id=? AND deleted=0 AND id_space=?";
-        $this->runRequest($sql, array($maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $id, $id_space));
+        if ($id) {
+            $sql = "UPDATE bk_restrictions SET id_resource=?, maxbookingperday=?, bookingdelayusercanedit=?, maxduration=?, maxfulldays=?, disableoverclosed=?, applies_to=? WHERE id=? AND deleted=0 AND id_space=?";
+            $this->runRequest($sql, array($id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo, $id, $id_space));
+        } else {
+            $id = $this->add($id_space, $id_resource, $maxbookingperday, $bookingdelayusercanedit, $maxduration, $maxfulldays, $disableoverclosed, $appliesTo);
+        }
+        return $id;
     }
 
     public function exists($id_space, $id_resource)
