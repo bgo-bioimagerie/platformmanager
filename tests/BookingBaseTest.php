@@ -14,6 +14,7 @@ require_once 'Modules/booking/Controller/BookingnightweController.php';
 
 require_once 'Modules/booking/Controller/BookingauthorisationsController.php';
 require_once 'Modules/booking/Controller/BookingquantitiesController.php';
+require_once 'Modules/booking/Controller/BookingrestrictionsController.php';
 require_once 'Modules/core/Controller/CorespaceuserController.php';
 
 require_once 'Modules/resources/Controller/ResourcesinfoController.php';
@@ -148,6 +149,54 @@ class BookingBaseTest extends BaseTest {
         foreach($data['bkaccess'] as $bkaccess) {
             $this->assertEquals($expects[$bkaccess['resource']], $bkaccess['bkaccess']);
         }
+
+
+
+// Update resources restrictions
+$req = $this->request([
+    "path" => "resources/".$space['id'],
+    "id" => 0
+]);
+$c = new ResourcesinfoController($req, $space);
+$data = $c->runAction('resources', 'index', ['id_space' => $space['id']]);
+$resources = $data['resources'];
+
+$form = [
+    "path" => "bookingrestrictionedit/".$space['id'].'/0',
+    "formid" => "restrictioneditform",
+    "id_resource" => $resources[0]['id'],
+    "maxbookingperday" => 8,
+    "bookingdelayusercanedit" => 0,
+    "maxduration" => "1d",
+    "maxfullduration" => "1",
+    "disableoverclosed" => "0",
+    "applies_to" => CoreSpace::$USER
+];
+
+$req = $this->request($form);
+$c = new BookingrestrictionsController($req, $space);
+$data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => 0]);
+$restriction_id = $data['bkrestriction']['id'];
+
+
+$form = [
+    "path" => "bookingrestrictions/".$space['id'],
+];
+$req = $this->request($form);
+$c = new BookingrestrictionsController($req, $space);
+$data = $c->runAction('booking', 'index', ['id_space' => $space['id']]);
+Configuration::getLogger()->debug('bkrestrictions', ['data' => $data]);
+$match = false;
+foreach ($data['bkrestrictions'] as $bkrestriction) {
+    if ($bkrestriction['id_resource'] == $resources[0]['id']) {
+        $this->assertEquals($bkrestriction['id'], $restriction_id);
+        $this->assertEquals($bkrestriction['maxduration'], '1d');
+        $match = true;
+        break;
+    }
+}
+$this->assertTrue($match);
+
 
 
 

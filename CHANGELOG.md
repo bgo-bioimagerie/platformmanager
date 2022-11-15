@@ -9,6 +9,9 @@
 * [mailer] on Users destination send to user+managers+admin #744
 * [statistics] fix error handling for invoice items 
 * [core] set minimal level for module access #511
+* [booking] add optional
+   * max duration for booking #741
+   * forbid booking over closed hours
 
 ## 2.9.4
 

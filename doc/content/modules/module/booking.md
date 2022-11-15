@@ -148,7 +148,10 @@ Options:
 
 ![booking_settings](../../../booking_settings_module_6.png)
 
-Set max booking per day and cancellation time limit by resource.
+* Set max number of booking per day and cancellation time limit by resource.
+* Set max booking duration for resource, for full duration or open hours only.
+* Forbid bookings overlapping closed hours
+* Apply restrictions to users only, or also on managers/admins
 
 #### Night & WE
 
