@@ -4,13 +4,13 @@ $userSettingsModel = new CoreUserSettings();
 ?>
 
     <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.3/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="externals/datatables-extra/buttons.bootstrap5.min.css">
     
     <script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.3/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.3/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.3.2/js/buttons.html5.min.js"></script>
+    <script src="externals/datatables-extra/dataTables.buttons.min.js"></script>
+    <script src="externals/datatables-extra/buttons.bootstrap5.min.js"></script>
+    <script src="externals/datatables-extra/buttons.html5.min.js"></script>
 
     <script>
         $(document).ready(function () {
