@@ -9,6 +9,7 @@
 * [mailer] on Users destination send to user+managers+admin #744
 * [statistics] fix error handling for invoice items 
 * [core] set minimal level for module access #511
+* [services] in stats, if user unknown ie not found, show *unknown* value
 
 ## 2.9.4
 

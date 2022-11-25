@@ -834,7 +834,7 @@ class SeProject extends Model
         for ($i = 0; $i < count($data); $i++) {
             $clientInfo = $modelClient->get($id_space, $data[$i]['id_resp']);
 
-            $data[$i]['resp'] = $clientInfo["contact_name"];
+            $data[$i]['resp'] = $clientInfo ? $clientInfo["contact_name"]: 'unknown';
             $data[$i]['user'] = $modelUser->getUserFUllName($data[$i]['id_user']);
             $data[$i]['unit'] = $modelClient->getInstitution($id_space, $data[$i]['id_resp']);
             $data[$i]["sample_cabinet"] = $modelSampleCabinet->getFullName($id_space, $data[$i]["id_sample_cabinet"]);
