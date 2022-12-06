@@ -30,6 +30,7 @@ class CatalogconfigController extends CoresecureController
         if (!$this->isUserAuthorized(CoreStatus::$USER)) {
             throw new PfmAuthException("Error 403: Permission denied", 403);
         }
+
     }
 
     /**
@@ -49,7 +50,7 @@ class CatalogconfigController extends CoresecureController
             return $this->redirect("catalogconfig/" . $id_space);
         }
 
-        $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang);
+        $formSettingsMenusactivation = $this->menusactivationForm($id_space, 'catalogsettings', $lang, CoreSpace::$MANAGER);
         if ($formSettingsMenusactivation->check()) {
             $this->menusactivation($id_space, 'catalogsettings', 'list', 'catalog');
             return $this->redirect("catalogconfig/" . $id_space);
