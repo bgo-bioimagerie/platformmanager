@@ -289,13 +289,18 @@ class Email extends Model
             $toAddress = $params["email"];
             $subject = CoreTranslator::AccountPendingCreationSubject($lang);
             $content = CoreTranslator::AccountPendingCreationEmail($lang, $params["jwt"], $params["url"]);
+        } elseif ($origin == "user_email_confirm") {
+            $fromName = "Platform-Manager";
+            $toAddress = $params["email"];
+            $subject = CoreTranslator::AccountEmailPendingConfirmSubject($lang);
+            $content = CoreTranslator::AccountEmailPendingConfirmEmail($lang, $params["jwt"], $params["url"]);
         } else {
             Configuration::getLogger()->error(
                 "notifyUserByEmail",
                 ["message" => "origin parameter is not set properly", "origin" => $origin]
             );
         }
-        $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false);
+        $this->sendEmail($from, $fromName, $toAddress, $subject, $content, false, bcc: false);
     }
 
     /**
@@ -320,4 +325,5 @@ class Email extends Model
         $mailerSetCopyToFrom = $modelConfig->getParamSpace("MailerSetCopyToFrom", $spaceId, 0);
         return ($mailerSetCopyToFrom == 1);
     }
+
 }

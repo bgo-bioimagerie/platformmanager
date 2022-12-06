@@ -158,6 +158,25 @@ class CoreTranslator
         return "Please confirm your registration at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
     }
 
+
+    public static function AccountEmailPendingConfirmSubject($lang)
+    {
+        $str = "[pfm] ";
+        if ($lang == "fr") {
+            return $str . "Mail en attente de confirmation";
+        }
+        return $str . "Pending email confirmation";
+    }
+
+    public static function AccountEmailPendingConfirmEmail($lang, $jwt, $url)
+    {
+        $confirmUrl = $url."/core/account/emailconfirm?token=".$jwt;
+        if ($lang == "fr") {
+            return "Merci de confirmer votre mail en allant sur le lien suivant.\n".$confirmUrl."\nLe lien expirera dans 2 jours.";
+        }
+        return "Please confirm your email at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.";
+    }
+
     public static function WaitingAccountMessage($lang)
     {
         if ($lang == "fr") {
@@ -2623,5 +2642,29 @@ class CoreTranslator
             return "Affichage d'éléments par tableau";
         }
         return "Displayed array elements";
+    }
+
+    public static function AccountEmailConfirmed($lang)
+    {
+        if ($lang == "fr") {
+            return "Mail confirmé";
+        }
+        return "Email confirmed";
+    }
+
+    public static function AccountEmailConfirm($lang)
+    {
+        if ($lang == "fr") {
+            return "Confirmer mails";
+        }
+        return "Confirm emails";
+    }
+
+    public static function CheckEmail($lang)
+    {
+        if ($lang == "fr") {
+            return "Confirmer mail";
+        }
+        return "Confirm email";     
     }
 }

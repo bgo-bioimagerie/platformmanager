@@ -28,6 +28,28 @@ use Firebase\JWT\JWT;
  */
 class CoreaccountController extends Controller
 {
+
+    public function confirmEmailAction() {
+        $lang = $this->getLanguage();
+        $token = $this->request->getParameter("token");
+        try {
+            $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
+        } catch (Throwable $e) {
+            Configuration::getLogger()->debug('[core][account][confirm] jwt decode failed', ['error' => $e->getMessage()]);
+            throw new PfmAuthException($e->getMessage(), 403);
+        }
+        $decoded_array = (array) $decoded;
+        $data = (array) $decoded_array['data'];
+        Configuration::getLogger()->debug('[account] email confirmation', ['user' => $data]);
+        $modelCoreUser = new CoreUser();
+        $expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+        $modelCoreUser->setEmailExpiration($data['id'], $expire);
+        $message = CoreTranslator::AccountEmailConfirmed($lang);
+        return $this->render(array(
+            "message" => $message
+        ));
+    }
+
     public function confirmAction()
     {
         $lang = $this->getLanguage();
@@ -36,7 +58,7 @@ class CoreaccountController extends Controller
             $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
         } catch(Throwable $e) {
             Configuration::getLogger()->debug('[core][account][confirm] jwt decode failed', ['error' => $e->getMessage()]);
-            return new PfmAuthException($e->getMessage(), 403);
+            throw new PfmAuthException($e->getMessage(), 403);
         }
         $decoded_array = (array) $decoded;
         $data = (array) $decoded_array['data'];
@@ -57,6 +79,10 @@ class CoreaccountController extends Controller
             $data["firstname"],
             $data["email"]
         );
+
+        $expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+        $modelCoreUser->setEmailExpiration($id_user, $expire);
+
         if ($data["phone"]??"") {
             $modelCoreUser->setPhone($id_user, $data["phone"]);
         }

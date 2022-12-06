@@ -4,6 +4,7 @@
 rootWeb = /
 public_url = 'http://localhost:4000'
 jwt_secret =
+email_expire_days=
 
 [Admin]
 admin_user =

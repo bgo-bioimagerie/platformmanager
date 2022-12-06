@@ -90,6 +90,9 @@ Following env variables can be used to override Config/conf.ini:
   * PFM_HELPDESK_IMAP_TLS:  ['' (default), '/ssl']  # empty string or /ssl if using tls
 * PFM_TIMEZONE: server timezone (Europe/Paris, ..., defaults to UTC)
 * PFM_MEMORY: sets php memory_limit (PFM_MEMORY: 1024M for example, else use default php settings) for pfm-events, pfm-helpdesk
+* PFM_LANG: default language (en, fr)
+* PFM_EMAIL_EXPIRE_DAYS: number of days before re-checking emails
+* PFM_EMAIL_EXPIRE_DELAY: number of days for mail check token validity
 
 And .env file should define (according to variables used):
 

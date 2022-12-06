@@ -81,6 +81,7 @@ services:
       PFM_ADMIN_PASSWORD: ${PFM_ADMIN_PASSWORD}
       PFM_ADMIN_APIKEY: ${PFM_ADMIN_APIKEY}
       PFM_TIMEZONE: 'UTC'
+      PFM_LANG: fr
     depends_on:
         - mysql
         - pfm-rabbitmq

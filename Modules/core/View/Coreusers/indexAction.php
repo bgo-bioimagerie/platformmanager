@@ -12,6 +12,9 @@
             <div class="col" >
                 <button type="button" onclick="location.href = 'coreusersedit/0'" class="btn btn-primary"><?php echo CoreTranslator::Add_User($lang) ?></button>
             </div>
+            <div class="col" >
+                <button type="button" onclick="location.href = '/core/users/emailcheck'" class="btn btn-primary"><?php echo CoreTranslator::AccountEmailConfirm($lang) ?></button>
+            </div>
         </div>
         <div class="row"><div class="col-12"><?php echo CoreTranslator::DeleteUserCaution($lang)?></div></div>
         <div class="row">

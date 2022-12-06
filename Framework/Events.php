@@ -46,6 +46,7 @@ require_once 'Modules/rating/Model/RatingTranslator.php';
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
 use Sentry\Event;
+use Firebase\JWT\JWT;
 
 class EventModel extends Model
 {
@@ -724,6 +725,56 @@ class EventHandler
         }
     }
 
+    public function userDisable($msg)
+    {
+        $this->logger->debug('[userDisable]');
+        $model = new CoreUser();
+        $model->disableUsers($msg['user_desactivate'], $msg['remove'], $msg['space']['id'], false);
+    }
+
+    public function userMailExpire()
+    {
+        $this->logger->debug('[userMailExpire]');
+        $model = new CoreUser();
+        $model->disableUnconfirmedEmails();
+    }
+
+    public function userMailCheck()
+    {
+        $this->logger->debug('[userMailCheck]');
+        $model = new CoreUser();
+        $userSettingsModel = new CoreUserSettings();
+        $users = $model->getExpiringEmails(Configuration::get('email_expire_delay', 30));
+        
+        foreach ($users as $user) {
+            $lang = Configuration::get('lang', 'en');
+            $lang = $userSettingsModel->getUserSetting($user['id'], "language", $lang);
+
+            $expiration = time() + (30 * 24 * 3600);
+            Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $user['id'], 'email' => $user['email']]);
+
+            $payload = array(
+                "iss" => Configuration::get('public_url', ''),
+                "aud" => Configuration::get('public_url', ''),
+                "exp" => $expiration, // 2 days to confirm
+                "data" => [
+                    "id" => $user['id'],
+                    "email" => $user['email'],
+                ]
+            );
+            $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
+            $emailModel = new Email();
+            $mailParams = [
+                "jwt" => $jwt,
+                "url" => Configuration::get('public_url'),
+                "email" => $user['email'],
+                "supData" => $payload['data']
+            ];
+            $emailModel->notifyUserByEmail($mailParams, "user_email_confirm", $lang);
+        }
+    }
+
+
     /**
      * Handle message from rabbitmq
      *
@@ -803,6 +854,15 @@ class EventHandler
                 case Events::ACTION_RATING_CAMPAIGN_NEW:
                     $this->campaignRequest($data);
                     break;
+                case Events::ACTION_USER_DISABLE:
+                    $this->userDisable($data);
+                    break;
+                case Events::ACTION_USER_MAILEXPIRE:
+                    $this->userMailExpire();
+                    break;
+                case Events::ACTION_USER_MAILCHECK:
+                    $this->userMailCheck();
+                    break;
                 default:
                     $this->logger->error('[message] unknown message', ['action' => $data]);
                     $ok = false;
@@ -853,6 +913,10 @@ class Events
     public const ACTION_STATISTICS_REQUEST = 800;
 
     public const ACTION_RATING_CAMPAIGN_NEW = 900;
+
+    public const ACTION_USER_DISABLE = 1000;
+    public const ACTION_USER_MAILEXPIRE = 1001;
+    public const ACTION_USER_MAILCHECK = 1002;
 
     private static $connection;
     private static $channel;

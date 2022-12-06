@@ -6,6 +6,8 @@
     <div class="container pm-form">
         <?php echo $formHtml ?>
 
+        <?php echo $formMail ?>
+
         <?php echo $formApi ?>
 
         <div class="col-md-12 mb-3">

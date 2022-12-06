@@ -45,6 +45,7 @@ class CoreUser extends Model
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
         $this->setColumnsInfo("validated", "int(1)", 1);
         $this->setColumnsInfo("apikey", "varchar(30)", "");
+        $this->setColumnsInfo("date_email_expiration", "int", 0);
         $this->primaryKey = "id";
     }
 
@@ -103,10 +104,28 @@ class CoreUser extends Model
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function editBaseInfo($id, $name, $firstname, $email)
+    public function editBaseInfo($id, $name, $firstname, $email, $date_email_expiration=0)
     {
-        $sql = "UPDATE core_users SET name=?, firstname=?, email=? WHERE id=?";
-        $this->runRequest($sql, array($name, $firstname, $email, $id));
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=?, date_email_expiration=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $date_email_expiration, $id));
+    }
+
+    public function setEmailExpiration($id, int $date_email_expiration)
+    {
+        $sql = "UPDATE core_users SET date_email_expiration=? WHERE id=?";
+        $this->runRequest($sql, array($date_email_expiration, $id));
+    }
+
+    public function getExpiredEmails()
+    {
+       return $this->getExpiringEmails(0);
+    }
+
+    public function getExpiringEmails($delay=30)
+    {
+        $sql = 'SELECT id, email from core_users WHERE is_active=1 AND date_email_expiration<?';
+        $res = $this->runRequest($sql, [time() + ($delay * 24 * 3600)]);
+        return $res->fetchAll();
     }
 
     public function setPhone($id, $phone)
@@ -152,6 +171,21 @@ class CoreUser extends Model
         for ($i = 1; $i < count($users); $i++) {
             $sql = "DELETE FROM core_users WHERE id=?";
             $this->runRequest($sql, array($users[$i]));
+        }
+    }
+
+
+    /**
+     * set user status to INACTIVE if user last email confirmation expired
+     * except site administrators
+     */
+    public function disableUnconfirmedEmails($dry=false): void
+    {
+        $now = time();
+        Configuration::getLogger()->debug('[mail:expired] inactivate users', ['date_email_expiration' => $now]);
+        if (!$dry) {
+            $sql = 'UPDATE core_users SET is_active=0 WHERE status_id!=?  AND date_email_expiration < ?';
+            $this->runRequest($sql, [CoreStatus::$ADMIN, $now]);
         }
     }
 

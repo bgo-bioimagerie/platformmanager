@@ -1,5 +1,7 @@
 <?php
 
+use PhpCsFixer\Config;
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
 
@@ -14,7 +16,7 @@ require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 
-
+use Firebase\JWT\JWT;
 /**
  *
  * @author sprigent
@@ -34,6 +36,33 @@ class UseraccountController extends CoresecureController
         ];
         return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
     }
+
+    private function requestEmailConfirmation($id_user, $email, $lang): int {
+        $expiration = time() + (48 * 3600);
+        Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $id_user, 'email' => $email]);
+
+        
+        $payload = array(
+            "iss" => Configuration::get('public_url', ''),
+            "aud" => Configuration::get('public_url', ''),
+            "exp" => $expiration, // 2 days to confirm
+            "data" => [
+                "id" => $id_user,
+                "email" => $email,
+            ]
+        );
+        $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
+        $emailModel = new Email();
+        $mailParams = [
+            "jwt" => $jwt,
+            "url" => Configuration::get('public_url'),
+            "email" => $email,
+            "supData" => $payload['data']
+        ];
+        $emailModel->notifyUserByEmail($mailParams, "user_email_confirm", $lang);
+        return $expiration;
+    }
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -73,6 +102,14 @@ class UseraccountController extends CoresecureController
         $formApi->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
         $formApi->setValidationButton('Reset', "usersmyaccount");
 
+        $formMail = new Form($this->request, "checkemail");
+        $formMail->addHidden("id", $id_user);
+        if ($userCore['date_email_expiration'] == 0 || $userCore['date_email_expiration'] < time()) {
+            $formMail->setTitle(CoreTranslator::Email($lang));
+            $formMail->setValidationButton(CoreTranslator::CheckEmail($lang), "usersmyaccount");
+        }
+
+
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
         if (!empty($openid_providers)) {
@@ -109,6 +146,10 @@ class UseraccountController extends CoresecureController
             'id_user' => $_SESSION['id_user']
         ]);
 
+        if ($formMail->check()) {
+            $this->requestEmailConfirmation($id_user, $userCore['email'], $lang);
+        }
+
         // get user linked providers and display them with unlink
         if ($formApi->check()) {
             $modelCoreUser->newApiKey($_SESSION['id_user']);
@@ -119,11 +160,23 @@ class UseraccountController extends CoresecureController
         }
 
         if ($form->check()) {
+            if (!$form->getParameter("email")) {
+                throw new PfmParamException('Empty email');
+            }
+            $expiration = $userCore['date_email_expiration'];
+            if ($userCore['email'] && $userCore['email'] != $form->getParameter("email")) {
+                // New email validation needed, set expiration to 48h
+                Configuration::getLogger()->debug('user email modification, request confirmation', ['login' => $userCore['login'], 'id_user' => $id_user, 'email' => $form->getParameter("email")]);
+
+                $expiration = $this->requestEmailConfirmation($id_user, $form->getParameter("email"), $lang);
+            }
+
             $modelCoreUser->editBaseInfo(
                 $id_user,
                 $form->getParameter("name"),
                 $form->getParameter("firstname"),
-                $form->getParameter("email")
+                $form->getParameter("email"),
+                date_email_expiration: $expiration
             );
             $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
             $modelUsersInfo->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
@@ -154,6 +207,7 @@ class UseraccountController extends CoresecureController
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
             'formApi' => $formApi->getHtml($lang),
+            'formMail' => $formMail->getHtml($lang),
             'providers' => $providers,
             'linked' => $linked,
             'data' => ['user' => $userCore]
