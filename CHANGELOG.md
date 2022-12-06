@@ -10,6 +10,7 @@
 * [statistics] fix error handling for invoice items 
 * [core] set minimal level for module access #511
 * [services] in stats, if user unknown ie not found, show *unknown* value
+* [core] remove CoreStatus sql related calls, use static values
 
 ## 2.9.4
 

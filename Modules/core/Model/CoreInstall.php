@@ -992,11 +992,6 @@ class CoreInstall extends Model
         $modelMenu->createTable();
         $modelMenu->addCoreDefaultMenus();
 
-
-        $modelStatus = new CoreStatus();
-        $modelStatus->createTable();
-        $modelStatus->createDefaultStatus();
-
         $modelProject = new CoreProjects();
         $modelProject->createTable();
 
