@@ -46,6 +46,7 @@ class CoreUser extends Model
         $this->setColumnsInfo("validated", "int(1)", 1);
         $this->setColumnsInfo("apikey", "varchar(30)", "");
         $this->setColumnsInfo("date_email_expiration", "int", 0);
+        $this->setColumnsInfo("nb_email_expiration", "int", 0);
         $this->primaryKey = "id";
     }
 
@@ -112,18 +113,25 @@ class CoreUser extends Model
 
     public function setEmailExpiration($id, int $date_email_expiration)
     {
-        $sql = "UPDATE core_users SET date_email_expiration=? WHERE id=?";
+        $sql = "UPDATE core_users SET nb_email_expiration=0, date_email_expiration=? WHERE id=?";
         $this->runRequest($sql, array($date_email_expiration, $id));
     }
 
-    public function getExpiredEmails()
+    public function getExpiredEmails($alerts= 3)
     {
-       return $this->getExpiringEmails(0);
+       $expired = $this->getExpiringEmails(0);
+       $maxExpired = [];
+       foreach ($expired as $e) {
+        if ($e['nb_email_expiration'] >= $alerts) {
+            $maxExpired[] = $e;
+        }
+       }
+       return $maxExpired;
     }
 
     public function getExpiringEmails($delay=30)
     {
-        $sql = 'SELECT id, email from core_users WHERE is_active=1 AND date_email_expiration<?';
+        $sql = 'SELECT * from core_users WHERE is_active=1 AND date_email_expiration<?';
         $res = $this->runRequest($sql, [time() + ($delay * 24 * 3600)]);
         return $res->fetchAll();
     }
@@ -1127,5 +1135,11 @@ class CoreUser extends Model
             default:
                 return password_verify($pwd, $encodedPwd);
         }
+    }
+
+    public function newEmailCallForConfirmation($id)
+    {
+        $sql = "UPDATE core_users SET  nb_email_expiration=nb_email_expiration+1 WHERE id=?";
+        $this->runRequest($sql, array($id));
     }
 }

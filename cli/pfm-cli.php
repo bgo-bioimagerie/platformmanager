@@ -64,6 +64,11 @@ $cli = Cli::create()
     ->opt('email', 'new email', false, 'string')
     ->command('repair')
     ->opt('bug', 'Bug number', 0, 'integer')
+    ->command('mailcheck')
+    ->opt('delay', 'expiring delay', false, 'integer')
+    ->opt('send', 'check expiring emails', false, 'boolean')
+    ->opt('list', 'list expiring emails', false, 'boolean')
+    ->command('mailexpire')
     ->command('maintenance')
     ->opt('on', 'start maintenance mode', false, 'boolean')
     ->opt('off', 'stop maintenance mode', false, 'boolean')
@@ -234,9 +239,54 @@ try {
             }
             break;
         case 'cache':
-            if($args->getOpt('clear')) {
+            if ($args->getOpt('clear')) {
                 cacheClear($args->getOpt('dry'));
             }
+            break;
+        case 'mailcheck':
+            $um = new CoreUser();
+            $users = $um->getExpiringEmails($args->getOpt('delay', 30));
+            if ($args->getOpt('list')) {
+                foreach ($users as $u) {
+                    print('* '. $u['email']."\n");
+                }
+            }
+            if ($args->getOpt('send')) {
+                Configuration::getLogger()->info('Sending email confirmation requests...');
+                $userSettingsModel = new CoreUserSettings();
+                foreach ($users as $user) {
+                    $lang = Configuration::get('lang', 'en');
+                    $lang = $userSettingsModel->getUserSetting($user['id'], "language", $lang);
+                    Utils::requestEmailConfirmation($user['id'], $user['email'], $lang);
+                    $um->newEmailCallForConfirmation($user['id']);
+                }
+                Configuration::getLogger()->info('Done!');
+            }
+            print(count($users).' expiring emails');
+            break;
+        case 'mailexpire':
+            $um = new CoreUser();
+            $sum = new CoreSpaceUser();
+            $hm = new CoreHistory();
+            $users = $um->getExpiredEmails(3);
+            foreach ($users as $u) {
+                $user_roles = $sum->roles($u['id']);
+                foreach ($user_roles as $role) {
+                    if ($role['status'] != CoreSpace::$USER) {
+                        Configuration::getLogger()->info('not user, skip inactivation', ['user' => $u['login'], 'space' => $role['id_space']]);
+                        continue;
+                    }
+                    Configuration::getLogger()->info('inactivate user', ['user' => $u['login'], 'space' => $role['id_space']]);
+                    $sum->setRole($u['id'], $role['id_space'], CoreSpace::$INACTIF);
+                    $hm->add($role['id_space'], '[auto]', 'Expired email, inactivate '.$u['login']);
+                    $space =$role['id_space'];
+                    $email = $u['email'];
+                    print("* [space:$space] $email\n");
+                }
+            }
+
+
+            print(count($users).' expired emails');
             break;
         default:
             break;

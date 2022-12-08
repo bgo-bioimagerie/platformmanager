@@ -4,6 +4,7 @@ use PhpCsFixer\Config;
 
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Utils.php';
 
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -16,7 +17,6 @@ require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
 
-use Firebase\JWT\JWT;
 /**
  *
  * @author sprigent
@@ -35,32 +35,6 @@ class UseraccountController extends CoresecureController
             'Password' => CoreTranslator::Password($lang),
         ];
         return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
-    }
-
-    private function requestEmailConfirmation($id_user, $email, $lang): int {
-        $expiration = time() + (48 * 3600);
-        Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $id_user, 'email' => $email]);
-
-        
-        $payload = array(
-            "iss" => Configuration::get('public_url', ''),
-            "aud" => Configuration::get('public_url', ''),
-            "exp" => $expiration, // 2 days to confirm
-            "data" => [
-                "id" => $id_user,
-                "email" => $email,
-            ]
-        );
-        $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
-        $emailModel = new Email();
-        $mailParams = [
-            "jwt" => $jwt,
-            "url" => Configuration::get('public_url'),
-            "email" => $email,
-            "supData" => $payload['data']
-        ];
-        $emailModel->notifyUserByEmail($mailParams, "user_email_confirm", $lang);
-        return $expiration;
     }
 
     /**
@@ -106,6 +80,7 @@ class UseraccountController extends CoresecureController
         $formMail->addHidden("id", $id_user);
         if ($userCore['date_email_expiration'] == 0 || $userCore['date_email_expiration'] < time()) {
             $formMail->setTitle(CoreTranslator::Email($lang));
+            $formMail->addText("mail", "Mail", false, $userCore['email'], readonly: true);
             $formMail->setValidationButton(CoreTranslator::CheckEmail($lang), "usersmyaccount");
         }
 
@@ -147,7 +122,8 @@ class UseraccountController extends CoresecureController
         ]);
 
         if ($formMail->check()) {
-            $this->requestEmailConfirmation($id_user, $userCore['email'], $lang);
+            Utils::requestEmailConfirmation($id_user, $userCore['email'], $lang);
+            $modelCoreUser->newEmailCallForConfirmation($id_user);
         }
 
         // get user linked providers and display them with unlink
@@ -168,7 +144,7 @@ class UseraccountController extends CoresecureController
                 // New email validation needed, set expiration to 48h
                 Configuration::getLogger()->debug('user email modification, request confirmation', ['login' => $userCore['login'], 'id_user' => $id_user, 'email' => $form->getParameter("email")]);
 
-                $expiration = $this->requestEmailConfirmation($id_user, $form->getParameter("email"), $lang);
+                $expiration = Utils::requestEmailConfirmation($id_user, $form->getParameter("email"), $lang);
             }
 
             $modelCoreUser->editBaseInfo(

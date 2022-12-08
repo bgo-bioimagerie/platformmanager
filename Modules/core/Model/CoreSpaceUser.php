@@ -44,6 +44,12 @@ class CoreSpaceUser extends Model
         return $this->runRequest($sql)->fetchAll();
     }
 
+    public function roles($id_user)
+    {
+        $sql = 'SELECT * from  core_j_spaces_user WHERE id_user=?';
+        return $this->runRequest($sql, [$id_user])->fetchAll();
+    }
+
     public function setRole($id_user, $id_space, $role)
     {
         if (!$this->exists($id_user, $id_space)) {

@@ -6,6 +6,7 @@ class CoreUpgradeDB1670322791 extends Model {
   public function run(){
     Configuration::getLogger()->info("[db][upgrade] Apply add email validation");
     $this->addColumn('core_users', 'date_email_expiration', "int", 0);
+    $this->addColumn('core_users', 'nb_email_expiration', "int", 0);
     Configuration::getLogger()->info("[db][upgrade] Apply add email validation, done!");
   }
 }

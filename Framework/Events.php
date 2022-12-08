@@ -749,28 +749,8 @@ class EventHandler
         foreach ($users as $user) {
             $lang = Configuration::get('lang', 'en');
             $lang = $userSettingsModel->getUserSetting($user['id'], "language", $lang);
-
-            $expiration = time() + (30 * 24 * 3600);
-            Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $user['id'], 'email' => $user['email']]);
-
-            $payload = array(
-                "iss" => Configuration::get('public_url', ''),
-                "aud" => Configuration::get('public_url', ''),
-                "exp" => $expiration, // 2 days to confirm
-                "data" => [
-                    "id" => $user['id'],
-                    "email" => $user['email'],
-                ]
-            );
-            $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
-            $emailModel = new Email();
-            $mailParams = [
-                "jwt" => $jwt,
-                "url" => Configuration::get('public_url'),
-                "email" => $user['email'],
-                "supData" => $payload['data']
-            ];
-            $emailModel->notifyUserByEmail($mailParams, "user_email_confirm", $lang);
+            Utils::requestEmailConfirmation($user['id'], $user['email'], $lang);
+            $model->newEmailCallForConfirmation($user['id']);
         }
     }
 
