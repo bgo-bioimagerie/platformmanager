@@ -248,7 +248,7 @@ try {
             $users = $um->getExpiringEmails($args->getOpt('delay', 30));
             if ($args->getOpt('list')) {
                 foreach ($users as $u) {
-                    print('* '. $u['email']."\n");
+                    print('* ['.$u['nb_email_expiration'].'] '. $u['email']."\n");
                 }
             }
             if ($args->getOpt('send')) {
