@@ -25,7 +25,6 @@ class CoreRouting extends Routing
         $router->map('GET', '/core/privacy', 'core/coreabout/privacy', 'core_privacy');
         $router->map('GET|POST', '/coreusersettings', 'core/coreusersettings/index', 'core_user_settings');
         $router->map('GET', '/core/account/emailconfirm', 'core/coreaccount/confirmEmail', 'core_account_email_confirm');
-        $router->map('GET', '/core/users/emailcheck', 'core/coreusers/checkEmails', 'core_users_email_check');
     }
 
     public function listRoutes()

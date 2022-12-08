@@ -173,10 +173,10 @@ class CoreTranslator
         $confirmUrl = $url."/core/account/emailconfirm?token=".$jwt;
         if ($lang == "fr") {
             $footer = "<p>Ceci est un mail automatique, envoyé à interval régulier, pour vérifier la validité de votre mail, merci de votre compréhension.</p>";
-            return "Merci de confirmer votre mail en allant sur le lien suivant: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Le lien expirera dans 2 jours.".$footer;
+            return "Merci de confirmer votre mail en allant sur le lien suivant: <a href=\"$confirmUrl\">$confirmUrl</a><br/><p>Le lien expirera dans 2 jours.</p><p>Vous pouvez également vérifier et valider votre mail dans votre compte.</p>".$footer;
         }
         $footer = "<p>This is an automated email sent at regular interval to check the validity of your email. Thank you for your comprehension.</p>";
-        return "Please confirm your email at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/>Link will expire in 2 days.".$footer;
+        return "Please confirm your email at the following link: <a href=\"$confirmUrl\">$confirmUrl</a><br/><p>Link will expire in 2 days</p><p>You can also check and validate your email in your account.</p>".$footer;
     }
 
     public static function WaitingAccountMessage($lang)

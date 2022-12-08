@@ -78,11 +78,23 @@ class UseraccountController extends CoresecureController
 
         $formMail = new Form($this->request, "checkemail");
         $formMail->addHidden("id", $id_user);
-        if ($userCore['date_email_expiration'] == 0 || $userCore['date_email_expiration'] < time()) {
-            $formMail->setTitle(CoreTranslator::Email($lang));
-            $formMail->addText("mail", "Mail", false, $userCore['email'], readonly: true);
-            $formMail->setValidationButton(CoreTranslator::CheckEmail($lang), "usersmyaccount");
+        $formMail->setTitle(CoreTranslator::Email($lang));
+        $expire = date('Y-m-d');
+        if($userCore['date_email_expiration'] > 0) {
+            $expire = date('Y-m-d', $userCore['date_email_expiration']);
         }
+
+        if ($formMail->check()) {
+            $new_expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+            $modelCoreUser->setEmailExpiration($id_user, $new_expire);
+            $expire = date('Y-m-d', $new_expire);
+            $_SESSION['flash'] = CoreTranslator::AccountEmailConfirmed($lang);
+            $_SESSION["flashClass"] = 'success';
+        }
+
+        $formMail->addText("expire", "Expiration", false, Utils::dateToEn($expire, $lang), readonly: true);
+        $formMail->addText("mail", "Mail", false, $userCore['email'], readonly: true);
+        $formMail->setValidationButton(CoreTranslator::CheckEmail($lang), "usersmyaccount");
 
 
         $openid_providers = Configuration::get("openid", []);
@@ -121,10 +133,6 @@ class UseraccountController extends CoresecureController
             'id_user' => $_SESSION['id_user']
         ]);
 
-        if ($formMail->check()) {
-            Utils::requestEmailConfirmation($id_user, $userCore['email'], $lang);
-            $modelCoreUser->newEmailCallForConfirmation($id_user);
-        }
 
         // get user linked providers and display them with unlink
         if ($formApi->check()) {
@@ -142,9 +150,8 @@ class UseraccountController extends CoresecureController
             $expiration = $userCore['date_email_expiration'];
             if ($userCore['email'] && $userCore['email'] != $form->getParameter("email")) {
                 // New email validation needed, set expiration to 48h
-                Configuration::getLogger()->debug('user email modification, request confirmation', ['login' => $userCore['login'], 'id_user' => $id_user, 'email' => $form->getParameter("email")]);
+                $expiration = time() + (3600*24*Configuration::get('email_expire_days', 365));
 
-                $expiration = Utils::requestEmailConfirmation($id_user, $form->getParameter("email"), $lang);
             }
 
             $modelCoreUser->editBaseInfo(

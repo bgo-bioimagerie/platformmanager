@@ -318,14 +318,6 @@ class CoreusersController extends CoresecureController
         $this->redirect("coreusers");
     }
 
-    public function checkEmailsAction()
-    {
-        $this->checkAuthorization(CoreStatus::$ADMIN);
-        Events::send(["action" => Events::ACTION_USER_MAILCHECK]);
-        $_SESSION['flash'] = 'Email checks in progress';
-        $this->redirect("coreusers");
-    }
-
     /**
      *
      * Returns true if user is pending or active in any space
