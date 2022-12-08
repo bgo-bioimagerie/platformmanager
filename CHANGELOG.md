@@ -1,5 +1,9 @@
 # Changes
 
+## 2.10.0
+
+* [core] add tables csv export button
+
 ## 2.9.5
 
 * code cleanup

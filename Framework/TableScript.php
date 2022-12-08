@@ -4,16 +4,27 @@ $userSettingsModel = new CoreUserSettings();
 ?>
 
     <link rel="stylesheet" type="text/css" href="externals/node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
-
+    <link rel="stylesheet" type="text/css" href="externals/datatables-extra/buttons.bootstrap5.min.css">
+    
     <script src="externals/node_modules/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="externals/node_modules/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="externals/datatables-extra/dataTables.buttons.min.js"></script>
+    <script src="externals/datatables-extra/buttons.bootstrap5.min.js"></script>
+    <script src="externals/datatables-extra/buttons.html5.min.js"></script>
 
     <script>
         $(document).ready(function () {
             //var tableHeight = window.innerHeight - 200;
             let defaultCol = 0;
             let defaultLen = 10;
-            $('#tableID').DataTable({
+            let tab = $('#tableID').DataTable({
+                buttons: [
+                    {
+                        extend: 'csvHtml5',
+                        className: 'btn-secondary',
+                        text: 'export csv'
+                    }
+                ],
                 columnDefs: [
                     {targets: 'no-sort', orderable: false, searchable: false}
                 ],
@@ -21,5 +32,6 @@ $userSettingsModel = new CoreUserSettings();
                 order: [[ defaultCol, "desc"]],
                 pageLength: defaultLen
             });
+            tab.buttons().container().appendTo( $(tab.table().container()) );
         });
     </script>
