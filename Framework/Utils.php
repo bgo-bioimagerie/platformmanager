@@ -111,7 +111,8 @@ class Utils
     }
 
 
-    public static function requestEmailConfirmation($id_user, $email, $lang): int {
+    public static function requestEmailConfirmation($id_user, $email, $lang): int
+    {
         $expiration = time() + (48 * 3600);
         Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $id_user, 'email' => $email]);
 

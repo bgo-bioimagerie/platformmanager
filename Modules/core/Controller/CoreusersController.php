@@ -78,7 +78,7 @@ class CoreusersController extends CoresecureController
             }
             if ($data[$i]['date_email_expiration'] == 0 || $data[$i]['date_email_expiration'] < time()) {
                 $data[$i]['email'] = '[!] ' . $data[$i]['email'];
-            } else if ($data[$i]['date_email_expiration'] < (time() + Configuration::get('email_expire_delay', 30))) {
+            } elseif ($data[$i]['date_email_expiration'] < (time() + Configuration::get('email_expire_delay', 30))) {
                 $data[$i]['email'] = '['.floor(($data[$i]['date_email_expiration'] - time())/(3600*24)).'] ' . $data[$i]['email'];
             }
 

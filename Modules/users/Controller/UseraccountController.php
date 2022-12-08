@@ -80,7 +80,7 @@ class UseraccountController extends CoresecureController
         $formMail->addHidden("id", $id_user);
         $formMail->setTitle(CoreTranslator::Email($lang));
         $expire = date('Y-m-d');
-        if($userCore['date_email_expiration'] > 0) {
+        if ($userCore['date_email_expiration'] > 0) {
             $expire = date('Y-m-d', $userCore['date_email_expiration']);
         }
 

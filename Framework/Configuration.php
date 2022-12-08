@@ -366,14 +366,14 @@ class Configuration
             self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
         }
 
-        if(!isset(self::$parameters['email_expire_days']) || !self::$parameters['email_expire_days']) {
+        if (!isset(self::$parameters['email_expire_days']) || !self::$parameters['email_expire_days']) {
             self::$parameters['email_expire_days'] = 365;
         }
         if (getenv('PFM_EMAIL_EXPIRE_DAYS')) {
             self::$parameters['email_expire_days'] = intval(getenv('PFM_EMAIL_EXPIRE_DAYS'));
         }
 
-        if(!isset(self::$parameters['email_expire_delay']) || !self::$parameters['email_expire_delay']) {
+        if (!isset(self::$parameters['email_expire_delay']) || !self::$parameters['email_expire_delay']) {
             self::$parameters['email_expire_delay'] = 30;
         }
         if (getenv('PFM_EMAIL_EXPIRE_DELAY')) {

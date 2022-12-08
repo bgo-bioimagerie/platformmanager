@@ -180,7 +180,7 @@ abstract class Controller
             $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
         }
 
-        if(isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+        if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
             $m  = new CoreUser();
             $this->user = $m->getUser($_SESSION['id_user']);
         }

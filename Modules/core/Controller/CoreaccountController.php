@@ -29,7 +29,8 @@ use Firebase\JWT\JWT;
 class CoreaccountController extends Controller
 {
 
-    public function confirmEmailAction() {
+    public function confirmEmailAction()
+    {
         $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");
         try {

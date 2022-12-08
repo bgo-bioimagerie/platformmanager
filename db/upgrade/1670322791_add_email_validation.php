@@ -12,4 +12,3 @@ class CoreUpgradeDB1670322791 extends Model {
 }
 $db = new CoreUpgradeDB1670322791();
 $db->run();
-?>

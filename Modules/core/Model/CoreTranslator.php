@@ -2667,6 +2667,6 @@ class CoreTranslator
         if ($lang == "fr") {
             return "Confirmer mail";
         }
-        return "Confirm email";     
+        return "Confirm email";
     }
 }
