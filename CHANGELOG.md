@@ -11,6 +11,8 @@
 * [core] set minimal level for module access #511
 * [services] in stats, if user unknown ie not found, show *unknown* value
 * [core] remove CoreStatus sql related calls, use static values
+* [core][cli] manage email checks and account inactivation (at space level)
+  if user does not validate his email
 
 ## 2.9.4
 
