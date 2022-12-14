@@ -224,7 +224,7 @@ class CoreconnectionController extends CorecookiesecureController
     {
         $lang = $this->getLanguage();
         $form = new Form($this->request, 'formpasswordforgottern');
-        $form->addEmail("email", CoreTranslator::Email($lang), true);
+        $form->addText("email", CoreTranslator::Email($lang).'/'.CoreTranslator::Login(($lang)), true);
         $form->setValidationButton(CoreTranslator::Ok($lang), "corepasswordforgotten");
 
         $_SESSION['flash'] = CoreTranslator::PasswordForgotten($lang);
@@ -233,7 +233,11 @@ class CoreconnectionController extends CorecookiesecureController
             $email = $this->request->getParameter("email");
             $model = new CoreUser();
             $userByEmail = $model->getUserByEmail($email);
+            if (! $userByEmail) {
+                $userByEmail = $model->getUserByLogin($email);
+            }
             if ($userByEmail) {
+                $email = $userByEmail['email'];
                 if ($userByEmail["source"] == "ext") {
                     $_SESSION['flash'] = CoreTranslator::ExtAccountMessage($lang);
                 } else {
