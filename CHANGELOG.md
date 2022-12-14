@@ -6,6 +6,13 @@
 * [statistics] fix translation in booking stats
 * [mailer] after message, display number of destinations and
   unsubscribed user count
+* [mailer] on Users destination send to user+managers+admin #744
+* [statistics] fix error handling for invoice items 
+* [core] set minimal level for module access #511
+* [services] in stats, if user unknown ie not found, show *unknown* value
+* [core] remove CoreStatus sql related calls, use static values
+* [core] get full user info on getUserByLogin, use id instead of idUser field
+* [core] allow password reset using login
 
 ## 2.9.4
 

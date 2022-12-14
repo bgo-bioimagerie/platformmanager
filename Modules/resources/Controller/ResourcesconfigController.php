@@ -40,7 +40,7 @@ class ResourcesconfigController extends CoresecureController
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'resources', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'resources', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'resources', 'truck');
             return $this->redirect("resourcesconfig/".$id_space);

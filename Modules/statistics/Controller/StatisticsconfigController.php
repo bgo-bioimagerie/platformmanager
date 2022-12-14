@@ -39,7 +39,7 @@ class StatisticsconfigController extends CoresecureController
         $modelSpace = new CoreSpace();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'statistics', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'statistics', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'statistics', 'bar-chart');
             return $this->redirect("statisticsconfig/" . $id_space);

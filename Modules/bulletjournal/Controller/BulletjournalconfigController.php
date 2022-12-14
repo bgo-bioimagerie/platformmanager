@@ -37,7 +37,7 @@ class BulletjournalconfigController extends CoresecureController
         $this->checkSpaceAdmin($id_space, $_SESSION["id_user"]);
         $lang = $this->getLanguage();
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'bulletjournal', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'bulletjournal', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'bulletjournal', 'book');
 

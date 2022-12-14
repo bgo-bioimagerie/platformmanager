@@ -1199,8 +1199,10 @@ class SeStats extends Model
             $responsibleName = '';
             if ($invoice["controller"] == "servicesinvoiceproject") {
                 $proj = $modelProject->getInfoFromInvoice($invoice['id'], $id_space);
-                $visa = $modelVisa->get($id_space, $proj["in_charge"]);
-                $responsibleName = $modelUser->getUserFUllName($visa["id_user"] ?? 0);
+                if ($proj != null) {
+                    $visa = $modelVisa->get($id_space, $proj["in_charge"] ?? 0);
+                    $responsibleName = $modelUser->getUserFUllName($visa["id_user"] ?? 0);
+                }
             }
 
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $responsibleName);

@@ -24,7 +24,7 @@ class Email extends Model
      * @param string || array $toAddress the recipients email or array of email addresses. If an array, the first one is set as main recipient, the others as BCC
      * @param string $subject
      * @param string $content
-     * @param string $sentCopyToFrom
+     * @param bool $sentCopyToFrom
      * @param array  list of CoreFiles to attach to email
      * @param bool   set toAddress as Bcc:, defaults to true, else just set in To:
      * @param array custom headers to add to mail (["Auto-Submitted" => "auto-replied"])

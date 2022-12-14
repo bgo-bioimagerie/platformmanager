@@ -136,7 +136,7 @@ abstract class CoresecureController extends CorecookiesecureController
     }
 
 
-    protected function menusactivationForm($id_space, $module, $lang)
+    protected function menusactivationForm($id_space, $module, $lang, $minRole=0)
     {
         $modelSpace = new CoreSpace();
         $statusMenu = $modelSpace->getSpaceMenusRole($id_space, $module);
@@ -147,7 +147,12 @@ abstract class CoresecureController extends CorecookiesecureController
         $form = new Form($this->request, $module."menusactivationForm");
         $form->addSeparator(CoreTranslator::Activate_desactivate_menus($lang). " ($module)");
 
-        $roles = $modelSpace->roles($lang);
+        // backward compat, may have been previously set unwanted role level...
+        // so set min role to existing one if any.
+        if ($statusMenu && $statusMenu < $minRole) {
+            $minRole = $statusMenu;
+        }
+        $roles = $modelSpace->roles($lang, $minRole);
 
         $form->addSelect($module."Menustatus", CoreTranslator::Users($lang), $roles["names"], $roles["ids"], $statusMenu);
         $form->addNumber($module."DisplayMenu", CoreTranslator::Display_order($lang), false, $displayMenu);

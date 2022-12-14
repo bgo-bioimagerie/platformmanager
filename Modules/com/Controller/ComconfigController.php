@@ -38,7 +38,7 @@ class ComconfigController extends CoresecureController
         $lang = $this->getLanguage();
 
         // maintenance form
-        $formMenusactivation = $this->menusactivationForm($id_space, 'com', $lang);
+        $formMenusactivation = $this->menusactivationForm($id_space, 'com', $lang, CoreSpace::$MANAGER);
         if ($formMenusactivation->check()) {
             $this->menusactivation($id_space, 'com', 'info-circle');
             return $this->redirect("comconfig/" . $id_space);
