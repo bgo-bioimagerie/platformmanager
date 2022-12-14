@@ -107,12 +107,12 @@ class CoreconnectionController extends CorecookiesecureController
             // generate the remember me cookie
             if ($this->request->isParameter("remember")) {
                 $key = hash('sha512', $this->generateRandomKey());
-                $cookieSet = setcookie("auth", $loggedUser['idUser'] . "-" . $key, time() + 3600 * 24 * 3);
+                $cookieSet = setcookie("auth", $loggedUser['id'] . "-" . $key, time() + 3600 * 24 * 3);
                 if (!$cookieSet) {
                     throw new PfmException("failed to set cookie with key " . $key, 500);
                 }
                 $modelUser = new CoreUser();
-                $modelUser->setRememberKey($loggedUser['idUser'], $key);
+                $modelUser->setRememberKey($loggedUser['id'], $key);
             }
             if ($redirection) {
                 $this->redirect($redirection);
@@ -203,7 +203,7 @@ class CoreconnectionController extends CorecookiesecureController
                         $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
                         $userInfo = $this->user->getUserByLogin($login);
                         if (!$userInfo['apikey']) {
-                            $this->user->newApiKey($userInfo['idUser']);
+                            $this->user->newApiKey($userInfo['id']);
                         }
                         try {
                             $this->user->isActive($login);
@@ -215,7 +215,7 @@ class CoreconnectionController extends CorecookiesecureController
                 }
                 throw new PfmAuthException(CoreUser::$CNX_INVALID_LOGIN);
             }
-        } catch(PfmAuthException $e) {
+        } catch (PfmAuthException $e) {
             throw new PfmAuthException($e->getMessage());
         }
     }

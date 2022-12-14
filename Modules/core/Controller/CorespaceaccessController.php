@@ -352,13 +352,13 @@ class CorespaceaccessController extends CoresecureController
             }
 
             $pendingModel = new CorePendingAccount();
-            if ($pendingModel->isActuallyPending($id_space, $user['idUser'])) {
+            if ($pendingModel->isActuallyPending($id_space, $user['id'])) {
                 $this->displayFormWarnings("PendingUserAccount", $id_space, $lang);
                 return;
             }
 
             $modelUserSpace = new CoreSpaceUser();
-            $modelUserSpace->setRole($user['idUser'], $id_space, $form->getParameter("role"));
+            $modelUserSpace->setRole($user['id'], $id_space, $form->getParameter("role"));
 
             $_SESSION["flash"] = CoreTranslator::UserAccountAdded($user['login'], $lang);
             $_SESSION["flashClass"] = "success";

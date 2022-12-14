@@ -577,8 +577,7 @@ class CoreUser extends Model
      */
     public function getUserByLogin($login)
     {
-        $sql = "select id as idUser, login as login, pwd as pwd, status_id, is_active, email, apikey
-            from core_users where login=?";
+        $sql = "select * from core_users where login=?";
         $user = $this->runRequest($sql, array($login));
         if ($user->rowCount() == 1) {
             return $user->fetch(); // get the first line of the result

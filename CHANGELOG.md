@@ -11,6 +11,7 @@
 * [core] set minimal level for module access #511
 * [services] in stats, if user unknown ie not found, show *unknown* value
 * [core] remove CoreStatus sql related calls, use static values
+* [core] get full user info on getUserByLogin, use id instead of idUser field
 
 ## 2.9.4
 

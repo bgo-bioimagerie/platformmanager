@@ -10,7 +10,8 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 use PHPUnit\Framework\TestCase;
 
-abstract class BaseTest extends TestCase {
+abstract class BaseTest extends TestCase
+{
     
 
     private static mixed $context = [
@@ -25,12 +26,14 @@ abstract class BaseTest extends TestCase {
         ]
     ];
 
-    protected function setUp(): void {
+    protected function setUp(): void
+    {
         $_SERVER['HTTP_HOST'] = 'localhost';
         $_SERVER['REQUEST_URI'] = '';
     }
 
-    public function request(array $params){
+    public function request(array $params): Request
+    {
         $req = new Request($params, true);
         $req->getSession()->setAttribut("id_user", $_SESSION['id_user']);
         $req->getSession()->setAttribut("login", $_SESSION['login']);
@@ -40,30 +43,33 @@ abstract class BaseTest extends TestCase {
         return $req;
     }
 
-    public function Context():mixed {
+    public function Context():mixed
+    {
         return self::$context;
     }
 
-    protected function asAdmin(int $id_space=0): mixed {
+    protected function asAdmin(int $id_space=0): mixed
+    {
         $u = $this->asUser(Configuration::get('admin_user', 'pfmadmin'), $id_space);
         $_SESSION['user_status'] = CoreStatus::$ADMIN;
         return $u;
     }
 
-    protected function asAnon(): void {
+    protected function asAnon(): void
+    {
         $_SESSION['user_status'] = CoreStatus::$USER;
         $_SESSION['id_user'] = -1;
         $_SESSION['login'] = 'anonymous';
     }
 
-    protected function asUser(string $name, int $id_space=0): mixed {
+    protected function asUser(string $name, int $id_space=0): mixed
+    {
         Configuration::getLogger()->debug("[runas:$name]");
         $m = new CoreUser();
         $user = $m->getUserByLogin($name);
-        if(!$user) {
+        if (!$user) {
             throw new PfmException("user not found ".$name);
         }
-        $user['id'] = $user['idUser'];
         $_SESSION['user_status'] = CoreStatus::$USER;
         $_SESSION['id_user'] = $user['id'];
         $_SESSION['id_space'] = $id_space;
@@ -72,16 +78,17 @@ abstract class BaseTest extends TestCase {
         return $user;
     }
 
-    protected function user(string $name): mixed {
+    protected function user(string $name): mixed
+    {
         $m = new CoreUser();
         $u = $m->getUserByLogin($name);
-        $u['id'] = $u['idUser'];
         return $u;
     }
 
-    protected function space(string $name): mixed {
+    protected function space(string $name): mixed
+    {
         $spaces = $this->spaces();
-        foreach($spaces as $space) {
+        foreach ($spaces as $space) {
             if ($space['name'] == $name) {
                 return $space;
             }
@@ -89,12 +96,10 @@ abstract class BaseTest extends TestCase {
         throw new PfmException('space not found '.$name);
     }
 
-    protected function spaces(): array {
+    protected function spaces(): array
+    {
         $m = new CoreSpace();
         return $m->getSpaces('id');
     }
  
 }
-
-
-?>

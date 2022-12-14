@@ -24,15 +24,8 @@ abstract class CorecookiesecureController extends Controller
         $modelUser = new CoreUser();
         $sessuser = $modelUser->getUserByLogin($login);
 
-        /*
-        $_SESSION["id_user"] = $sessuser['idUser'];
-        $_SESSION["login"] = $sessuser['login'];
-        $_SESSION["company"] = Configuration::get("name");
-        $_SESSION["user_status"] = $sessuser['status_id'];
-        */
-
         if ($this->request->getSession() != null) {
-            $this->request->getSession()->setAttribut("id_user", $sessuser['idUser']);
+            $this->request->getSession()->setAttribut("id_user", $sessuser['id']);
             $this->request->getSession()->setAttribut("login", $sessuser['login']);
             $this->request->getSession()->setAttribut("email", $sessuser['email']);
             $this->request->getSession()->setAttribut("company", Configuration::get("name"));
@@ -42,14 +35,13 @@ abstract class CorecookiesecureController extends Controller
             }
             // add the user settings to the session
             $modelUserSettings = new CoreUserSettings();
-            $settings = $modelUserSettings->getUserSettings($sessuser['idUser']);
-            //$_SESSION["user_settings"] = $settings;
+            $settings = $modelUserSettings->getUserSettings($sessuser['id']);
             $this->request->getSession()->setAttribut("user_settings", $settings);
         }
 
 
         // update the user last connection
-        $modelUser->updateLastConnection($sessuser['idUser']);
+        $modelUser->updateLastConnection($sessuser['id']);
 
         // update user active base if the user is manager or admin
         $this->runModuleConnectionActions();
