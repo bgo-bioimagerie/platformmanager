@@ -243,7 +243,7 @@ class BookingcaldavController extends CorecookiesecureController
         } catch (PfmAuthException) {
             Configuration::getLogger()->debug('[caldav] user not found', ['login' => $login]);
         }
-        return $user ? $user['idUser'] : 0;
+        return $user ? $user['id'] : 0;
     }
 
     public function reportAction($id_space)
