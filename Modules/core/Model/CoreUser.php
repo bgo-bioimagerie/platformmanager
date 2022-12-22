@@ -117,6 +117,26 @@ class CoreUser extends Model
         $this->runRequest($sql, array($date_email_expiration, $id));
     }
 
+    public function isEmailExpired($mail, $alerts=3) : bool
+    {
+        $sql = 'SELECT * from core_users WHERE is_active=1 AND email=?';
+        $res = $this->runRequest($sql, [$mail]);
+        $expired = true;
+        if ($res) {
+            // loop over all users with this email, one may be validated while others not
+            // should not really get this duplicate email use case but need
+            // to manage backward compat before email duplicate controls were
+            // added
+            $users = $res->fetchAll();
+            foreach ($users as $user) {
+                if ($user['date_email_expiration'] > time() || $user['nb_email_expiration'] < $alerts) {
+                    $expired = false;
+                }
+            }
+        }
+        return $expired;
+    }
+
     public function getExpiredEmails($alerts= 3)
     {
        $expired = $this->getExpiringEmails(0);

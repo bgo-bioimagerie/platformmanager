@@ -78,6 +78,11 @@ class Email extends Model
                     $user = $cu->getUserByEmail($address);
                     if (!$user) {
                         Configuration::getLogger()->debug('[mail] user not found', ["mail" => $mailing, "user" => $address]);
+                        continue;
+                    }
+                    if ($cu->isEmailExpired($user['email'])) {
+                        Configuration::getLogger()->debug('[mail] user mail expired', ["mail" => $mailing, "user" => $user['email']]);
+                        continue;
                     }
                     if ($user && $cm->unsubscribed($user["id"], $mailingInfo[1], $mailingInfo[0])) {
                         Configuration::getLogger()->debug('[mail] user unsubscribed', ["mail" => $mailing, "user" => $address]);
