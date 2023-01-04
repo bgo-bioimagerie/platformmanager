@@ -13,6 +13,7 @@
 * [core] remove CoreStatus sql related calls, use static values
 * [core] get full user info on getUserByLogin, use id instead of idUser field
 * [core] allow password reset using login
+* [core] add user id and space id if known in sentry reports
 
 ## 2.9.4
 
