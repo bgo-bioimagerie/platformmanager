@@ -65,6 +65,8 @@ class BkGraph extends Model
         $sql = 'SELECT * FROM re_info WHERE id_space=? AND deleted=0';
         $resources = $this->runRequest($sql, array($id_space))->fetchAll();
         // TODO: optimize this !!!
+        // something like
+        // select bk_calendar_entry.resource_id,cl_j_client_user.id_client,sum(bk_calendar_entry.end_time-bk_calendar_entry.start_time) FROM bk_calendar_entry INNER JOIN cl_j_client_user on cl_j_client_user.id_user=bk_calendar_entry.recipient_id WHERE bk_calendar_entry.id_space=8 AND bk_calendar_entry.start_time >=1640995200 AND bk_calendar_entry.end_time <=1703980800 group by bk_calendar_entry.resource_id, cl_j_client_user.id_client
         foreach ($resources as $resource) {
             $d['resource'] = $resource["name"];
             foreach ($clients as $client) {

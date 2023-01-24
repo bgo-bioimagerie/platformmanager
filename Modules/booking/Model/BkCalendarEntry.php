@@ -150,7 +150,7 @@ class BkCalendarEntry extends Model
 
             $respinfo = $this->runRequest($sqlr, array($resp[0], $id_space))->fetch();
             if (!$respinfo) {
-                $respinfo = ["name" => "unknown"];
+                $respinfo = ["name" => "unknown [" . $resp[0] . "]"];
             }
             $resourceCount = array();
             foreach ($resources as $resource) {
