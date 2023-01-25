@@ -15,6 +15,7 @@
 * [core] allow password reset using login
 * [core] add user id and space id if known in sentry reports
 * [statistics] on global statistics, reservation per client, display only clients with bookings #572
+* [statistics] on booking time per account, fix case where resource not used (alignment) #572
 
 ## 2.9.4
 

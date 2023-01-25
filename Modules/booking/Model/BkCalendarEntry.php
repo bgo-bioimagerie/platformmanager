@@ -157,6 +157,7 @@ class BkCalendarEntry extends Model
                 $sql3 = "SELECT * FROM bk_calendar_entry WHERE deleted=0 AND id_space=? AND responsible_id=? AND resource_id=? AND start_time>=? AND start_time<=?";
                 $res = $this->runRequest($sql3, array($id_space, $resp[0], $resource["id"], $dateBeginTime, $dateEndTime))->fetchAll();
                 if (!$res) {
+                    $resourceCount[] = array( "resource" => $resource["name"], "time" => 0 );
                     continue;
                 }
 
