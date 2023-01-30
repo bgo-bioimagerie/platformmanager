@@ -73,7 +73,7 @@ echo $nav->get();
                                 <?php echo $context['maintenance']; ?>
                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                             </div>
-                        </div>                        
+                        </div>
                     <?php } ?>
                     <?php if (isset($flash) && $flash) { ?>
                         <div class="col-12">

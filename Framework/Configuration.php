@@ -168,6 +168,10 @@ class Configuration
             self::$parameters['headless']= intval(getenv('PFM_HEADLESS')) == 1 ? true : false;
         }
 
+        if (getenv('PFM_LANG')) {
+            self::$parameters['lang']= getenv('PFM_LANG');
+        }
+
         if (!isset(self::$parameters['rootWeb'])) {
             self::$parameters['rootWeb'] = '/';
         }
@@ -360,6 +364,24 @@ class Configuration
         }
         if (getenv('PFM_TIMEZONE')) {
             self::$parameters['timezone'] = getenv('PFM_TIMEZONE');
+        }
+
+        if (!isset(self::$parameters['email_expire_days']) || !self::$parameters['email_expire_days']) {
+            self::$parameters['email_expire_days'] = 365;
+        }
+        if (getenv('PFM_EMAIL_EXPIRE_DAYS')) {
+            self::$parameters['email_expire_days'] = intval(getenv('PFM_EMAIL_EXPIRE_DAYS'));
+        }
+
+        if (!isset(self::$parameters['email_expire_delay']) || !self::$parameters['email_expire_delay']) {
+            self::$parameters['email_expire_delay'] = 30;
+        }
+        if (getenv('PFM_EMAIL_EXPIRE_DELAY')) {
+            self::$parameters['email_expire_delay'] = intval(getenv('PFM_EMAIL_EXPIRE_DELAY'));
+        }
+
+        if (getenv('PFM_LANG')) {
+            self::$parameters['lang']= getenv('PFM_LANG');
         }
         // do not set because impacts existing bookings....
         // date_default_timezone_set(self::$parameters['timezone']);

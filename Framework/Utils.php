@@ -1,5 +1,7 @@
 <?php
 
+use Firebase\JWT\JWT;
+
 class Utils
 {
     public static function dateToEn(string $date, string $lang='en'): string|false
@@ -106,5 +108,32 @@ class Utils
             $res[$key] = $value;
         }
         return $res;
+    }
+
+
+    public static function requestEmailConfirmation($id_user, $email, $lang): int
+    {
+        $expiration = time() + (48 * 3600);
+        Configuration::getLogger()->debug('user email modification, request confirmation', ['id_user' => $id_user, 'email' => $email]);
+
+        $payload = array(
+            "iss" => Configuration::get('public_url', ''),
+            "aud" => Configuration::get('public_url', ''),
+            "exp" => $expiration, // 2 days to confirm
+            "data" => [
+                "id" => $id_user,
+                "email" => $email,
+            ]
+        );
+        $jwt = JWT::encode($payload, Configuration::get('jwt_secret'));
+        $emailModel = new Email();
+        $mailParams = [
+            "jwt" => $jwt,
+            "url" => Configuration::get('public_url'),
+            "email" => $email,
+            "supData" => $payload['data']
+        ];
+        $emailModel->notifyUserByEmail($mailParams, "user_email_confirm", $lang);
+        return $expiration;
     }
 }

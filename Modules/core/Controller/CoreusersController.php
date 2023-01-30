@@ -14,6 +14,9 @@ require_once 'Modules/users/Model/UsersInfo.php';
 require_once 'Modules/core/Model/CorePendingAccount.php';
 require_once 'Modules/core/Controller/CorespaceController.php';
 require_once 'Modules/core/Model/CoreTranslator.php';
+
+use Firebase\JWT\JWT;
+
 /**
  *
  * @author sprigent
@@ -72,6 +75,11 @@ class CoreusersController extends CoresecureController
                 $data[$i]["is_active"] = CoreTranslator::yes($lang);
             } else {
                 $data[$i]["is_active"] = CoreTranslator::no($lang);
+            }
+            if ($data[$i]['date_email_expiration'] == 0 || $data[$i]['date_email_expiration'] < time()) {
+                $data[$i]['email'] = '[!] ' . $data[$i]['email'];
+            } elseif ($data[$i]['date_email_expiration'] < (time() + Configuration::get('email_expire_delay', 30))) {
+                $data[$i]['email'] = '['.floor(($data[$i]['date_email_expiration'] - time())/(3600*24)).'] ' . $data[$i]['email'];
             }
 
             $data[$i]["date_last_login"] = CoreTranslator::dateFromEn($data[$i]["date_last_login"], $lang);

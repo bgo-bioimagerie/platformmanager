@@ -1,5 +1,10 @@
 # Changes
 
+## 2.10.0
+
+* [core][cli] manage email checks and account inactivation (at space level)
+  if user does not validate his email
+
 ## 2.9.5
 
 * code cleanup

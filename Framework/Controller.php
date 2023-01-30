@@ -11,6 +11,7 @@ require_once 'Modules/core/Model/CoreSpace.php';
 require_once 'Modules/core/Model/CoreMainMenu.php';
 require_once 'Modules/core/Model/CoreAdminMenu.php';
 require_once 'Modules/core/Model/CoreConfig.php';
+require_once 'Modules/core/Model/CoreUser.php';
 
 use DebugBar\StandardDebugBar;
 use DebugBar\DataCollector\PDO\PDOCollector;
@@ -123,6 +124,7 @@ abstract class Controller
     protected ?array $currentSpace = null;
     protected int $role = -1;
     protected ?string $maintenance = null;
+    protected $user = null;
 
     public function args()
     {
@@ -188,6 +190,11 @@ abstract class Controller
                 });
             }
 
+        }
+
+        if (isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
+            $m  = new CoreUser();
+            $this->user = $m->getUser($_SESSION['id_user']);
         }
 
         $ccm = new CoreConfig();
@@ -374,6 +381,7 @@ abstract class Controller
             "lang" => $this->getLanguage(),
             "currentSpace" => $this->currentSpace,  // current space if any
             "role" => $this->role,   // user role in space if any
+            "user" => $this->user,
             "maintenance" => $this->maintenance,
             "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
             "dev" => (getenv('PFM_MODE')=='dev')

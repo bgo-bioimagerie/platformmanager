@@ -1,7 +1,10 @@
 <?php
 
+use PhpCsFixer\Config;
+
 require_once 'Framework/Controller.php';
 require_once 'Framework/Configuration.php';
+require_once 'Framework/Utils.php';
 
 require_once 'Framework/Form.php';
 require_once 'Framework/TableView.php';
@@ -13,7 +16,6 @@ require_once 'Modules/users/Model/UsersInfo.php';
 
 require_once 'Modules/core/Model/CoreUser.php';
 require_once 'Modules/core/Model/CoreOpenId.php';
-
 
 /**
  *
@@ -34,6 +36,7 @@ class UseraccountController extends CoresecureController
         ];
         return $this->twig->render("Modules/core/View/Coreusers/navbar.twig", $dataView);
     }
+
     /**
      * (non-PHPdoc)
      * @see Controller::index()
@@ -73,6 +76,27 @@ class UseraccountController extends CoresecureController
         $formApi->addText("apikey", "Apikey", false, $userCore["apikey"], readonly: true);
         $formApi->setValidationButton('Reset', "usersmyaccount");
 
+        $formMail = new Form($this->request, "checkemail");
+        $formMail->addHidden("id", $id_user);
+        $formMail->setTitle(CoreTranslator::Email($lang));
+        $expire = date('Y-m-d');
+        if ($userCore['date_email_expiration'] > 0) {
+            $expire = date('Y-m-d', $userCore['date_email_expiration']);
+        }
+
+        if ($formMail->check()) {
+            $new_expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+            $modelCoreUser->setEmailExpiration($id_user, $new_expire);
+            $expire = date('Y-m-d', $new_expire);
+            $_SESSION['flash'] = CoreTranslator::AccountEmailConfirmed($lang);
+            $_SESSION["flashClass"] = 'success';
+        }
+
+        $formMail->addText("expire", "Expiration", false, Utils::dateToEn($expire, $lang), readonly: true);
+        $formMail->addText("mail", "Mail", false, $userCore['email'], readonly: true);
+        $formMail->setValidationButton(CoreTranslator::CheckEmail($lang), "usersmyaccount");
+
+
         $openid_providers = Configuration::get("openid", []);
         $providers = [];
         if (!empty($openid_providers)) {
@@ -109,6 +133,7 @@ class UseraccountController extends CoresecureController
             'id_user' => $_SESSION['id_user']
         ]);
 
+
         // get user linked providers and display them with unlink
         if ($formApi->check()) {
             $modelCoreUser->newApiKey($_SESSION['id_user']);
@@ -119,11 +144,22 @@ class UseraccountController extends CoresecureController
         }
 
         if ($form->check()) {
+            if (!$form->getParameter("email")) {
+                throw new PfmParamException('Empty email');
+            }
+            $expiration = $userCore['date_email_expiration'];
+            if ($userCore['email'] && $userCore['email'] != $form->getParameter("email")) {
+                // New email validation needed, set expiration to 48h
+                $expiration = time() + (3600*24*Configuration::get('email_expire_days', 365));
+
+            }
+
             $modelCoreUser->editBaseInfo(
                 $id_user,
                 $form->getParameter("name"),
                 $form->getParameter("firstname"),
-                $form->getParameter("email")
+                $form->getParameter("email"),
+                date_email_expiration: $expiration
             );
             $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
             $modelUsersInfo->set($id_user, $form->getParameter("phone"), $form->getParameter("unit"), $form->getParameter("organization"));
@@ -154,6 +190,7 @@ class UseraccountController extends CoresecureController
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
             'formApi' => $formApi->getHtml($lang),
+            'formMail' => $formMail->getHtml($lang),
             'providers' => $providers,
             'linked' => $linked,
             'data' => ['user' => $userCore]

@@ -28,18 +28,43 @@ use Firebase\JWT\JWT;
  */
 class CoreaccountController extends Controller
 {
-    public function confirmAction()
+
+    private function decodeToken()
     {
-        $lang = $this->getLanguage();
         $token = $this->request->getParameter("token");
         try {
             $decoded = JWT::decode($token, Configuration::get('jwt_secret'), array('HS256'));
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             Configuration::getLogger()->debug('[core][account][confirm] jwt decode failed', ['error' => $e->getMessage()]);
-            return new PfmAuthException($e->getMessage(), 403);
+            throw new PfmAuthException($e->getMessage(), 403);
         }
         $decoded_array = (array) $decoded;
-        $data = (array) $decoded_array['data'];
+        return (array) $decoded_array['data'];
+    }
+
+    private function resetEmailExpiration($id_user)
+    {
+        $expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+        $modelCoreUser = new CoreUser();
+        $modelCoreUser->setEmailExpiration($id_user, $expire);
+    }
+
+    public function confirmEmailAction()
+    {
+        $lang = $this->getLanguage();
+        $data = $this->decodeToken();
+        Configuration::getLogger()->debug('[account] email confirmation', ['user' => $data]);
+        $this->resetEmailExpiration($data['id']);
+        $message = CoreTranslator::AccountEmailConfirmed($lang);
+        return $this->render(array(
+            "message" => $message
+        ));
+    }
+
+    public function confirmAction()
+    {
+        $lang = $this->getLanguage();
+        $data = $this->decodeToken();
         Configuration::getLogger()->debug('[account] registration confirmation', ['user' => $data]);
 
         $modelCoreUser = new CoreUser();
@@ -57,6 +82,9 @@ class CoreaccountController extends Controller
             $data["firstname"],
             $data["email"]
         );
+
+        $this->resetEmailExpiration($id_user);
+
         if ($data["phone"]??"") {
             $modelCoreUser->setPhone($id_user, $data["phone"]);
         }

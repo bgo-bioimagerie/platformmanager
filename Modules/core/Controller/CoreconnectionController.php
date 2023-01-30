@@ -21,7 +21,6 @@ require_once 'Modules/core/Model/CoreSpace.php';
  */
 class CoreconnectionController extends CorecookiesecureController
 {
-    private $user;
     private $logger;
 
     /**
@@ -30,7 +29,6 @@ class CoreconnectionController extends CorecookiesecureController
     public function __construct(Request $request, ?array $space=null)
     {
         parent::__construct($request, $space);
-        $this->user = new CoreUser();
         $this->logger = Configuration::getLogger();
     }
 
@@ -182,12 +180,13 @@ class CoreconnectionController extends CorecookiesecureController
      */
     private function userConnection($login, $pwd)
     {
+        $um = new CoreUser();
         // Check if localUser
         try {
-            $localUser = $this->user->isLocalUser($login);
+            $localUser = $um->isLocalUser($login);
             if ($localUser) {
                 $this->logger->debug('[auth] local user', ['user' => $localUser['login']]);
-                $this->user->connect($localUser['login'], $pwd);
+                $um->connect($localUser['login'], $pwd);
                 return $localUser['login'];
             } else {
                 // search for LDAP account
@@ -200,13 +199,13 @@ class CoreconnectionController extends CorecookiesecureController
                         throw new PfmAuthException(CoreUser::$CNX_INVALID_LDAP);
                     } else {
                         // update the user infos
-                        $this->user->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
-                        $userInfo = $this->user->getUserByLogin($login);
+                        $um->setExtBasicInfo($login, $ldapResult["name"], $ldapResult["firstname"], $ldapResult["mail"], 1);
+                        $userInfo = $um->getUserByLogin($login);
                         if (!$userInfo['apikey']) {
-                            $this->user->newApiKey($userInfo['id']);
+                            $um->newApiKey($userInfo['id']);
                         }
                         try {
-                            $this->user->isActive($login);
+                            $um->isActive($login);
                         } catch (PfmAuthException $e) {
                             throw new PfmAuthException($e->getMessage());
                         }

@@ -243,6 +243,10 @@ class CorespaceaccessController extends CoresecureController
             $user["date_contract_end"] = CoreTranslator::dateFromEn($user["date_contract_end"], $lang);
             $user["convention_url"] = $user['convention_url'] ? sprintf('/core/spaceaccess/%s/users/%s/convention', $id_space, $user['id']) : '';
             $user["clients"] = $cmap[$user['id']] ?? 0;
+            if ($user['date_email_expiration'] == 0 || $user['date_email_expiration'] < time()) {
+                $user['email'] = '[! expired] ' . $user['email'];
+            }
+            
             array_push($usersArray, $user);
         }
 
@@ -402,6 +406,8 @@ class CorespaceaccessController extends CoresecureController
                     $form->getParameter("firstname"),
                     $form->getParameter("email")
                 );
+                $expire = time() + (3600*24*Configuration::get('email_expire_days', 365));
+                $modelCoreUser->setEmailExpiration($id_user, $expire);
                 $modelCoreUser->setPhone($id_user, $form->getParameter("phone"));
                 $modelCoreUser->validateAccount($id_user);
                 $spaceModel = new CoreSpace();

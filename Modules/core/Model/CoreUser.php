@@ -45,6 +45,8 @@ class CoreUser extends Model
         $this->setColumnsInfo("remember_key", "varchar(255)", "");
         $this->setColumnsInfo("validated", "int(1)", 1);
         $this->setColumnsInfo("apikey", "varchar(30)", "");
+        $this->setColumnsInfo("date_email_expiration", "int", 0);
+        $this->setColumnsInfo("nb_email_expiration", "int", 0);
         $this->primaryKey = "id";
     }
 
@@ -103,10 +105,55 @@ class CoreUser extends Model
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function editBaseInfo($id, $name, $firstname, $email)
+    public function editBaseInfo($id, $name, $firstname, $email, $date_email_expiration=0)
     {
-        $sql = "UPDATE core_users SET name=?, firstname=?, email=? WHERE id=?";
-        $this->runRequest($sql, array($name, $firstname, $email, $id));
+        $sql = "UPDATE core_users SET name=?, firstname=?, email=?, date_email_expiration=? WHERE id=?";
+        $this->runRequest($sql, array($name, $firstname, $email, $date_email_expiration, $id));
+    }
+
+    public function setEmailExpiration($id, int $date_email_expiration)
+    {
+        $sql = "UPDATE core_users SET nb_email_expiration=0, date_email_expiration=? WHERE id=?";
+        $this->runRequest($sql, array($date_email_expiration, $id));
+    }
+
+    public function isEmailExpired($mail, $alerts=3) : bool
+    {
+        $sql = 'SELECT * from core_users WHERE is_active=1 AND email=?';
+        $res = $this->runRequest($sql, [$mail]);
+        $expired = true;
+        if ($res) {
+            // loop over all users with this email, one may be validated while others not
+            // should not really get this duplicate email use case but need
+            // to manage backward compat before email duplicate controls were
+            // added
+            $users = $res->fetchAll();
+            foreach ($users as $user) {
+                if ($user['date_email_expiration'] > time() || $user['nb_email_expiration'] < $alerts) {
+                    $expired = false;
+                }
+            }
+        }
+        return $expired;
+    }
+
+    public function getExpiredEmails($alerts= 3)
+    {
+       $expired = $this->getExpiringEmails(0);
+       $maxExpired = [];
+       foreach ($expired as $e) {
+        if ($e['nb_email_expiration'] >= $alerts) {
+            $maxExpired[] = $e;
+        }
+       }
+       return $maxExpired;
+    }
+
+    public function getExpiringEmails($delay=30)
+    {
+        $sql = 'SELECT * from core_users WHERE is_active=1 AND date_email_expiration<?';
+        $res = $this->runRequest($sql, [time() + ($delay * 24 * 3600)]);
+        return $res->fetchAll();
     }
 
     public function setPhone($id, $phone)
@@ -152,6 +199,21 @@ class CoreUser extends Model
         for ($i = 1; $i < count($users); $i++) {
             $sql = "DELETE FROM core_users WHERE id=?";
             $this->runRequest($sql, array($users[$i]));
+        }
+    }
+
+
+    /**
+     * set user status to INACTIVE if user last email confirmation expired
+     * except site administrators
+     */
+    public function disableUnconfirmedEmails($dry=false): void
+    {
+        $now = time();
+        Configuration::getLogger()->debug('[mail:expired] inactivate users', ['date_email_expiration' => $now]);
+        if (!$dry) {
+            $sql = 'UPDATE core_users SET is_active=0 WHERE status_id!=?  AND date_email_expiration < ?';
+            $this->runRequest($sql, [CoreStatus::$ADMIN, $now]);
         }
     }
 
@@ -1092,5 +1154,11 @@ class CoreUser extends Model
             default:
                 return password_verify($pwd, $encodedPwd);
         }
+    }
+
+    public function newEmailCallForConfirmation($id)
+    {
+        $sql = "UPDATE core_users SET  nb_email_expiration=nb_email_expiration+1 WHERE id=?";
+        $this->runRequest($sql, array($id));
     }
 }
