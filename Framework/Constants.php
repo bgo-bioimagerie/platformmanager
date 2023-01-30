@@ -13,4 +13,6 @@ class Constants
     public const TIME_FORMAT = 'H:i';
 
     public const UNKNOWN = 'Unknown';
+
+    public const UTF8_CHARSET = 'SET CHARACTER SET utf8';
 }

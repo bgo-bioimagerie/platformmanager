@@ -93,7 +93,7 @@ class Configuration
                     if (!isset($yamlData['plans'][0]['limits'])) {
                         $yamlData['plans'][0]['limits'] = [];
                     }
-                    for ($i=1;$i<count($plans);$i++) {
+                    for ($i=1; $i<count($plans); $i++) {
                         if (!isset($yamlData['plans'][$i]['flags'])) {
                             $yamlData['plans'][$i]['flags'] = [];
                         }
@@ -159,7 +159,7 @@ class Configuration
                     throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
                 }
                 self::$parameters['dsn'] = 'mysql:host='.self::$parameters['mysql_host'].';dbname='.self::$parameters['mysql_dbname'].';charset=utf8';
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 throw new PfmException('no dns nor MYSQL env vars set for mysql connection', 500);
             }
         }
@@ -395,7 +395,7 @@ class Configuration
         $configd = var_export($config, true);
         try {
             file_put_contents(self::getConfigFile(), "<?php return $configd ;");
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             self::getLogger()->error('Failed to overwrite '.self::getConfigFile(), ['err' => $e]);
         }
     }
