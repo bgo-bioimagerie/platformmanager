@@ -424,6 +424,26 @@ class BkStats
         $clients = $modelClient->getAll($id_space);
         $data = $modelGraph->getStatReservationPerClient($dateBegin, $dateEnd, $id_space, $clients, $excludeColorCode);
 
+        $clientsWithResa = [];
+        $clientsResaCount = [];
+        for ($i = 0; $i < count($data); $i++) {
+            foreach ($clients as $client) {
+                if (!isset($clientsResaCount[$client['id']])) {
+                    $clientsResaCount[$client['id']] = [ 'count' =>0 , 'client' => $client ];
+                }
+                $clientsResaCount[$client['id']]['count'] += $data[$i]["client_" . $client['id']][0];
+            }
+        }
+        foreach ($clientsResaCount as $client_id => $c) {
+            if ($c['count']) {
+                $clientsWithResa[] = $c['client'];
+            } else {
+                Configuration::getLogger()->debug('[stats][statsReservationsPerClient] no reservation for client, skipping', ['client' => $client_id]);
+            }
+        }
+
+
+
         $objWorkSheet = $spreadsheet->createSheet();
         $objWorkSheet->setTitle(BookingTranslator::Reservation_per_client($lang));
         $objWorkSheet->getRowDimension('1')->setRowHeight(40);
@@ -443,7 +463,7 @@ class BkStats
             $curentLine++;
             $curentCol = 1;
             $style = $this->getStylesheet();
-            foreach ($clients as $client) {
+            foreach ($clientsWithResa as $client) {
                 $curentCol++;
                 $colLetter = Utils::get_col_letter($curentCol);
                 $objWorkSheet->SetCellValue($colLetter . $curentLine, $client['name']);
@@ -458,7 +478,7 @@ class BkStats
                 $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
 
                 $curentCol = 1;
-                foreach ($clients as $client) {
+                foreach ($clientsWithResa as $client) {
                     $curentCol++;
                     $colLetter = Utils::get_col_letter($curentCol);
                     $objWorkSheet->SetCellValue($colLetter . $curentLine, $data[$i]["client_" . $client['id']][$catstat]);

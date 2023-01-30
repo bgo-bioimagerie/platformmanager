@@ -175,7 +175,19 @@ abstract class Controller
         $this->currentSpace = $space;
         if ($space && $space['id'] && isset($_SESSION['id_user']) && $_SESSION['id_user'] > 0) {
             $m = new CoreSpace();
-            $this->role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
+            $role = $m->getUserSpaceRole($space['id'], $_SESSION['id_user']);
+            $this->role = $role;
+            if (Configuration::get('sentry_dsn', '')) {
+                \Sentry\configureScope(function (\Sentry\State\Scope $scope) use ($space, $role): void {
+                    $scope->setUser([
+                        'id' => $_SESSION["id_user"],
+                        'username' => $_SESSION["login"] ?? ''
+                    ]);
+                    $scope->setTag('pfm.space', $space['id']);
+                    $scope->setTag('pfm.role', $role);
+                });
+            }
+
         }
 
         $ccm = new CoreConfig();
