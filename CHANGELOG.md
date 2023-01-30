@@ -1,5 +1,11 @@
 # Changes
 
+## 2.10.0
+
+### Fixes
+
+* [core] differentiate pdo from other errors in db handling
+
 ## 2.9.6
 
 ### Fixes

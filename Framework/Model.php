@@ -25,6 +25,9 @@ abstract class Model
     private $columnsDefaultValue;
     protected $primaryKey;
 
+    // instance model variables
+    public int $id=0;
+
     public static $reconnectErrors = [
         1317 // interrupted
         ,2002 // refused
@@ -73,9 +76,9 @@ abstract class Model
                 $result = self::getDatabase()->prepare($sql); // prepared request
                 $result->execute($params);
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             $msg = $e->getMessage();
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            Configuration::getLogger()->error('[sql] database error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
             if (Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
@@ -89,13 +92,19 @@ abstract class Model
                         $result = self::getDatabase()->prepare($sql); // prepared request
                         $result->execute($params);
                     }
-                } catch(Exception $e2) {
+                } catch (PdoException $e2) {
                     Configuration::getLogger()->error('[sql] connection reset failed', ['error' => $e2]);
-                    Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+                    Configuration::getLogger()->error('[sql] retry error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
                     if (Configuration::get('sentry_dsn', '')) {
                         \Sentry\captureException($e);
                     }
                 }
+            }
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            Configuration::getLogger()->error('[sql] other error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            if (Configuration::get('sentry_dsn', '')) {
+                \Sentry\captureException($e);
             }
         }
         if ($result === false) {
