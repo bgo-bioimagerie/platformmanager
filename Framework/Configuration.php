@@ -114,7 +114,6 @@ class Configuration
                             $new_limits[$key] = $value ;
                         }
                         $yamlData['plans'][$i]['limits'] = $new_limits;
-                        //$yamlData['plans'][$i]['limits'] = array_merge($yamlData['plans'][$i-1]['limits'], $yamlData['plans'][$i]['limits']);
                     }
                 }
                 foreach ($yamlData as $key => $value) {

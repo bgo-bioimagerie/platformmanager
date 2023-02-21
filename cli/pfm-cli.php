@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 require_once 'Framework/Configuration.php';
 require_once 'Framework/FCache.php';
@@ -110,7 +110,7 @@ try {
             if ($args->getOpt('on')) {
                 $modelCoreConfig->setParam("is_maintenance", 1);
                 Configuration::getLogger()->info("Starting maintenance");
-            } else if ($args->getOpt('off')) {
+            } elseif ($args->getOpt('off')) {
                 $modelCoreConfig->setParam("is_maintenance", 0);
                 Configuration::getLogger()->info("Stopping maintenance");
             }
@@ -120,7 +120,7 @@ try {
             break;
         case 'upgrade':
             $ts = time();
-            if(!file_exists('db/upgrade')){
+            if (!file_exists('db/upgrade')) {
                 mkdir('db/upgrade', 0755, true);
             }
             $desc = $args->getOpt('desc');
@@ -132,13 +132,13 @@ try {
             break;
         case 'config':
             $params =  Configuration::getParameters();
-            if($args->getOpt('yaml', false)) {
+            if ($args->getOpt('yaml', false)) {
                 echo Yaml::dump(['config' => $params], 10);
             } else {
                 ksort($params);
-                foreach($params as $key => $value) {
-                    if(is_array($value)) {
-                        foreach($value as $v){
+                foreach ($params as $key => $value) {
+                    if (is_array($value)) {
+                        foreach ($value as $v) {
                             echo $key.'[] = '.$v."\n";
                         }
                     } else {
@@ -154,7 +154,7 @@ try {
             cliFix($args->getOpt('bug', 0));
             break;
         case 'install':
-            if($args->getOpt('module')) {
+            if ($args->getOpt('module')) {
                 $module = $args->getOpt('module');
                 $moduleName = ucfirst(strtolower($module));
                 if ($moduleName == 'Core') {
@@ -177,7 +177,7 @@ try {
             cliInstall($args->getOpt('from', -1));
             break;
         case 'routes':
-            if($args->getOpt('reload')) {
+            if ($args->getOpt('reload')) {
                 $modelCache = new FCache();
                 $modelCache->freeTableURL();
                 $modelCache->load();
@@ -194,13 +194,13 @@ try {
                 foreach ($rl as $rll) {
                     $route = ['methods' => 'GET|POST', 'action' => $rll[1]];
                     $u = '/'.$rll[0];
-                    for($i=2;$i<count($rll);$i++) {
+                    for ($i=2; $i<count($rll); $i++) {
                         $u .= "/[i:".$rll[$i]."]";
                     }
                     $route['url'] = $u;
                     $routes[] = $route;
                 }
-                if($args->getOpt('yaml')) {
+                if ($args->getOpt('yaml')) {
                     $out = ['routes' => $routes];
                     echo Yaml::dump($out, 3)."\n";
                 } else {
@@ -221,8 +221,10 @@ try {
             break;
         case 'stats':
             $logger = Configuration::getLogger();
-            $logger->info("Import stats");
-            statsImport();
+            if ($args->getOpt('import')) {
+                $logger->info("Import stats");
+                statsImport();
+            }
             break;
         case 'version':
             echo "Version: ".version()."\n";
@@ -234,18 +236,19 @@ try {
             }
             break;
         case 'cache':
-            if($args->getOpt('clear')) {
+            if ($args->getOpt('clear')) {
                 cacheClear($args->getOpt('dry'));
             }
             break;
         default:
             break;
     }
-} catch(Throwable $e) {
+} catch (Throwable $e) {
     Configuration::getLogger()->error('Something went wrong', ['error' => $e->getMessage(), 'stack' => $e->getTraceAsString()]);
 }
 
-function cliSpaceShow(int $id, bool $flags) {
+function cliSpaceShow(int $id, bool $flags)
+{
     $cp = new CoreSpace();
     Configuration::getLogger()->debug("[space] get space");
     $space = $cp->getSpace($id);
@@ -257,13 +260,14 @@ function cliSpaceShow(int $id, bool $flags) {
         }
     }
     echo Yaml::dump(['space' => $space], 2, 4, Yaml::DUMP_OBJECT_AS_MAP);
-    if($flags) {
+    if ($flags) {
         $f = $plan->Flags();
         echo Yaml::dump(['flags' => $f], 2, 4, Yaml::DUMP_OBJECT_AS_MAP);
     }
 }
 
-function statsImport() {
+function statsImport()
+{
     $cp = new CoreSpace();
     Configuration::getLogger()->info("[stats] create bucket");
     $spaces = $cp->getSpaces('id');
@@ -308,8 +312,9 @@ function statsImport() {
 
 }
 
-function cacheClear($dry) {
-    if(is_dir('/tmp/pfm')) {
+function cacheClear($dry)
+{
+    if (is_dir('/tmp/pfm')) {
        removeDirectory('/tmp/pfm', $dry);
        Configuration::getLogger()->info('cache cleared');
     } else {
@@ -317,54 +322,58 @@ function cacheClear($dry) {
     }
 }
 
-function removeFile($path, $dry=false) {
-    if($dry) {
+function removeFile($path, $dry=false)
+{
+    if ($dry) {
         Configuration::getLogger()->info('[delete]', ['path' => $path]);
     } else {
-	    unlink($path);
+       unlink($path);
     }
 }
-function removeDirectory($path, $dry=false) {
-	$files = glob($path . '/*');
-	foreach ($files as $file) {
-		is_dir($file) ? removeDirectory($file, $dry) : removeFile($file, $dry);
-	}
-    if($dry) {
+function removeDirectory($path, $dry=false)
+{
+    $files = glob($path . '/*');
+    foreach ($files as $file) {
+        is_dir($file) ? removeDirectory($file, $dry) : removeFile($file, $dry);
+    }
+    if ($dry) {
         Configuration::getLogger()->info('[delete]', ['path' => $path]);
     } else {
-	    rmdir($path);
+        rmdir($path);
     }
 }
 
-function cliFix($bug=0) {
-    if($bug<=0) {
+function cliFix($bug=0)
+{
+    if ($bug<=0) {
         Configuration::getLogger()->error('No bug specified', []);
         return;
     }
     $cdb = new CoreDB();
     try {
         call_user_func_array(array($cdb, 'repair'.$bug), []);
-    } catch(Throwable $e) {
+    } catch (Throwable $e) {
         Configuration::getLogger()->error('Repair error', ['error' => $e->getMessage()]);
     }
 }
 
-function cliInstall($from=-1) {
+function cliInstall($from=-1)
+{
     $logger = Configuration::getLogger();
     $logger->info("Installing database from ". Configuration::getConfigFile());
 
     // Create db release table if not exists
     $cdb = new CoreDB();
     $release = $cdb->getRelease();
-    if($from > -1) {
+    if ($from > -1) {
         $release = $from;
     }
     $freshInstall = $cdb->isFreshInstall();
-    if($from == -1 && $freshInstall) {
+    if ($from == -1 && $freshInstall) {
         $from = 0;
     }
 
-    if($freshInstall || $release < $cdb->getVersion()) {
+    if ($freshInstall || $release < $cdb->getVersion()) {
         $expected = $cdb->getVersion();
         $logger->info("Install from version $release to $expected");
         $cdb->createTable();
@@ -390,10 +399,9 @@ function cliInstall($from=-1) {
                 $installFile = "Modules/" . $modules[$i] . "/Model/" . $moduleName . "Install.php";
                 if (file_exists($installFile)) {
                     $logger->info('Update database for module ' . $moduleName . " => ". $installFile);
-                    if (!$first){
+                    if (!$first) {
                         $modulesInstalled .= ", ";
-                    }
-                    else{
+                    } else {
                         $first = false;
                     }
                     $modulesInstalled .= $modules[$i];
@@ -419,10 +427,4 @@ function cliInstall($from=-1) {
     $logger->info("Check for upgrades");
     $cdb->scanUpgrades($from);
 
-
-    
-
 }
-
-?>
-
