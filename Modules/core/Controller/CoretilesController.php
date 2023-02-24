@@ -35,7 +35,6 @@ class CoretilesController extends CorecookiesecureController
     public function __construct(Request $request, ?array $space=null)
     {
         parent::__construct($request, $space);
-        $this->user = new CoreUser();
         //$this->checkAuthorization(CoreStatus::$USER);
     }
 
@@ -145,7 +144,7 @@ class CoretilesController extends CorecookiesecureController
                         $userSpacesList[] = $space;
                     }
                 }
-                if ($logged && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && isset($_SESSION["login"])) {
+                if ($logged && $space['status'] == 1 && !in_array($space["id"], $userSpaces['spacesUserIsAdminOf']) && (isset($_SESSION["id_user"]) && $_SESSION["id_user"] > 0)) {
                     if (!in_array($space["id"], $userSpaces['userPendingSpaceIds'])) {
                         $isMemberOfSpace = (in_array($space["id"], $userSpaces['userSpaceIds'])) ? true : false;
                         if (!$isMemberOfSpace) {

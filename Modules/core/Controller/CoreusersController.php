@@ -149,7 +149,7 @@ class CoreusersController extends CoresecureController
             $pum = new CorePendingAccount();
             $pendings = $pum->getSpaceIdsForPending($user['id']);
             foreach ($pendings as $p) {
-                $roles[] = ['space_name' => $p['space_name'], 'role_name' => CoreTranslator::PendingUserAccount($lang)];
+                $roles[] = ['id_space' => $p['id_space'], 'space_name' => $p['space_name'], 'role_name' => CoreTranslator::PendingUserAccount($lang)];
             }
             $rolesTable = new TableView('spaces');
             $rolesTable->setTitle(CoreTranslator::Spaces($lang));
@@ -157,6 +157,7 @@ class CoreusersController extends CoresecureController
                 "space_name" => CoreTranslator::Space($lang),
                 "role_name" => CoreTranslator::Role($lang),
             );
+            $rolesTable->addLineEditButton('/corespaceuseredit/{{id_space}}/'.$user['id'], 'id_space');
             $rolesTableHtml = $rolesTable->view($roles, $headers);
         }
         $script = "";

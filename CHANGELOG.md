@@ -2,9 +2,14 @@
 
 ## 2.10.0
 
+### Features
+
+* [core] coreusersedit, add link to edit user in related space
+
 ### Fixes
 
 * [core] differentiate pdo from other errors in db handling
+* [core] remove request access button for private spaces in search results
 
 ## 2.9.6
 
