@@ -1,6 +1,7 @@
 <?php
 
 require_once 'Configuration.php';
+require_once 'Constants.php';
 require_once 'Errors.php';
 
 use DebugBar\DataCollector\PDO\TraceablePDO;
@@ -24,6 +25,9 @@ abstract class Model
     private $columnsTypes;
     private $columnsDefaultValue;
     protected $primaryKey;
+
+    // instance model variables
+    public int $id=0;
 
     public static $reconnectErrors = [
         1317 // interrupted
@@ -73,9 +77,9 @@ abstract class Model
                 $result = self::getDatabase()->prepare($sql); // prepared request
                 $result->execute($params);
             }
-        } catch (Exception $e) {
+        } catch (PDOException $e) {
             $msg = $e->getMessage();
-            Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            Configuration::getLogger()->error('[sql] database error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
             if (Configuration::get('sentry_dsn', '')) {
                 \Sentry\captureException($e);
             }
@@ -89,13 +93,19 @@ abstract class Model
                         $result = self::getDatabase()->prepare($sql); // prepared request
                         $result->execute($params);
                     }
-                } catch(Exception $e2) {
+                } catch (PdoException $e2) {
                     Configuration::getLogger()->error('[sql] connection reset failed', ['error' => $e2]);
-                    Configuration::getLogger()->error('[sql] error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
+                    Configuration::getLogger()->error('[sql] retry error', ['sql' => $sql, 'params' => $params, 'error' => $msg]);
                     if (Configuration::get('sentry_dsn', '')) {
                         \Sentry\captureException($e);
                     }
                 }
+            }
+        } catch (Exception $e) {
+            $msg = $e->getMessage();
+            Configuration::getLogger()->error('[sql] other error', ['sql' => $sql, 'params' => $params, 'error' => $msg, 'line' => $e->getLine(), 'file' => $e->getFile()]);
+            if (Configuration::get('sentry_dsn', '')) {
+                \Sentry\captureException($e);
             }
         }
         if ($result === false) {
@@ -126,7 +136,7 @@ abstract class Model
             if (getenv('PFM_MODE') == 'dev' && Configuration::get('debug_sql', false)) {
                 self::$bdd = new DebugBar\DataCollector\PDO\TraceablePDO(self::$bdd);
             }
-            self::$bdd->exec("SET CHARACTER SET utf8");
+            self::$bdd->exec(Constants::UTF8_CHARSET);
         }
         return self::$bdd;
     }
@@ -144,7 +154,7 @@ abstract class Model
         //echo "pwd = " . $pwd . "<br/>";
         // Create connection
         self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-        self::$bdd->exec("SET CHARACTER SET utf8");
+        self::$bdd->exec(Constants::UTF8_CHARSET);
     }
 
     public function checkColumn($tableName, $columnName)
@@ -167,8 +177,6 @@ abstract class Model
      */
     public function addColumn($tableName, $columnName, $columnType, $defaultValue)
     {
-        //$sql = "SHOW COLUMNS FROM `" . $tableName . "` LIKE '" . $columnName . "'";
-        //$pdo = $this->runRequest($sql);
         $sql = "SHOW COLUMNS FROM `" . $tableName . "` WHERE Field=?";
         $pdo = $this->runRequest($sql, array($columnName));
         $isColumn = $pdo->fetch();
@@ -441,7 +449,7 @@ abstract class Model
         $login = Configuration::get("mysql_admin_login", "root");
         $pwd = Configuration::get("mysql_admin_pwd", "platform_manager");
         $pdo = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
-        $pdo->exec("SET CHARACTER SET utf8");
+        $pdo->exec(Constants::UTF8_CHARSET);
 
         $spaceID = $space['id'];
         $spaceName = "pfm".$spaceID;
@@ -460,7 +468,7 @@ abstract class Model
             try {
                 $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
                 $pdo->query($sql);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);
             }
         }
@@ -470,7 +478,7 @@ abstract class Model
             $sql .= "INNER JOIN core_j_spaces_user on core_j_spaces_user.id_user=core_users.id ";
             $sql .= "WHERE core_j_spaces_user.status > 0 and core_j_spaces_user.id_space=$spaceID";
             $pdo->query($sql);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             Configuration::getLogger()->warning("[db] could not create user view", ["error" => $e->getMessage()]);
         }
     }
@@ -554,7 +562,7 @@ abstract class Model
         $id = $this->id;
         if ($this->id) {
             $update = [];
-            for ($i=0;$i<count($columns);$i++) {
+            for ($i=0; $i<count($columns); $i++) {
                 $update[] = $columns[$i]. " = ?";
             }
             $sql = "UPDATE ".$this->tableName." SET ".implode(',', $update)." WHERE id=?";

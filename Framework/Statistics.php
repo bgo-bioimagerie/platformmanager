@@ -226,7 +226,7 @@ class Statistics
             $sm = new BucketStatistics();
             $sm->add($space, $bucket->getId(), $token);
             Configuration::getLogger()->debug('[stats] bucket created', ['bucket' => $bucket->getId(), 'token' => $token]);
-        } catch(Throwable $e) {
+        } catch (Throwable $e) {
             Configuration::getLogger()->error('[stats] createdb error', ['message' => $e->getMessage(), 'line' => $e->getLine(), "file" => $e->getFile(),  'stack' => $e->getTraceAsString()]);
         }
     }

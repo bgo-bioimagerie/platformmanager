@@ -32,6 +32,8 @@ class TableView
     private $numFixedCol;
     private $downloadButton;
     private $tableID;
+    private $iscsv;
+    private $exportAction;
 
     /**
      * Constructor
@@ -84,9 +86,20 @@ class TableView
     }
 
     /**
+     * Add a edit button as action to table lines
+     * @param string $editURL  edit url
+     * @param string $editIndex object identifier to use
      *
-     * @param type $editURL
-     * @param type $editIndex
+     * editURL can be in format (xxx represents object value for related editIndex):
+     *  - /path_to/{{editIndex_value}}/somewhere will result in /path_to/xxx/somewhere
+     *   or
+     *  - /path_to/somewhere will result in /path_to/somewhere/xxx
+     *
+     * Examples:
+     *
+     * - editURL=/corespaceaccess and editIndex='id' links to /corespaceaccess/xxx
+     * - editURL=/corespaceaccess/{{id_space}}/123 links to /corespaceaccess/xxx/123
+     *
      */
     public function addLineEditButton($editURL, $editIndex = "id", $editJS = false)
     {
