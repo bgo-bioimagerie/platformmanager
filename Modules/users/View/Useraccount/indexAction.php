@@ -3,12 +3,21 @@
     
 <?php startblock('content') ?>
     
-    <div class="container pm-form">
-        <?php echo $formHtml ?>
+<div class="container pm-form">
+    <div class="row">
+        <div class="col-12 mb-3">
+            <?php echo $formHtml ?>
+        </div>
 
-        <?php echo $formApi ?>
+        <div class="col-12 mb-3">
+            <?php echo $formApi ?>
+        </div>
 
-        <div class="col-md-12 mb-3">
+        <div class="col-12 mb-3">
+            <?php echo $rolesTableHtml ?>
+        </div>
+
+        <div class="col-12 mb-3">
             <h2>External connection providers</h2>
         <?php
         foreach ($providers as $provider) {
@@ -22,23 +31,26 @@
             </a>
         <?php
         }
-?>
+    ?>
         </div>
-        <div class="col-md-12">
+        <div class="col-12 mb-3">
             <h2>Linked providers</h2>
             <table class="table" aria-label="external providers linked to account">
             <thead><tr><th scope="col">Provider</th><th scope="col">ID</th></tr></thead>
             <tbody>
         <?php
-foreach ($linked as $link) {
+    foreach ($linked as $link) {
     ?>
             <tr><td><?php echo $link['provider'];?></td><td><?php echo $link['oid'];?></td></tr>
         <?php
-}
-?>
+    }
+    ?>
             </tbody>
             </table>
         </div>
+
+    </div>
+
 </div>
     
 

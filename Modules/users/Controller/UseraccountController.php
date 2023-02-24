@@ -149,11 +149,29 @@ class UseraccountController extends CoresecureController
         $_SESSION["redirect"] = "usersmyaccount";
 
         unset($userCore['password']);
+
+
+        $csm = new CoreSpace();
+        $roles = $csm->getUserSpacesRoles(0, $id_user);
+        $pum = new CorePendingAccount();
+        $pendings = $pum->getSpaceIdsForPending($id_user);
+        foreach ($pendings as $p) {
+            $roles[] = ['id_space' => $p['id_space'], 'space_name' => $p['space_name'], 'role_name' => CoreTranslator::PendingUserAccount($lang)];
+        }
+        $rolesTable = new TableView('spaces');
+        $rolesTable->setTitle(CoreTranslator::Spaces($lang));
+        $headers = array(
+            "space_name" => CoreTranslator::Space($lang),
+            "role_name" => CoreTranslator::Role($lang),
+        );
+        $rolesTableHtml = $rolesTable->view($roles, $headers);
+
         // render the View
         $this->render(array(
             'lang' => $lang,
             'formHtml' => $form->getHtml($lang),
             'formApi' => $formApi->getHtml($lang),
+            'rolesTableHtml' => $rolesTableHtml,
             'providers' => $providers,
             'linked' => $linked,
             'data' => ['user' => $userCore]

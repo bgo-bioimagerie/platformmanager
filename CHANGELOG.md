@@ -5,6 +5,7 @@
 ### Features
 
 * [core] coreusersedit, add link to edit user in related space
+* [core] as admin, allow full user impersonification in coreusersedit
 
 ### Fixes
 

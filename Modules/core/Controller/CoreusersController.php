@@ -131,8 +131,6 @@ class CoreusersController extends CoresecureController
         $form->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
         $form->setCancelButton(CoreTranslator::Cancel($lang), "coreusers");
 
-
-
         $rolesTableHtml  = '';
         if ($id > 0) {
             $formPwd = new Form($this->request, "coreuseretidpwd");
@@ -141,8 +139,6 @@ class CoreusersController extends CoresecureController
             $formPwd->addPassword("pwd", CoreTranslator::New_password($lang));
             $formPwd->addPassword("pwdconfirm", CoreTranslator::New_password($lang));
             $formPwd->setValidationButton(CoreTranslator::Save($lang), "coreusersedit/" . $id);
-
-
 
             $csm = new CoreSpace();
             $roles = $csm->getUserSpacesRoles(0, $user['id']);
@@ -166,29 +162,25 @@ class CoreusersController extends CoresecureController
 
             if (!$form->getParameter("email") || !$modelUser->isEmailFormat($form->getParameter("email"))) {
                 $canEditUser = false;
-                $this->displayFormWarnings("EmailInvalid", $id, $lang);
-                return;
+                return $this->displayFormWarnings("EmailInvalid", $id, $lang);
             }
             if (!$id) {
                 // creating a new user
                 if ($modelUser->isLogin($this->request->getParameter('login'))) {
                     $canEditUser = false;
-                    $this->displayFormWarnings("LoginAlreadyExists", $id, $lang);
-                    return;
+                    return $this->displayFormWarnings("LoginAlreadyExists", $id, $lang);
                 }
                 if ($modelUser->isEmail($form->getParameter("email"))) {
                     // if email already exists, warn user
                     $canEditUser = false;
-                    $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
-                    return;
+                    return $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
                 }
             } else {
                 // updating an existing user
                 if ($modelUser->isEmail($form->getParameter("email")) && ($form->getParameter("email") != $user["email"])) {
                     // if email, excepting user's one, already exists, warn user
                     $canEditUser = false;
-                    $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
-                    return;
+                    return $this->displayFormWarnings("EmailAlreadyExists", $id, $lang);
                 }
             }
 
@@ -205,8 +197,7 @@ class CoreusersController extends CoresecureController
 
         if ($id > 0 && $formPwd->check()) {
             $this->editPwdQuery($form, $lang);
-            $this->redirect("coreusers");
-            return;
+            return $this->redirect("coreusers");
         }
 
         $formPwdHtml = "";
@@ -227,7 +218,7 @@ class CoreusersController extends CoresecureController
     {
         $_SESSION["flash"] = CoreTranslator::$cause($lang);
         $_SESSION["flashClass"] = "danger";
-        $this->redirect("coreusersedit/" . $id ?? 0);
+        return $this->redirect("coreusersedit/" . $id ?? 0);
     }
 
     protected function editPwdQuery($formPwd, $lang)
@@ -418,5 +409,32 @@ class CoreusersController extends CoresecureController
             'lang' => $lang,
             'form' => $form->getHtml($lang)
         ));
+    }
+
+
+    public function impersonateAction($id_user)
+    {
+        $this->checkAuthorization(CoreStatus::$ADMIN);
+
+        $this->request->getSession()->setAttribut("logged_id_user", $_SESSION['id_user']);
+        $this->request->getSession()->setAttribut("logged_login", $_SESSION['login']);
+        $this->request->getSession()->setAttribut("logged_email", $_SESSION['email']);
+        $this->request->getSession()->setAttribut("logged_user_status", $_SESSION['user_status']);
+
+        $modelUser = new CoreUser();
+        $user = $modelUser->getInfo($id_user);
+
+        Configuration::getLogger()->debug('[impersonate][admin]', [
+            'to_id' => $user['id'], 'to_login' => $user['login'],
+            'from_id' => $_SESSION['id_user'], 'from_login' => $_SESSION['login']
+        ]);
+
+
+        $this->request->getSession()->setAttribut("id_user", $user['id']);
+        $this->request->getSession()->setAttribut("login", $user['login']);
+        $this->request->getSession()->setAttribut("email", $user['email']);
+        $this->request->getSession()->setAttribut("user_status", CoreStatus::$USER);
+
+        $this->redirect("coretiles");
     }
 }

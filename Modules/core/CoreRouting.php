@@ -11,6 +11,7 @@ class CoreRouting extends Routing
         $router->map('GET', '/corespaceaccess/[i:id_space]/user/expire/run', 'core/corespaceaccess/doexpire', 'userspace_expire_run');
         $router->map('GET', '/corespaceaccess/[i:id_space]/impersonate/[i:id_user]', 'core/corespaceaccess/impersonate', 'user_impersonate');
         $router->map('GET', '/corespaceaccess/[i:id_space]/unimpersonate', 'core/corespaceaccess/unimpersonate', 'user_unimpersonate');
+        $router->map('GET', '/core/users/impersonate/[i:id_user]', 'core/coreusers/impersonate', 'admin_impersonate');
         $router->map('GET', '/corecreateaccountconfirm', 'core/coreaccount/confirm', 'core_createaccount_confirm');
         $router->map('GET', '/coreuserwaiting', 'core/coreaccount/waiting', 'core_createaccount_waiting');
         $router->map('GET', '/corespaces', 'core/corespace/spaces', 'core_space_list');
