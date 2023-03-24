@@ -9,12 +9,13 @@ require_once 'Modules/core/Model/CoreSpace.php';
 
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 
-pcntl_async_signals(true);
+// need php extensions
+// pcntl_async_signals(true);
 
-pcntl_signal(SIGTERM, function ($signo) {
-    Configuration::getLogger()->error("SIGTERM!!!!!!");
-    //var_dump("SIGTERM"); die;
-});
+// pcntl_signal(SIGTERM, function ($signo) {
+//     Configuration::getLogger()->error("SIGTERM!!!!!!");
+//     //var_dump("SIGTERM"); die;
+//});
 
 // to defined timezone: date_default_timezone_set(Configuration::get('timezone', 'UTC'));
 
