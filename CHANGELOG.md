@@ -1,5 +1,11 @@
 # Changes
 
+## 2.9.8
+
+### Fixes
+
+Remove signals handlers in pfm-events, preventing startup in docker
+
 ## 2.9.7
 
 ### Features
