@@ -10,8 +10,8 @@ require_once 'Framework/Errors.php';
  */
 class View
 {
-    /** Name of the file associted to the view */
-    private string $file;
+    /** Name of the file associated to the view */
+    private ?string $file = null;
 
     /**
      * Constructor
@@ -47,10 +47,10 @@ class View
         $data['rootWeb'] = $rootWeb;
         // Generate the dedicated part of the view
         extract($data);
-        if (!file_exists($this->file) || !$this->file) {
+        if (!$this->file || !file_exists($this->file)) {
             throw new PfmException('Template not found or undefined', 500);
         }
-        include($this->file);
+        include_once($this->file);
     }
 
     /**
