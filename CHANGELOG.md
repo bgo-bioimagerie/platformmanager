@@ -1,5 +1,11 @@
 # Changes
 
+## 2.10.1
+
+### Fixes
+
+* [core] manage case where user never logged for inactivation #755
+
 ## 2.10.0
 
 ### Fixes
