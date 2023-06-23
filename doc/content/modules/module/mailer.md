@@ -27,7 +27,7 @@ Don't forget to save your choice.
 
 ![mailer_module](../../../mailer_module_2.png)
 
-Classic email interface with the add of a filter to select to which group to send the email.
+Classic email interface with the addition of a filter to select to which group to send the email.
 
 You can filter users by:
 
@@ -36,3 +36,5 @@ You can filter users by:
 - resource
 
 Sent mails are listed and accessible at the bottom of the interface.
+
+Super admin users have an additional *admins* selection to send an email to users with admin role in **any** space.

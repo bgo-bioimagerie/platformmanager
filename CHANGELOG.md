@@ -1,5 +1,11 @@
 # Changes
 
+## 2.10.0
+
+### Fixes
+
+* [core] handle invalid view init cases
+
 ## 2.9.8
 
 ### Fixes
