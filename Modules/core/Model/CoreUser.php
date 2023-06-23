@@ -207,13 +207,13 @@ class CoreUser extends Model
         $req = [];
         $params = [];
         if ($expireDelay!=null && $expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE  ((core_users.date_last_login is not null AND core_users.date_last_login<? ) OR (core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?))";
-            $params = [$expireDelay, $date];
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.status > 0 AND  ((core_users.date_last_login is not null AND core_users.date_last_login<? ) OR (core_users.date_last_login is null AND core_users.created_at<? ) OR (core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?))";
+            $params = [$expireDelay, $expireDelay, $date];
         } elseif ($expireDelay!=null && !$expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_users.date_last_login is not null AND core_users.date_last_login<?";
-            $params = [$expireDelay];
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.status > 0 AND ((core_users.date_last_login is not null AND core_users.date_last_login<?) OR (core_users.date_last_login is null AND core_users.created_at<? ))";
+            $params = [$expireDelay, $expireDelay];
         } elseif ($expireDelay==null && $expireContract) {
-            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
+            $sql = "SELECT core_users.id,core_users.login,core_users.name,core_users.firstname,core_users.email,core_j_spaces_user.date_contract_end,core_users.date_last_login,core_j_spaces_user.id_space as space FROM core_users INNER JOIN core_j_spaces_user ON core_j_spaces_user.id_user=core_users.id WHERE core_j_spaces_user.status > 0 AND core_j_spaces_user.date_contract_end is not null AND core_j_spaces_user.date_contract_end < ?";
             $params = [$date];
         }
         if ($id_space > 0) {
