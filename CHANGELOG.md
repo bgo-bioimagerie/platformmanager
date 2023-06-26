@@ -1,5 +1,11 @@
 # Changes
 
+## 2.10.2 [UNRELEASED]
+
+### Fixes
+
+* minor install error on bj_collections on upgrades from v2 version
+
 ## 2.10.1
 
 ### Fixes

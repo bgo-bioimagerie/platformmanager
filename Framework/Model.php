@@ -124,7 +124,7 @@ abstract class Model
                 self::$bdd->query('KILL CONNECTION_ID()');
                 Configuration::getLogger()->debug('[sql] asked mysql to kill connection');
             } catch (Exception $e) {
-                Configuration::getLogger()->error('[sql] failed to force sql connection close, that may be fine, or not...');
+                Configuration::getLogger()->error('[sql] failed to force sql connection close, that may be fine, or not...', ['error' => $e]);
             }
         }
         */
