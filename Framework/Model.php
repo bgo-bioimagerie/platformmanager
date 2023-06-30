@@ -116,6 +116,18 @@ abstract class Model
 
     public static function resetDatabase()
     {
+        // try to force mysql to kill conn ? setting to null may not be immediate and leave many conn open
+        // else may need to increase max conn in mysql....
+        /* 
+        if (self::$bdd != null) {
+            try {
+                self::$bdd->query('KILL CONNECTION_ID()');
+                Configuration::getLogger()->debug('[sql] asked mysql to kill connection');
+            } catch (Exception $e) {
+                Configuration::getLogger()->error('[sql] failed to force sql connection close, that may be fine, or not...', ['error' => $e]);
+            }
+        }
+        */
         self::$bdd = null;
     }
 

@@ -289,7 +289,7 @@ class CoreDB extends Model
         $sql = "SELECT * FROM `bj_collections`;";
         $resdb = $this->runRequest($sql);
         if ($resdb!=null) {
-            while ($res = $resdb->fetch) {
+            while ($res = $resdb->fetch()) {
                 $sql = "UPDATE bj_j_collections_notes SET id_space=? WHERE id_collection=?";
                 $this->runRequest($sql, array($res['id_space'], $res['id']));
             }
