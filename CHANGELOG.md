@@ -1,6 +1,6 @@
 # Changes
 
-## 2.10.2 [UNRELEASED]
+## 2.10.2
 
 ### Fixes
 
