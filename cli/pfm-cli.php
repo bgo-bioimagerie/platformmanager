@@ -305,6 +305,7 @@ function statsImport()
 
     Configuration::getLogger()->info("[stats] import tickets stats");
     foreach ($spaces as $space) {
+        $eventHandler->spaceUserCount(["space" => ["id" => $space["id"]]]);
         $eventHandler->ticketCount(["space" => ["id" => $space["id"]]]);
     }
     Configuration::getLogger()->info("[stats] import tickets stats, done!");

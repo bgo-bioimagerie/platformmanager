@@ -5,6 +5,7 @@
 ### Fixes
 
 * minor install error on bj_collections on upgrades from v2 version
+* fix import of user statistics on cli stats import command
 
 ## 2.10.1
 

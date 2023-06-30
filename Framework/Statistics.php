@@ -55,6 +55,8 @@ class BucketStatistics extends Model
      */
     public function add($space, $bucket, $token)
     {
+        $sql = "DELETE FROM stats_buckets WHERE space=?";
+        $this->runRequest($sql, [$space]);
         $sql = "INSERT INTO stats_buckets(space, token, bucket) VALUES (?, ?,?)";
         $this->runRequest($sql, [$space, $token, $bucket]);
     }
