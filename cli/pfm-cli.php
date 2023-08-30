@@ -67,12 +67,55 @@ $cli = Cli::create()
     ->command('maintenance')
     ->opt('on', 'start maintenance mode', false, 'boolean')
     ->opt('off', 'stop maintenance mode', false, 'boolean')
-    ->opt('message:m', 'maintenance message', false, 'string');
+    ->opt('message:m', 'maintenance message', false, 'string')
+    ->command('admins')
+    ->description('list spaces admins')
+    ->opt('csv', 'show in csv format', false, 'boolean')
+    ->opt('mail', 'show unique emails only', false, 'boolean')
+    ->opt('space', 'list admin of selected space', false, 'string');
 
 $args = $cli->parse($argv);
 
 try {
     switch ($args->getCommand()) {
+        case 'admins':
+            $cs = new CoreSpace();
+            $csl = $cs->getSpaces('id');
+            $spaces = [];
+            $spaces_ids = [];
+            $emails = [];
+            if($csl) {
+                foreach($csl as $space) {
+                    $spaces[$space['name']] = $space['id'];
+                    $spaces_ids[$space['id']] = $space['name'];
+                }
+            }
+            $csu = new CoreSpaceUser();
+            $admins = $csu->admins();
+            if(!$admins) {
+                echo "No admin found";
+                break;
+            }
+            $out = '';
+            foreach($admins as $admin) {
+                if($args->getOpt('space') && $spaces[$args->getOpt('space')]!= $admin['id_space']){
+                    continue;
+                }
+                if($args->getOpt('csv')) {
+                    $out .= $admin['firstname'].','.$admin['name'].','.$admin['email'].','.$spaces_ids[$admin['id_space']]."\n";
+                } else {
+                    $out .= $admin['firstname'].' '.$admin['name'].' ('.$admin['email'].'): '.$spaces_ids[$admin['id_space']]."\n";
+                }
+                $emails[$admin['email']] = 1;
+            }
+            if($args->getOpt('mail')){
+                foreach($emails as $email => $ignore) {
+                    echo "$email\n";
+                }
+            } else {
+                echo $out;
+            }
+            break;
         case 'user':
             if (!$args->getOpt('login')) {
                 Configuration::getLogger()->error('Missing user parameter');
