@@ -43,7 +43,7 @@ echo $c->dropDownMenu($id_space);
             <div class="col-2">
                 
                 <form action="anticorpscsv/<?php echo $id_space?>" method="post">
-                    <textarea style="display:none;" name="anticorpsArray"><?php echo json_encode($anticorpsArray)?></textarea>
+                    <textarea style="display:none;" name="anticorpsArray"><?php echo htmlspecialchars(json_encode($anticorpsArray))?></textarea>
                     <button type="submit" class="btn btn-primary"><?php echo AntibodiesTranslator::Export_as_csv($lang) ?></button>
                 </form> 
             </div>
