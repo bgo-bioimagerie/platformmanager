@@ -6,27 +6,24 @@
     <description>Recent content in Use_cases on Platform Manager</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 23 Jun 2021 16:08:15 +0200</lastBuildDate><atom:link href="https://bgo-bioimagerie.github.io/platformmanager/use_cases/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 23 Jun 2021 16:08:15 +0200</lastBuildDate>
+    <atom:link href="https://bgo-bioimagerie.github.io/platformmanager/use_cases/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>How to join an existing space</title>
       <link>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</link>
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
-      
       <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/join_space/</guid>
       <description>Since Platform-Manager V2 (2021-08-10 release), users with an existing account can request to join a space.
 Join a space as a user you already have an account
 you don&amp;rsquo;t have an account yet
 Request access First, find the space you want to request access to. From Platform-Manager main page, you can select its parent structure if or search for the space name. Then you should see, amongst one or several tiles, the one you are looking for.</description>
     </item>
-    
     <item>
       <title>How to manage interdependant booking resources</title>
       <link>https://bgo-bioimagerie.github.io/platformmanager/use_cases/interdependant_resources/</link>
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
-      
       <guid>https://bgo-bioimagerie.github.io/platformmanager/use_cases/interdependant_resources/</guid>
       <description>Use case you have one equipment for which users need a specific authorization with this equipment, users can perform more than one activity eventually, these activities have different prices Problem Using one category (on which users authorizations can be set) representing the equipment and several resources, each of them representing one activity linked to this equipment, do not avoid a user to make a booking for one of these activities whereas some other user already did book another activity for this equipment.</description>
     </item>
-    
   </channel>
 </rss>
