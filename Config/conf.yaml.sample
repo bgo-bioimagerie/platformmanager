@@ -16,7 +16,7 @@ plans:
       - basic helpdesk
       - statistic reports (excel)
     limits:
-      resources: 4
+      resources: 100
   - name: bronze
     price: 'tbd...'
     color: sienna
