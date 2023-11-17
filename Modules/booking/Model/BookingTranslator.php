@@ -103,7 +103,7 @@ class BookingTranslator
         if ($lang == "fr") {
             return "Calendrier config";
         }
-        return "booking settings";
+        return "Booking settings";
     }
 
     public static function bookingusersstats($lang)
@@ -2258,5 +2258,13 @@ class BookingTranslator
             return "Nombre de nouveaux utilisateurs";
         }
         return "New user quantity";
+    }
+
+    public static function supplementariesChoices($lang)
+    {
+        if ($lang == 'fr') {
+            return "Choix possibles (vide pour choix libre)";
+        }
+        return "Choices (leave empty for free text)";
     }
 }

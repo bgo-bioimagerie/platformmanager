@@ -381,6 +381,19 @@ class BkStats
         $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
 
 
+        $sups = [];
+        for ($i = 0; $i < count($data['resource']); $i++) {
+            foreach ($data['supDatas'][$i] as $key => $value) {
+                $sups[] = $key;
+                $num++;
+                $letter = Utils::get_col_letter($num);
+                $objWorkSheet->SetCellValue($letter . $curentLine, $key);
+                $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+                $spreadsheet->getActiveSheet()->getColumnDimension($letter)->setAutoSize(true);
+            }
+
+        }
+
         $resourcesids = $data['resourcesids'];
         $resources = $data['resource'];
         $counting = $data['count'];
@@ -408,6 +421,13 @@ class BkStats
             $letter = Utils::get_col_letter($num);
             $objWorkSheet->SetCellValue($letter . $curentLine, $data['timeCancelled'][$i]);
             $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+
+            foreach ($sups as $sup) {
+                $num++;
+                $letter = Utils::get_col_letter($num);
+                $objWorkSheet->SetCellValue($letter . $curentLine, $data['supDatas'][$i][$sup] ?? 0);
+                $objWorkSheet->getStyle($letter . $curentLine)->applyFromArray($style['styleBorderedCell']);
+            }
 
             $objWorkSheet->getStyle('A' . $curentLine)->applyFromArray($style['styleBorderedCell']);
             $objWorkSheet->getStyle('B' . $curentLine)->applyFromArray($style['styleBorderedCell']);

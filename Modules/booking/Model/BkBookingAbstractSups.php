@@ -23,6 +23,8 @@ abstract class BkBookingAbstractSups extends Model
         $duration
     );
 
+    abstract public function setOptions($id_space, $id_supinfo, $id_resource, $choices);
+
     abstract public function getBySupID($id_space, $id_quantity, $id_resource);
 
     abstract public function removeUnlisted($id_space, $ids, $idIsSup=false);

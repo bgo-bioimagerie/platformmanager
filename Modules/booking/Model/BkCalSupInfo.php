@@ -27,6 +27,7 @@ class BkCalSupInfo extends BkBookingAbstractSups
             `id_supinfo` int(11) NOT NULL,
             `id_resource` int(11) NOT NULL,
             `name` varchar(30) NOT NULL DEFAULT '',
+            `choices` varchar(255) NOT NULL DEFAULT '',
             `mandatory` int(1) NOT NULL,
         PRIMARY KEY (`id`)
         );";
@@ -96,11 +97,12 @@ class BkCalSupInfo extends BkBookingAbstractSups
      * @param String $name
      * @param String|Int $mandatory
      */
-    public function addCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory)
+    public function addCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory, $choices='')
     {
-        $sql = "insert into bk_calsupinfo(id_supinfo, id_resource, name, mandatory, id_space)"
-                . " values(?,?,?,?,?)";
-        $this->runRequest($sql, array($id_supinfo, $id_resource, $name, $mandatory, $id_space));
+        $sql = "insert into bk_calsupinfo(id_supinfo, id_resource, name, mandatory, id_space, choices)"
+                . " values(?,?,?,?,?, ?)";
+        $this->runRequest($sql, array($id_supinfo, $id_resource, $name, $mandatory, $id_space, $choices));
+        return $this->getDatabase()->lastInsertId();
     }
 
     /**
@@ -161,14 +163,17 @@ class BkCalSupInfo extends BkBookingAbstractSups
 
     /**
      * Update a supplementary
-     * @param unknown $id
-     * @param unknown $name
-     * @param unknown $mandatory
      */
     public function updateCalSupInfo($id_space, $id_supinfo, $id_resource, $name, $mandatory)
     {
         $sql = "UPDATE bk_calsupinfo SET name= ?, mandatory=? WHERE id_supinfo=? AND id_resource=? AND deleted=0 AND id_space=?";
         $this->runRequest($sql, array($name, $mandatory, $id_supinfo, $id_resource, $id_space));
+    }
+
+    public function setOptions($id_space, $id_supinfo, $id_resource, $choices)
+    {
+        $sql = "UPDATE bk_calsupinfo SET choices= ? WHERE id_supinfo=? AND id_resource=? AND deleted=0 AND id_space=?";
+        $this->runRequest($sql, array($choices, $id_supinfo, $id_resource, $id_space));
     }
 
     /**
