@@ -9,6 +9,7 @@ require_once 'Framework/Model.php';
  */
 class CoreStatus extends Model
 {
+    // TODO: GN: préférer la nouvelle table `core_user_roles`
     public static $USER = 1;
     public static $ADMIN = 2;
 

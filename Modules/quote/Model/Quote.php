@@ -36,7 +36,7 @@ class Quote extends Model
                 "recipient" => "",
                 "recipient_email" => "",
                 "address" => "",
-                "id_belonging" => 0,
+                "id_belonging" => null,
                 "id_user" => 0,
                 "id_client" => 0,
                 "date_open" => "",
@@ -66,6 +66,7 @@ class Quote extends Model
         $modelClient = new ClClient();
 
         $data['id_pricing'] = $data['id_belonging'];
+
         if ($data["id_client"] && $data["id_client"] != 0) {
             $client = $modelClient->get($id_space, $data["id_client"]);
         } else {

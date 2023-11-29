@@ -402,7 +402,7 @@ class BookingInvoice extends InvoiceModel
         $model = new BkCalendarEntry();
         $services = $model->getInvoiceEntries($id_space, $id_invoice);
         foreach ($services as $s) {
-            $model->setReservationInvoice($id_space, $s["id"], 0);
+            $model->setReservationInvoice($id_space, $s["id"], null);
         }
     }
 

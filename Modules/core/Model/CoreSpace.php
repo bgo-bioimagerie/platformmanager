@@ -91,6 +91,7 @@ class CorePlan
  */
 class CoreSpace extends Model
 {
+    // TODO: GN: préférer la nouvelle table `core_user_space_roles`
     public static $INACTIF = 0;
     public static $VISITOR = 1;
     public static $USER = 2;

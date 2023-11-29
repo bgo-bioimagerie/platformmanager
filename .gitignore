@@ -4,3 +4,5 @@ vendor
 Config/conf.ini
 Config/conf.yaml
 .vscode
+.idea
+*.iml

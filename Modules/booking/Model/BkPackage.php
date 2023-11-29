@@ -6,6 +6,8 @@ require_once 'Modules/booking/Model/BkBookingAbstractSups.php';
 /**
  * Class defining the area model
  *
+ * TODO: GN: Effacer la table bk_j_packages_prices et tout le code obsolète qui s'y rapporte
+ *
  * @author Sylvain Prigent
  */
 class BkPackage extends BkBookingAbstractSups
