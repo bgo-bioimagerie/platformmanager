@@ -97,7 +97,7 @@ class QuotelistController extends QuoteController
         $info = $modelQuote->get($id_space, $id);
 
         if ($info["id_user"] > 0) {
-            return $this->editexistinguserAction($id_space, $id);
+            return $this->editexistinguserAction($id_space, $id); // TODO : passer le $info pour éviter $modelQuote->get($id_space, $id); redondante (l. 121)
         } else {
             return $this->editnewuserAction($id_space, $id);
         }
@@ -178,7 +178,7 @@ class QuotelistController extends QuoteController
                 "",
                 "",
                 "",
-                0,
+                null,
                 $form->getParameter('id_user'),
                 $form->getParameter('id_client'),
                 $this->request->getParameterNoException('date_open')
@@ -342,8 +342,8 @@ class QuotelistController extends QuoteController
                 $form->getParameter('recipient'),
                 $form->getParameter('recipient_email'),
                 $form->getParameter('address'),
-                0,
-                0,
+                null,
+                1,
                 $form->getParameter('id_client'),
                 $form->getParameter('date_open')
             );

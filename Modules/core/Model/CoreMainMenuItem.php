@@ -20,10 +20,11 @@ class CoreMainMenuItem extends Model
         $sql = "SELECT core_main_menu_items.* , core_main_sub_menus.name as sub_menu "
                 . "FROM core_main_menu_items "
                 . "INNER JOIN core_main_sub_menus ON core_main_sub_menus.id = core_main_menu_items.id_sub_menu "
+                . "WHERE core_main_sub_menus.deleted = 0 "
                 . "ORDER BY core_main_sub_menus.name ASC";
         $data =  $this->runRequest($sql)->fetchAll();
         for ($i = 0 ; $i < count($data) ; $i++) {
-            $sql = "SELECT name FROM core_main_menus WHERE id=(SELECT id_main_menu FROM core_main_sub_menus WHERE id=?)";
+            $sql = "SELECT name FROM core_main_menus WHERE id=(SELECT id_main_menu FROM core_main_sub_menus WHERE id=? AND deleted = 0)";
             $tmp = $this->runRequest($sql, array($data[$i]["id_sub_menu"]))->fetch();
             $data[$i]["main_menu"] = $tmp[0];
         }

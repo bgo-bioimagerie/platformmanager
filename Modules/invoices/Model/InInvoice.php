@@ -148,6 +148,9 @@ class InInvoice extends Model
         return $this->getDatabase()->lastInsertId();
     }
 
+    /**
+     * TODO: GN: apparemment pas utilisé (de plus, la jointure core_users.id=in_invoice.id_responsible est à priori insensée puisque id_resp(onsible) renvoie à cl_clients#id)
+     */
     public function getAll($sortentry = "number")
     {
         $sql = "SELECT in_invoice.*, ec_units.name AS unit, core_users.name AS resp, core_users.firstname AS respfirstname "

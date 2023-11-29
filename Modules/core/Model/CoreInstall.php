@@ -394,20 +394,21 @@ class CoreDB extends Model
             }
         }
 
-        $sql = "SELECT * FROM `es_sales`;";
-        $resdb = $this->runRequest($sql);
-        if ($resdb!=null) {
-            while ($res = $resdb->fetch()) {
-                $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
-                $this->runRequest($sql, array($res['id_space'], $res['id']));
-                $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
-                $this->runRequest($sql, array($res['id_space'], $res['id']));
-                $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
-                $this->runRequest($sql, array($res['id_space'], $res['id']));
-                $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
-                $this->runRequest($sql, array($res['id_space'], $res['id']));
-            }
-        }
+// TODO: GN: Toutes les table es_* sont inutilisées
+//        $sql = "SELECT * FROM `es_sales`;";
+//        $resdb = $this->runRequest($sql);
+//        if ($resdb!=null) {
+//            while ($res = $resdb->fetch()) {
+//                $sql = "UPDATE es_sale_entered_items SET id_space=? WHERE id_sale=?";
+//                $this->runRequest($sql, array($res['id_space'], $res['id']));
+//                $sql = "UPDATE es_sale_history SET id_space=? WHERE id_sale=?";
+//                $this->runRequest($sql, array($res['id_space'], $res['id']));
+//                $sql = "UPDATE es_sale_items SET id_space=? WHERE id_sale=?";
+//                $this->runRequest($sql, array($res['id_space'], $res['id']));
+//                $sql = "UPDATE es_sale_invoice_items SET id_space=? WHERE id_sale=?";
+//                $this->runRequest($sql, array($res['id_space'], $res['id']));
+//            }
+//        }
 
         $sql = "SELECT * FROM `ac_anticorps`";
         $resdb = $this->runRequest($sql);
@@ -729,7 +730,6 @@ class CoreDB extends Model
     {
         $sqlRelease = "SELECT * FROM `pfm_db`;";
         $reqRelease = $this->runRequest($sqlRelease);
-        $release = null;
         if ($reqRelease && $reqRelease->rowCount() > 0) {
             $release = $reqRelease->fetch();
             return $release['version'];
