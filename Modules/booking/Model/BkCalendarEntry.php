@@ -271,7 +271,7 @@ class BkCalendarEntry extends Model
             "full_description" => "",
             "quantities" => "",
             "supplementaries" => "",
-            "package_id" => 0,
+            "package_id" => NULL,
             "responsible_id" => $resps_id,
             "invoice_id" => 0,
             "reason" => self::$REASON_BOOKING,
