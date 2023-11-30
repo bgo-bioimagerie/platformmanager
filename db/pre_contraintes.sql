@@ -2,6 +2,8 @@
 
 -- on change le type des colonnes 'deleted' à BOOL (au lieu de INT) => MEMOIRE
 
+SET sql_mode = '';
+
 ALTER TABLE platform_manager.ac_aciincs MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.ac_aciis MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.ac_anticorps MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
@@ -98,8 +100,6 @@ ALTER TABLE platform_manager.pfm_db MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NUL
 ALTER TABLE platform_manager.pfm_upgrade MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.qo_quoteitems MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.qo_quotes MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
-ALTER TABLE platform_manager.rating MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
-ALTER TABLE platform_manager.rating_campaign MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.re_area MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.re_category MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.re_event MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
@@ -129,6 +129,8 @@ ALTER TABLE platform_manager.stats_buckets MODIFY COLUMN deleted BOOL DEFAULT 0 
 ALTER TABLE platform_manager.stock_cabinets MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.stock_shelf MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE platform_manager.users_info MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
+
+SET sql_mode = (SELECT @@GLOBAL.sql_mode);
 
 -- ajout d'une table manquante pour des jointures sur les rôles (status) attribués aux utilisateurs par espace
 CREATE TABLE platform_manager.core_user_space_roles (
@@ -573,10 +575,18 @@ UPDATE se_project_user
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes cl_clients.id
 
+-- on insert des comptes clients 'bidons' pour pourvoir poser des contraintes de clés (notamment bk_calendar_entry#responsible_id -> cl_clients#id)
+INSERT INTO platform_manager.cl_clients (id,id_space,name,contact_name)
+	VALUES (8,8,'-- --','-- --');
+INSERT INTO platform_manager.cl_clients (id_space,name,contact_name)
+	VALUES (40,'-- --','-- --');
+INSERT INTO platform_manager.cl_clients (id_space,name,contact_name)
+	VALUES (25,'-- --','-- --');
+
 -- DELETE FROM se_project sp WHERE sp.id_resp NOT IN (SELECT id FROM cl_clients); => Non ! Trop brutal, préférer SET id_resp = 1 (voire NULL ?)
 UPDATE se_project sp
 	-- SET sp.id_resp = 1 -- NON PLUS !! => ne prend pas en compte le core_spaces#id (incohérence entre se_project#id_space et cl_clients#id_space)
-	SET sp.id_resp = SELECT cc.id FROM cl_clients cc WHERE cc.id_space = sp.id_space AND (cc.name = '' OR cc.name = '-- --') LIMIT 1
+	SET sp.id_resp = (SELECT cc.id FROM cl_clients cc WHERE cc.id_space = sp.id_space AND (cc.name = '' OR cc.name = '-- --') LIMIT 1)
 	WHERE sp.id_resp NOT IN (SELECT id FROM cl_clients);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes ac_* (module anticorps)
@@ -643,14 +653,6 @@ LEFT OUTER JOIN cl_j_client_user cjcu ON cjcu.id_user = bce.recipient_id
 INNER JOIN cl_clients cc ON cc.id = cjcu.id_client  AND cc.id_space = bce.id_space
 	SET bce.responsible_id = cc.id
 WHERE bce.responsible_id NOT IN (SELECT cc.id FROM cl_clients cc);
-
--- on insert des comptes clients 'bidons' pour pourvoir poser des contraintes de clés (ici bk_calendar_entry#responsible_id -> cl_clients#id)
-INSERT INTO platform_manager.cl_clients (id,id_space,name,contact_name)
-	VALUES (8,8,'-- --','-- --');
-INSERT INTO platform_manager.cl_clients (id_space,name,contact_name)
-	VALUES (40,'-- --','-- --');
-INSERT INTO platform_manager.cl_clients (id_space,name,contact_name)
-	VALUES (25,'-- --','-- --');
 
 DELETE FROM bk_calendar_entry WHERE responsible_id = 0 AND id_space = 6; 
 
@@ -796,6 +798,8 @@ DELETE FROM bk_calendar_entry bce
 	WHERE bce.resource_id IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 
 DELETE FROM bk_access ba WHERE ba.id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
+
+SELECT * FROM bk_access ba WHERE ba.id_resource NOT IN (SELECT id FROM re_info);
 
 DELETE FROM bk_restrictions br WHERE br.id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 

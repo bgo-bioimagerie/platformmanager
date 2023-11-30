@@ -199,8 +199,6 @@ ALTER TABLE se_purchase ADD CONSTRAINT se_purchase_FK FOREIGN KEY (id_space) REF
 
 ALTER TABLE se_purchase_item ADD CONSTRAINT se_purchase_item_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
 
-ALTER TABLE se_resaassay ADD CONSTRAINT se_resaassay_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
-
 ALTER TABLE se_services ADD CONSTRAINT se_services_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
 
 ALTER TABLE se_task ADD CONSTRAINT se_task_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
@@ -214,8 +212,6 @@ ALTER TABLE se_visa ADD CONSTRAINT se_visa_FK FOREIGN KEY (id_space) REFERENCES 
 ALTER TABLE stock_cabinets ADD CONSTRAINT stock_cabinets_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
 
 ALTER TABLE stock_shelf ADD CONSTRAINT stock_shelf_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
-
-ALTER TABLE users_info ADD CONSTRAINT users_info_FK FOREIGN KEY (id_space) REFERENCES core_spaces(id);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%% CONTRAINTES SUR core_users.id
 
@@ -248,8 +244,6 @@ ALTER TABLE platform_manager.dc_documents ADD CONSTRAINT dc_documents_FK_1 FOREI
 ALTER TABLE platform_manager.ec_convention ADD CONSTRAINT ec_convention_FK_1 FOREIGN KEY (id_user) REFERENCES platform_manager.core_users(id);
 
 ALTER TABLE platform_manager.ec_j_user_responsible ADD CONSTRAINT ec_j_user_responsible_FK FOREIGN KEY (id_user) REFERENCES platform_manager.core_users(id);
-
-ALTER TABLE platform_manager.ec_j_user_responsible ADD CONSTRAINT ec_j_user_responsible_FK_1 FOREIGN KEY (id_resp) REFERENCES platform_manager.core_users(id);
 
 ALTER TABLE platform_manager.ec_users ADD CONSTRAINT ec_users_FK FOREIGN KEY (id) REFERENCES platform_manager.core_users(id);
 
@@ -285,6 +279,8 @@ ALTER TABLE platform_manager.users_info ADD CONSTRAINT users_info_FK FOREIGN KEY
 
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%% CONTRAINTES SUR cl_clients.id (voir issue#500 sur github )
+
+ALTER TABLE platform_manager.ec_j_user_responsible ADD CONSTRAINT ec_j_user_responsible_FK_1 FOREIGN KEY (id_resp) REFERENCES platform_manager.cl_clients(id);
 
 ALTER TABLE platform_manager.cl_j_client_user ADD CONSTRAINT cl_j_client_user_FK_2 FOREIGN KEY (id_client) REFERENCES platform_manager.cl_clients(id);
 
