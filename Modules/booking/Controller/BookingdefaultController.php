@@ -321,7 +321,7 @@ class BookingdefaultController extends BookingabstractController
         }
 
         $use_package = $this->request->getParameterNoException("use_package");
-        $package_id = 0;
+        $package_id = NULL;
         if ($use_package == "yes") {
             $package_id = $this->request->getParameter("package_id");
             $modelPackage = new BkPackage();
