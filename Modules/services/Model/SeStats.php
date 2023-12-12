@@ -694,16 +694,16 @@ class SeStats extends Model
 
             if ($pricingInfo["type"] == 1) {
                 if ($onTime) {
-                    $numberIndustryProjectInDelay++;
-                } else {
-                    $numberIndustryProjectOutDelay++;
-                }
-            } else {
-                if ($onTime) {
                     $numberAcademicProjectInDelay++;
                 } else {
                     $numberAcademicProjectOutDelay++;
                 }
+            } else {
+                if ($onTime) {
+                    $numberIndustryProjectInDelay++;
+                } else {
+                    $numberIndustryProjectOutDelay++;
+                }                
             }
         }
 
@@ -743,10 +743,11 @@ class SeStats extends Model
 
     public function computeOriginStats($id_space, $periodStart, $periodEnd)
     {
+        $unknown = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 1);
         $academique = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 2);
         $private = $this->computeSingleOriginStats($id_space, $periodStart, $periodEnd, 3);
 
-        return array("academique" => $academique, "private" => $private);
+        return array("academique" => $academique, "private" => $private, "unknown" => $unknown);
     }
 
     public function computeSingleOriginStats($id_space, $periodStart, $periodEnd, $academic_private)
@@ -1401,21 +1402,26 @@ class SeStats extends Model
         $curentLine = 1;
         $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, ServicesTranslator::Academique($lang));
         $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, ServicesTranslator::Industry($lang));
+        $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, ServicesTranslator::Old_Project($lang));
 
         $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
         $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+        $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);        
 
         $acc = $statsOrigins['academique'];
         $private = $statsOrigins['private'];
+        $unknown = $statsOrigins['unknown'];
         for ($i = 0; $i < count($acc); $i++) {
             $curentLine++;
             $spreadsheet->getActiveSheet()->SetCellValue('A' . $curentLine, $acc[$i]['origin']);
             $spreadsheet->getActiveSheet()->SetCellValue('B' . $curentLine, $acc[$i]['count']);
             $spreadsheet->getActiveSheet()->SetCellValue('C' . $curentLine, $private[$i]['count']);
+            $spreadsheet->getActiveSheet()->SetCellValue('D' . $curentLine, $unknown[$i]['count']);
 
             $spreadsheet->getActiveSheet()->getStyle('A' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('B' . $curentLine)->applyFromArray($styleBorderedCell);
             $spreadsheet->getActiveSheet()->getStyle('C' . $curentLine)->applyFromArray($styleBorderedCell);
+            $spreadsheet->getActiveSheet()->getStyle('D' . $curentLine)->applyFromArray($styleBorderedCell);
         }
 
         $spreadsheet->getActiveSheet()->insertNewRowBefore(1, 1);
