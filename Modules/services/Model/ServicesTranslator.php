@@ -424,6 +424,14 @@ class ServicesTranslator
         return "Industry";
     }
 
+    public static function Old_Project($lang)
+    {
+        if ($lang == "fr") {
+            return "Projet Ancien";
+        }
+        return "Old Project";
+    }
+
     public static function Time_limite($lang)
     {
         if ($lang == "fr") {
