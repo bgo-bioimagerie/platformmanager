@@ -17,9 +17,12 @@ require_once 'Modules/services/Model/SeProject.php';
 require_once 'Modules/services/Model/SePrice.php';
 require_once 'Modules/services/Model/ServicesInvoice.php';
 
-
-
 require_once 'Modules/clients/Model/ClientsTranslator.php';
+
+use Fp\Callable as F;
+use Fp\Collection as Fp;
+use Fp\Collections\Map;
+use Fp\Functional\Option\Option;
 
 
 /**
@@ -149,26 +152,6 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
             "formAddName" => $formAddName,
             "data" => ['item' => $item, 'invoice' => $invoice]
         ));
-    }
-
-    protected function unparseContent($id_space, $id_item)
-    {
-        $modelServices = new SeService();
-        $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($id_space, $id_item);
-
-        $contentArray = explode(";", $item["content"]);
-        $contentList = array();
-        foreach ($contentArray as $content) {
-            $data = explode("=", $content);
-            if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
-            }
-            if (count($data) > 3) {
-                $contentList[] = array(($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN) . " " . $data[3], $data[1], $data[2]);
-            }
-        }
-        return $contentList;
     }
 
     public function deleteAction($id_space, $id_invoice)
@@ -345,35 +328,44 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         return $id_resp;
     }
 
-    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
+    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang): string
     {
-        $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
+        $table = '<table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
                     <tr>
-                        <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
-                        <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
+                        <th style="width: 52%">' . InvoicesTranslator::Designation($lang) . '</th>
+                        <th style="width: 14%">' . InvoicesTranslator::Quantity($lang) . '</th>
+                        <th style="width: 17%">' . InvoicesTranslator::UnitPrice($lang) . '</th>
+                        <th style="width: 17%">' . InvoicesTranslator::Price_HT($lang) . '</th>
                     </tr>
-                </table>
-        ";
+                </table>';
 
-        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($id_space, $id_item);
+        $table .= '<table cellspacing="0" style="width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;">';
+        $groupedLines = self::mkInvoiceLines($id_space, $id_item);
         $total = 0;
-        foreach ($content as $d) {
-            $rawQuantity = floatval($d[1]);
-            $rawUnitPrice = floatval($d[2]);
-            $name = $d[0];
-            $formattedQuantity = number_format($rawQuantity, 2, ',', ' ');
-            $formattedUnitPrice = number_format($rawUnitPrice, 2, ',', ' ') . "&euro;";
+        foreach ($groupedLines as $lg) {
+            $table .= '<tr>';
 
-            $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $name . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . $formattedQuantity . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $formattedUnitPrice . " </td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($rawQuantity * $rawUnitPrice, 2, ',', ' ') . " &euro;</td>";
-            $table .= "</tr>";
-            $total += $rawQuantity * $rawUnitPrice;
+            $table .= '<td style="width: 52%; text-align: left; border: solid 1px black;"><div>' . $lg->name . "</div>";
+            foreach ($lg->lines as $l)
+                $table .= '<div style="margin-left: 5%; font-size: 8pt;">' . $l->name . "</div>";
+            $table .= '</td>';
+
+            $table .= '<td style="width: 14%; border: solid 1px black; text-align: unset;"><div></div>';
+            foreach ($lg->lines as $l)
+                $table .= '<div style="font-size: 8pt; width: 100%; text-align: center;">' . $l->formattedQuantity . "</div>";
+            $table .= '</td>';
+
+            $table .= '<td style="width: 17%; border: solid 1px black; text-align: unset;"><div></div>';
+            foreach ($lg->lines as $l)
+                $table .= '<div style="font-size: 8pt; width: 100%; text-align: center; ">' . $l->formattedUnitPrice . "</div>";
+            $table .= '</td>';
+
+            $table .= '<td style="width: 17%; text-align: right; border: solid 1px black; vertical-align: middle;">';
+            $table .= '<span>' . $lg->formattedTotal . "</span>";
+            $table .= '</td>';
+
+            $table .= '</tr>';
+            $total += $lg->total;
         }
 
         $discount = floatval($invoice["discount"]);
@@ -395,4 +387,81 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $resp = $clientInfos["contact_name"];
         return $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
+
+    /**
+     * @param int $id_space
+     * @param int $id_item
+     * @return array<InvoiceLineGroup>
+     */
+    protected static function mkInvoiceLines(int $id_space, int $id_item): array
+    {
+        $modelItem = new InInvoiceItem();
+        $modelService = new SeService();
+
+        $contentArray = explode(";", $modelItem->getItem($id_space, $id_item)["content"]);
+
+        $data = Fp\filterMap($contentArray
+                           , fn($content) => substr_count($content, "=") > 2
+                               ? Option::some(explode("=", $content))
+                               : Option::none());
+
+        $groupedLines = Fp\groupMap($data
+                                  , fn($d) => $d[0]
+                                  , self::mkInvoiceLine(...));
+
+        return Fp\mapKV($groupedLines, fn($id, $lines) =>
+            new InvoiceLineGroup($id, $lines, $modelService->getItemName($id_space, $id, true) ?? Constants::UNKNOWN));
+    }
+
+    /**
+     * @param array<string> $line
+     * @return InvoiceLine
+     */
+    private static function mkInvoiceLine(array $line): InvoiceLine
+    {
+        return new InvoiceLine(count($line) > 3 ? " " . $line[3] : ""
+                             , $line[2]
+                             , $line[1]);
+    }
 }
+
+
+
+
+final class InvoiceLineGroup {
+    public readonly float $total;
+    public readonly string $formattedTotal;
+
+    public function __construct(public readonly int $id,
+                                /** @var array<InvoiceLine> */
+                                public readonly array $lines,
+                                public readonly string $name)
+    {
+        $this->total = Fp\fold(0.0, $lines)(fn($acc, $l) => $acc + $l->total);
+        $this->formattedTotal = formatNum($this->total, " &euro;");
+    }
+
+
+}
+
+final class InvoiceLine {
+    public readonly float $total;
+    public readonly string $formattedQuantity;
+    public readonly string $formattedUnitPrice;
+    public readonly string $formattedTotal;
+
+    public function __construct(public readonly string $name
+                              , public readonly float $unitPrice
+                              , public readonly float $quantity){
+        $this->total = $quantity * $unitPrice;
+        $this->formattedQuantity = formatNum($quantity);
+        $this->formattedUnitPrice = formatNum($unitPrice, " &euro;");
+        $this->formattedTotal = formatNum($this->total, " &euro;");
+    }
+
+}
+
+ function formatNum(float $quantity, string $suffix = ""): string
+ {
+     return number_format($quantity, 2, ',', ' ') . $suffix;
+ }
