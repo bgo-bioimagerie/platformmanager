@@ -1,5 +1,5 @@
-#FROM php:7.3-apache
-FROM php:8.0.7-apache
+
+FROM php:8.1-apache
 
 LABEL author="GenOuest <support@genouest.org>" \
       description="Image for platform manager processes" \
