@@ -178,23 +178,6 @@ class ServicesinvoiceorderController extends InvoiceAbstractController
         ]);
     }
 
-    protected function unparseContent($id_space, $id_item)
-    {
-        $modelServices = new SeService();
-        $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($id_space, $id_item);
-
-        $contentArray = explode(";", $item["content"]);
-        $contentList = array();
-        foreach ($contentArray as $content) {
-            $data = explode("=", $content);
-            if (count($data) == 3) {
-                $contentList[] = array($modelServices->getItemName($id_space, $data[0], true) ?? Constants::UNKNOWN, $data[1], $data[2]);
-            }
-        }
-        return $contentList;
-    }
-
     public function editForm($id_item, $id_space, $id_invoice, $lang)
     {
         $itemIds = array();
@@ -273,50 +256,5 @@ class ServicesinvoiceorderController extends InvoiceAbstractController
         }
 
         return $details;
-    }
-
-    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
-    {
-        $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
-                    <tr>
-                        <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
-                        <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
-                    </tr>
-                </table>
-        ";
-
-
-        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($id_space, $id_item);
-        $total = 0;
-        foreach ($content as $d) {
-            $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d[1]), 2, ',', ' ') . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[2]), 2, ',', ' ') . " &euro;</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d[1] * $d[2]), 2, ',', ' ') . " &euro;</td>";
-            $table .= "</tr>";
-            $total += floatval($d[1]) * floatval($d[2]);
-        }
-        $discount = floatval($invoice["discount"]);
-        if ($discount>0) {
-            $total = (1-$discount/100)*$total;
-            $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "</tr>";
-        }
-        $table .= "</table>";
-
-        $modelClient = new ClClient();
-        $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
-        $resp = $clientInfos["contact_name"];
-        $this->generatePDF($id_space, $invoice["id"], $invoice["date_generated"], $unit, $resp, $adress, $table, $total, clientInfos: $clientInfos, lang: $lang);
     }
 }

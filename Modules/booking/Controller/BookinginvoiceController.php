@@ -25,6 +25,9 @@ require_once 'Modules/booking/Model/BookingTranslator.php';
 require_once 'Modules/clients/Model/ClClient.php';
 require_once 'Modules/clients/Model/ClientsTranslator.php';
 
+use Fp\Callable as F;
+use Fp\Collection as Fp;
+use Fp\Functional\Option\Option;
 
 /**
  *
@@ -90,11 +93,11 @@ class BookinginvoiceController extends InvoiceAbstractController
         $id_items = $modelInvoiceItem->getInvoiceItems($id_space, $id_invoice);
 
         // generate pdf
-        if ($pdf == 1) {
-            return $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang);
-        }
-        if ($pdf == 2) {
-            return $this->generatePDFInvoiceDetails($id_space, $invoice, $id_items[0]["id"], $lang);
+        if ($pdf != 0) {
+            $details = $pdf == 2 ? $this->detailsTable($id_space, $invoice["id"], $lang) : "";
+
+            $this->generatePDFInvoice($id_space, $invoice, $id_items[0]["id"], $lang, $details);
+            return;
         }
 
         // unparse details
@@ -426,115 +429,47 @@ class BookinginvoiceController extends InvoiceAbstractController
         ]);
     }
 
-    protected function invoiceTable($id_space, $invoice, $id_item, $lang)
-    {
-        $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
-                    <tr>
-                        <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
-                        <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
-                    </tr>
-                </table>
-        ";
-
-        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-        $content = $this->unparseContent($id_space, $id_item, $lang);
-        $total = 0;
-        foreach ($content as $d) {
-            if ($d[2] > 0) {
-                $table .= "<tr>";
-                $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d[0] . "</td>";
-                $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format($d[1], 2, ',', ' ') . "</td>";
-                $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[2], 2, ',', ' ') . " &euro;</td>";
-                $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format($d[1] * $d[2], 2, ',', ' ') . " &euro;</td>";
-                $table .= "</tr>";
-                $total += $d[1] * $d[2];
-            }
-        }
-        $discount = floatval($invoice["discount"]);
-        if ($discount > 0) {
-            $total = (1 - $discount / 100) * $total;
-            $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "</tr>";
-        }
-        $table .= "</table>";
-
-        return array("table" => $table, "total" => $total);
-    }
-
-    protected function generatePDFInvoiceDetails($id_space, $invoice, $id_item, $lang)
-    {
-        $tabledata = $this->invoiceTable($id_space, $invoice, $id_item, $lang);
-        $table = $tabledata["table"];
-        $total = $tabledata["total"];
-        $details = $this->detailsTable($id_space, $invoice["id"], $lang);
-
-        $modelClient = new ClClient();
-        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
-        $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $resp = $clientInfos["contact_name"];
-        $useTTC = true;
-
-        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, $details, $clientInfos, lang: $lang);
-    }
-
-    protected function generatePDFInvoice($id_space, $invoice, $id_item, $lang)
-    {
-        $tabledata = $this->invoiceTable($id_space, $invoice, $id_item, $lang);
-        $table = $tabledata["table"];
-        $total = $tabledata["total"];
-
-        $modelClient = new ClClient();
-        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
-        $unit = "";
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $resp = $clientInfos["contact_name"];
-
-        $useTTC = true;
-        return $this->generatePDF($id_space, $invoice["id"], CoreTranslator::dateFromEn($invoice["date_generated"], $lang), $unit, $resp, $adress, $table, $total, $useTTC, clientInfos: $clientInfos, lang: $lang);
-    }
-
-    protected function unparseContent($id_space, $id_item, $lang)
-    {
+    protected final function mkInvoiceEntries(int $id_space, int $id_item, string $lang): array {
         $modelResources = new ResourceInfo();
         $modelPackage = new BkPackage();
+        $modelItem = new InInvoiceItem();
 
-        $modelInvoiceItem = new InInvoiceItem();
-        $item = $modelInvoiceItem->getItem($id_space, $id_item);
+        $contentArray = explode(";", $modelItem->getItem($id_space, $id_item)["content"]);
 
-        $contentArray = explode(";", $item["content"]);
-        $contentList = array();
-        foreach ($contentArray as $content) {
-            $data = explode("=", $content);
-            if (count($data) == 3) {
-                $name = "";
-                $idArray = explode("_", $data[0]);
-                if (count($idArray) == 2) {
-                    $idRes = $idArray[0];
-                    $idDay = $idArray[1];
-                    $name = $modelResources->getName($id_space, $idRes);
-                    if ($idDay == "day") {
-                        $name .= " " . BookinginvoiceTranslator::Day($lang);
-                    } elseif ($idDay == "night") {
-                        $name .= " " . BookinginvoiceTranslator::night($lang);
-                    } elseif ($idDay == "we") {
-                        $name .= " " . BookinginvoiceTranslator::WE($lang);
-                    }
-                } elseif (count($idArray) == 3) {
-                    $name = $modelResources->getName($id_space, $idArray[0]);
-                    $name .= " " . $modelPackage->getName($id_space, $idArray[2], include_deleted:true);
-                }
+        $data = Fp\map(Fp\filterMap($contentArray
+                                  , fn($content) => substr_count($content, "=") > 1
+                                          ? Option::some(explode("=", $content))
+                                          : Option::none())
+                      , fn ($arr) => [...explode("_", $arr[0]), ...Fp\tail($arr)]);
 
-                $contentList[] = array($name, $data[1], $data[2]);
-            }
-        }
-        return $contentList;
+        $groupedLines = Fp\groupMap($data
+                                  , fn($d) => $d[0]
+                                  , F\partial(self::mkInvoiceLine(...), $modelPackage, $lang, $id_space));
+
+        return Fp\mapKV($groupedLines, fn($id, $lines) =>
+            new InvoiceEntry($id, $modelResources->getName($id_space, $id) ?? Constants::UNKNOWN, $lines));
+    }
+
+    /**
+     * @param BkPackage $modelPackage
+     * @param string $lang
+     * @param int $id_space
+     * @param array<string> $line
+     * @return InvoiceLine
+     */
+    private static function mkInvoiceLine(BkPackage $modelPackage, string $lang, int $id_space, array $line): InvoiceLine
+    {
+        $name = count($line) > 4
+            ? $modelPackage->getName($id_space, $line[2], include_deleted: true)
+            : match ($line[1]) {
+                'day' => BookinginvoiceTranslator::Day($lang),
+                'night' => BookinginvoiceTranslator::night($lang),
+                'we' => BookinginvoiceTranslator::WE($lang)
+            };
+
+        [ $unitPrice, $quantity, ] = Fp\reverse($line);
+
+        return new InvoiceLine($name, $unitPrice, $quantity);
     }
 
     protected function detailsTable($id_space, $id_invoice, $lang)

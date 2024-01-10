@@ -25,6 +25,11 @@ require_once 'Modules/clients/Model/ClientsTranslator.php';
 
 require_once 'Modules/core/Model/CoreVirtual.php';
 
+use Fp\Callable as F;
+use Fp\Cast as Fc;
+use Fp\Collection as Fp;
+use Fp\Evidence as Fv;
+use Fp\Functional\Option\Option;
 
 /**
  *
@@ -207,24 +212,46 @@ class InvoiceglobalController extends InvoiceAbstractController
         $invoice = $modelInvoice->get($id_space, $id_invoice);
 
         $modelItem = new InInvoiceItem();
-        $invoiceItem = $modelItem->getForInvoice($id_space, $id_invoice);
+        $id_item = $modelItem->getInvoiceItems($id_space, $id_invoice)[0]["id"];
 
-        $modelClient = new ClClient();
+        $detailsTable = $details > 0 ? $this->generateDetailsTable($id_space, $id_invoice) : "";
 
-        // $number = $invoice["number"];
-        $date = $invoice["date_generated"];
-        $unit = "";
-        $clientInfos = $modelClient->get($id_space, $invoice["id_responsible"]);
-        $resp = $clientInfos["contact_name"];
-        $adress = $modelClient->getAddressInvoice($id_space, $invoice["id_responsible"]);
-        $content = json_decode($invoiceItem["content"], true);
-        $table = $this->invoiceTable($content, $invoice, $lang);
-        $detailsTable = "";
-        if ($details > 0) {
-            $detailsTable = $this->generateDetailsTable($id_space, $id_invoice);
-        }
-        $this->generatePDF($id_space, $id_invoice, $date, $unit, $resp, $adress, $table["table"], $table["total"], true, $detailsTable, $clientInfos, lang: $lang);
+        $this->generatePDFInvoice($id_space, $invoice, $id_item, $lang, $detailsTable);
     }
+
+    protected final function mkInvoiceEntries(int $id_space, int $id_item, string $lang): array
+    {
+        $modelResources = new ResourceInfo();
+        $modelItem = new InInvoiceItem();
+        $invoiceItem = $modelItem->getItem($id_space, $id_item);
+
+        $data = Fp\flatMap(json_decode($invoiceItem["content"], true)
+                         , fn ($js) => $js["data"]["count"]);
+
+        $groupedLines = Fp\groupMap($data
+                                  , fn($d) => $d["resource"]
+                                  , fn ($d) => new InvoiceLine($d["label"], $d["unitprice"], $d["quantity"]));
+
+        return Fp\mapKV($groupedLines, F\partial(self::mkInvoiceEntry(...), $modelResources, $id_space));
+    }
+
+    /**
+     * @param ResourceInfo $modelResources
+     * @param int $id_space
+     * @param int $id
+     * @param array<InvoiceLine> $lines
+     * @return InvoiceEntry
+     */
+    private static function mkInvoiceEntry(ResourceInfo $modelResources, int $id_space, int $id, array $lines): InvoiceEntry
+    {
+        $resName = $modelResources->getName($id_space, $id) ?? Constants::UNKNOWN;
+
+        $newLines = Fp\map($lines, fn ($line) =>
+            str_starts_with($line->name, $resName) ? $line->withName(str_replace($resName, "", $line->name)) : $line);
+
+        return new InvoiceEntry($id, $resName, $newLines);
+    }
+
 
     public function editqueryAction($id_space, $id_invoice)
     {
@@ -276,51 +303,6 @@ class InvoiceglobalController extends InvoiceAbstractController
     // ////////////////////////////////////////////////////////////////////// //
     //                      internal methods
     // ////////////////////////////////////////////////////////////////////// //
-    protected function invoiceTable($content, $invoice, $lang)
-    {
-        $table = "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;\">
-                    <tr>
-                        <th style=\"width: 52%\">" . InvoicesTranslator::Designation($lang) . "</th>
-                        <th style=\"width: 14%\">" . InvoicesTranslator::Quantity($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::UnitPrice($lang) . "</th>
-                        <th style=\"width: 17%\">" . InvoicesTranslator::Price_HT($lang) . "</th>
-                    </tr>
-                </table>
-        ";
-
-        $table .= "<table cellspacing=\"0\" style=\"width: 100%; border: solid 1px black; border-collapse: collapse; background: #F7F7F7; text-align: center; font-size: 10pt;\">";
-
-        $total = 0;
-        // $modules = Configuration::get("modules");
-        foreach ($content as $c) {
-            foreach ($c["data"]["count"] as $d) {
-                if (floatval($d["unitprice"]) > 0) {
-                    $table .= "<tr>";
-                    $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . $d["label"] . "</td>";
-                    $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . number_format(floatval($d["quantity"]), 2, ',', ' ') . "</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
-                    $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . number_format(floatval($d["quantity"]) * floatval($d["unitprice"]), 2, ',', ' ') . " &euro;</td>";
-                    $table .= "</tr>";
-                    $total += floatval($d["quantity"]) * floatval($d["unitprice"]);
-                }
-            }
-        }
-
-        $discount = floatval($invoice["discount"]);
-        if ($discount > 0) {
-            $total = (1 - $discount / 100) * $total;
-            $table .= "<tr>";
-            $table .= "<td style=\"width: 52%; text-align: left; border: solid 1px black;\">" . InvoicesTranslator::Discount($lang) . "</td>";
-            $table .= "<td style=\"width: 14%; border: solid 1px black;\">" . 1 . "</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "<td style=\"width: 17%; text-align: right; border: solid 1px black;\">" . $invoice["discount"] . " %</td>";
-            $table .= "</tr>";
-        }
-        $table .= "</table>";
-
-        return array("table" => $table, "total" => $total);
-    }
-
     protected function createAllForm($id_space, $lang)
     {
         $form = new Form($this->request, "GlobalInvoiceAllForm");
