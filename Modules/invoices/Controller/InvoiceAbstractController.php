@@ -183,10 +183,10 @@ abstract class InvoiceAbstractController extends InvoicesController
     {
          $table = '<table cellspacing="0" style="width: 100%; border: solid 1px black; background: #E7E7E7; text-align: center; font-size: 10pt;">
                     <tr>
-                        <th style="width: 52%">' . InvoicesTranslator::Designation($lang) . '</th>
+                        <th style="width: 45%">' . InvoicesTranslator::Designation($lang) . '</th>
                         <th style="width: 14%">' . InvoicesTranslator::Quantity($lang) . '</th>
                         <th style="width: 17%">' . InvoicesTranslator::UnitPrice($lang) . '</th>
-                        <th style="width: 17%">' . InvoicesTranslator::Price_HT($lang) . '</th>
+                        <th style="width: 24%">' . InvoicesTranslator::Price_HT($lang) . '</th>
                     </tr>
                 </table>';
 
@@ -195,9 +195,9 @@ abstract class InvoiceAbstractController extends InvoicesController
         foreach ($content->entries as $entry) {
             $table .= '<tr>';
 
-            $table .= '<td style="width: 52%; text-align: left; border: solid 1px black;"><div>' . $entry->name . "</div>";
+            $table .= '<td style="width: 45%; text-align: left; border: solid 1px black;"><div style="margin-left: 1%;">' . $entry->name . "</div>";
             foreach ($entry->lines as $l)
-                $table .= '<div style="margin-left: 5%; font-size: 8pt;">' . $l->name . "</div>";
+                $table .= '<div style="margin-left: 5%; font-size: 8pt;">&nbsp;-&nbsp;' . $l->name . "</div>";
             $table .= '</td>';
 
             $table .= '<td style="width: 14%; border: solid 1px black; text-align: unset;"><div></div>';
@@ -210,8 +210,14 @@ abstract class InvoiceAbstractController extends InvoicesController
                 $table .= '<div style="font-size: 8pt; width: 100%; text-align: center; ">' . $l->formattedUnitPrice . "</div>";
             $table .= '</td>';
 
-            $table .= '<td style="width: 17%; border: solid 1px black; text-align: right; vertical-align: middle;">';
-            $table .= '<span>' . $entry->formattedTotal . "</span>";
+            $table .= '<td style="width: 24%; border: solid 1px black; text-align: unset;"><div></div>';
+            $table .= '<table cellspacing="0" style="width: 100%;"><tr>';
+            $table .= '<td style="width: 50%; border-right: dashed .5px grey; ">';
+            foreach ($entry->lines as $l)
+                $table .= '<div style="font-size: 8pt; text-align: center;">' . $l->formattedTotal . "</div>";
+            $table .= '</td>';
+            $table .= '<td style="width: 50%; vertical-align: middle;"><div style="text-align: right;">' . $entry->formattedTotal . "</div></td>";
+            $table .= '</tr></table>';
             $table .= '</td>';
 
             $table .= '</tr>';
