@@ -94,12 +94,12 @@ if (!$skipConstraints) {
 
     $logger->info("Running sql pre_constraints script");
 
-    $pre_constraints = file_get_contents("db/pre_contraintes.sql");
+    $pre_constraints = file_get_contents("db/pre_constraints.sql");
     $pdo->exec($pre_constraints);
 
     $logger->info("Running sql constraints script");
 
-    $constraints = file_get_contents("db/contraintes.sql");
+    $constraints = file_get_contents("db/constraints.sql");
     $pdo->exec($constraints);
 
     $logger->info("Done running sql constraints scripts !");
