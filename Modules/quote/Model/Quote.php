@@ -100,7 +100,7 @@ class Quote extends Model
         }
         $date_last_modified = date('Y-m-d');
         if ($id_client == "") {
-            $id_client = 0;
+            $id_client = null;
         }
         if (!$id) {
             $sql = 'INSERT INTO qo_quotes (id_space, recipient, recipient_email, address, id_belonging, id_user, id_client, date_open, date_last_modified) VALUES (?,?,?,?,?,?,?,?,?)';
