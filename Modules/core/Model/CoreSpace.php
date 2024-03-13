@@ -229,6 +229,15 @@ class CoreSpace extends Model
         ];
     }
 
+    public function installDefault()
+    {
+        $sql = "INSERT INTO core_spaces (name, shortname, description) VALUES (?,?,?)";
+
+        $this->runRequest($sql, array("pfm-init-space", "pfm-init-space", "Espace par défaut de PFM"));
+
+        return $this->getDatabase()->lastInsertId();
+    }
+
     public function getForList()
     {
         $sql = "SELECT * FROM core_spaces ORDER BY name ASC";

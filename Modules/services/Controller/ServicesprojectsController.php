@@ -853,7 +853,7 @@ class ServicesprojectsController extends ServicesController
         $comment = $this->request->getParameter("formservicecomment");
 
         $modelProject = new SeProject();
-        $id = $modelProject->setEntry($id_space, $id_entry, $id_project, $id_service, $date, $quantity, $comment, 0);
+        $id = $modelProject->setEntry($id_space, $id_entry, $id_project, $id_service, $date, $quantity, $comment);
 
         return $this->redirect("servicesprojectfollowup/" . $id_space . "/" . $id_project, [], ['entry' => ['id' => $id]]);
     }
@@ -900,10 +900,9 @@ class ServicesprojectsController extends ServicesController
                 CoreTranslator::dateToEn($this->request->getParameterNoException("date_close"), $lang),
                 $this->request->getParameter("new_team"),
                 $this->request->getParameter("new_project"),
-                CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang)
-            );
-        $modelProject->setOrigin($id_space, $id_project, $this->request->getParameter("id_origin"));
-        $modelProject->setInCharge($id_space, $id_project, $pic);
+                CoreTranslator::dateToEn($this->request->getParameter("time_limit"), $lang),
+                $this->request->getParameter("id_origin"),
+                $pic);
 
         // add project users
         if ($this->request->getParameter("users") && !empty($this->request->getParameter("users"))) {

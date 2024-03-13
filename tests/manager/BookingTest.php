@@ -196,16 +196,17 @@ class BookingTest extends BookingBaseTest {
             "id" => 0
          ]); 
         $c = new ResourcesinfoController($req, $space);
-        $data = $c->runAction('resources', 'index', ['id_space' =>$space['id']]);
-        $resources = $data['resources'];
+        $re_data = $c->runAction('resources', 'index', ['id_space' =>$space['id']]);
+        $resources = $re_data['resources'];
         $resource = $resources[0];
         $req = $this->request([
             "path" => "clclients/".$space['id'],
             "id" => 0
          ]); 
         $c = new ClientslistController($req, $space);
-        $data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
-        $clients = $data['clients'];
+        $cl_data = $c->runAction('clients', 'index', ['id_space' => $space['id']]);
+        $clients = $cl_data['clients'];
+        $client = $clients[0];
 
         $r = new ReArea();
         $areas = $r->getForSpace($space['id']);
@@ -214,15 +215,15 @@ class BookingTest extends BookingBaseTest {
             'path' => 'bookingschedulingedit/'.$space['id'].'/'.$area['id']
         ]);
         $c = new BookingschedulingController($req, $space);
-        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
-        $bkScheduling = $data['bkScheduling'];
+        $bk_data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $bkScheduling = $bk_data['bkScheduling'];
         $this->assertTrue($bkScheduling['id']  == 0);
 
         // cannot book at 19h
         $this->asUser($user['login'], $space['id']);
         $canBook = true;
         try {
-            $this->book($space, $user, $clients[0], $resource, 19);
+            $this->book($space, $user, $client, $resource, 19);
         } catch(Exception) {
             $canBook = false;
         }
@@ -237,16 +238,16 @@ class BookingTest extends BookingBaseTest {
         $req = $this->request($form);
 
         $c = new BookingschedulingController($req, $space);
-        $data = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
-        $bkScheduling = $data['bkScheduling'];
+        $bk_data_1 = $c->runAction('booking', 'edit', ['id_space' => $space['id'], 'id' => $area['id']]);
+        $bkScheduling_1 = $bk_data_1['bkScheduling'];
 
-        $this->assertTrue($bkScheduling['id']  > 0);
+        $this->assertTrue($bkScheduling_1['id']  > 0);
 
         $this->asUser($user['login'], $space['id']);
         // cannot book at 19h
         $canBook = true;
         try {
-        $this->book($space, $user, $clients[0], $resource, 19);
+            $this->book($space, $user, $client, $resource, 19);
         } catch(Exception $e) {
             $canBook = false;
             Configuration::getLogger()->error('should be able to book at 19h', ['error' => $e]);
@@ -264,8 +265,8 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'day', ['id_space' => $space['id']]);
-        $this->assertTrue(!empty($data['bookings']));
+        $bk_data_2 = $c->runAction('booking', 'day', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($bk_data_2['bookings']));
 
         $req = $this->request([
             'path' => 'bookingdayarea/'.$space['id'],
@@ -274,8 +275,8 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'dayarea', ['id_space' => $space['id']]);
-        $this->assertTrue(!empty($data['bookings']));
+        $bk_data_3 = $c->runAction('booking', 'dayarea', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($bk_data_3['bookings']));
 
         $req = $this->request([
             'path' => 'bookingweek/'.$space['id'],
@@ -284,8 +285,8 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'week', ['id_space' => $space['id']]);
-        $this->assertTrue(!empty($data['bookings']));
+        $bk_data_4 = $c->runAction('booking', 'week', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($bk_data_4['bookings']));
 
         $req = $this->request([
             'path' => 'bookingweekarea/'.$space['id'],
@@ -294,8 +295,8 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'weekarea', ['id_space' => $space['id']]);
-        $this->assertTrue(!empty($data['bookings']));
+        $bk_data_5 = $c->runAction('booking', 'weekarea', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($bk_data_5['bookings']));
 
         $req = $this->request([
             'path' => 'bookingmonth/'.$space['id'],
@@ -304,8 +305,8 @@ class BookingTest extends BookingBaseTest {
             'bk_id_area' => $area['id']
         ]);
         $c = new BookingController($req, $space);
-        $data = $c->runAction('booking', 'month', ['id_space' => $space['id']]);
-        $this->assertTrue(!empty($data['bookings']));
+        $bk_data_6 = $c->runAction('booking', 'month', ['id_space' => $space['id']]);
+        $this->assertTrue(!empty($bk_data_6['bookings']));
 
 
         // Test compute

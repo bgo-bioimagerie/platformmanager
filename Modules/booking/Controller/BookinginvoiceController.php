@@ -371,8 +371,7 @@ class BookinginvoiceController extends InvoiceAbstractController
         $module = "services";
         $controller = "servicesinvoiceproject";
         $number = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_unit, $id_resp);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $_SESSION["id_user"]);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, $number, date("Y-m-d", time()), $id_resp, $_SESSION["id_user"], id_unit: $id_unit);
 
         // parse content
         $modelClient = new ClClient();

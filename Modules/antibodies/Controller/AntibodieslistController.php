@@ -285,12 +285,7 @@ class AntibodieslistController extends AntibodiesController
                 $form->getParameter("clone"),
                 $form->getParameter("lot"),
                 $form->getParameter("id_isotype"),
-                $form->getParameter("stockage")
-            );
-
-            $this->antibody->setApplicationStaining(
-                $id_space,
-                $idNew,
+                $form->getParameter("stockage"),
                 $form->getParameter("id_staining"),
                 $form->getParameter("id_application")
             );

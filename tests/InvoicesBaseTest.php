@@ -151,8 +151,8 @@ class InvoicesBaseTest extends BaseTest {
         $list = $this->listInvoices($space);
         $this->assertTrue(count($list) > $nb_invoices);
         $nb_invoices++;
-        $service_invoice_id = $list[0]['id'];
 
+        $service_invoice_id = $list[0]['id'];
         $req = $this->request([
             "path" => "invoiceedit/".$space['id'].'/'.$service_invoice_id
         ]);

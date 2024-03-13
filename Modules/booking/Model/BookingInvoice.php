@@ -87,9 +87,8 @@ class BookingInvoice extends InvoiceModel
         $controller = "Bookinginvoice";
         $date_generated = date("Y-m-d", time());
         $id_resp = intval($id_client);
-        $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', $date_generated, $id_resp, 0, $beginPeriod, $endPeriod);
+        $invoice_id = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', $date_generated, $id_resp, $id_user, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setTitle($id_space, $invoice_id, BookingTranslator::MAD($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
-        $modelInvoice->setEditedBy($id_space, $invoice_id, $id_user);
         try {
             $contentAll = $this->invoice($id_space, $beginPeriod, $endPeriod, $id_client, $invoice_id, $lang);
         } catch(Exception $e) {

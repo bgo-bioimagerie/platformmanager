@@ -179,7 +179,7 @@ class ServicesinvoiceprojectController extends InvoiceAbstractController
         $modelProject = new SeProject();
         $services = $modelProject->getServicesInvoice($id_space, $id_invoice);
         foreach ($services as $s) {
-            $modelProject->setServiceInvoice($id_space, $s["id"], 0);
+            $modelProject->setServiceInvoice($id_space, $s["id"], null);
         }
     }
 

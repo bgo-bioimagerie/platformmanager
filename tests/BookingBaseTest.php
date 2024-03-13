@@ -20,6 +20,7 @@ require_once 'Modules/resources/Controller/ResourcesinfoController.php';
 require_once 'Modules/resources/Model/ReVisa.php';
 require_once 'Modules/booking/Model/BkCalQuantities.php';
 require_once 'Modules/booking/Model/BkPrice.php';
+require_once 'Modules/booking/Model/BkColorCode.php';
 
 require_once 'Modules/clients/Model/ClPricing.php';
 
@@ -235,7 +236,7 @@ class BookingBaseTest extends BaseTest {
             "id_resource" => $resource['id'],
             "recipient_id" => $user['id'],
             "responsible_id" => $client['id'],
-            "color_type_id" => 0,
+            "color_type_id" => (new BkColorCode())->getForSpace($space['id'])[0]['id'],
             "all_day_long" => 0,
             "resa_start" => $bookDate,
             "hour_startH" => $time,

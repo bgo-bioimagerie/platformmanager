@@ -183,7 +183,7 @@ class BkCalQuantities extends BkBookingAbstractSups
      */
     public function delete($id_space, $id)
     {
-        $sql = "UPDATE bk_calquantities SET deleted=1,deleted_at=NOW(), mandatory=0 WHERE id=? AND id_space=?";
+        $sql = "UPDATE bk_calquantities SET deleted=1, deleted_at=NOW(), mandatory=0 WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

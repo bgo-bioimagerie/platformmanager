@@ -130,7 +130,7 @@ class ServicesinvoiceorderController extends InvoiceAbstractController
         // re-open orders and remove invoice number
         foreach ($details as $detail) {
             $modelOrder->reopenEntry($id_space, $detail[0]);
-            $modelOrder->setInvoiceIDByNum($id_space, $detail[0], 0);
+            $modelOrder->setInvoiceIDByNum($id_space, $detail[0], null);
         }
     }
 

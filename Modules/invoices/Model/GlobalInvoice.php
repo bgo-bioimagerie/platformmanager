@@ -53,8 +53,7 @@ class GlobalInvoice extends Model
         // create invoice in the database
         $modelInvoice = new InInvoice();
         $invoiceNumber = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
+        $id_invoice = $modelInvoice->addInvoice("invoices", "invoiceglobal", $id_space, 'in progress', date("Y-m-d", time()), $id_client, $id_user, 0, $beginPeriod, $endPeriod);
         $modelInvoice->setTitle($id_space, $id_invoice, InvoicesTranslator::Invoice($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         // get invoice content

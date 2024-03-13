@@ -150,10 +150,14 @@ class FCache extends Model
      */
     public function freeTableURL()
     {
-        $sql = "TRUNCATE TABLE cache_urls";
-        $this->runRequest($sql);
-        $sqlg = "TRUNCATE TABLE cache_urls_gets";
-        $this->runRequest($sqlg);
+        $this->runRequest("SET FOREIGN_KEY_CHECKS = 0")->execute();
+
+        if ($this->isTable("cache_urls"))
+            $this->runRequest("TRUNCATE TABLE cache_urls");
+        if ($this->isTable("cache_urls_gets"))
+            $this->runRequest("TRUNCATE TABLE cache_urls_gets");
+
+        $this->runRequest("SET FOREIGN_KEY_CHECKS = 1")->execute();
     }
 
     /**

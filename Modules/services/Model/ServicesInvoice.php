@@ -60,8 +60,7 @@ class ServicesInvoice extends InvoiceModel
         $number = $modelInvoice->getNextNumber($id_space);
         $module = "services";
         $controller = "servicesinvoiceorder";
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, $id_user);
         $modelInvoice->setTitle($id_space, $id_invoice, ServicesTranslator::services($lang).": " . CoreTranslator::dateFromEn($beginPeriod, $lang) . " => " . CoreTranslator::dateFromEn($endPeriod, $lang));
 
         $total_ht = $contentAll['total_ht'];
@@ -191,8 +190,7 @@ class ServicesInvoice extends InvoiceModel
         }
 
         $number = $modelInvoice->getNextNumber($id_space);
-        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, 0, $beginPeriod, $endPeriod);
-        $modelInvoice->setEditedBy($id_space, $id_invoice, $id_user);
+        $id_invoice = $modelInvoice->addInvoice($module, $controller, $id_space, 'in progress', date("Y-m-d", time()), $id_client, $id_user, 0, $beginPeriod, $endPeriod);
         foreach ($contentAll['servicesToInvoice'] as $s) {
             $modelProject->setServiceInvoice($id_space, $s, $id_invoice);
         }

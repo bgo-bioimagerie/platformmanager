@@ -5,6 +5,9 @@ require_once 'Modules/clients/Model/ClPricing.php';
 
 class ClClient extends Model
 {
+    /**
+     * Schéma modifié dans db/(pre)contraintes.sql
+     */
     public function __construct()
     {
         $this->tableName = "cl_clients";
@@ -129,11 +132,11 @@ class ClClient extends Model
                 "id" => 0,
                 "name" => "",
                 "contact_name" => "",
-                "address_delivery" => 0,
-                "address_invoice" => 0,
+                "address_delivery" => null,
+                "address_invoice" => null,
                 "phone" => "",
                 "email" => "",
-                "pricing" => 0,
+                "pricing" => null,
                 "invoice_send_preference" => 1
             );
         }

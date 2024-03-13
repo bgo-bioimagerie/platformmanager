@@ -47,24 +47,25 @@ class CoreDB extends Model
     /**
      * Drops all tables content
      *
-     * @param bool $drop delete tables and not just content
+     * @param bool $contentOnly delete tables and not just content
      */
-    public function dropAll($drop=false)
+    public function dropAll($contentOnly=false)
     {
         $sql = "SHOW tables";
         $tables = $this->runRequest($sql)->fetchAll();
+        $this->runRequest("SET FOREIGN_KEY_CHECKS = 0")->execute();
         foreach ($tables as $tb) {
             $table = $tb[0];
-            if ($drop) {
+            if ($contentOnly) {
+                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
+                $sql = "TRUNCATE TABLE ".$table;
+            } else {
                 Configuration::getLogger()->warning('Drop table', ["table" => $table]);
                 $sql = "DROP TABLE ".$table;
-                $this->runRequest($sql);
-            } else {
-                Configuration::getLogger()->warning('Delete table content', ["table" => $table]);
-                $sql = "DELETE FROM ".$table;
-                $this->runRequest($sql);
             }
+            $this->runRequest($sql);
         }
+        $this->runRequest("SET FOREIGN_KEY_CHECKS = 1")->execute();
     }
 
     public function isFreshInstall()
@@ -965,18 +966,22 @@ class CoreInstall extends Model
         $modelCache->freeTableURL();
         $modelCache->load();
 
+        $modelSpace = new CoreSpace();
+        $modelSpace->createTable();
+        $initSpaceId = $modelSpace->installDefault();
+
         $modelConfig = new CoreConfig();
         $modelConfig->createTable();
 
-        $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''));
-        $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg");
-        $modelConfig->initParam("home_title", "Platform-Manager");
-        $modelConfig->initParam("home_message", "Connection");
+        $modelConfig->initParam("admin_email", Configuration::get('admin_email', ''), $initSpaceId);
+        $modelConfig->initParam("logo", "Modules/core/Theme/logo.jpg", $initSpaceId);
+        $modelConfig->initParam("home_title", "Platform-Manager", $initSpaceId);
+        $modelConfig->initParam("home_message", "Connection", $initSpaceId);
 
-        $modelConfig->setParam("navbar_bg_color", "#404040");
-        $modelConfig->setParam("navbar_bg_highlight", "#333333");
-        $modelConfig->setParam("navbar_text_color", "#e3e2e4");
-        $modelConfig->setParam("navbar_text_highlight", Constants::COLOR_WHITE);
+        $modelConfig->setParam("navbar_bg_color", "#404040", $initSpaceId);
+        $modelConfig->setParam("navbar_bg_highlight", "#333333", $initSpaceId);
+        $modelConfig->setParam("navbar_text_color", "#e3e2e4", $initSpaceId);
+        $modelConfig->setParam("navbar_text_highlight", Constants::COLOR_WHITE, $initSpaceId);
 
         $modelUser = new CoreUser();
         $modelUser->createTable();
@@ -994,9 +999,6 @@ class CoreInstall extends Model
 
         $modelProject = new CoreProjects();
         $modelProject->createTable();
-
-        $modelSpace = new CoreSpace();
-        $modelSpace->createTable();
 
         $modelModules = new CoreInstalledModules();
         $modelModules->createTable();

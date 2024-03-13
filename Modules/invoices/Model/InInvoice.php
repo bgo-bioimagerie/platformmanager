@@ -126,13 +126,8 @@ class InInvoice extends Model
         //$this->runRequest($sql2, array($id, $id_space));
     }
 
-    public function setEditedBy($id_space, $id_invoice, $id_user)
-    {
-        $sql = "UPDATE in_invoice SET id_edited_by=? WHERE id=? AND id_space=? AND deleted=0";
-        $this->runRequest($sql, array($id_user, $id_invoice, $id_space));
-    }
-
-    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0)
+    public function addInvoice($module, $controller, $id_space, $number, $date_generated, $id_responsible, $edited_by,
+                               $total_ht = 0, $period_begin = null, $period_end = null, $id_project = 0, $id_unit = null)
     {
         if ($date_generated == "") {
             $date_generated = null;
@@ -143,8 +138,8 @@ class InInvoice extends Model
         if ($period_end == "") {
             $period_end = null;
         }
-        $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
-        $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, 0, $id_responsible, $total_ht, $period_begin, $period_end, $id_project));
+        $sql = "INSERT INTO in_invoice (module, controller, id_space, number, date_generated, id_unit, id_responsible, total_ht, period_begin, period_end, id_project, id_edited_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+        $this->runRequest($sql, array($module, $controller, $id_space, $number, $date_generated, $id_unit, $id_responsible, $total_ht, $period_begin, $period_end, $id_project, $edited_by));
         return $this->getDatabase()->lastInsertId();
     }
 
@@ -328,7 +323,7 @@ class InInvoice extends Model
 
     public function delete($id_space, $id)
     {
-        $sql = "UPDATE in_invoice SET deleted=1,deleted_at=NOW() WHERE id=? AND id_space=?";
+        $sql = "UPDATE in_invoice SET deleted=1, deleted_at=NOW() WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($id, $id_space));
     }
 

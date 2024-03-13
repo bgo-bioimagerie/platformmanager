@@ -174,7 +174,7 @@ class BookingdefaultController extends BookingabstractController
         $booked_by_id = $_SESSION["id_user"];
         $recipient_id = $this->request->getParameter("recipient_id");
         $last_update = date("Y-m-d H:m:i", time());
-        $color_type_id = $this->request->getParameter("color_type_id");
+        $color_type_id = $this->request->getParameterNoException("color_type_id");
         $short_description = $this->request->getParameterNoException("short_description");
         $full_description = $this->request->getParameterNoException("full_description");
         $all_day_long = intval($this->request->getParameterNoException("all_day_long"));

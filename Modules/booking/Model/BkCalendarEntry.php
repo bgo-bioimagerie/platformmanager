@@ -28,6 +28,7 @@ class BkCalendarEntry extends Model
 
     /**
      * Create the calendar entry table
+     * G.N : schéma modifié dans db/(pre)contraintes.sql
      *
      * @return PDOStatement
      */
@@ -57,10 +58,10 @@ class BkCalendarEntry extends Model
         );";
 
         $this->runRequest($sql);
-
-        $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
-        $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
-        $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
+        // G.N: déjà fait au-dessus !??
+//        $this->addColumn('bk_calendar_entry', 'period_id', 'int(11)', 0);
+//        $this->addColumn('bk_calendar_entry', 'all_day_long', 'int(1)', 0);
+//        $this->addColumn('bk_calendar_entry', 'deleted', 'int(1)', 0);
     }
 
     public function getEntriesForUserResource($id_space, $id_user, $id_resource)
@@ -271,9 +272,9 @@ class BkCalendarEntry extends Model
             "full_description" => "",
             "quantities" => "",
             "supplementaries" => "",
-            "package_id" => NULL,
+            "package_id" => null,
             "responsible_id" => $resps_id,
-            "invoice_id" => 0,
+            "invoice_id" => null,
             "reason" => self::$REASON_BOOKING,
             "all_day_long" => 0);
     }
@@ -376,7 +377,7 @@ class BkCalendarEntry extends Model
                 AND start_time < :end
                 AND resource_id=:resource
                 AND responsible_id=:resp
-                AND invoice_id=0
+                AND invoice_id IS NULL 
                 AND deleted=0
                 AND id_space=:id_space 
                 ORDER BY id';
@@ -790,7 +791,7 @@ class BkCalendarEntry extends Model
                                 AND resource_id IN (SELECT id FROM re_info WHERE id_space= :space)
                                 AND deleted=0
                                 AND id_space=:space
-                                AND invoice_id=0';
+                                AND invoice_id IS NULL';
         $req = $this->runRequest($sql, $q);
 
         if ($req->rowCount() > 0) {

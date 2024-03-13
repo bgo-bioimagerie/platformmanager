@@ -40,8 +40,8 @@ class Anticorps extends Model
                  `lot` varchar(30) NOT NULL DEFAULT '',
                 `id_isotype` int(11) NOT NULL DEFAULT '0',
                 `stockage` varchar(30) NOT NULL DEFAULT '',
-                `id_staining` FLOAT(11) NOT NULL DEFAULT 1,
-                `id_application` FLOAT(11) NOT NULL DEFAULT 1,
+                `id_staining` FLOAT(11) NOT NULL,
+                `id_application` FLOAT(11) NOT NULL,
                 `export_calatog` int(1) NOT NULL DEFAULT 0,
                 `image_url` varchar(250) NOT NULL DEFAULT '',
                 `image_desc` varchar(250) NOT NULL DEFAULT '',
@@ -106,12 +106,6 @@ class Anticorps extends Model
     {
         $sql = "UPDATE ac_anticorps SET image_url=? WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($image_url, $id, $id_space));
-    }
-
-    public function setApplicationStaining($id_space, $id, $id_staining, $id_application)
-    {
-        $sql = "UPDATE ac_anticorps SET id_staining=?, id_application=? WHERE id=? AND id_space=?";
-        $this->runRequest($sql, array($id_staining, $id_application, $id, $id_space));
     }
 
     public function getBySpace($id_space)
@@ -179,7 +173,7 @@ class Anticorps extends Model
      * @param unknown $date_recept
      * @return string
      */
-    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    public function addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage, $id_staining, $id_application)
     {
         //$cvm = new CoreVirtual();
         $new_no_h2p2 = $no_h2p2;
@@ -192,21 +186,21 @@ class Anticorps extends Model
         }
 
         $sql = "insert into ac_anticorps(id_space, nom, no_h2p2, fournisseur, id_source, reactivity, reference, 
-                                         clone, lot, id_isotype, stockage)"
-                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                         clone, lot, id_isotype, stockage, id_staining, id_application)"
+                . " values(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $this->runRequest($sql, array($id_space, $nom, $new_no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
-            $lot, $id_isotype, $stockage));
+            $lot, $id_isotype, $stockage, $id_staining, $id_application));
 
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    public function setAntibody($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage, $id_staining, $id_application)
     {
         if ($this->isAnticorpsID($id_space, $id)) {
-            $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
+            $this->updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage, $id_staining, $id_application);
             return $id;
         } else {
-            return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage);
+            return $this->addAnticorps($id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage, $id_staining, $id_application);
         }
     }
 
@@ -221,13 +215,13 @@ class Anticorps extends Model
         return $this->getDatabase()->lastInsertId();
     }
 
-    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage)
+    public function updateAnticorps($id, $id_space, $nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone, $lot, $id_isotype, $stockage, $id_staining, $id_application)
     {
         $sql = "UPDATE ac_anticorps SET nom=?, no_h2p2=?, fournisseur=?, id_source=?, reactivity=?, reference=?, 
-                                         clone=?, lot=?, id_isotype=?, stockage=?
+                                         clone=?, lot=?, id_isotype=?, stockage=?, id_staining=?, id_application=?
                                     WHERE id=? AND id_space=?";
         $this->runRequest($sql, array($nom, $no_h2p2, $fournisseur, $id_source, $reactivity, $reference, $clone,
-            $lot, $id_isotype, $stockage, $id, $id_space));
+            $lot, $id_isotype, $stockage, $id_staining, $id_application, $id, $id_space));
     }
 
     /**

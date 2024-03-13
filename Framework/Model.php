@@ -131,6 +131,8 @@ abstract class Model
             $dsn = Configuration::get("dsn");
             $login = Configuration::get("login");
             $pwd = Configuration::get("pwd");
+            Configuration::getLogger()->debug("No connection to DB ; initializing one..."
+                                            , [ "dsn" => $dsn, "login" => $login, "pwd" => $pwd ]);
             // Create connection
             self::$bdd = new PDO($dsn, $login, $pwd, array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
             if (getenv('PFM_MODE') == 'dev' && Configuration::get('debug_sql', false)) {
@@ -466,7 +468,10 @@ abstract class Model
         foreach ($tables as $tb) {
             $table = $tb[0];
             try {
-                $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE id_space=$spaceID";
+                $columns = $pdo->query("SHOW COLUMNS FROM " . $table . " LIKE 'id_space'")->fetch();
+                $hasIdSpace = is_array($columns) && isset($columns["Field"]) && $columns["Field"] === "id_space";
+                $suffix = $hasIdSpace ? "id_space=$spaceID" : "1";
+                $sql = "CREATE OR REPLACE VIEW $spaceName.$table  AS SELECT * FROM $table WHERE " . $suffix;
                 $pdo->query($sql);
             } catch (Exception $e) {
                 Configuration::getLogger()->warning("[db] could not create view", ["error" => $e->getMessage()]);

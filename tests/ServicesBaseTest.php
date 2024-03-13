@@ -193,7 +193,7 @@ class ServicesBaseTest extends BaseTest {
 
     
     protected function createProject($space, $user, $name, $visa, $client, $client_user, $origin) {
-        Configuration::getLogger()->debug('create origin', ['user' => $user, 'space' => $space, 'name' => $name]);
+        Configuration::getLogger()->debug('create project', ['user' => $user, 'space' => $space, 'name' => $name]);
         $this->asUser($user['login'], $space['id']);
         $date = new DateTime();
         $date->modify('next monday');

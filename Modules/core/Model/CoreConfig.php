@@ -174,10 +174,10 @@ class CoreConfig extends Model
         }
     }
 
-    public function initParam($key, $value)
+    public function initParam($key, $value, $id_space)
     {
         if (!$this->isKey($key, 0)) {
-            $this->addParam($key, $value);
+            $this->addParam($key, $value, $id_space);
         }
     }
 
