@@ -339,7 +339,7 @@ UPDATE bk_authorization
 	WHERE date_desactivation = '0000-00-00';
 SET sql_mode = (SELECT @@GLOBAL.sql_mode);
 
-DELETE FROM bk_authorization bka WHERE bka.user_id NOT IN (SELECT id FROM core_users);
+DELETE FROM bk_authorization WHERE user_id NOT IN (SELECT id FROM core_users);
 
 DELETE FROM cl_j_client_user WHERE id_user NOT IN (SELECT id FROM core_users);
 
@@ -389,6 +389,12 @@ SET sql_mode = (SELECT @@GLOBAL.sql_mode);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes cl_clients.id
 
+-- on insert des comptes clients 'bidons' pour pourvoir poser des contraintes de clés (notamment bk_calendar_entry#responsible_id -> cl_clients#id)
+INSERT INTO cl_clients(id_space,name,contact_name)
+SELECT DISTINCT id_space,'-- --','-- --' FROM cl_clients
+WHERE id_space NOT IN (
+    SELECT DISTINCT id_space FROM cl_clients cc WHERE cc.name = '' OR cc.name = '-- --');
+
 -- DELETE FROM se_project sp WHERE sp.id_resp NOT IN (SELECT id FROM cl_clients); => Non ! Trop brutal, préférer SET id_resp = 1 (voire NULL ?)
 UPDATE se_project sp
 	-- SET sp.id_resp = 1 -- NON PLUS !! => ne prend pas en compte le core_spaces#id (incohérence entre se_project#id_space et cl_clients#id_space)
@@ -419,10 +425,10 @@ UPDATE ac_j_user_anticorps
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes bk_*
 
 -- TODO: WARN bk_authorization#resource_id renvoie bien à re_category#id (PAS à re_info#id)
-DELETE FROM bk_authorization ba WHERE ba.resource_id NOT IN (SELECT id FROM re_category);
+DELETE FROM bk_authorization WHERE resource_id NOT IN (SELECT id FROM re_category);
 
--- En dessous : peut-être excessif ? (1459 lignes effacées de bk_authorization) => à discuter 
-DELETE FROM bk_authorization ba WHERE ba.visa_id NOT IN (SELECT id FROM re_visas);
+-- pas ici car on efface des re_visas plus bas => voir section re_*
+# DELETE FROM bk_authorization WHERE visa_id NOT IN (SELECT id FROM re_visas);
 
 -- cf BkCalendarEntry.php l. 266
 UPDATE bk_calendar_entry
@@ -439,9 +445,16 @@ INNER JOIN cl_clients cc ON cc.id = cjcu.id_client  AND cc.id_space = bce.id_spa
 	SET bce.responsible_id = cc.id
 WHERE bce.responsible_id NOT IN (SELECT cc.id FROM cl_clients cc);
 
-UPDATE bk_calendar_entry bce
-	SET bce.responsible_id = (SELECT cc.id FROM cl_clients cc WHERE cc.id_space = bce.id_space AND (cc.name = '' OR cc.name = '-- --') LIMIT 1)
-WHERE bce.responsible_id NOT IN (SELECT cc.id FROM cl_clients cc);
+SET sql_mode = '';
+UPDATE bk_calendar_entry bc
+INNER JOIN (
+        SELECT bce.id, cc.id AS cl_id FROM bk_calendar_entry bce
+        INNER JOIN cl_clients cc ON bce.id_space = cc.id_space AND (cc.name = '' OR cc.name = '-- --')
+        WHERE bce.responsible_id NOT IN (SELECT cl.id FROM cl_clients cl)
+        GROUP BY bce.id) bc_
+ON bc.id = bc_.id
+SET bc.responsible_id = bc_.cl_id;
+SET sql_mode = (SELECT @@GLOBAL.sql_mode);
 
 ALTER TABLE bk_calendar_entry MODIFY COLUMN invoice_id int NULL;
 
@@ -570,6 +583,13 @@ DELETE FROM re_resps rr WHERE rr.id_resource NOT IN (SELECT id FROM re_info);
 
 ALTER TABLE re_visas MODIFY COLUMN is_active BOOL DEFAULT 1 NOT NULL;
 
+DELETE FROM re_visas WHERE id_instructor NOT IN (SELECT id FROM core_users);
+
+DELETE FROM re_visas WHERE id_resource_category NOT IN (SELECT id FROM re_category);
+
+-- on joue l'effacement de bk_authorization ici car dépend de re_visas (et on en efface juste au-dessus)
+DELETE FROM bk_authorization WHERE visa_id NOT IN (SELECT id FROM re_visas);
+
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes se_* (module presta services)
 
 -- choix un peu arbitraire mais à priori sur de vieilles données...
@@ -624,3 +644,7 @@ ON DUPLICATE KEY UPDATE   name = new.name
 ALTER TABLE se_task MODIFY COLUMN done BOOL DEFAULT 0 NOT NULL;
 
 ALTER TABLE se_task MODIFY COLUMN private BOOL DEFAULT 0 NOT NULL;
+
+UPDATE stock_shelf
+    SET id_cabinet = NULL
+    WHERE id_cabinet NOT IN (SELECT id FROM stock_cabinets);
