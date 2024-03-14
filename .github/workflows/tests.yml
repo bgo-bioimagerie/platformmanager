@@ -24,7 +24,8 @@ jobs:
           MYSQL_PASSWORD: platform_manager
           MYSQL_DATABASE: platform_manager
           MYSQL_ROOT_PASSWORD: platform_manager
-        options: --health-cmd="mysqladmin ping" --health-interval=5s --health-timeout=2s --health-retries=3
+        #options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+        options: --health-cmd="/usr/local/bin/healthcheck.sh --connect" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - uses: actions/checkout@v3
