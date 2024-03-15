@@ -326,9 +326,9 @@ ENGINE=InnoDB;
 ALTER TABLE users_info DROP INDEX idx_users_info_space;
 ALTER TABLE users_info DROP COLUMN id_space;
 
-DELETE FROM users_info ui WHERE ui.id_core NOT IN (SELECT id FROM core_users);
+DELETE FROM users_info WHERE id_core NOT IN (SELECT id FROM core_users);
 
-DELETE FROM core_users_settings cus WHERE cus.user_id NOT IN (SELECT id FROM core_users);
+DELETE FROM core_users_settings WHERE user_id NOT IN (SELECT id FROM core_users);
 
 SET sql_mode = '';
 UPDATE bk_authorization
@@ -476,7 +476,7 @@ UPDATE bk_calendar_entry bce
 
 ALTER TABLE bk_color_codes MODIFY COLUMN who_can_use TINYINT UNSIGNED DEFAULT 1 NOT NULL;
 
-DELETE FROM bk_nightwe bn WHERE bn.id_belonging NOT IN (SELECT id FROM cl_pricings);
+DELETE FROM bk_nightwe WHERE id_belonging NOT IN (SELECT id FROM cl_pricings);
 
 -- TODO : bk_packages#id_package, bk_prices#id_package renvoient à core_virtual#id (cf. BookingsupsabstractController.php l. 129...)
 
@@ -492,11 +492,11 @@ ALTER TABLE bk_schedulings MODIFY COLUMN is_sunday BOOL DEFAULT 1 NOT NULL;
 ALTER TABLE bk_schedulings MODIFY COLUMN shared BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE bk_schedulings MODIFY COLUMN force_packages BOOL DEFAULT 0 NOT NULL;
 
-DELETE FROM bk_schedulings bs WHERE bs.id_rearea NOT IN (SELECT id FROM re_area);
+DELETE FROM bk_schedulings WHERE id_rearea NOT IN (SELECT id FROM re_area);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes ca_*
 
-DELETE FROM ca_entries ce WHERE ce.id_category NOT IN (SELECT id FROM ca_categories);
+DELETE FROM ca_entries WHERE id_category NOT IN (SELECT id FROM ca_categories);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes cache_*
 
@@ -518,7 +518,7 @@ ALTER TABLE core_files MODIFY COLUMN `role` TINYINT UNSIGNED NOT NULL;
 
 ALTER TABLE core_j_spaces_user MODIFY COLUMN status TINYINT UNSIGNED NOT NULL;
 
-DELETE FROM core_main_sub_menus cmsm WHERE cmsm.id_main_menu NOT IN (SELECT id FROM core_main_menus);
+DELETE FROM core_main_sub_menus WHERE id_main_menu NOT IN (SELECT id FROM core_main_menus);
 
 ALTER TABLE core_pending_accounts MODIFY COLUMN validated BOOL DEFAULT FALSE NOT NULL;
 
@@ -554,7 +554,7 @@ ALTER TABLE in_invoice MODIFY COLUMN is_paid BOOL DEFAULT 1 NOT NULL;
 
 ALTER TABLE in_invoice MODIFY COLUMN visa_send int NULL;
 
-DELETE FROM in_invoice_item it WHERE it.id_invoice NOT IN (SELECT id FROM in_invoice);
+DELETE FROM in_invoice_item WHERE id_invoice NOT IN (SELECT id FROM in_invoice);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Avant mise en place contraintes qo_*
 
@@ -564,22 +564,21 @@ DELETE FROM in_invoice_item it WHERE it.id_invoice NOT IN (SELECT id FROM in_inv
 
 ALTER TABLE re_area MODIFY COLUMN restricted BOOL DEFAULT 0 NOT NULL;
 
-DELETE FROM re_event re WHERE re.id_eventtype NOT IN (SELECT id FROM re_event_type);
+DELETE FROM re_event WHERE id_eventtype NOT IN (SELECT id FROM re_event_type);
 
-DELETE FROM re_event_data red WHERE red.id_event NOT IN (SELECT id FROM re_event);
+DELETE FROM re_event_data WHERE id_event NOT IN (SELECT id FROM re_event);
 
-DELETE FROM bk_calendar_entry bce
-	WHERE bce.resource_id IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
+DELETE FROM bk_calendar_entry WHERE resource_id IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 
-DELETE FROM bk_access ba WHERE ba.id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
+DELETE FROM bk_access WHERE id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 
-DELETE FROM bk_restrictions br WHERE br.id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
+DELETE FROM bk_restrictions WHERE id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 
-DELETE FROM bk_prices bp WHERE bp.id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
+DELETE FROM bk_prices WHERE id_resource IN (SELECT id FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category));
 
-DELETE FROM re_info ri WHERE ri.id_category NOT IN (SELECT id FROM re_category);
+DELETE FROM re_info WHERE id_category NOT IN (SELECT id FROM re_category);
 
-DELETE FROM re_resps rr WHERE rr.id_resource NOT IN (SELECT id FROM re_info);
+DELETE FROM re_resps WHERE id_resource NOT IN (SELECT id FROM re_info);
 
 ALTER TABLE re_visas MODIFY COLUMN is_active BOOL DEFAULT 1 NOT NULL;
 
@@ -609,7 +608,7 @@ UPDATE se_project
 	SET id_sample_cabinet = NULL
 	WHERE id_sample_cabinet NOT IN (SELECT id FROM stock_shelf);
 
-DELETE FROM se_project_service sps WHERE sps.id_project NOT IN (SELECT id FROM se_project);
+DELETE FROM se_project_service WHERE id_project NOT IN (SELECT id FROM se_project);
 
 ALTER TABLE se_project_service MODIFY COLUMN id_invoice INT NULL;
 
@@ -634,12 +633,11 @@ VALUES (1, 'Quantity', 'Quantité', 0, NULL,NOW(), NOW())
      , (4, 'Price', 'Prix', 0, NULL, NOW(), NOW())
      , (5, 'Half day', 'Demi journée', 0, NULL, NOW(), NOW())
      , (6, 'Journée', 'Journée', 0, NULL, NOW(), NOW())
-AS new
-ON DUPLICATE KEY UPDATE   name = new.name
-                        , local_name = new.local_name
-                        , deleted = new.deleted
-                        , deleted_at = new.deleted_at
-                        , updated_at = new.updated_at;
+ON DUPLICATE KEY UPDATE   name = name
+                        , local_name = local_name
+                        , deleted = deleted
+                        , deleted_at = deleted_at
+                        , updated_at = updated_at;
 
 ALTER TABLE se_task MODIFY COLUMN done BOOL DEFAULT 0 NOT NULL;
 
