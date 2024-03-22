@@ -20,7 +20,7 @@ class ClientsController extends CoresecureController
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
+        $title = $modelConfig->getParamSpace("clientsmenuname", $id_space);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }
@@ -54,7 +54,7 @@ class ClientsController extends CoresecureController
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("clients", $id_space);
 
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("clientsMenuName", $id_space);
+        $title = $modelConfig->getParamSpace("clientsmenuname", $id_space);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }

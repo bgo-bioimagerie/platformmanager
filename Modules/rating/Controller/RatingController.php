@@ -28,7 +28,7 @@ class RatingController extends CoresecureController
         $modelSpace = new CoreSpace();
         $menuInfo = $modelSpace->getSpaceMenuFromUrl("rating", $id_space);
         $modelConfig = new CoreConfig();
-        $title = $modelConfig->getParamSpace("ratingMenuName", $id_space);
+        $title = $modelConfig->getParamSpace("ratingmenuname", $id_space);
         if ($title == "") {
             $title = ClientsTranslator::clients($lang);
         }

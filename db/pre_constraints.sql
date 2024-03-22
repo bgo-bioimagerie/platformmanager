@@ -646,3 +646,14 @@ ALTER TABLE se_task MODIFY COLUMN private BOOL DEFAULT 0 NOT NULL;
 UPDATE stock_shelf
     SET id_cabinet = NULL
     WHERE id_cabinet NOT IN (SELECT id FROM stock_cabinets);
+
+DELETE FROM core_config
+WHERE keyname LIKE BINARY '%MenuName'
+AND EXISTS(SELECT * FROM core_config cc
+                    WHERE cc.keyname = core_config.keyname
+                    AND cc.id_space = core_config.id_space);
+
+UPDATE core_config
+SET keyname = REPLACE(keyname, 'MenuName', 'menuname')
+WHERE BINARY keyname LIKE '%MenuName';
+
