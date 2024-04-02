@@ -5,7 +5,7 @@
     echo $lang;
 } else {
     echo "en";
-} ?>">
+} ?>" class="h-100">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -48,7 +48,7 @@ if ($context['dev']) {
         <link rel='stylesheet' href='/Modules/core/Theme/spacemenu.css' />
 
     </head>
-    <body>
+    <body class="d-flex flex-column h-100">
 
         <?php startblock('navbar') ?>
             <?php
@@ -115,12 +115,12 @@ echo $nav->get();
         </div>
 
         <?php startblock('footer') ?>
-        <footer>
+        <footer class="footer mt-auto">
         <div class="container">
             <div class="row">
                 <div class="col"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <?php if(isset($pfm_support_url)) { ?>
-                <div class="col"><a href="<?php echo $pfm_support_url ?>" target="_blank"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
+                <?php if($context['pfm_support_url']) { ?>
+                <div class="col"><a href="<?php echo $context['pfm_support_url'] ?>" target="_blank"> Support</a></div>
                 <?php } ?>
                 <div class="col"><a href="core/about">About</a></div>
                 <div class="col"><a href="core/privacy">Privacy</a></div>

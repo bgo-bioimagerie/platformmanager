@@ -52,19 +52,19 @@
                             <input class="form-check-input" type="checkbox" id="remember" name="remember" value="">
                         </div>
                         <div class="row mb-3">
-                            <div class="col-12 col-md-3"><button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button></div>
-                            
+                            <div class="col-12 col-md-3 d-flex align-items-center">                                
+                                <button class="btn btn-primary" type="submit"> <?php echo CoreTranslator::Ok($language) ?> </button>                                
+                            </div>
                             <div class="col-12 col-md-9">
-                                <div><a href="corepasswordforgotten" class="m-3"><?php echo CoreTranslator::PasswordForgotten($language) ?></a></div>
-                                
+                                <div class="d-flex align-items-center"><a href="corepasswordforgotten" class="m-3"><?php echo CoreTranslator::PasswordForgotten($language) ?></a></div>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <div class="col-12 col-md-12">
                                 <?php if(isset($pfm_support_url)) { ?>
-                                <div><a href="<?php echo $pfm_support_url ?>" class="btn btn-info" target="_blank"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
+                                <div class="d-flex justify-content-center"><a href="<?php echo $pfm_support_url ?>" class="btn btn-info" target="_blank"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
                                 <?php } elseif(isset($admin_email)) { ?>
-                                <div><a href="mailto:<?php echo $admin_email ?>" class="btn btn-info"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a><?php echo $pfm_support_url ?></div>
+                                <div class="d-flex justify-content-center"><a href="mailto:<?php echo $admin_email ?>" class="btn btn-info"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a><?php echo $pfm_support_url ?></div>
                                 <?php } ?>
                             </div>
                         </div>

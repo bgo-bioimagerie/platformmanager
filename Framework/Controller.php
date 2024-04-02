@@ -376,6 +376,7 @@ abstract class Controller
             "role" => $this->role,   // user role in space if any
             "maintenance" => $this->maintenance,
             "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+            "pfm_support_url" => Configuration::get("pfm_support_url", ""),
             "dev" => (getenv('PFM_MODE')=='dev')
         ];
         if ($dataView["context"]["dev"]) {
