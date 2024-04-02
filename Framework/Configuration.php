@@ -240,6 +240,9 @@ class Configuration
         if (getenv('PFM_ADMIN_EMAIL')) {
             self::$parameters['admin_email'] = getenv('PFM_ADMIN_EMAIL');
         }
+        if (getenv('PFM_SUPPORT_URL')) {
+            self::$parameters['pfm_support_url'] = getenv('PFM_SUPPORT_URL');
+        }
         if (getenv('PFM_ADMIN_PASSWORD')) {
             self::$parameters['admin_password'] = getenv('PFM_ADMIN_PASSWORD');
         }

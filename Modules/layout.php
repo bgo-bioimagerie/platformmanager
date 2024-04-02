@@ -118,9 +118,12 @@ echo $nav->get();
         <footer>
         <div class="container">
             <div class="row">
-                <div class="col-4"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
-                <div class="col-4"><a href="core/about">About</a></div>
-                <div class="col-4"><a href="core/privacy">Privacy</a></div>
+                <div class="col"><a href="http://bgo-bioimagerie.github.io/platformmanager/">Documentation</a></div>
+                <?php if(isset($pfm_support_url)) { ?>
+                <div class="col"><a href="<?php echo $pfm_support_url ?>"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
+                <?php } ?>
+                <div class="col"><a href="core/about">About</a></div>
+                <div class="col"><a href="core/privacy">Privacy</a></div>
             </div>
         </div>
         </footer>
