@@ -62,7 +62,7 @@
                         <div class="row mb-3">
                             <div class="col-12 col-md-12">
                                 <?php if(isset($pfm_support_url)) { ?>
-                                <div><a href="<?php echo $pfm_support_url ?>" class="btn btn-info"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
+                                <div><a href="<?php echo $pfm_support_url ?>" class="btn btn-info" target="_blank"><?php echo CoreTranslator::Contact_support($language) ?></a></div>
                                 <?php } elseif(isset($admin_email)) { ?>
                                 <div><a href="mailto:<?php echo $admin_email ?>" class="btn btn-info"><?php echo CoreTranslator::Contact_the_administrator($language) ?></a><?php echo $pfm_support_url ?></div>
                                 <?php } ?>
