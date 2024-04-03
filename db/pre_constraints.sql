@@ -114,7 +114,6 @@ ALTER TABLE stock_shelf MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 ALTER TABLE users_info MODIFY COLUMN deleted BOOL DEFAULT 0 NOT NULL;
 
 SET sql_mode = (SELECT @@GLOBAL.sql_mode);
-
 --  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Ajout d'une table manquante pour des jointures sur les rôles (status) attribués aux utilisateurs par espace
 DROP TABLE IF EXISTS core_user_space_roles;
 
@@ -646,6 +645,12 @@ ALTER TABLE se_task MODIFY COLUMN private BOOL DEFAULT 0 NOT NULL;
 UPDATE stock_shelf
     SET id_cabinet = NULL
     WHERE id_cabinet NOT IN (SELECT id FROM stock_cabinets);
+
+ALTER TABLE core_config MODIFY COLUMN id_space  int(11) NULL;
+
+UPDATE core_config
+SET id_space = NULL
+WHERE id_space = 0;
 
 DELETE FROM core_config
 WHERE keyname LIKE BINARY '%MenuName'

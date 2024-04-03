@@ -6,6 +6,9 @@ require_once 'Framework/Configuration.php';
 /**
  * Class defining the config model
  *
+ * GN: En BDD, la valeur 0 pour id_space a été remplacée par null (pour placer une contrainte d'intégrité sur ce champ)
+ * => on continue de gérer 0 au niveau PHP, et on convertit vers et à partir de null au niveau de requête SQL
+ *
  * @author Sylvain Prigent
  */
 class CoreConfig extends Model
@@ -30,7 +33,7 @@ class CoreConfig extends Model
         $sql = "CREATE TABLE IF NOT EXISTS `core_config` (
         `keyname` varchar(30) NOT NULL DEFAULT '',
         `value` text NOT NULL,
-        `id_space` int(11) NOT NULL DEFAULT 0
+        `id_space` int(11) NULL
         );";
 
         $this->runRequest($sql);
@@ -45,7 +48,7 @@ class CoreConfig extends Model
             $this->runRequest($sql3);
         }
 
-        $this->addColumn('core_config', 'id_space', 'int(11)', 0);
+        $this->addColumn('core_config', 'id_space', 'int(11)', "");
     }
 
     /**
@@ -85,14 +88,16 @@ class CoreConfig extends Model
             return;
         }
         Configuration::getLogger()->debug('load config', ['space' => $id_space]);
-        $sql = "SELECT * FROM core_config where id_space=?";
-        $configParams = $this->runRequest($sql, array($id_space));
+        $sql_suffix = $id_space == 0 ? " IS NULL" : "=?";
+        $sql = "SELECT * FROM core_config where id_space$sql_suffix";
+        $configParams = $this->runRequest($sql, $id_space == 0 ? [] : array($id_space));
         $dbconfig = $configParams->fetchAll();
         foreach ($dbconfig as $param) {
-            if (!isset(self::$params[$param["id_space"]])) {
-                self::$params[$param["id_space"]] = [];
+            $db_id_space = $param["id_space"] === null ? 0 : $param["id_space"];
+            if (!isset(self::$params[$db_id_space])) {
+                self::$params[$db_id_space] = [];
             }
-            self::$params[$param["id_space"]][$param["keyname"]] = $param["value"];
+            self::$params[$db_id_space][$param["keyname"]] = $param["value"];
         }
     }
 
@@ -109,7 +114,7 @@ class CoreConfig extends Model
     public function addParam($key, $value, $id_space=0)
     {
         $sql = "INSERT INTO core_config (keyname, value, id_space) VALUES(?,?,?)";
-        $this->runRequest($sql, array($key, $value, $id_space));
+        $this->runRequest($sql, array($key, $value, $id_space == 0 ? null : $id_space));
         if (!isset(self::$params[$id_space])) {
             self::$params[$id_space] = [];
         }
@@ -123,8 +128,9 @@ class CoreConfig extends Model
      */
     public function updateParam($key, $value, $id_space=0)
     {
-        $sql = "update core_config set value=?  where keyname=? AND id_space=?";
-        $this->runRequest($sql, array($value, $key, $id_space));
+        $sql_suffix = $id_space == 0 ? " IS NULL" : "=?";
+        $sql = "update core_config set value=?  where keyname=? AND id_space$sql_suffix";
+        $this->runRequest($sql, $id_space == 0 ? array($value, $key) : array($value, $key, $id_space));
         $this->loadParams($id_space);
         if (!isset(self::$params[$id_space])) {
             self::$params[$id_space] = [];

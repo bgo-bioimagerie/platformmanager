@@ -3,7 +3,7 @@
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%% CONTRAINTES SUR core_config
 
-ALTER TABLE core_config ADD CONSTRAINT core_config_PK PRIMARY KEY (keyname,id_space);
+ALTER TABLE core_config ADD CONSTRAINT core_config_unique UNIQUE (keyname, id_space);
 
 -- %%%%%%%%%%%%%%%%%%%%%%%%% CONTRAINTES SUR core_spaces.id
 
