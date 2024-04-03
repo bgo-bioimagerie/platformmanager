@@ -44,8 +44,8 @@ class CoreconnectionController extends CorecookiesecureController
         $language = $this->getLanguage();
 
         $modelConfig = new CoreConfig();
-        $admin_email = Configuration::get("admin_email", "support-pfm@univ-rennes.fr");
-        $pfm_support_url = Configuration::get("pfm_support_url", "https://assistance.univ-rennes.fr/");
+        $admin_email = Configuration::get("admin_email");
+        $pfm_support_url = Configuration::get("pfm_support_url");
         $logo = $modelConfig->getParam("logo");
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
