@@ -44,7 +44,8 @@ class CoreconnectionController extends CorecookiesecureController
         $language = $this->getLanguage();
 
         $modelConfig = new CoreConfig();
-        $admin_email = $modelConfig->getParam("admin_email");
+        $admin_email = Configuration::get("admin_email");
+        $pfm_support_url = Configuration::get("pfm_support_url");
         $logo = $modelConfig->getParam("logo");
         $home_title = $modelConfig->getParam("home_title");
         $home_message = $modelConfig->getParam("home_message");
@@ -75,6 +76,7 @@ class CoreconnectionController extends CorecookiesecureController
 
 
         return $this->render(array("msgError" => $message, "admin_email" => $admin_email, "logo" => $logo,
+            "pfm_support_url" => $pfm_support_url,
             "home_title" => $home_title, "home_message" => $home_message,
             "redirection" => $redirection,
             "language" => $language,

@@ -744,6 +744,14 @@ class CoreTranslator
         return "Contact the administrator";
     }
 
+    public static function Contact_support($lang = "")
+    {
+        if ($lang == "fr") {
+            return "Contacter le support";
+        }
+        return "Contact support";
+    }
+
     public static function CoreConfigAbstract($lang)
     {
         if ($lang == "fr") {

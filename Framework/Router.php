@@ -423,6 +423,7 @@ class Router
                         "currentSpace" => null,  // current space if any
                         "role" => -1 ,  // user role in space if any,
                         "theme" => isset($_SESSION['theme']) ? $_SESSION['theme'] : null,
+                        "pfm_support_url" => Configuration::get("pfm_support_url", ""),
                         "dev" => false
                 ],
                 'type' => $type,
