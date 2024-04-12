@@ -25,7 +25,7 @@ class BkReport extends Model
                 . "e.color_type_id, e.recipient_id, "
                 . "a.name as area_name, r.name as resource, r.description, a.id as area, u.login, c.name color"
                 . " FROM bk_calendar_entry e, re_area a, re_info r, core_users u, bk_color_codes c "
-                . " WHERE e.resource_id = r.id  AND u.id = e.recipient_id AND r.id_area = a.id AND c.id = e.color_type_id"
+                . " WHERE e.resource_id = r.id  AND u.id = e.recipient_id AND r.id_area = a.id AND c.id = e.color_type_id AND e.deleted=0"
                 . " AND e.id_space=?"
                 . " AND e.start_time >= " . $datebegin . " AND e.end_time <= " .$dateend . " ";
 
