@@ -68,6 +68,19 @@ class Configuration
     }
 
     /**
+     * @throws PfmParamException
+     */
+    public static function getOrThrow($name)
+    {
+        $value = self::get($name);
+
+        if ($value == null)
+            throw new PfmParamException("Parameter " . $name . " has no value");
+
+        return $value;
+    }
+
+    /**
      * Return the table of the parametres by loading the configuration file.
      *
      * @return array Table containing the configuration parameters
