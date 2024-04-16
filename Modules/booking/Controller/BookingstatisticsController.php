@@ -475,16 +475,16 @@ class BookingstatisticsController extends StatisticsController
 
 
         foreach ($table as $t) {
-            $content.= $t["area_name"] . "; ";
-            $content.= $t["resource"] . "; ";
-            $content.= $t["short_description"] . "; ";
+            $content.= htmlspecialchars_decode($t["area_name"]) . "; ";
+            $content.= htmlspecialchars_decode($t["resource"]) . "; ";
+            $content.= htmlspecialchars_decode($t["short_description"]) . "; ";
 
             $date = date("d/m/Y à H:i", $t["start_time"]) . " - ";
             $date .= date("d/m/Y à H:i", $t["end_time"]);
 
             $content.= $date . ";";
-            $content.= $t["full_description"] . "; ";
-            $content.= $t["color"] . "; ";
+            $content.= htmlspecialchars_decode($t["full_description"]) . "; ";
+            $content.= htmlspecialchars_decode($t["color"]) . "; ";
             $content.= $t["login"] . " ";
             $content.= "\r\n";
         }
@@ -493,8 +493,10 @@ class BookingstatisticsController extends StatisticsController
             return $content;
         }
 
-        header("Content-Type: application/csv-tab-delimited-table");
+        header('Content-Encoding: UTF-8');
+        header("Content-Type: application/csv-tab-delimited-table; charset=UTF-8");
         header("Content-disposition: filename=rapport.csv");
+        echo "\xEF\xBB\xBF"; // UTF-8 BOM
         echo $content;
     }
 

@@ -68,6 +68,7 @@ class BkReport extends Model
      */
     private function extractQueryFrom($champ, $text, $type_recherche)
     {
+        $text = htmlspecialchars( (string) $text);
         $like = " LIKE ";
         if ($type_recherche == 0) {
             $like = " NOT LIKE ";
