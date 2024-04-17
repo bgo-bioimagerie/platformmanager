@@ -859,14 +859,13 @@ class Events
 
     /**
      * Initialize client
+     * @throws PfmParamException
+     * @throws Exception
      */
     public static function getChannel()
     {
         if (self::$channel === null) {
-            $amqpHost = Configuration::get('amqp_host', '');
-            if ($amqpHost == '') {
-                return null;
-            }
+            $amqpHost = Configuration::getOrThrow('amqp_host');
             $amqpPort = Configuration::get('amqp_port', 5672);
             $amqpUser = Configuration::get('amqp_user');
             $amqpPassword = Configuration::get('amqp_password');
@@ -910,9 +909,6 @@ class Events
         }
         try {
             $channel = self::getChannel();
-            if ($channel === null) {
-                return;
-            }
             Configuration::getLogger()->debug('[event] send', ['message' => $message]);
             $message['_user'] = $_SESSION['login'] ?? 'unknown';
             $amqpMsg = new AMQPMessage(json_encode($message));
