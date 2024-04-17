@@ -483,7 +483,7 @@ class BookingstatisticsController extends StatisticsController
             $date .= date("d/m/Y à H:i", $t["end_time"]);
 
             $content.= $date . ";";
-            $content.= htmlspecialchars_decode($t["full_description"]) . "; ";
+            $content.= htmlspecialchars_decode(str_replace( "\r\n", " ", $t["full_description"] )) . "; ";
             $content.= htmlspecialchars_decode($t["color"]) . "; ";
             $content.= $t["login"] . " ";
             $content.= "\r\n";
