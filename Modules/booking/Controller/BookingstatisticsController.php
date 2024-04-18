@@ -475,16 +475,20 @@ class BookingstatisticsController extends StatisticsController
 
 
         foreach ($table as $t) {
-            $content.= htmlspecialchars_decode($t["area_name"]) . "; ";
-            $content.= htmlspecialchars_decode($t["resource"]) . "; ";
-            $content.= htmlspecialchars_decode($t["short_description"]) . "; ";
+
+            $content.= html_entity_decode(htmlspecialchars_decode($t["area_name"])) . "; ";
+            $content.= html_entity_decode(htmlspecialchars_decode($t["resource"])) . "; ";
+            $content.= html_entity_decode(htmlspecialchars_decode($t["short_description"], ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)) . "; ";
+
 
             $date = date("d/m/Y à H:i", $t["start_time"]) . " - ";
             $date .= date("d/m/Y à H:i", $t["end_time"]);
 
             $content.= $date . ";";
-            $content.= htmlspecialchars_decode(str_replace( "\r\n", " ", $t["full_description"] )) . "; ";
-            $content.= htmlspecialchars_decode($t["color"]) . "; ";
+
+            $content.= html_entity_decode(htmlspecialchars_decode(str_replace( "\r\n", " ", $t["full_description"] ), ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401)) . "; ";
+            $content.= html_entity_decode(htmlspecialchars_decode($t["color"])) . "; ";
+
             $content.= $t["login"] . " ";
             $content.= "\r\n";
         }
