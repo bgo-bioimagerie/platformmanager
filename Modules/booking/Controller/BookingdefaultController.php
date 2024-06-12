@@ -316,6 +316,10 @@ class BookingdefaultController extends BookingabstractController
         foreach ($quantitiesInfo as $q) {
             $qt = $this->request->getParameterNoException("q" . $q["id"]);
             if (!empty($qt)) {
+                if (!is_numeric($qt)) {
+                    Configuration::getLogger()->debug('Invalid quantity numeric value ', ['q' => $q, 'qt' => $qt]);
+                    throw new PfmParamException('Invalid numeric value: '.$qt);
+                }
                 $quantities .= $q["id"] . "=" . $qt . ";";
             }
         }
@@ -841,12 +845,26 @@ END:VCALENDAR
         foreach ($supInfos as $sup) {
             $key = array_search($sup["id"], $supDataId);
             $value = "";
+            $selectChoices = null;
+            if (isset($sup['choices']) && $sup['choices']) {
+                $selectChoices = [];
+                $supChoices = explode(',', $sup['choices']);
+                foreach ($supChoices as $supChoice) {
+                    $selectChoices[] = trim($supChoice);
+                }
+            }
             // if deleted, add a [!] warning
             $supName = $sup["deleted"] == 1 ? '[!] ' . $sup["name"] : $sup["name"];
+
             if ($key !== false) {
                 $value = $supDataValue[$key];
             }
-            $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
+
+            if ($selectChoices) {
+                $form->addSelect("sup" . $sup["id"], $supName, $selectChoices, $selectChoices, $value);
+            } else {
+                $form->addText("sup" . $sup["id"], $supName, $sup["mandatory"], $value);
+            }
         }
 
         $modelColors = new BkColorCode();
@@ -877,10 +895,31 @@ END:VCALENDAR
             }
         }
         foreach ($quantitiesInfo as $q) {
+            $selectChoices = null;
+            if (isset($q['choices']) && $q['choices']) {
+                $selectChoices = [];
+                $supChoices = explode(',', $q['choices']);
+                foreach ($supChoices as $supChoice) {
+                    $selectChoices[] = trim($supChoice);
+                }
+            }
+
+
             $qName = $q["deleted"] == 1 ? '[!] ' . $q["name"] : $q["name"];
             $key = array_search($q["id"], $qDataId);
             $value = ($key!==false) ? $qDataValue[$key] : "";
-            $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
+
+
+            if ($selectChoices) {
+                if ($q['mandatory']) {
+                    $form->addSelectMandatory("q" . $q["id"], $qName, $selectChoices, $selectChoices, $value);
+                } else {
+                    $selectChoices[] = '';
+                    $form->addSelect("q" . $q["id"], $qName, $selectChoices, $selectChoices, $value);
+                }
+            } else {
+                $form->addNumber("q" . $q["id"], $qName, $q["mandatory"], $value);
+            }
         }
 
         // booking nav bar
