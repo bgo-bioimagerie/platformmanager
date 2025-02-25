@@ -10,10 +10,29 @@
 
 
 
-    <meta name="description" content="General configuration Configuration file, located in Config/conf.ini defines base configuration and the list of modules globally activated.
+    <meta name="description" content="
+    
+        General configuration
+        
+            
+        
+    
+Configuration file, located in Config/conf.ini defines base configuration
+and the list of modules globally activated.
 Example file is available with conf.ini.sample.
 Mandatory sections are:
-Installation: base setup with public url access and optional url prefix Modules: list of modules DB: mysql connection information Admin: super administrator information (created at install if not exists), admin secrets (password, apikey) should not be exposed in config file and should rather be defined via env variables (see below).">
+
+Installation: base setup with public url access and optional url prefix
+Modules: list of modules
+DB: mysql connection information
+Admin: super administrator information (created at install if not exists),
+admin secrets (password, apikey) should not be exposed in config file and
+should rather be defined via env variables (see below).
+Amqp: rabbitmq connection information, used for events and statistics
+to dialog with pfm-events process
+smtp: mail settings
+
+Optional sections:">
 
 
 

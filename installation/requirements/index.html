@@ -10,8 +10,55 @@
 
 
 
-    <meta name="description" content="Base requirements Database: mysql &gt; 5.6, tested on 8 PHP: version &gt;= 8 with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support Apache server with: PHP enabled rewrite, headers, proxy_http modules use of .htaccess Apache should also have specific pfm configuration:
-&lt;Location /update&gt; Order deny,allow Deny from all Allow from 127.0.0.1 &lt;/Location&gt; &lt;Directory &quot;^${docroot}/data&quot;&gt; &lt;FilesMatch &quot;.&#43;\.*$&quot;&gt; SetHandler ! &lt;/FilesMatch&gt; &lt;/Directory&gt; Rabbitmq server for additional services (pfm-events, etc.">
+    <meta name="description" content="
+    
+        Base requirements
+        
+            
+        
+    
+
+Database: mysql &gt; 5.6, tested on 8
+PHP:
+
+version &gt;= 8
+with gd (jpeg, xpm, freetype support), pdo, pdo_mysql, mysqli, zip, ldap, imap and sockets support
+
+
+Apache server with:
+
+PHP enabled
+rewrite, headers, proxy_http modules
+use of .htaccess
+
+
+
+Apache should also have specific pfm configuration:
+&lt;Location /update&gt;
+  Order deny,allow
+  Deny from all
+  Allow from 127.0.0.1
+&lt;/Location&gt;
+
+&lt;Directory &quot;^${docroot}/data&quot;&gt;
+  &lt;FilesMatch &quot;.&#43;\.*$&quot;&gt;
+    SetHandler !
+  &lt;/FilesMatch&gt;
+&lt;/Directory&gt;
+
+
+Rabbitmq server for additional services (pfm-events, etc.)
+Redis
+Influxdb server for statistics (optional)
+
+
+    
+        Install with docker
+        
+            
+        
+    
+You just need docker and docker-compose ;-)">
 
 
 

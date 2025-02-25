@@ -4,7 +4,7 @@
     <title>Administration on Platform Manager</title>
     <link>https://bgo-bioimagerie.github.io/platformmanager/admin/</link>
     <description>Recent content in Administration on Platform Manager</description>
-    <generator>Hugo 0.125.0</generator>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Wed, 23 Jun 2021 16:11:10 +0200</lastBuildDate>
     <atom:link href="https://bgo-bioimagerie.github.io/platformmanager/admin/index.xml" rel="self" type="application/rss+xml" />
@@ -13,14 +13,14 @@
       <link>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</link>
       <pubDate>Wed, 23 Jun 2021 16:08:15 +0200</pubDate>
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/</guid>
-      <description>Setup new spaces At first, as superadmin you must create a space, create accounts for the future space administrators and give them admin role to this space.&#xA;First step is to connect with the configured admin account.&#xA;Create a space In the admin menu, go to Spaces&#xA;Add a space.&#xA;Note that you can choose to pre-configure your space. That will activate the base modules: Booking, Resources and Clients</description>
+      <description>&lt;div class=&#34;gdoc-page__anchorwrap&#34;&gt;&#xA;    &lt;h2 id=&#34;setup-new-spaces&#34;&gt;&#xA;        Setup new spaces&#xA;        &lt;a data-clipboard-text=&#34;https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/#setup-new-spaces&#34; class=&#34;gdoc-page__anchor gdoc-page__anchor--right clip&#34; aria-label=&#34;Anchor Setup new spaces&#34; href=&#34;#setup-new-spaces&#34;&gt;&#xA;            &lt;svg class=&#34;icon gdoc_link&#34;&gt;&lt;use xlink:href=&#34;#gdoc_link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&#xA;        &lt;/a&gt;&#xA;    &lt;/h2&gt;&#xA;&lt;/div&gt;&lt;p&gt;At first, as superadmin you must create a space, create accounts for the future space administrators and give them &lt;em&gt;admin&lt;/em&gt; role to this space.&lt;/p&gt;&#xA;&lt;p&gt;First step is to connect with the configured admin account.&lt;/p&gt;&#xA;&lt;div class=&#34;gdoc-page__anchorwrap&#34;&gt;&#xA;    &lt;h3 id=&#34;create-a-space&#34;&gt;&#xA;        Create a space&#xA;        &lt;a data-clipboard-text=&#34;https://bgo-bioimagerie.github.io/platformmanager/admin/getting_started/#create-a-space&#34; class=&#34;gdoc-page__anchor gdoc-page__anchor--right clip&#34; aria-label=&#34;Anchor Create a space&#34; href=&#34;#create-a-space&#34;&gt;&#xA;            &lt;svg class=&#34;icon gdoc_link&#34;&gt;&lt;use xlink:href=&#34;#gdoc_link&#34;&gt;&lt;/use&gt;&lt;/svg&gt;&#xA;        &lt;/a&gt;&#xA;    &lt;/h3&gt;&#xA;&lt;/div&gt;&lt;p&gt;In the &lt;em&gt;admin&lt;/em&gt; menu, go to &lt;em&gt;Spaces&lt;/em&gt;&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;../../install_1.png&#34; alt=&#34;main page&#34;  /&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Cli</title>
       <link>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</link>
       <pubDate>Wed, 23 Jun 2021 16:11:10 +0200</pubDate>
       <guid>https://bgo-bioimagerie.github.io/platformmanager/admin/cli/</guid>
-      <description>cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.&#xA;For help commands, execute:&#xA;php cli/pfm-cli.php Tool can be used to install/upgrade database, expire users, check database version etc.</description>
+      <description>&lt;p&gt;cli/pfm-cli.php tool (to be executed in code root directory), helps administrators on different tasks.&lt;/p&gt;&#xA;&lt;p&gt;For help commands, execute:&lt;/p&gt;&#xA;&lt;pre&gt;&lt;code&gt;php cli/pfm-cli.php&#xA;&lt;/code&gt;&lt;/pre&gt;&#xA;&lt;p&gt;Tool can be used to install/upgrade database, expire users, check database version etc.&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
