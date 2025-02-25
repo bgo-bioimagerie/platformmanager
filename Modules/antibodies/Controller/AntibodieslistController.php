@@ -480,6 +480,7 @@ class AntibodieslistController extends AntibodiesController
     protected function createEditForm($id_space, $anticorps, $id)
     {
         $lang = $this->getLanguage();
+        $anticorpsModelCreate = new Anticorps();
 
         $mandatoryEntries = [];
 
@@ -487,7 +488,11 @@ class AntibodieslistController extends AntibodiesController
         $form->setTitle(AntibodiesTranslator::AntibodyInfo($lang));
 
         $form->addText("name", CoreTranslator::Name($lang), true, $anticorps["nom"]);
-        $form->addText("no_h2p2", AntibodiesTranslator::Number($lang), false, $anticorps["no_h2p2"]);
+        $form->addText("no_h2p2", 
+                        AntibodiesTranslator::Number($lang), 
+                        false,  
+                        $anticorps["no_h2p2"] == 0 ? $anticorpsModelCreate->getLargerNoH2P2($id_space) : $anticorps["no_h2p2"], 
+                        $anticorps["no_h2p2"] == 0 ? "disabled" : "" ); //$anticorps["no_h2p2"]);
         $form->addText("fournisseur", AntibodiesTranslator::Provider($lang), false, $anticorps["fournisseur"]);
 
         $modelSource = new Source();
