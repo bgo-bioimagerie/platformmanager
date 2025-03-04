@@ -491,8 +491,9 @@ class AntibodieslistController extends AntibodiesController
         $form->addText("no_h2p2", 
                         AntibodiesTranslator::Number($lang), 
                         false,  
-                        $anticorps["no_h2p2"] == 0 ? $anticorpsModelCreate->getLargerNoH2P2($id_space) : $anticorps["no_h2p2"], 
-                        $anticorps["no_h2p2"] == 0 ? "disabled" : "" ); //$anticorps["no_h2p2"]);
+                        $anticorps["no_h2p2"] == 0 ? $anticorpsModelCreate->getLargerNoH2P2($id_space) + 1 : $anticorps["no_h2p2"], 
+                        "", //no value send if disabled
+                        $anticorps["no_h2p2"] == 0 ? "readonly" : "" ); //$anticorps["no_h2p2"]);
         $form->addText("fournisseur", AntibodiesTranslator::Provider($lang), false, $anticorps["fournisseur"]);
 
         $modelSource = new Source();
