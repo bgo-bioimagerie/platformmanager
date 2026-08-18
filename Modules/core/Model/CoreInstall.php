@@ -857,7 +857,7 @@ class CoreDB extends Model
 
             $indexExists = false;
             foreach ($indexes as $index) {
-                if ($index['Key_name'] == "idx_${table}_space") {
+                if ($index['Key_name'] == "idx_{$table}_space") {
                     $indexExists = true;
                     Configuration::getLogger()->debug('[db] id_space index already exists');
                     break;
@@ -865,7 +865,7 @@ class CoreDB extends Model
             }
             if (!$indexExists) {
                 Configuration::getLogger()->debug('[db] create id_space index');
-                $space_index = "CREATE INDEX `idx_${table}_space` ON `$table` (`id_space`)";
+                $space_index = "CREATE INDEX `idx_{$table}_space` ON `$table` (`id_space`)";
                 $this->runRequest($space_index);
             }
         }

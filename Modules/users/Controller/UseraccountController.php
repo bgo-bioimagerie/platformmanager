@@ -80,11 +80,11 @@ class UseraccountController extends CoresecureController
             foreach ($openid_providers as $openid_provider) {
                 $provider = [
                     "name" => $openid_provider,
-                    "url" => Configuration::get("openid_${openid_provider}_url"),
-                    "icon" => Configuration::get("openid_${openid_provider}_icon"),
-                    "login" => Configuration::get("openid_${openid_provider}_login"),
-                    "client_id" => Configuration::get("openid_${openid_provider}_client_id"),
-                    "client_secret" => Configuration::get("openid_${openid_provider}_client_secret"),
+                    "url" => Configuration::get('openid_'. $openid_provider .'_url'),
+                    "icon" => Configuration::get('openid_'. $openid_provider .'_icon'),
+                    "login" => Configuration::get('openid_'. $openid_provider .'_login'),
+                    "client_id" => Configuration::get('openid_'. $openid_provider .'_client_id'),
+                    "client_secret" => Configuration::get('openid_'. $openid_provider .'_client_secret'),
                     "callback" => Configuration::get("public_url")."/ooc/$openid_provider/authorized",
                     "nonce" => $nonce,
                 ];
