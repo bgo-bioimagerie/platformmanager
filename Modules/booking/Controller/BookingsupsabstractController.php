@@ -23,6 +23,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
     protected bool $invoicable;
     protected bool $mandatoryFields;
     protected bool $hasDuration;
+    protected bool $hasChoices;
 
     protected function getSupForm($id_space, $formTitle)
     {
@@ -40,6 +41,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $supsIds = array();
         $supsIdsRes = array();
         $supsNames = array();
+        $supsChoices = array();
         $supsMandatories = array();
         $supIsInvoicingUnit = array();
         $supsDuration = array();
@@ -47,6 +49,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController
             $supsIds[] = $sup["id_" . $this->supsType];
             $supsIdsRes[] = $sup["id_resource"];
             $supsNames[] = $sup["name"];
+            if ($this->hasChoices) {
+                $supsChoices[] = $sup["choices"];
+            }
             if ($this->mandatoryFields) {
                 $supsMandatories[] = $sup["mandatory"] ?? 0;
             }
@@ -65,6 +70,10 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $formAdd->addHidden("id_sups", $supsIds);
         $formAdd->addSelect("id_resources", BookingTranslator::Resource($lang), $choicesR, $choicesRid, $supsIdsRes);
         $formAdd->addText("names", CoreTranslator::Name($lang), $supsNames);
+
+        if ($this->hasChoices) {
+            $formAdd->addText("choices", BookingTranslator::supplementariesChoices($lang), $supsChoices);
+        }
 
         if ($this->hasDuration) {
             $formAdd->addNumber("durations", BookingTranslator::Duration($lang), $supsDuration);
@@ -90,6 +99,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $supID = $this->request->getParameterNoException("id_sups");
         $supResources = $this->request->getParameterNoException("id_resources");
         $supName = $this->request->getParameterNoException("names");
+        $supChoices = $this->request->getParameterNoException("choices");
         $supMandatory = $this->request->getParameterNoException("mandatory");
         $supIsInvoicingUnit = $this->request->getParameterNoException("is_invoicing_unit");
         $supDuration = $this->request->getParameterNoException("durations");
@@ -99,6 +109,7 @@ abstract class BookingsupsabstractController extends BookingsettingsController
         $supDuration = is_array($supDuration) ? $supDuration : [$supDuration];
         $supID = is_array($supID) ? $supID : [$supID];
         $supResources = is_array($supResources) ? $supResources : [$supResources];
+        $supChoices = is_array($supChoices) ? $supChoices : [$supChoices];
 
         if ($this->invoicable && $this->hasInvoicingUnitsDuplicates($supResources, $supIsInvoicingUnit, $id_space, $lang)) {
             // find out if multiple sups are used as invoicing units
@@ -134,6 +145,9 @@ abstract class BookingsupsabstractController extends BookingsettingsController
             }
 
             $this->modelSups->setSupplementary($id_space, $supID[$i], $supResources[$i], $supName[$i], $supMandatory[$i] ?? 0, $supIsInvoicingUnit[$i] ?? 0, $supDuration[$i] ?? 0);
+            if ($this->hasChoices) {
+                $this->modelSups->setOptions($id_space, $supID[$i], $supResources[$i], $supChoices[$i]);
+            }
             array_push($id_sups, $this->modelSups->getBySupID($id_space, $supID[$i], $supResources[$i])['id']);
         }
 

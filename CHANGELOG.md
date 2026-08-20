@@ -53,6 +53,9 @@ Remove signals handlers in pfm-events, preventing startup in docker
   unsubscribed user count
 * [mailer] on Users destination send to user+managers+admin #744
 * [statistics] fix error handling for invoice items 
+* [booking] allow supplementaries info and quantities to limit choices,
+  setting choices as val1,val2,val3 to limit name
+  to [val1,val2,val3]
 * [core] set minimal level for module access #511
 * [services] in stats, if user unknown ie not found, show *unknown* value
 * [core] remove CoreStatus sql related calls, use static values

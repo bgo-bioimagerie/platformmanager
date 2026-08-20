@@ -26,6 +26,7 @@ class BookingpackagesController extends BookingsupsabstractController
         $this->invoicable = false;
         $this->mandatoryFields = false;
         $this->hasDuration = true;
+        $this->hasChoices = false;
         $this->formUrl = "bookingpackages";
     }
 

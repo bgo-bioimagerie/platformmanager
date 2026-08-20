@@ -26,6 +26,7 @@ class BookingsupsinfoController extends BookingsupsabstractController
         $this->mandatoryFields = true;
         $this->hasDuration = false;
         $this->formUrl = "bookingsupsinfo";
+        $this->hasChoices = true;
     }
 
     /**
